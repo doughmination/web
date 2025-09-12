@@ -17,6 +17,14 @@ services:
 #      - NODE_ENV=production
 #    restart: unless-stopped
 
+  lgbt:
+    image: clovetwilight3/lgb-with-t
+    ports:
+      - "8008:8008"
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+
   mazeymoos:
     image: clovetwilight3/estrogen-moos:latest
     ports:
@@ -75,7 +83,7 @@ services:
     ports:
       - "8002:3000"
     env_file: .env
-    restart: always
+    restart: unless-stopped
 
 volumes:
   backend_data:
