@@ -1,0 +1,115 @@
+/**
+ * @name Minecraft
+ * @author CloveTwilight3/EstrocordHRT
+ * @version 1.0.3
+ * @description A custom Minecraft Theme.
+ */
+
+/* IMPORT CSS */
+@import url("https://www.yuri-lover.win/vencord/api/main.css");
+@import url("https://www.yuri-lover.win/vencord/api/vencord.css");
+
+/* SETTINGS */
+:root {
+    /* ACCENT COLORS */
+    --main-color: #E91E63;        /* Cherry blossom pink */
+    --hover-color: #F48FB1;       /* Lighter cherry pink for hover */
+    --success-color: #4CAF50;     /* Minecraft grass green */
+    --danger-color: #D32F2F;      /* Red for danger states */
+
+    /* STATUS COLORS */
+    --online-color: #4CAF50;      /* Bright grass green */
+    --idle-color: #FFC107;        /* Golden/yellow like the beehives */
+    --dnd-color: #E91E63;         /* Cherry blossom pink */
+    --streaming-color: #9C27B0;   /* Purple from the sky gradient */
+    --offline-color: #8D6E63;     /* Brown like the tree trunks */
+
+    /* APP BACKGROUND */
+    --background-shading-percent: 100%;
+    --background-image: url(https://www.yuri-lover.win/vencord/images/backgrounds/Minecraft.jpg);
+    --background-position: center;
+    --background-size: cover;
+    --background-attachment: fixed;
+    --background-filter: saturate(calc(var(--saturation-factor, 1) * 1));
+
+    /* USER POPOUT BACKGROUND */
+    --user-popout-image: var(--background-image);
+    --user-popout-position: var(--background-position);
+    --user-popout-size: var(--background-size);
+    --user-popout-attachment: var(--background-attachment);
+    --user-popout-filter: var(--background-filter);
+
+    /* USER MODAL BACKGROUND */
+    --user-modal-image: var(--background-image);
+    --user-modal-position: var(--background-position);
+    --user-modal-size: var(--background-size);
+    --user-modal-attachment: var(--background-attachment);
+    --user-modal-filter: var(--background-filter);
+
+    /* HOME ICON */
+    --home-icon: url(https://www.yuri-lover.win/vencord/images/dm%20icons/Minecraft.svg);
+    --home-size: cover;
+
+    /* FONTS */
+    --main-font: "Comic Code", "gg sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --code-font: "Comic Code", Consolas, "gg mono", "Liberation Mono", Menlo, Courier, monospace;
+
+    /* CHANNEL COLORS */
+    --channel-normal: var(--interactive-normal);
+    --channel-muted: var(--interactive-muted);
+    --channel-hover: var(--interactive-hover);
+    --channel-selected: var(--interactive-active);
+    --channel-selected-bg: var(--main-color);
+    --channel-unread: var(--main-color);
+    --channel-unread-hover: var(--hover-color);
+
+    /* ACCESSIBILITY */
+    --focus-color: var(--main-color);
+}
+
+/* THEME SPECIFIC SHADING */
+/* LIGHT THEME */
+:is(.theme-light, .theme-dark .theme-light) {
+    --background-shading: rgba(252, 252, 252, 0.3);
+    --card-shading: rgba(252, 252, 252, 0.3);
+    --popout-shading: rgba(252, 252, 252, 0.7);
+    --modal-shading: rgba(252, 252, 252, 0.5);
+    --input-shading: rgba(0, 0, 0, 0.3);
+    --normal-text: #36363c;
+    --muted-text: #75757e;
+}
+
+/* ASH THEME */
+:is(.theme-dark, .theme-light .theme-dark) {
+    --background-shading: rgba(0, 0, 0, 0.4);
+    --card-shading: rgba(0, 0, 0, 0.2);
+    --popout-shading: rgba(0, 0, 0, 0.6);
+    --modal-shading: rgba(0, 0, 0, 0.4);
+    --input-shading: rgba(255, 255, 255, 0.05);
+    --normal-text: #d8d8db;
+    --muted-text: #aeaeb4;
+}
+
+/* DARK THEME */
+:is(.theme-darker, .theme-light .theme-darker) {
+    --background-shading: rgba(139, 195, 74, 0.1);   /* Slight green tint */
+    --card-shading: rgba(233, 30, 99, 0.1);          /* Slight pink tint */
+    --popout-shading: rgba(121, 85, 72, 0.8);        /* Brown like tree bark */
+    --modal-shading: rgba(139, 195, 74, 0.2);        /* Green tint */
+    --input-shading: rgba(233, 30, 99, 0.05);        /* Very light pink */
+    --normal-text: #FFFFFF;                           /* Clean white text */
+    --muted-text: #8D6E63;                            /* Brownish for muted text */
+}
+
+/* ONYX THEME */
+:is(.theme-midnight, .theme-light .theme-midnight) {
+    --background-shading: rgba(0, 0, 0, 0.8);
+    --card-shading: rgba(0, 0, 0, 0.4);
+    --popout-shading: rgba(0, 0, 0, 0.8);
+    --modal-shading: rgba(0, 0, 0, 0.6);
+    --input-shading: rgba(255, 255, 255, 0.05);
+    --normal-text: #dcdcde;
+    --muted-text: #86868e;
+}
+
+/* ADD ADDITIONAL CSS BELOW HERE */

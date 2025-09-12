@@ -1,0 +1,39 @@
+# .gitignore
+# Node
+node_modules/
+.env
+npm-debug.log*
+
+# Python
+__pycache__/
+*.pyc
+.env
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Build
+/dist/
+/build/
+
+# Docker
+*.pid
+
+# Misc
+*.swp
+*.swo
+
+# Coverage
+coverage/
+
+# Others
+*.bak
+*.tmp
+
+yuri-lover.win/videos/*

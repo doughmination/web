@@ -1,0 +1,167 @@
+# Most updated version of Dependabot
+version: 2
+updates:
+
+# ================================
+# GitHub Actions
+# ================================
+
+  - package-ecosystem: "github-actions"
+    directory: "/.github/workflows"
+    schedule:
+      interval: "daily"
+      time: "08:00"
+    assignees:
+      - "EstrogenHRT"
+    labels:
+      - "Dependabot"
+    open-pull-requests-limit: 99
+
+# ================================
+# Butterfly Network Website
+# ================================
+  - package-ecosystem: "npm"
+    directory: "butterfly-network.win"
+    schedule:
+      interval: "daily"
+      time: "08:15"
+    assignees:
+      - "EstrogenHRT"
+    labels:
+      - "Dependabot"
+      - "JavaScript"
+    open-pull-requests-limit: 99
+
+# ================================
+# Doughmination Website
+# ================================
+
+  - package-ecosystem: "pip"
+    directory: "doughmination.win/backend"
+    schedule:
+      interval: "daily"
+      time: "08:30"
+    assignees:
+      - "EstrogenHRT"
+    labels:
+      - "Dependabot"
+      - "Python"
+    open-pull-requests-limit: 99
+
+  - package-ecosystem: "npm"
+    directory: "doughmination.win/frontend"
+    schedule:
+      interval: "daily"
+      time: "08:45"
+    assignees:
+      - "EstrogenHRT"
+    labels:
+      - "Dependabot"
+      - "JavaScript"
+    open-pull-requests-limit: 99
+
+# ================================
+# EstrogenHRT Website
+# ================================
+
+  - package-ecosystem: "npm"
+    directory: "mazeymoos.com"
+    schedule:
+      interval: "daily"
+      time: "09:00"
+    assignees:
+      - "EstrogenHRT"
+    labels:
+      - "Dependabot"
+      - "JavaScript"
+    open-pull-requests-limit: 99
+
+# ================================
+# The Midnight Cyan (Athena's) Website
+# ================================
+
+  - package-ecosystem: "npm"
+    directory: "themidnightcyan.win"
+    schedule:
+      interval: "daily"
+      time: "09:15"
+    assignees:
+      - "EstrogenHRT"
+    labels:
+      - "Dependabot"
+      - "JavaScript"
+    open-pull-requests-limit: 99
+
+# ================================
+# Trans4Trans Letters
+# ================================
+
+  - package-ecosystem: "pip"
+    directory: "trans4trans.win/backend"
+    schedule:
+      interval: "daily"
+      time: "09:30"
+    assignees:
+      - "EstrogenHRT"
+    labels:
+      - "Dependabot"
+      - "Python"
+    open-pull-requests-limit: 99
+
+# ================================
+# Yuri Lover Files Website
+# ================================
+
+  - package-ecosystem: "pip"
+    directory: "yuri-lover.win"
+    schedule:
+      interval: "daily"
+      time: "09:45"
+    assignees:
+      - "EstrogenHRT"
+    labels:
+      - "Dependabot"
+      - "Python"
+    open-pull-requests-limit: 99
+
+# ================================
+# Other Planned Repositories
+# ================================
+
+# - package-ecosystem: "npm"
+#   directory: "clovetwilight3.co.uk"
+#   schedule:
+#     interval: "daily"
+#     time: "10:00"
+#   assignees:
+#     - "EstrogenHRT"
+#   labels:
+#     - "Dependabot"
+#     - "JavaScript"
+#   open-pull-requests-limit: 99
+
+# - package-ecosystem: "npm"
+#   directory: "clove-portfolio.win"
+#   schedule:
+#     interval: "daily"
+#     time: "10:15"
+#   assignees:
+#     - "EstrogenHRT"
+#   labels:
+#     - "Dependabot"
+#     - "JavaScript"
+#   open-pull-requests-limit: 99
+
+# - package-ecosystem: "npm"
+#   directory: "yaoi-lover.win"
+#   schedule:
+#     interval: "daily"
+#     time: "10:30"
+#   assignees:
+#     - "EstrogenHRT"
+#   labels:
+#     - "Dependabot"
+#     - "JavaScript"
+#   open-pull-requests-limit: 99
+
+# ================================

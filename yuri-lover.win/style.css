@@ -1,0 +1,274 @@
+/* Comic Code font declarations */
+@font-face {
+    font-family: 'Comic Code';
+    src: url('https://www.doughmination.win/fonts/ComicCode-Regular_2022-05-24-151938_hsmz.woff2') format('woff2'),
+        url('https://www.doughmination.win/fonts/ComicCode-Regular_2022-05-24-151938_hsmz.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Comic Code';
+    src: url('https://www.doughmination.win/fonts/ComicCode-Italic_2022-05-24-151939_rdtu.woff2') format('woff2'),
+        url('https://www.doughmination.win/fonts/ComicCode-Italic_2022-05-24-151939_rdtu.woff') format('woff');
+    font-weight: 400;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Comic Code';
+    src: url('https://www.doughmination.win/fonts/ComicCode-Medium_2022-05-24-151941_ugqm.woff2') format('woff2'),
+        url('https://www.doughmination.win/fonts/ComicCode-Medium_2022-05-24-151941_ugqm.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Comic Code';
+    src: url('https://www.doughmination.win/fonts/ComicCode-Bold_2022-05-24-152309_zqkm.woff2') format('woff2'),
+        url('https://www.doughmination.win/fonts/ComicCode-Bold_2022-05-24-152309_zqkm.woff') format('woff');
+    font-weight: 700;
+    font-style: normal;
+}
+
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body Styles */
+body {
+    font-family: "Comic Code", monospace;
+    background-color: #0e0e1a;
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+/* Title and Header */
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.title-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transform: rotate(-2deg);
+}
+
+.title-logo {
+    width: 50px;
+    height: 50px;
+    animation: tilt 2s infinite ease-in-out;
+}
+
+@keyframes tilt {
+    0%, 100% { transform: rotate(-5deg); }
+    50% { transform: rotate(5deg); }
+}
+
+#page-title {
+    font-size: 2rem;
+    color: #ff6fff;
+}
+
+/* Loading Screen */
+#loading {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #0e0e1a;
+    z-index: 1000;
+    gap: 15px;
+}
+
+#loading img {
+    width: 80px;
+    height: auto;
+}
+
+#loading span {
+    font-size: 1.2rem;
+    color: #ff6fff;
+}
+
+/* Main File Container */
+#file-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    width: 100%;
+    max-width: 1000px;
+    margin-top: 20px;
+}
+
+/* Cards */
+.card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    background: #1a1a2e;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    width: 150px;
+    min-height: 150px;
+    transition: transform 0.2s, background-color 0.2s;
+    overflow: hidden;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    background: #252545;
+}
+
+/* Folder and file emoji icons */
+.folder-icon, 
+.file-icon {
+    font-size: 4rem;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100px;
+    width: 100%;
+}
+
+/* Image preview styling */
+.image-preview {
+    width: 100%;
+    max-height: 100px;
+    object-fit: cover;
+    margin-bottom: 8px;
+    border-radius: 6px;
+}
+
+/* File name container with heart icon */
+.file-name {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    justify-content: center;
+    margin-top: 8px;
+    word-wrap: break-word;
+    width: 100%;
+}
+
+.heart-icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+.file-name span {
+    font-size: 0.9rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Back Button Card */
+.card.back {
+    background: #33334d;
+}
+
+.card.back:hover {
+    background: #4a4a6a;
+}
+
+/* Swipe Animations */
+.swipe-in {
+    opacity: 0;
+    transform: translateX(50px);
+    animation: swipeIn 0.4s ease-out forwards;
+}
+
+@keyframes swipeIn {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.swipe-out {
+    opacity: 1;
+    transform: translateX(0);
+    animation: swipeOut 0.3s ease-in forwards;
+}
+
+@keyframes swipeOut {
+    to {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #0e0e1a;
+}
+::-webkit-scrollbar-thumb {
+    background: #ff6fff;
+    border-radius: 4px;
+}
+
+/* Responsive layout */
+@media (max-width: 600px) {
+    .card {
+        width: 120px;
+        min-height: 120px;
+    }
+    
+    .folder-icon, 
+    .file-icon {
+        font-size: 3rem;
+        height: 80px;
+    }
+    
+    .image-preview {
+        max-height: 80px;
+    }
+}
+
+/* Image placeholder styling */
+.image-placeholder {
+    font-size: 4rem;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100px;
+    width: 100%;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+
+/* Smooth transition when image loads */
+.image-preview {
+    width: 100%;
+    max-height: 100px;
+    object-fit: cover;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    transition: opacity 0.3s ease;
+}
