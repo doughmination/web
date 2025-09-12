@@ -14,6 +14,11 @@ if [[ "$1" == "--rebuild" ]]; then
     echo -e "${YELLOW}🔨 Force rebuild enabled — skipping pulls${NC}"
 fi
 
+echo -e "${BLUE} pulling updates... ${NC}"
+echo "=================================="
+
+git pull
+
 echo -e "${BLUE}🚀 Starting Butterfly Network Websites...${NC}"
 echo "=================================="
 
