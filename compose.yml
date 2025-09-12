@@ -1,8 +1,6 @@
 services:
   butterfly:
-    build:
-      context: ./butterfly-network.win
-      dockerfile: Dockerfile
+    image: clovetwilight3/butterfly-network
     ports:
       - "8004:8004"
     environment:
