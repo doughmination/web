@@ -55,7 +55,7 @@ services:
   dough-front:
     image: clovetwilight3/doughmination-frontend:latest
     ports:
-      - "8080:8080"
+      - "8001:8001"
     depends_on:
       - dough-back
     restart: unless-stopped
@@ -75,7 +75,7 @@ services:
       context: ./yuri-lover.win
       dockerfile: Dockerfile
     ports:
-      - "8001:8001"
+      - "8080:8080"
     restart: unless-stopped
 
   discord:

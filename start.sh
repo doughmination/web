@@ -14,7 +14,7 @@ if [[ "$1" == "--rebuild" ]]; then
     echo -e "${YELLOW}🔨 Force rebuild enabled — skipping pulls${NC}"
 fi
 
-echo -e "${BLUE} pulling updates... ${NC}"
+echo -e "${BLUE}😸 Pulling GitHub Updates... ${NC}"
 echo "=================================="
 
 git pull
