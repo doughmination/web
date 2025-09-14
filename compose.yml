@@ -6,6 +6,14 @@ services:
     environment:
       - NODE_ENV=production
     restart: unless-stopped
+
+  nytrix:
+    image: clovetwilight3/clove-nytrix
+    ports:
+      - "8009:8009"
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
   
 #  clovetwilight3.co.uk:
 #    build:
