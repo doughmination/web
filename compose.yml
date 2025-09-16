@@ -15,15 +15,13 @@ services:
       - NODE_ENV=production
     restart: unless-stopped
   
-#  clovetwilight3.co.uk:
-#    build:
-#      context: ./clovetwilight3.co.uk
-#      dockerfile: Dockerfile
-#    ports:
-#      - "8005:8005"
-#    environment:
-#      - NODE_ENV=production
-#    restart: unless-stopped
+  clovetwilight3.co.uk:
+    image: clovetwilight3/clovetwilight3
+    ports:
+      - "8005:8005"
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
 
   lgbt:
     image: clovetwilight3/lgb-with-t
