@@ -12,8 +12,8 @@ This repository contains the source code and assets for every Butterfly Networkâ
 Contributions are welcome! Please open issues or pull requests for improvements, bug fixes, or new features.
 
 # Contributors
-<a href="https://github.com/CloveTwilight3/butterfly-network-websites/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=CloveTwilight3/butterfly-network-websites" />
+<a href="https://github.com/The-Butterfly-Network/butterfly-network-websites/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=The-Butterfly-Network/butterfly-network-websites" />
 </a>
 
 ## License
