@@ -25,12 +25,19 @@ git pull
 echo -e "${BLUE}🚀 Starting Butterfly Network Websites...${NC}"
 echo "=================================="
 
-# Stop all running containers
-echo -e "${YELLOW}🛑 Stopping all running containers...${NC}"
-docker compose down
-
 # Get list of services from docker-compose.yml
 services=$(docker compose config --services)
+
+# Stop and remove only non-excluded services
+echo -e "${YELLOW}🛑 Stopping non-excluded containers...${NC}"
+for service in $services; do
+    if [[ " ${EXCLUDE_SERVICES[*]} " =~ " ${service} " ]]; then
+        echo -e "${YELLOW}⏩ Leaving running service untouched: ${service}${NC}"
+        continue
+    fi
+    docker compose stop "$service"
+    docker compose rm -f "$service"
+done
 
 # Track started services
 started=()
