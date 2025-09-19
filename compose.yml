@@ -91,6 +91,20 @@ services:
     env_file: .env
     restart: unless-stopped
 
+  status-back:
+    image: clovetwilight3/status-backend:latest
+    ports:
+      - "8010:8010"
+    restart: unless-stopped
+
+  status-front:
+    image: clovetwilight3/status-frontend:latest
+    ports:
+      - "8011:8011"
+    depends_on:
+      - status-back
+    restart: unless-stopped
+
 volumes:
   backend_data:
   backend_avatars:
