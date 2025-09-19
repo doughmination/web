@@ -14,6 +14,9 @@ if [[ "$1" == "--rebuild" ]]; then
     echo -e "${YELLOW}🔨 Force rebuild enabled — skipping pulls${NC}"
 fi
 
+# Excluded services
+EXCLUDE_SERVICES=("status-front" "status-back")
+
 echo -e "${BLUE}😸 Pulling GitHub Updates... ${NC}"
 echo "=================================="
 
@@ -33,6 +36,12 @@ services=$(docker compose config --services)
 started=()
 
 for service in $services; do
+    # Skip excluded services
+    if [[ " ${EXCLUDE_SERVICES[*]} " =~ " ${service} " ]]; then
+        echo -e "${YELLOW}⏩ Skipping excluded service: ${service}${NC}"
+        continue
+    fi
+
     echo -e "${YELLOW}📦 Processing service: ${service}${NC}"
     start_ok=false
 
