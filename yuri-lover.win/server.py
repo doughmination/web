@@ -33,46 +33,7 @@ def get_current_user(credentials: HTTPBasicCredentials = Depends(security)):
 
 
 # --------------------
-# File Serving Route (must come first to catch file requests)
-# --------------------
-@app.get("/{file_path:path}")
-async def serve_cdn_file(file_path: str):
-    """Serve files from CDN directory"""
-    # Skip API routes, admin routes, and root requests
-    if (file_path.startswith('api/') or 
-        file_path.startswith('yuri/') or 
-        file_path == '' or 
-        file_path.endswith('.html') or
-        file_path.endswith('.css') or 
-        file_path.endswith('.js')):
-        raise HTTPException(status_code=404, detail="Not found")
-    
-    # Security check - only serve files with valid extensions
-    allowed_extensions = {'.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.bmp', 
-                         '.ico', '.pdf', '.txt', '.mp4', '.mp3', '.wav', '.zip', 
-                         '.rar', '.7z', '.tar', '.gz', '.json', '.xml', '.csv'}
-    
-    file_path_obj = Path(file_path)
-    if file_path_obj.suffix.lower() not in allowed_extensions:
-        raise HTTPException(status_code=404, detail="File not found")
-    
-    # Check if file exists in CDN directory
-    full_path = CDN_DIR / file_path
-    
-    # Security check - ensure we're not going outside CDN_DIR
-    try:
-        full_path.resolve().relative_to(CDN_DIR.resolve())
-    except ValueError:
-        raise HTTPException(status_code=404, detail="File not found")
-    
-    if not full_path.exists() or not full_path.is_file():
-        raise HTTPException(status_code=404, detail="File not found")
-    
-    return FileResponse(full_path)
-
-
-# --------------------
-# API Routes
+# API Routes (must come before file serving)
 # --------------------
 @app.get("/api/list")
 async def list_files(folder: str = Query(default="")):
@@ -147,7 +108,7 @@ def admin_panel(user: str = Depends(get_current_user)):
         <title>Yuri Lover CDN Admin</title>
         <style>
             body { 
-                font-family: 'Comic Code', Arial, sans-serif; 
+                font-family: Arial, sans-serif; 
                 margin: 40px; 
                 background: #0e0e1a; 
                 color: white; 
@@ -395,6 +356,40 @@ async def upload_file(
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Upload failed: {str(e)}")
+
+
+# --------------------
+# File Serving Route (comes after API routes)
+# --------------------
+@app.get("/{file_path:path}")
+async def serve_cdn_file(file_path: str):
+    """Serve files from CDN directory"""
+    # Don't serve empty paths or frontend files
+    if not file_path or file_path in ['', 'index.html', 'script.js', 'style.css']:
+        raise HTTPException(status_code=404, detail="Not found")
+    
+    # Security check - only serve files with valid extensions
+    allowed_extensions = {'.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.bmp', 
+                         '.ico', '.pdf', '.txt', '.mp4', '.mp3', '.wav', '.zip', 
+                         '.rar', '.7z', '.tar', '.gz', '.json', '.xml', '.csv'}
+    
+    file_path_obj = Path(file_path)
+    if file_path_obj.suffix.lower() not in allowed_extensions:
+        raise HTTPException(status_code=404, detail="File not found")
+    
+    # Check if file exists in CDN directory
+    full_path = CDN_DIR / file_path
+    
+    # Security check - ensure we're not going outside CDN_DIR
+    try:
+        full_path.resolve().relative_to(CDN_DIR.resolve())
+    except ValueError:
+        raise HTTPException(status_code=404, detail="File not found")
+    
+    if not full_path.exists() or not full_path.is_file():
+        raise HTTPException(status_code=404, detail="File not found")
+    
+    return FileResponse(full_path)
 
 
 # --------------------
