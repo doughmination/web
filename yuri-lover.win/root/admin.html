@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yuri Lover CDN Admin</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        .form-container {
+            background: #1a1a2e;
+            padding: 30px;
+            border-radius: 12px;
+            border: 2px solid #ff6fff;
+            margin-top: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #ff6fff;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ff6fff;
+            border-radius: 8px;
+            background: #0e0e1a;
+            color: white;
+            font-size: 16px;
+            font-family: "Comic Code", monospace;
+        }
+        .form-group input[type="file"] {
+            padding: 8px;
+        }
+        .admin-button {
+            background: #ff6fff;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+            font-family: "Comic Code", monospace;
+        }
+        .admin-button:hover {
+            background: #e55fe5;
+        }
+        .new-folder {
+            display: none;
+            margin-top: 10px;
+        }
+        .small-text {
+            font-size: 14px;
+            color: #aaa;
+            margin-top: 5px;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .success {
+            background: #2a5a2a;
+            color: #4CAF50;
+            border: 1px solid #4CAF50;
+        }
+        .error {
+            background: #5a2a2a;
+            color: #f44336;
+            border: 1px solid #f44336;
+        }
+        .admin-title {
+            text-align: center;
+            color: #ff6fff;
+            margin-bottom: 20px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #ff6fff;
+            text-decoration: none;
+            font-size: 1.1rem;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <a href="/" class="back-link">← Back to Files</a>
+        
+        <div class="title-container admin-title">
+            <img src="https://www.yuri-lover.win/animated-emojis/cl_heart.gif" alt="Animated logo" class="title-logo">
+            <h1>Yuri Lover CDN Admin</h1>
+        </div>
+        
+        <div class="form-container">
+            <form id="uploadForm" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="file">Select file to upload:</label>
+                    <input name="file" type="file" required>
+                    <div class="small-text">Supported: images, videos, audio, documents, archives</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="destination">Upload destination:</label>
+                    <select name="destination" id="destination">
+                        <option value="">Root directory</option>
+                        <option value="__new__">📁 Create new folder...</option>
+                    </select>
+                </div>
+                
+                <div class="form-group new-folder" id="newFolderGroup">
+                    <label for="newFolder">New folder path:</label>
+                    <input type="text" id="newFolder" name="newFolder" placeholder="e.g., images/avatars or just avatars">
+                    <div class="small-text">Use / to create nested folders (e.g., images/avatars)</div>
+                </div>
+                
+                <button type="submit" class="admin-button">Upload to CDN</button>
+            </form>
+        </div>
+        
+        <div id="result"></div>
+    </div>
+    
+    <script>
+        const destinationSelect = document.getElementById('destination');
+        const newFolderGroup = document.getElementById('newFolderGroup');
+        const resultDiv = document.getElementById('result');
+        
+        // Load existing folders
+        async function loadFolders() {
+            try {
+                const response = await fetch('/api/folders');
+                const data = await response.json();
+                
+                // Clear existing options except root and new folder
+                while (destinationSelect.children.length > 2) {
+                    destinationSelect.removeChild(destinationSelect.lastChild);
+                }
+                
+                // Add existing folders
+                data.folders.forEach(folder => {
+                    const option = document.createElement('option');
+                    option.value = folder;
+                    option.textContent = `📁 ${folder}`;
+                    destinationSelect.appendChild(option);
+                });
+            } catch (err) {
+                console.error('Failed to load folders:', err);
+            }
+        }
+        
+        // Handle destination change
+        destinationSelect.addEventListener('change', function() {
+            if (this.value === '__new__') {
+                newFolderGroup.style.display = 'block';
+            } else {
+                newFolderGroup.style.display = 'none';
+            }
+        });
+        
+        // Handle form submission
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const destination = destinationSelect.value;
+            
+            if (destination === '__new__') {
+                const newFolder = document.getElementById('newFolder').value.trim();
+                if (!newFolder) {
+                    showResult('Please enter a folder name', 'error');
+                    return;
+                }
+                formData.set('destination', newFolder);
+            } else {
+                formData.set('destination', destination);
+            }
+            
+            try {
+                resultDiv.innerHTML = '<p>Uploading...</p>';
+                
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showResult(`Successfully uploaded: ${result.filename}<br>
+                               Size: ${(result.size / 1024).toFixed(1)} KB<br>
+                               Location: <a href="/${result.path}" target="_blank" style="color: #ff6fff;">/${result.path}</a>`, 'success');
+                    
+                    // Reload folders and reset form
+                    loadFolders();
+                    this.reset();
+                    newFolderGroup.style.display = 'none';
+                } else {
+                    showResult(`Upload failed: ${result.detail}`, 'error');
+                }
+            } catch (err) {
+                showResult(`Upload failed: ${err.message}`, 'error');
+            }
+        });
+        
+        function showResult(message, type) {
+            resultDiv.innerHTML = `<div class="${type}">${message}</div>`;
+        }
+        
+        // Load folders on page load
+        loadFolders();
+    </script>
+</body>
+</html>
