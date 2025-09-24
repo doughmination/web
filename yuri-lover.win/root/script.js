@@ -138,7 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 backButton.innerHTML = `
                     <div class="folder-icon">⬅️</div>
                     <div class="file-name">
-                        <img src="https://www.yuri-lover.win/animated-emojis/cl_heart.gif" class="heart-icon">
+                        <img src="https://www.yuri-lover.win/cdn/animated-emojis/cl_heart.gif" class="heart-icon">
                         <span>Back</span>
                     </div>
                 `;
@@ -203,7 +203,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     item.innerHTML = `
                         ${iconHtml}
                         <div class="file-name">
-                            <img src="https://www.yuri-lover.win/animated-emojis/cl_heart.gif" class="heart-icon">
+                            <img src="https://www.yuri-lover.win/cdn/animated-emojis/cl_heart.gif" class="heart-icon">
                             <span>${file.name}</span>
                         </div>
                     `;

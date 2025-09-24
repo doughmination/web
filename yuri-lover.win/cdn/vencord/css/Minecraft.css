@@ -6,8 +6,8 @@
  */
 
 /* IMPORT CSS */
-@import url("https://www.yuri-lover.win/vencord/api/main.css");
-@import url("https://www.yuri-lover.win/vencord/api/vencord.css");
+@import url("https://www.yuri-lover.win/cdn/vencord/api/main.css");
+@import url("https://www.yuri-lover.win/cdn/vencord/api/vencord.css");
 
 /* SETTINGS */
 :root {
@@ -26,7 +26,7 @@
 
     /* APP BACKGROUND */
     --background-shading-percent: 100%;
-    --background-image: url(https://www.yuri-lover.win/vencord/images/backgrounds/Minecraft.jpg);
+    --background-image: url(https://www.yuri-lover.win/cdn/vencord/images/backgrounds/Minecraft.jpg);
     --background-position: center;
     --background-size: cover;
     --background-attachment: fixed;
@@ -47,7 +47,7 @@
     --user-modal-filter: var(--background-filter);
 
     /* HOME ICON */
-    --home-icon: url(https://www.yuri-lover.win/vencord/images/dm%20icons/Minecraft.svg);
+    --home-icon: url(https://www.yuri-lover.win/cdn/vencord/images/dm%20icons/Minecraft.svg);
     --home-size: cover;
 
     /* FONTS */

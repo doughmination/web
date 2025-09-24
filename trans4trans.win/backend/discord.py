@@ -21,7 +21,7 @@ async def send_discord_notification(letter_data: dict):
     message = {
         "content": f"📝 **New letter written by {from_name}**\n**Subject:** {subject}\n{url}",
         "username": "Trans4Trans Letters",
-        "avatar_url": "https://www.yuri-lover.win/pfp/trans4trans.gif"
+        "avatar_url": "https://www.yuri-lover.win/cdn/pfp/trans4trans.gif"
     }
     
     # Send to all webhooks
