@@ -1,54 +1,65 @@
-from fastapi import FastAPI
-from fastapi.responses import JSONResponse, FileResponse
-from pathlib import Path
 import os
+from pathlib import Path
+from fastapi import FastAPI, Depends, UploadFile, HTTPException
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from dotenv import load_dotenv
+
+# Load credentials from .env
+load_dotenv()
+USERNAME = os.getenv("CDN_USERNAME", "admin")
+PASSWORD = os.getenv("CDN_PASSWORD", "password")
+
+# Base directories
+BASE_DIR = Path(__file__).parent
+ROOT_DIR = BASE_DIR / "root"
+CDN_DIR = BASE_DIR / "cdn"
 
 app = FastAPI()
+security = HTTPBasic()
 
-BASE_DIR = Path(__file__).parent
-EXCLUDE = {".git", "requirements.txt", ".gitignore", "__pycache__", "script.js", "style.css", "index.html", "server.py", "Dockerfile"}
+# --------------------
+# Public Routes
+# --------------------
 
-@app.get("/api/list")
-def list_files(folder: str = ""):
-    # Clean up the folder path
-    folder = folder.strip().strip('/')
-    
-    if folder:
-        full_path = BASE_DIR / folder
-    else:
-        full_path = BASE_DIR
-    
-    print(f"Requested folder: '{folder}'")
-    print(f"Full path: {full_path}")
-    print(f"Path exists: {full_path.exists()}")
-    print(f"Is directory: {full_path.is_dir()}")
-    
-    if not full_path.exists():
-        return JSONResponse({"error": f"Path does not exist: {folder}"}, status_code=404)
-        
-    if not full_path.is_dir():
-        return JSONResponse({"error": f"Path is not a directory: {folder}"}, status_code=404)
+# Serve frontend (HTML/CSS/JS)
+app.mount("/", StaticFiles(directory=ROOT_DIR, html=True), name="frontend")
 
-    items = []
-    try:
-        for f in sorted(os.listdir(full_path)):
-            if f.startswith(".") or f in EXCLUDE:
-                continue
-            item_path = full_path / f
-            items.append({
-                "name": f,
-                "is_dir": item_path.is_dir(),
-                "url": f"/{folder}/{f}".replace("//", "/") if folder else f"/{f}"
-            })
-    except PermissionError:
-        return JSONResponse({"error": "Permission denied"}, status_code=403)
-    
-    return {"path": folder, "items": items}
+# Serve CDN files
+app.mount("/cdn", StaticFiles(directory=CDN_DIR), name="cdn")
 
-# Serve frontend for all other routes
-@app.get("/{full_path:path}")
-def serve_frontend(full_path: str):
-    index_file = BASE_DIR / "index.html"
-    if index_file.exists():
-        return FileResponse(index_file)
-    return JSONResponse({"error": "index.html not found"}, status_code=404)
+
+# --------------------
+# Auth Helper
+# --------------------
+def get_current_user(credentials: HTTPBasicCredentials = Depends(security)):
+    if credentials.username == USERNAME and credentials.password == PASSWORD:
+        return credentials.username
+    raise HTTPException(status_code=401, detail="Unauthorized")
+
+
+# --------------------
+# Admin Panel
+# --------------------
+@app.get("/yuri/admin", response_class=HTMLResponse)
+def admin_panel(user: str = Depends(get_current_user)):
+    return """
+    <html>
+    <body>
+        <h1>Yuri Lover CDN Admin</h1>
+        <form action="/yuri/upload" enctype="multipart/form-data" method="post">
+            <input name="file" type="file" required>
+            <button type="submit">Upload</button>
+        </form>
+    </body>
+    </html>
+    """
+
+
+@app.post("/yuri/upload")
+async def upload_file(file: UploadFile, user: str = Depends(get_current_user)):
+    file_path = CDN_DIR / file.filename
+    with open(file_path, "wb") as f:
+        f.write(await file.read())
+    return {"status": "ok", "filename": file.filename}

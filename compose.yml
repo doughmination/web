@@ -80,8 +80,14 @@ services:
     build:
       context: ./yuri-lover.win
       dockerfile: Dockerfile
+    container_name: yuri-cdn
     ports:
       - "8080:8080"
+    env_file:
+      - .env
+    volumes:
+      - ./yuri-lover.win/root:/app/root
+      - ./yuri-lover.win/cdn:/app/cdn
     restart: unless-stopped
 
   discord:
