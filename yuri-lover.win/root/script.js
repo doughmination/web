@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Function to get the full URL for a file
     function getFileUrl(folder, filename) {
-        const basePath = folder ? `/${folder}/${filename}` : `/${filename}`;
+        const basePath = folder ? `/cdn/${folder}/${filename}` : `/cdn/${filename}`;
         return basePath.replace(/\/+/g, '/'); // Remove double slashes
     }
 
