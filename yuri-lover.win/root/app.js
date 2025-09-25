@@ -1,32 +1,72 @@
+// app.js - Unified JavaScript for all site functionality
 document.addEventListener("DOMContentLoaded", () => {
+    // Determine current page based on URL or page identifier
+    const currentPage = getCurrentPage();
+    
+    // Initialize appropriate functionality based on page
+    switch(currentPage) {
+        case 'index':
+            initFileExplorer();
+            break;
+        case 'admin':
+            initAdminPanel();
+            break;
+        case 'login':
+            initLoginForm();
+            break;
+    }
+    
+    // Initialize common functionality
+    initCommonFeatures();
+});
+
+// Utility function to determine current page
+function getCurrentPage() {
+    const path = window.location.pathname;
+    const body = document.body;
+    
+    if (body.classList.contains('admin-page')) return 'admin';
+    if (body.classList.contains('login-page')) return 'login';
+    if (path.includes('/yuri/admin') && !body.classList.contains('login-page')) return 'admin';
+    if (path.includes('/yuri/admin')) return 'login';
+    return 'index';
+}
+
+// Common features used across all pages
+function initCommonFeatures() {
+    // Handle navigation links
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            // Add any common navigation handling here
+        });
+    });
+}
+
+// File Explorer functionality (from script.js)
+function initFileExplorer() {
     const fileContainer = document.getElementById("file-container");
     const loading = document.getElementById("loading");
     let currentFolder = "";
     let isInitialLoad = true;
-    const imageCache = new Map(); // Cache for preloaded images
+    const imageCache = new Map();
 
-    // Function to check if a file is an image
     function isImage(filename) {
         const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'];
         const extension = filename.split('.').pop().toLowerCase();
         return imageExtensions.includes(extension);
     }
 
-    // Function to get the full URL for a file
     function getFileUrl(folder, filename) {
         const basePath = folder ? `/cdn/${folder}/${filename}` : `/cdn/${filename}`;
-        return basePath.replace(/\/+/g, '/'); // Remove double slashes
+        return basePath.replace(/\/+/g, '/');
     }
 
-    // Function to normalize folder paths
     function normalizePath(path) {
         return path.replace(/\/+/g, '/').replace(/^\/|\/$/g, '');
     }
 
-    // Function to preload an image
     function preloadImage(src) {
         return new Promise((resolve, reject) => {
-            // Check if already cached
             if (imageCache.has(src)) {
                 resolve(imageCache.get(src));
                 return;
@@ -45,7 +85,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Function to preload all images in current folder
     async function preloadImages(files, folder) {
         const imagePromises = files
             .filter(file => !file.is_dir && isImage(file.name))
@@ -57,13 +96,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             });
 
-        // Wait for all images to load (or fail)
         const results = await Promise.allSettled(imagePromises);
         const successCount = results.filter(result => result.status === 'fulfilled' && result.value).length;
         console.log(`Preloaded ${successCount} images out of ${imagePromises.length}`);
     }
 
-    // Function to animate content
     function animateContent(container, direction = 'in') {
         const cards = container.querySelectorAll('.card, p');
         cards.forEach((card, index) => {
@@ -77,7 +114,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Function to clear animations
     function clearAnimations(container) {
         const cards = container.querySelectorAll('.card, p');
         cards.forEach(card => {
@@ -90,21 +126,17 @@ document.addEventListener("DOMContentLoaded", () => {
         const loading = document.getElementById("loading");
         const container = document.getElementById("file-container");
         
-        // Normalize the folder path
         folder = normalizePath(folder);
         currentFolder = folder;
 
-        // Show loading screen only on initial load
         if (isInitialLoad && loading) {
             loading.style.display = "flex";
         }
 
-        // If not initial load, animate out current content
         if (!isInitialLoad) {
             if (isGoingBack) {
                 animateContent(container, 'out');
             }
-            // Wait for animation to complete
             await new Promise(resolve => setTimeout(resolve, isGoingBack ? 300 : 0));
         }
 
@@ -116,22 +148,17 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             
             const data = await response.json();
-
-            // Use 'items' instead of 'files' to match server response
             const files = data.items || [];
 
-            // Preload images in background
             if (files.length > 0) {
                 preloadImages(files, folder).catch(err => {
                     console.warn("Error preloading images:", err);
                 });
             }
 
-            // Clear container and animations
             container.innerHTML = "";
             clearAnimations(container);
 
-            // Add back button if not in root folder
             if (folder) {
                 const backButton = document.createElement("div");
                 backButton.className = "card back";
@@ -144,9 +171,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 `;
                 backButton.addEventListener("click", () => {
                     const pathParts = folder.split('/').filter(part => part.length > 0);
-                    pathParts.pop(); // Remove last part
+                    pathParts.pop();
                     const parentFolder = pathParts.join('/');
-                    loadFolder(parentFolder, true); // true indicates going back
+                    loadFolder(parentFolder, true);
                     const newUrl = parentFolder ? `/${parentFolder}` : '/';
                     history.pushState(null, '', newUrl);
                 });
@@ -165,22 +192,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     let iconHtml = '';
                     
                     if (file.is_dir) {
-                        // Folder
                         iconHtml = '<div class="folder-icon">📁</div>';
                     } else if (isImage(file.name)) {
-                        // Image file - use cached image if available, otherwise show loading placeholder
                         const imageUrl = getFileUrl(folder, file.name);
                         const cachedImage = imageCache.get(imageUrl);
                         
                         if (cachedImage) {
                             iconHtml = `<img src="${imageUrl}" alt="${file.name}" class="image-preview">`;
                         } else {
-                            // Show a placeholder while image loads
                             iconHtml = `<div class="image-placeholder">🖼️</div>`;
                             
-                            // Try to load the image and replace placeholder when ready
                             preloadImage(imageUrl).then(() => {
-                                // Find the card and update the image
                                 const cards = container.querySelectorAll('.card');
                                 cards.forEach(card => {
                                     const span = card.querySelector('span');
@@ -196,7 +218,6 @@ document.addEventListener("DOMContentLoaded", () => {
                             });
                         }
                     } else {
-                        // Regular file
                         iconHtml = '<div class="file-icon">📄</div>';
                     }
 
@@ -208,16 +229,13 @@ document.addEventListener("DOMContentLoaded", () => {
                         </div>
                     `;
 
-                    // Add click handler
                     item.addEventListener("click", () => {
                         if (file.is_dir) {
-                            // Navigate to folder
                             const newFolder = folder ? `${folder}/${file.name}` : file.name;
                             const normalizedNewFolder = normalizePath(newFolder);
-                            loadFolder(normalizedNewFolder, false); // false indicates going forward
+                            loadFolder(normalizedNewFolder, false);
                             history.pushState(null, '', `/${normalizedNewFolder}`);
                         } else {
-                            // Open file
                             const fileUrl = getFileUrl(folder, file.name);
                             window.open(fileUrl, '_blank');
                         }
@@ -227,7 +245,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             }
 
-            // Animate in new content (except on initial load)
             if (!isInitialLoad) {
                 animateContent(container, 'in');
             }
@@ -236,7 +253,6 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Error loading folder:", err);
             container.innerHTML = `<p>Error loading files: ${err.message}</p>`;
         } finally {
-            // Hide loading screen only after initial load
             if (isInitialLoad && loading) {
                 loading.style.display = "none";
                 isInitialLoad = false;
@@ -247,10 +263,135 @@ document.addEventListener("DOMContentLoaded", () => {
     // Handle browser back/forward
     window.addEventListener("popstate", () => {
         const path = location.pathname.slice(1);
-        loadFolder(path, true); // Treat browser navigation as going back
+        loadFolder(path, true);
     });
 
-    // Load root folder on page load
+    // Load initial folder
     const initialPath = location.pathname.slice(1);
     loadFolder(initialPath);
-});
+}
+
+// Admin Panel functionality
+function initAdminPanel() {
+    const destinationSelect = document.getElementById('destination');
+    const newFolderGroup = document.getElementById('newFolderGroup');
+    const resultDiv = document.getElementById('result');
+    
+    if (!destinationSelect || !newFolderGroup || !resultDiv) {
+        console.warn('Admin panel elements not found');
+        return;
+    }
+
+    // Load existing folders
+    async function loadFolders() {
+        try {
+            const response = await fetch('/api/folders');
+            
+            if (response.status === 401) {
+                window.location.href = '/yuri/admin';
+                return;
+            }
+            
+            const data = await response.json();
+            
+            while (destinationSelect.children.length > 2) {
+                destinationSelect.removeChild(destinationSelect.lastChild);
+            }
+            
+            data.folders.forEach(folder => {
+                const option = document.createElement('option');
+                option.value = folder;
+                option.textContent = `📁 ${folder}`;
+                destinationSelect.appendChild(option);
+            });
+        } catch (err) {
+            console.error('Failed to load folders:', err);
+            showResult('Failed to load folders. Please refresh the page.', 'error');
+        }
+    }
+    
+    // Handle destination change
+    destinationSelect.addEventListener('change', function() {
+        if (this.value === '__new__') {
+            newFolderGroup.style.display = 'block';
+        } else {
+            newFolderGroup.style.display = 'none';
+        }
+    });
+    
+    // Handle form submission
+    const uploadForm = document.getElementById('uploadForm');
+    if (uploadForm) {
+        uploadForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const destination = destinationSelect.value;
+            
+            if (destination === '__new__') {
+                const newFolder = document.getElementById('newFolder').value.trim();
+                if (!newFolder) {
+                    showResult('Please enter a folder name', 'error');
+                    return;
+                }
+                formData.set('destination', newFolder);
+            } else {
+                formData.set('destination', destination);
+            }
+            
+            try {
+                resultDiv.innerHTML = '<p style="color: #ff6fff;">Uploading...</p>';
+                
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.status === 401) {
+                    window.location.href = '/yuri/admin';
+                    return;
+                }
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showResult(`Successfully uploaded: ${result.filename}<br>
+                               Size: ${(result.size / 1024).toFixed(1)} KB<br>
+                               Location: <a href="/${result.path}" target="_blank" style="color: #ff6fff;">/${result.path}</a>`, 'success');
+                    
+                    loadFolders();
+                    this.reset();
+                    newFolderGroup.style.display = 'none';
+                } else {
+                    showResult(`Upload failed: ${result.detail}`, 'error');
+                }
+            } catch (err) {
+                showResult(`Upload failed: ${err.message}`, 'error');
+            }
+        });
+    }
+    
+    function showResult(message, type) {
+        resultDiv.innerHTML = `<div class="${type}">${message}</div>`;
+    }
+    
+    loadFolders();
+}
+
+// Login form functionality
+function initLoginForm() {
+    const submitButton = document.getElementById('submitButton');
+    const turnstileDiv = document.querySelector('.cf-turnstile');
+    
+    // Handle Turnstile callback
+    window.onTurnstileCallback = function(token) {
+        if (submitButton) {
+            submitButton.disabled = false;
+        }
+    };
+    
+    // If no Turnstile is configured, enable the button immediately
+    if (!turnstileDiv && submitButton) {
+        submitButton.disabled = false;
+    }
+}
