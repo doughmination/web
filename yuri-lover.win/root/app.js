@@ -367,7 +367,7 @@ function initAdminPanel() {
                 if (response.ok) {
                     showResult(`Successfully uploaded: ${result.filename}<br>
                                Size: ${(result.size / 1024).toFixed(1)} KB<br>
-                               Location: <a href="/${result.path}" target="_blank" style="color: #ff6fff;">/${result.path}</a>`, 'success');
+                               Location: <a href="/cdn/${result.path}" target="_blank" style="color: #ff6fff;">/${result.path}</a>`, 'success');
                     
                     loadFolders();
                     this.reset();
