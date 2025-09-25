@@ -144,7 +144,7 @@ async def admin_login_post(request: Request):
             value=session_token,
             max_age=86400,  # 24 hours
             httponly=True,
-            secure=True,    # Set to False if not using HTTPS
+            secure=True,
             samesite="lax"
         )
         return response
@@ -242,46 +242,105 @@ async def upload_file(
     file: UploadFile, 
     destination: str = Form(default="")
 ):
+    """Upload file to CDN directory"""
     user = require_auth(request)  # Require authentication
     
     try:
+        # Read file content first
+        content = await file.read()
+        
+        # Check file size (limit to 100MB)
+        if len(content) > 100 * 1024 * 1024:
+            raise HTTPException(status_code=413, detail="File too large (max 100MB)")
+        
+        # Validate filename
+        if not file.filename or file.filename == '':
+            raise HTTPException(status_code=400, detail="No filename provided")
+        
+        # Sanitize filename - remove path separators and dangerous characters
+        safe_filename = file.filename.replace('/', '_').replace('\\', '_').replace('..', '_')
+        
         # Normalize destination path
         destination = destination.strip().strip("/")
         
         # Create destination directory if it doesn't exist
         if destination:
-            dest_dir = CDN_DIR / destination
-            dest_dir.mkdir(parents=True, exist_ok=True)
-            file_path = dest_dir / file.filename
-            relative_path = f"{destination}/{file.filename}"
+            # Normalize path separators and remove any dangerous components
+            dest_parts = [part for part in destination.split('/') if part and part not in ['.', '..']]
+            if not dest_parts:  # If all parts were filtered out, use root
+                destination = ""
+                dest_dir = CDN_DIR
+                file_path = dest_dir / safe_filename
+                relative_path = safe_filename
+            else:
+                dest_path_str = '/'.join(dest_parts)
+                dest_dir = CDN_DIR / dest_path_str
+                dest_dir.mkdir(parents=True, exist_ok=True)
+                file_path = dest_dir / safe_filename
+                relative_path = f"{dest_path_str}/{safe_filename}"
         else:
-            file_path = CDN_DIR / file.filename
-            relative_path = file.filename
+            dest_dir = CDN_DIR
+            file_path = dest_dir / safe_filename
+            relative_path = safe_filename
         
         # Security check - ensure we're not going outside CDN_DIR
         try:
-            file_path.resolve().relative_to(CDN_DIR.resolve())
-        except ValueError:
+            resolved_path = file_path.resolve()
+            cdn_resolved = CDN_DIR.resolve()
+            resolved_path.relative_to(cdn_resolved)
+        except (ValueError, OSError):
             raise HTTPException(status_code=400, detail="Invalid destination path")
         
-        # Read and write file content
-        content = await file.read()
-        with open(file_path, "wb") as f:
-            f.write(content)
+        # Check if file already exists and create unique name if needed
+        original_file_path = file_path
+        counter = 1
+        while file_path.exists():
+            name_parts = safe_filename.rsplit('.', 1)
+            if len(name_parts) > 1:
+                base_name, extension = name_parts
+                new_filename = f"{base_name}_{counter}.{extension}"
+            else:
+                new_filename = f"{safe_filename}_{counter}"
+            
+            file_path = dest_dir / new_filename
+            counter += 1
+            
+            # Update relative path with new filename
+            if destination:
+                dest_parts = [part for part in destination.split('/') if part and part not in ['.', '..']]
+                if dest_parts:
+                    relative_path = f"{'/'.join(dest_parts)}/{new_filename}"
+                else:
+                    relative_path = new_filename
+            else:
+                relative_path = new_filename
+        
+        # Write file content
+        try:
+            with open(file_path, "wb") as f:
+                f.write(content)
+        except OSError as e:
+            raise HTTPException(status_code=500, detail=f"Failed to write file: {str(e)}")
         
         return {
             "status": "success", 
-            "filename": file.filename, 
+            "filename": file_path.name,
+            "original_filename": file.filename,
             "size": len(content),
             "path": relative_path,
-            "destination": destination if destination else "root"
+            "destination": destination if destination else "root",
+            "url": f"/cdn/{relative_path}"
         }
         
+    except HTTPException:
+        raise  # Re-raise HTTP exceptions
     except Exception as e:
+        import traceback
+        traceback.print_exc()  # Print full traceback for debugging
         raise HTTPException(status_code=500, detail=f"Upload failed: {str(e)}")
 
 # --------------------
-# CDN File Serving Routes (unchanged)
+# CDN File Serving Routes
 # --------------------
 @app.get("/cdn/{file_path:path}")
 async def serve_cdn_file(file_path: str):
