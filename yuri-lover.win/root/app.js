@@ -1,4 +1,14 @@
 // app.js - Unified JavaScript for all site functionality
+
+// Define Turnstile callback immediately when script loads (before DOM is ready)
+window.onTurnstileCallback = function(token) {
+    console.log('Turnstile verified!', token);
+    const submitButton = document.getElementById('submitButton');
+    if (submitButton) {
+        submitButton.disabled = false;
+    }
+};
+
 document.addEventListener("DOMContentLoaded", () => {
     // Determine current page based on URL or page identifier
     const currentPage = getCurrentPage();
@@ -382,13 +392,6 @@ function initAdminPanel() {
 function initLoginForm() {
     const submitButton = document.getElementById('submitButton');
     const turnstileDiv = document.querySelector('.cf-turnstile');
-    
-    // Handle Turnstile callback
-    window.onTurnstileCallback = function(token) {
-        if (submitButton) {
-            submitButton.disabled = false;
-        }
-    };
     
     // If no Turnstile is configured, enable the button immediately
     if (!turnstileDiv && submitButton) {
