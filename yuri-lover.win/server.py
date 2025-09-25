@@ -1,16 +1,20 @@
 import os
 import json
 from pathlib import Path
-from fastapi import FastAPI, Depends, UploadFile, HTTPException, Query, Form
+from fastapi import FastAPI, Depends, UploadFile, HTTPException, Query, Form, Request
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from fastapi.templating import Jinja2Templates
 from dotenv import load_dotenv
+import httpx
 
 # Load credentials from .env
 load_dotenv()
 USERNAME = os.getenv("CDN_USERNAME", "admin")
 PASSWORD = os.getenv("CDN_PASSWORD", "password")
+TURNSTILE_SECRET = os.getenv("TURNSTILE_SECRET_KEY", "")  # Add this to your .env
+TURNSTILE_SITE_KEY = os.getenv("TURNSTILE_SITE_KEY", "")  # Add this to your .env
 
 # Base directories
 BASE_DIR = Path(__file__).parent
@@ -22,6 +26,27 @@ CDN_DIR.mkdir(exist_ok=True)
 
 app = FastAPI()
 security = HTTPBasic()
+templates = Jinja2Templates(directory=ROOT_DIR)
+
+# --------------------
+# Turnstile Verification
+# --------------------
+async def verify_turnstile(token: str, ip: str) -> bool:
+    """Verify Cloudflare Turnstile token"""
+    if not TURNSTILE_SECRET:
+        return True  # Skip verification if no secret key configured
+    
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+            data={
+                "secret": TURNSTILE_SECRET,
+                "response": token,
+                "remoteip": ip
+            }
+        )
+        result = response.json()
+        return result.get("success", False)
 
 # --------------------
 # Auth Helper
@@ -31,9 +56,56 @@ def get_current_user(credentials: HTTPBasicCredentials = Depends(security)):
         return credentials.username
     raise HTTPException(status_code=401, detail="Unauthorized")
 
+# --------------------
+# Admin Routes
+# --------------------
+@app.get("/yuri/admin", response_class=HTMLResponse)
+async def admin_login(request: Request):
+    """Show admin login page"""
+    return templates.TemplateResponse("admin_login.html", {
+        "request": request,
+        "turnstile_site_key": TURNSTILE_SITE_KEY
+    })
+
+@app.post("/yuri/admin")
+async def admin_login_post(request: Request):
+    """Handle admin login with Turnstile verification"""
+    form_data = await request.form()
+    username = form_data.get("username")
+    password = form_data.get("password")
+    turnstile_token = form_data.get("cf-turnstile-response")
+    
+    # Get client IP
+    client_ip = request.client.host
+    if "x-forwarded-for" in request.headers:
+        client_ip = request.headers["x-forwarded-for"].split(",")[0].strip()
+    
+    # Verify Turnstile
+    if not await verify_turnstile(turnstile_token, client_ip):
+        return HTMLResponse(
+            content="<html><body><h1>Verification failed</h1><a href='/yuri/admin'>Try again</a></body></html>",
+            status_code=400
+        )
+    
+    # Verify credentials
+    if username == USERNAME and password == PASSWORD:
+        # Redirect to upload page
+        return HTMLResponse(
+            content=f"<html><head><meta http-equiv='refresh' content='0;url=/yuri/upload'></head></html>"
+        )
+    else:
+        return HTMLResponse(
+            content="<html><body><h1>Invalid credentials</h1><a href='/yuri/admin'>Try again</a></body></html>",
+            status_code=401
+        )
+
+@app.get("/yuri/upload", response_class=HTMLResponse)
+async def upload_page(request: Request, user: str = Depends(get_current_user)):
+    """Show upload page (requires authentication)"""
+    return FileResponse(ROOT_DIR / "admin.html")
 
 # --------------------
-# API Routes
+# API Routes (unchanged)
 # --------------------
 @app.get("/api/list")
 async def list_files(folder: str = Query(default="")):
@@ -74,7 +146,6 @@ async def list_files(folder: str = Query(default="")):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error listing files: {str(e)}")
 
-
 @app.get("/api/folders")
 async def list_all_folders(user: str = Depends(get_current_user)):
     """Get all folders in CDN for the upload dropdown"""
@@ -94,7 +165,6 @@ async def list_all_folders(user: str = Depends(get_current_user)):
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error listing folders: {str(e)}")
-
 
 @app.post("/api/upload")
 async def upload_file(
@@ -138,9 +208,8 @@ async def upload_file(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Upload failed: {str(e)}")
 
-
 # --------------------
-# CDN File Serving Routes
+# CDN File Serving Routes (unchanged)
 # --------------------
 @app.get("/cdn/{file_path:path}")
 async def serve_cdn_file(file_path: str):
@@ -171,13 +240,11 @@ async def serve_cdn_file(file_path: str):
     
     return FileResponse(full_path)
 
-
-# Alternative route for backward compatibility (files accessible without /cdn/ prefix)
+# Alternative route for backward compatibility
 @app.get("/files/{file_path:path}")
 async def serve_cdn_file_alt(file_path: str):
     """Alternative route for CDN files"""
     return await serve_cdn_file(file_path)
-
 
 # --------------------
 # Static File Serving (Frontend)

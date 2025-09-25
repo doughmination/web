@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yuri Lover Admin Login</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    <style>
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 20px;
+        }
+        .login-form {
+            background: #1a1a2e;
+            padding: 40px;
+            border-radius: 12px;
+            border: 2px solid #ff6fff;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #ff6fff;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ff6fff;
+            border-radius: 8px;
+            background: #0e0e1a;
+            color: white;
+            font-size: 16px;
+            font-family: "Comic Code", monospace;
+        }
+        .login-button {
+            background: #ff6fff;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 20px;
+            font-family: "Comic Code", monospace;
+        }
+        .login-button:hover {
+            background: #e55fe5;
+        }
+        .login-button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        .login-title {
+            text-align: center;
+            color: #ff6fff;
+            margin-bottom: 30px;
+        }
+        .turnstile-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #ff6fff;
+            text-decoration: none;
+            font-size: 1.1rem;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <a href="/" class="back-link">← Back to Files</a>
+        
+        <div class="login-form">
+            <div class="title-container login-title">
+                <img src="https://www.yuri-lover.win/cdn/animated-emojis/cl_heart.gif" alt="Animated logo" class="title-logo">
+                <h1>Admin Login</h1>
+            </div>
+            
+            <form method="POST" action="/yuri/admin" id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" name="username" id="username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" name="password" id="password" required>
+                </div>
+                
+                {% if turnstile_site_key %}
+                <div class="turnstile-container">
+                    <div class="cf-turnstile" data-sitekey="{{ turnstile_site_key }}" data-callback="onTurnstileCallback"></div>
+                </div>
+                {% endif %}
+                
+                <button type="submit" class="login-button" id="submitButton" {% if turnstile_site_key %}disabled{% endif %}>
+                    Login to Admin Panel
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        function onTurnstileCallback(token) {
+            document.getElementById('submitButton').disabled = false;
+        }
+        
+        // If no Turnstile is configured, enable the button immediately
+        if (!'{{ turnstile_site_key }}') {
+            document.getElementById('submitButton').disabled = false;
+        }
+    </script>
+</body>
+</html>
