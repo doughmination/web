@@ -76,6 +76,15 @@
         .back-link:hover {
             text-decoration: underline;
         }
+        .error-message {
+            background: #5a2a2a;
+            color: #f44336;
+            border: 1px solid #f44336;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -87,6 +96,10 @@
                 <img src="https://www.yuri-lover.win/cdn/animated-emojis/cl_heart.gif" alt="Animated logo" class="title-logo">
                 <h1>Admin Login</h1>
             </div>
+            
+            {% if error %}
+            <div class="error-message">{{ error }}</div>
+            {% endif %}
             
             <form method="POST" action="/yuri/admin" id="loginForm">
                 <div class="form-group">

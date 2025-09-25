@@ -1,20 +1,21 @@
 import os
 import json
 from pathlib import Path
-from fastapi import FastAPI, Depends, UploadFile, HTTPException, Query, Form, Request
-from fastapi.responses import HTMLResponse, FileResponse
+from fastapi import FastAPI, Depends, UploadFile, HTTPException, Query, Form, Request, Response
+from fastapi.responses import HTMLResponse, FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
-from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.templating import Jinja2Templates
 from dotenv import load_dotenv
 import httpx
+import secrets
+from datetime import datetime, timedelta
 
 # Load credentials from .env
 load_dotenv()
 USERNAME = os.getenv("CDN_USERNAME", "admin")
 PASSWORD = os.getenv("CDN_PASSWORD", "password")
-TURNSTILE_SECRET = os.getenv("TURNSTILE_SECRET_KEY", "")  # Add this to your .env
-TURNSTILE_SITE_KEY = os.getenv("TURNSTILE_SITE_KEY", "")  # Add this to your .env
+TURNSTILE_SECRET = os.getenv("TURNSTILE_SECRET_KEY", "")
+TURNSTILE_SITE_KEY = os.getenv("TURNSTILE_SITE_KEY", "")
 
 # Base directories
 BASE_DIR = Path(__file__).parent
@@ -25,8 +26,52 @@ CDN_DIR = BASE_DIR / "cdn"
 CDN_DIR.mkdir(exist_ok=True)
 
 app = FastAPI()
-security = HTTPBasic()
 templates = Jinja2Templates(directory=ROOT_DIR)
+
+# Simple in-memory session storage (use Redis or database in production)
+sessions = {}
+
+# --------------------
+# Session Management
+# --------------------
+def create_session(username: str) -> str:
+    """Create a new session and return session token"""
+    session_token = secrets.token_urlsafe(32)
+    sessions[session_token] = {
+        "username": username,
+        "created_at": datetime.now(),
+        "expires_at": datetime.now() + timedelta(hours=24)
+    }
+    return session_token
+
+def get_session(session_token: str) -> dict:
+    """Get session data if valid"""
+    if not session_token or session_token not in sessions:
+        return None
+    
+    session = sessions[session_token]
+    if datetime.now() > session["expires_at"]:
+        # Session expired, remove it
+        del sessions[session_token]
+        return None
+    
+    return session
+
+def cleanup_expired_sessions():
+    """Remove expired sessions"""
+    now = datetime.now()
+    expired_tokens = [token for token, session in sessions.items() if now > session["expires_at"]]
+    for token in expired_tokens:
+        del sessions[token]
+
+def require_auth(request: Request):
+    """Check if user is authenticated via session"""
+    cleanup_expired_sessions()
+    session_token = request.cookies.get("yuri_session")
+    session = get_session(session_token)
+    if not session:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    return session["username"]
 
 # --------------------
 # Turnstile Verification
@@ -49,19 +94,18 @@ async def verify_turnstile(token: str, ip: str) -> bool:
         return result.get("success", False)
 
 # --------------------
-# Auth Helper
-# --------------------
-def get_current_user(credentials: HTTPBasicCredentials = Depends(security)):
-    if credentials.username == USERNAME and credentials.password == PASSWORD:
-        return credentials.username
-    raise HTTPException(status_code=401, detail="Unauthorized")
-
-# --------------------
 # Admin Routes
 # --------------------
 @app.get("/yuri/admin", response_class=HTMLResponse)
 async def admin_login(request: Request):
     """Show admin login page"""
+    # Check if already authenticated
+    try:
+        require_auth(request)
+        return RedirectResponse(url="/yuri/upload", status_code=302)
+    except HTTPException:
+        pass  # Not authenticated, show login page
+    
     return templates.TemplateResponse("admin_login.html", {
         "request": request,
         "turnstile_site_key": TURNSTILE_SITE_KEY
@@ -82,30 +126,54 @@ async def admin_login_post(request: Request):
     
     # Verify Turnstile
     if not await verify_turnstile(turnstile_token, client_ip):
-        return HTMLResponse(
-            content="<html><body><h1>Verification failed</h1><a href='/yuri/admin'>Try again</a></body></html>",
-            status_code=400
-        )
+        return templates.TemplateResponse("admin_login.html", {
+            "request": request,
+            "turnstile_site_key": TURNSTILE_SITE_KEY,
+            "error": "Verification failed. Please try again."
+        })
     
     # Verify credentials
     if username == USERNAME and password == PASSWORD:
-        # Redirect to upload page
-        return HTMLResponse(
-            content=f"<html><head><meta http-equiv='refresh' content='0;url=/yuri/upload'></head></html>"
+        # Create session
+        session_token = create_session(username)
+        
+        # Redirect to upload page with session cookie
+        response = RedirectResponse(url="/yuri/upload", status_code=302)
+        response.set_cookie(
+            key="yuri_session",
+            value=session_token,
+            max_age=86400,  # 24 hours
+            httponly=True,
+            secure=True,    # Set to False if not using HTTPS
+            samesite="lax"
         )
+        return response
     else:
-        return HTMLResponse(
-            content="<html><body><h1>Invalid credentials</h1><a href='/yuri/admin'>Try again</a></body></html>",
-            status_code=401
-        )
+        return templates.TemplateResponse("admin_login.html", {
+            "request": request,
+            "turnstile_site_key": TURNSTILE_SITE_KEY,
+            "error": "Invalid credentials. Please try again."
+        })
 
 @app.get("/yuri/upload", response_class=HTMLResponse)
-async def upload_page(request: Request, user: str = Depends(get_current_user)):
+async def upload_page(request: Request):
     """Show upload page (requires authentication)"""
+    user = require_auth(request)  # This will raise HTTPException if not authenticated
     return FileResponse(ROOT_DIR / "admin.html")
 
+@app.get("/yuri/logout")
+async def logout(request: Request):
+    """Logout and clear session"""
+    session_token = request.cookies.get("yuri_session")
+    if session_token and session_token in sessions:
+        del sessions[session_token]
+    
+    response = RedirectResponse(url="/", status_code=302)
+    response.delete_cookie("yuri_session")
+    return response
+
 # --------------------
-# API Routes (unchanged)
+# API Routes
 # --------------------
 @app.get("/api/list")
 async def list_files(folder: str = Query(default="")):
@@ -147,8 +215,10 @@ async def list_files(folder: str = Query(default="")):
         raise HTTPException(status_code=500, detail=f"Error listing files: {str(e)}")
 
 @app.get("/api/folders")
-async def list_all_folders(user: str = Depends(get_current_user)):
+async def list_all_folders(request: Request):
     """Get all folders in CDN for the upload dropdown"""
+    user = require_auth(request)  # Require authentication
+    
     try:
         folders = []
         
@@ -168,10 +238,12 @@ async def list_all_folders(user: str = Depends(get_current_user)):
 
 @app.post("/api/upload")
 async def upload_file(
+    request: Request,
     file: UploadFile, 
-    destination: str = Form(default=""),
-    user: str = Depends(get_current_user)
+    destination: str = Form(default="")
 ):
+    user = require_auth(request)  # Require authentication
+    
     try:
         # Normalize destination path
         destination = destination.strip().strip("/")

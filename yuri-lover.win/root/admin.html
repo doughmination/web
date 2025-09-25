@@ -85,21 +85,41 @@
             color: #ff6fff;
             margin-bottom: 20px;
         }
-        .back-link {
-            display: inline-block;
+        .nav-links {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .nav-link {
             color: #ff6fff;
             text-decoration: none;
             font-size: 1.1rem;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: background-color 0.2s;
         }
-        .back-link:hover {
-            text-decoration: underline;
+        .nav-link:hover {
+            background-color: rgba(255, 111, 255, 0.1);
+            text-decoration: none;
+        }
+        .logout-link {
+            background: #ff4444;
+            color: white;
+        }
+        .logout-link:hover {
+            background: #cc3333;
         }
     </style>
 </head>
 <body>
     <div class="admin-container">
-        <a href="/" class="back-link">← Back to Files</a>
+        <div class="nav-links">
+            <a href="/" class="nav-link">← Back to Files</a>
+            <a href="/yuri/logout" class="nav-link logout-link">Logout →</a>
+        </div>
         
         <div class="title-container admin-title">
             <img src="https://www.yuri-lover.win/cdn/animated-emojis/cl_heart.gif" alt="Animated logo" class="title-logo">
@@ -144,6 +164,13 @@
         async function loadFolders() {
             try {
                 const response = await fetch('/api/folders');
+                
+                if (response.status === 401) {
+                    // Session expired, redirect to login
+                    window.location.href = '/yuri/admin';
+                    return;
+                }
+                
                 const data = await response.json();
                 
                 // Clear existing options except root and new folder
@@ -160,6 +187,7 @@
                 });
             } catch (err) {
                 console.error('Failed to load folders:', err);
+                showResult('Failed to load folders. Please refresh the page.', 'error');
             }
         }
         
@@ -191,12 +219,18 @@
             }
             
             try {
-                resultDiv.innerHTML = '<p>Uploading...</p>';
+                resultDiv.innerHTML = '<p style="color: #ff6fff;">Uploading...</p>';
                 
                 const response = await fetch('/api/upload', {
                     method: 'POST',
                     body: formData
                 });
+                
+                if (response.status === 401) {
+                    // Session expired, redirect to login
+                    window.location.href = '/yuri/admin';
+                    return;
+                }
                 
                 const result = await response.json();
                 
