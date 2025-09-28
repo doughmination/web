@@ -343,6 +343,7 @@ async def upload_file(
 # CDN File Serving Routes
 # --------------------
 @app.get("/cdn/{file_path:path}")
+@app.head("/cdn/{file_path:path}")
 async def serve_cdn_file(file_path: str):
     """Serve files from CDN directory with /cdn/ prefix"""
     if not file_path:
@@ -373,6 +374,7 @@ async def serve_cdn_file(file_path: str):
 
 # Alternative route for backward compatibility
 @app.get("/files/{file_path:path}")
+@app.head("/files/{file_path:path}")
 async def serve_cdn_file_alt(file_path: str):
     """Alternative route for CDN files"""
     return await serve_cdn_file(file_path)
