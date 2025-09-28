@@ -1,6 +1,7 @@
 services:
   butterfly:
     image: clovetwilight3/butterfly-network
+    container_name: butteffly-main
     ports:
       - "8004:8004"
     environment:
@@ -9,6 +10,7 @@ services:
 
   nytrix:
     image: clovetwilight3/clove-nytrix
+    container_name: clove-nytrix
     ports:
       - "8009:8009"
     environment:
@@ -17,6 +19,7 @@ services:
   
   clovetwilight3.co.uk:
     image: clovetwilight3/clovetwilight3
+    container_name: clovetwilight3
     ports:
       - "8005:8005"
     environment:
@@ -25,6 +28,7 @@ services:
 
   lgbt:
     image: clovetwilight3/lgb-with-t
+    container_name: lgbt
     ports:
       - "8008:8008"
     environment:
@@ -33,6 +37,7 @@ services:
 
   mazeymoos:
     image: clovetwilight3/estrogen-moos:latest
+    container_name: estrogenhrt
     ports:
       - "8006:8006"
     environment:
@@ -41,6 +46,7 @@ services:
 
   midnight:
     image: clovetwilight3/themidnightcyan:latest
+    container_name: midnightcyan
     ports:
       - "8007:8007"
     environment:
@@ -49,6 +55,7 @@ services:
 
   dough-back:
     image: clovetwilight3/doughmination-backend:latest
+    container_name: dough-back
     ports:
       - "8000:8000"
     env_file:
@@ -60,6 +67,7 @@ services:
 
   dough-front:
     image: clovetwilight3/doughmination-frontend:latest
+    container_name: dough-front
     ports:
       - "8001:8001"
     depends_on:
@@ -92,6 +100,7 @@ services:
 
   discord:
     image: ghcr.io/the-snesler/discord-github-preview:latest
+    container_name: discord
     ports:
       - "8002:3000"
     env_file: .env
@@ -99,12 +108,14 @@ services:
 
   status-back:
     image: clovetwilight3/status-backend:latest
+    container_name: status-back
     ports:
       - "8010:8010"
     restart: unless-stopped
 
   status-front:
     image: clovetwilight3/status-frontend:latest
+    container_name: status-front
     ports:
       - "8011:8011"
     depends_on:
