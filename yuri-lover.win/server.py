@@ -352,7 +352,8 @@ async def serve_cdn_file(file_path: str):
     # Security check - only serve files with valid extensions
     allowed_extensions = {'.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.bmp', 
                          '.ico', '.pdf', '.txt', '.mp4', '.mp3', '.wav', '.zip', 
-                         '.rar', '.7z', '.tar', '.gz', '.json', '.xml', '.csv'}
+                         '.rar', '.7z', '.tar', '.gz', '.json', '.xml', '.csv',
+                         '.jsonc', '.md', '.js'}
     
     file_path_obj = Path(file_path)
     if file_path_obj.suffix.lower() not in allowed_extensions:
