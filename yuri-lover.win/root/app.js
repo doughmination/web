@@ -357,12 +357,15 @@ function initAdminPanel() {
                     body: formData
                 });
                 
+                // Handle common HTTP errors BEFORE trying to parse JSON
                 if (response.status === 401) {
-                    window.location.href = '/yuri/admin';
+                    showResult('Session expired or not authenticated. Redirecting to login...', 'error');
+                    setTimeout(() => {
+                        window.location.href = '/yuri/admin';
+                    }, 1500);
                     return;
                 }
                 
-                // Handle common HTTP errors
                 if (response.status === 413) {
                     showResult('File too large! Maximum upload size is 100MB. Check your nginx configuration if you need to upload larger files.', 'error');
                     return;
@@ -383,29 +386,48 @@ function initAdminPanel() {
                     return;
                 }
                 
-                // Try to parse JSON response
-                let result;
-                const contentType = response.headers.get('content-type');
-                if (contentType && contentType.includes('application/json')) {
-                    result = await response.json();
-                } else {
-                    // Non-JSON response
+                // For any other non-2xx status codes
+                if (!response.ok) {
                     const text = await response.text();
-                    showResult(`Upload failed (${response.status}): Server returned unexpected response. ${text.substring(0, 200)}`, 'error');
+                    showResult(`Upload failed (${response.status}): ${text.substring(0, 200)}`, 'error');
                     return;
                 }
                 
-                if (response.ok) {
-                    showResult(`Successfully uploaded: ${result.filename}<br>
-                               Size: ${(result.size / 1024).toFixed(1)} KB<br>
-                               Location: <a href="/cdn/${result.path}" target="_blank" style="color: #ff6fff;">/${result.path}</a>`, 'success');
-                    
-                    loadFolders();
-                    this.reset();
-                    newFolderGroup.style.display = 'none';
-                } else {
-                    showResult(`Upload failed: ${result.detail || 'Unknown error'}`, 'error');
+                // Get the response text first to check what we're dealing with
+                const responseText = await response.text();
+                
+                // Check if response starts with '<' (likely HTML error page)
+                if (responseText.trim().startsWith('<')) {
+                    showResult(`Upload failed (${response.status}): Server returned HTML instead of JSON. This usually means a proxy or web server error. Response: ${responseText.substring(0, 200)}`, 'error');
+                    return;
                 }
+                
+                // Try to parse JSON response only for successful responses
+                let result;
+                const contentType = response.headers.get('content-type');
+                
+                // Check if content type is JSON
+                if (contentType && contentType.includes('application/json')) {
+                    try {
+                        result = JSON.parse(responseText);
+                    } catch (e) {
+                        showResult(`Upload completed but failed to parse server response: ${e.message}. Response: ${responseText.substring(0, 200)}`, 'error');
+                        return;
+                    }
+                } else {
+                    // Non-JSON response even on success
+                    showResult(`Upload completed but server returned unexpected response format. Content-Type: ${contentType}. Response: ${responseText.substring(0, 200)}`, 'error');
+                    return;
+                }
+                
+                // If we made it here, we have a successful response with JSON
+                showResult(`Successfully uploaded: ${result.filename}<br>
+                           Size: ${(result.size / 1024).toFixed(1)} KB<br>
+                           Location: <a href="/cdn/${result.path}" target="_blank" style="color: #ff6fff;">/${result.path}</a>`, 'success');
+                
+                loadFolders();
+                this.reset();
+                newFolderGroup.style.display = 'none';
             } catch (err) {
                 showResult(`Upload failed: ${err.message}`, 'error');
             }
