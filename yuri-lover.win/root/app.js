@@ -362,7 +362,38 @@ function initAdminPanel() {
                     return;
                 }
                 
-                const result = await response.json();
+                // Handle common HTTP errors
+                if (response.status === 413) {
+                    showResult('File too large! Maximum upload size is 100MB. Check your nginx configuration if you need to upload larger files.', 'error');
+                    return;
+                }
+                
+                if (response.status === 403) {
+                    showResult('Permission denied. You do not have access to upload files.', 'error');
+                    return;
+                }
+                
+                if (response.status === 404) {
+                    showResult('Upload endpoint not found. Please check your server configuration.', 'error');
+                    return;
+                }
+                
+                if (response.status === 500) {
+                    showResult('Server error occurred during upload. Please check server logs or try again.', 'error');
+                    return;
+                }
+                
+                // Try to parse JSON response
+                let result;
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    result = await response.json();
+                } else {
+                    // Non-JSON response
+                    const text = await response.text();
+                    showResult(`Upload failed (${response.status}): Server returned unexpected response. ${text.substring(0, 200)}`, 'error');
+                    return;
+                }
                 
                 if (response.ok) {
                     showResult(`Successfully uploaded: ${result.filename}<br>
@@ -373,7 +404,7 @@ function initAdminPanel() {
                     this.reset();
                     newFolderGroup.style.display = 'none';
                 } else {
-                    showResult(`Upload failed: ${result.detail}`, 'error');
+                    showResult(`Upload failed: ${result.detail || 'Unknown error'}`, 'error');
                 }
             } catch (err) {
                 showResult(`Upload failed: ${err.message}`, 'error');

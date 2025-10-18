@@ -383,4 +383,26 @@ async def serve_cdn_file_alt(file_path: str):
 # --------------------
 # Static File Serving (Frontend)
 # --------------------
-app.mount("/", StaticFiles(directory=ROOT_DIR, html=True), name="frontend")
+
+# Serve index.html for all non-API, non-CDN routes
+@app.get("/{full_path:path}")
+async def catch_all(full_path: str):
+    """Catch-all route to serve index.html for SPA routing"""
+    # Skip if it's an API or admin route (these are handled above)
+    if full_path.startswith("api/") or full_path.startswith("yuri/"):
+        raise HTTPException(status_code=404, detail="Not Found")
+    
+    # Check if requesting a static asset (CSS, JS, etc.)
+    static_extensions = {'.css', '.js', '.png', '.jpg', '.jpeg', '.gif', '.ico', '.svg', '.woff', '.woff2', '.ttf'}
+    if any(full_path.endswith(ext) for ext in static_extensions):
+        file_path = ROOT_DIR / full_path
+        if file_path.exists() and file_path.is_file():
+            return FileResponse(file_path)
+        raise HTTPException(status_code=404, detail="Not Found")
+    
+    # For all other routes (including folder paths), serve index.html
+    index_path = ROOT_DIR / "index.html"
+    if not index_path.exists():
+        raise HTTPException(status_code=404, detail="index.html not found")
+    
+    return FileResponse(index_path)
