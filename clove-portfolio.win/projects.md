@@ -4,7 +4,7 @@
 
 ### Personal Projects
 
-#### [Medication-Reminders](https://github.com/CloveTwilight3/Medication-Reminders)
+#### [Cuddle-Blahaj-Medication](https://github.com/CloveTwilight3/Cuddle-Blahaj-Medication)
 
 A basic medication reminder system
 
@@ -12,7 +12,7 @@ A basic medication reminder system
 
 ⭐ 1 | 🍴 0
 
-Last updated: 00:21 17 October, 2025 (UTC)
+Last updated: 12:59 25 October, 2025 (UTC)
 
 ---
 
