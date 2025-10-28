@@ -4,6 +4,18 @@
 
 ### Personal Projects
 
+#### [pluralkit-xyz](https://github.com/CloveTwilight3/pluralkit-xyz)
+
+No description provided.
+
+**Language:** Svelte
+
+⭐ 0 | 🍴 0
+
+Last updated: 16:23 28 October, 2025 (UTC)
+
+---
+
 #### [Cuddle-Blahaj-Medication](https://github.com/CloveTwilight3/Cuddle-Blahaj-Medication)
 
 A basic medication reminder system
