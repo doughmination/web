@@ -4,15 +4,97 @@
 
 ### Personal Projects
 
-#### [GitCommit](https://github.com/CloveTwilight3/GitCommit)
+#### [JailPlugin](https://github.com/CloveTwilight3/JailPlugin)
 
-GitCommit is an automated Git workflow tool that simplifies the process of committing and pushing changes to your Git repositories. It handles the entire workflow: switching to main branch, pulling latest changes, adding files, committing with your message, and pushing to origin.
+A simple jail plugin
 
-**Language:** PowerShell
+**Language:** Java
+
+⭐ 2 | 🍴 1
+
+Last updated: 10:22 1 July, 2025 (UTC)
+
+---
+
+#### [EndRace](https://github.com/CloveTwilight3/EndRace)
+
+No description provided.
+
+**Language:** Java
 
 ⭐ 0 | 🍴 0
 
-Last updated: 16:28 25 August, 2025 (UTC)
+Last updated: 02:26 30 August, 2025 (UTC)
+
+---
+
+#### [Estrocord](https://github.com/CloveTwilight3/Estrocord)
+
+A fun all-in-1 plugin
+
+**Language:** Java
+
+⭐ 1 | 🍴 0
+
+Last updated: 17:24 13 August, 2025 (UTC)
+
+---
+
+#### [end-stats](https://github.com/CloveTwilight3/end-stats)
+
+A basic end stats repo
+
+**Language:** Java
+
+⭐ 0 | 🍴 0
+
+Last updated: 10:25 20 August, 2025 (UTC)
+
+---
+
+#### [CloveLib](https://github.com/CloveTwilight3/CloveLib)
+
+A basic Library Plugin for Plugins
+
+⭐ 2 | 🍴 0
+
+Last updated: 03:20 3 May, 2025 (UTC)
+
+---
+
+#### [Minecraft-Whitelist-Discord-Bot](https://github.com/CloveTwilight3/Minecraft-Whitelist-Discord-Bot)
+
+a simple and efficient plugin for a Discord bot for managing the Minecraft server whitelist
+
+**Language:** Java
+
+⭐ 2 | 🍴 0
+
+Last updated: 17:44 28 April, 2025 (UTC)
+
+---
+
+#### [Cloves-PluralCraft](https://github.com/CloveTwilight3/Cloves-PluralCraft)
+
+A Fabric Mod for Systems
+
+**Language:** Java
+
+⭐ 2 | 🍴 0
+
+Last updated: 03:20 3 May, 2025 (UTC)
+
+---
+
+#### [Cloves-PluralCraft-Spigot](https://github.com/CloveTwilight3/Cloves-PluralCraft-Spigot)
+
+A Simple Plugin for Plural Systems
+
+**Language:** Java
+
+⭐ 2 | 🍴 0
+
+Last updated: 03:20 3 May, 2025 (UTC)
 
 ---
 
@@ -22,9 +104,21 @@ A basic medication reminder system
 
 **Language:** TypeScript
 
-⭐ 1 | 🍴 0
+⭐ 2 | 🍴 0
 
 Last updated: 12:59 25 October, 2025 (UTC)
+
+---
+
+#### [GitCommit](https://github.com/CloveTwilight3/GitCommit)
+
+GitCommit is an automated Git workflow tool that simplifies the process of committing and pushing changes to your Git repositories. It handles the entire workflow: switching to main branch, pulling latest changes, adding files, committing with your message, and pushing to origin.
+
+**Language:** PowerShell
+
+⭐ 0 | 🍴 0
+
+Last updated: 16:28 25 August, 2025 (UTC)
 
 ---
 
@@ -64,18 +158,6 @@ Last updated: 14:43 24 August, 2025 (UTC)
 
 ---
 
-#### [end-stats](https://github.com/CloveTwilight3/end-stats)
-
-A basic end stats repo
-
-**Language:** Java
-
-⭐ 0 | 🍴 0
-
-Last updated: 10:25 20 August, 2025 (UTC)
-
----
-
 #### [EMIS](https://github.com/CloveTwilight3/EMIS)
 
 This is a JARVIS like assistant for your desktop, working on Most Linux Distros and Windows
@@ -88,52 +170,6 @@ Last updated: 00:35 27 May, 2025 (UTC)
 
 ---
 
-#### [JailPlugin](https://github.com/CloveTwilight3/JailPlugin)
-
-A simple jail plugin
-
-**Language:** Java
-
-⭐ 2 | 🍴 1
-
-Last updated: 10:22 1 July, 2025 (UTC)
-
----
-
-#### [Estrocord](https://github.com/CloveTwilight3/Estrocord)
-
-A fun all-in-1 plugin
-
-**Language:** Java
-
-⭐ 1 | 🍴 0
-
-Last updated: 17:24 13 August, 2025 (UTC)
-
----
-
-#### [EndRace](https://github.com/CloveTwilight3/EndRace)
-
-No description provided.
-
-**Language:** Java
-
-⭐ 0 | 🍴 0
-
-Last updated: 02:26 30 August, 2025 (UTC)
-
----
-
-#### [CloveLib](https://github.com/CloveTwilight3/CloveLib)
-
-A basic Library Plugin for Plugins
-
-⭐ 2 | 🍴 0
-
-Last updated: 03:20 3 May, 2025 (UTC)
-
----
-
 #### [Clove-Blank-Repo](https://github.com/CloveTwilight3/Clove-Blank-Repo)
 
 No description provided.
@@ -141,42 +177,6 @@ No description provided.
 ⭐ 0 | 🍴 0
 
 Last updated: 16:18 25 August, 2025 (UTC)
-
----
-
-#### [Cloves-PluralCraft-Spigot](https://github.com/CloveTwilight3/Cloves-PluralCraft-Spigot)
-
-A Simple Plugin for Plural Systems
-
-**Language:** Java
-
-⭐ 2 | 🍴 0
-
-Last updated: 03:20 3 May, 2025 (UTC)
-
----
-
-#### [Minecraft-Whitelist-Discord-Bot](https://github.com/CloveTwilight3/Minecraft-Whitelist-Discord-Bot)
-
-a simple and efficient plugin for a Discord bot for managing the Minecraft server whitelist
-
-**Language:** Java
-
-⭐ 2 | 🍴 0
-
-Last updated: 17:44 28 April, 2025 (UTC)
-
----
-
-#### [Cloves-PluralCraft](https://github.com/CloveTwilight3/Cloves-PluralCraft)
-
-A Fabric Mod for Systems
-
-**Language:** Java
-
-⭐ 2 | 🍴 0
-
-Last updated: 03:20 3 May, 2025 (UTC)
 
 ---
 
@@ -213,18 +213,6 @@ No description provided.
 ⭐ 0 | 🍴 0
 
 Last updated: 18:32 21 June, 2025 (UTC)
-
----
-
-#### [Medication-Bot](https://github.com/CloveTwilight3/Medication-Bot)
-
-No description provided.
-
-**Language:** TypeScript
-
-⭐ 0 | 🍴 0
-
-Last updated: 05:25 25 August, 2025 (UTC)
 
 ---
 
