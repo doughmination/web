@@ -4,6 +4,18 @@
 
 ### Personal Projects
 
+#### [EMIS](https://github.com/CloveTwilight3/EMIS)
+
+This is a JARVIS like assistant for your desktop, working on Most Linux Distros and Windows
+
+**Language:** TypeScript
+
+⭐ 1 | 🍴 0
+
+Last updated: 00:35 27 May, 2025 (UTC)
+
+---
+
 #### [JailPlugin](https://github.com/CloveTwilight3/JailPlugin)
 
 A simple jail plugin
@@ -155,18 +167,6 @@ A template website for easy url buttons
 ⭐ 0 | 🍴 0
 
 Last updated: 14:43 24 August, 2025 (UTC)
-
----
-
-#### [EMIS](https://github.com/CloveTwilight3/EMIS)
-
-This is a JARVIS like assistant for your desktop, working on Most Linux Distros and Windows
-
-**Language:** JavaScript
-
-⭐ 1 | 🍴 0
-
-Last updated: 00:35 27 May, 2025 (UTC)
 
 ---
 
