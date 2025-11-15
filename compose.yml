@@ -7,8 +7,7 @@ services:
     env_file:
       - .env
     volumes:
-      - backend_data:/app/data
-      - backend_avatars:/app/avatars
+      - "./dough-data:/app/dough-data"
     restart: unless-stopped
   dough-front:
     image: clovetwilight3/doughmination-frontend:latest
