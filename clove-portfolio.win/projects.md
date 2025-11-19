@@ -4,6 +4,42 @@
 
 ### Personal Projects
 
+#### [web](https://github.com/CloveTwilight3/web)
+
+No description provided.
+
+**Language:** JavaScript
+
+⭐ 0 | 🍴 0
+
+Last updated: 10:19 18 November, 2025 (UTC)
+
+---
+
+#### [docker](https://github.com/CloveTwilight3/docker)
+
+No description provided.
+
+**Language:** TypeScript
+
+⭐ 1 | 🍴 0
+
+Last updated: 10:18 18 November, 2025 (UTC)
+
+---
+
+#### [nginx](https://github.com/CloveTwilight3/nginx)
+
+The NGINX Setup for all websites
+
+**Language:** DIGITAL Command Language
+
+⭐ 0 | 🍴 0
+
+Last updated: 10:20 18 November, 2025 (UTC)
+
+---
+
 #### [EMIS](https://github.com/CloveTwilight3/EMIS)
 
 This is a JARVIS like assistant for your desktop, working on Most Linux Distros and Windows
