@@ -4,6 +4,30 @@
 
 ### Personal Projects
 
+#### [docker](https://github.com/CloveTwilight3/docker)
+
+No description provided.
+
+**Language:** TypeScript
+
+⭐ 0 | 🍴 0
+
+Last updated: 10:18 18 November, 2025 (UTC)
+
+---
+
+#### [GitCommit](https://github.com/CloveTwilight3/GitCommit)
+
+GitCommit is an automated Git workflow tool that simplifies the process of committing and pushing changes to your Git repositories. It handles the entire workflow: switching to main branch, pulling latest changes, adding files, committing with your message, and pushing to origin.
+
+**Language:** PowerShell
+
+⭐ 0 | 🍴 0
+
+Last updated: 16:28 25 August, 2025 (UTC)
+
+---
+
 #### [web](https://github.com/CloveTwilight3/web)
 
 No description provided.
@@ -122,18 +146,6 @@ Last updated: 00:35 27 May, 2025 (UTC)
 
 ---
 
-#### [docker](https://github.com/CloveTwilight3/docker)
-
-No description provided.
-
-**Language:** TypeScript
-
-⭐ 0 | 🍴 0
-
-Last updated: 10:18 18 November, 2025 (UTC)
-
----
-
 #### [Cuddle-Blahaj-Medication](https://github.com/CloveTwilight3/Cuddle-Blahaj-Medication)
 
 A basic medication reminder system
@@ -191,18 +203,6 @@ A basic end stats repo
 ⭐ 0 | 🍴 0
 
 Last updated: 10:25 20 August, 2025 (UTC)
-
----
-
-#### [GitCommit](https://github.com/CloveTwilight3/GitCommit)
-
-GitCommit is an automated Git workflow tool that simplifies the process of committing and pushing changes to your Git repositories. It handles the entire workflow: switching to main branch, pulling latest changes, adding files, committing with your message, and pushing to origin.
-
-**Language:** PowerShell
-
-⭐ 0 | 🍴 0
-
-Last updated: 16:28 25 August, 2025 (UTC)
 
 ---
 
