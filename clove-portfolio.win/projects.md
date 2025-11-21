@@ -4,7 +4,7 @@
 
 ### Personal Projects
 
-#### [PluralKitStatus](https://github.com/CloveTwilight3/PluralKitStatus)
+#### [web](https://github.com/CloveTwilight3/web)
 
 No description provided.
 
@@ -12,7 +12,7 @@ No description provided.
 
 ⭐ 0 | 🍴 0
 
-Last updated: 18:38 21 November, 2025 (UTC)
+Last updated: 10:19 18 November, 2025 (UTC)
 
 ---
 
@@ -25,18 +25,6 @@ No description provided.
 ⭐ 0 | 🍴 0
 
 Last updated: 10:18 18 November, 2025 (UTC)
-
----
-
-#### [web](https://github.com/CloveTwilight3/web)
-
-No description provided.
-
-**Language:** JavaScript
-
-⭐ 0 | 🍴 0
-
-Last updated: 10:19 18 November, 2025 (UTC)
 
 ---
 
