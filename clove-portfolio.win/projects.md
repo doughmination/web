@@ -4,6 +4,18 @@
 
 ### Personal Projects
 
+#### [web](https://github.com/CloveTwilight3/web)
+
+No description provided.
+
+**Language:** JavaScript
+
+⭐ 0 | 🍴 0
+
+Last updated: 10:19 18 November, 2025 (UTC)
+
+---
+
 #### [CloveLib](https://github.com/CloveTwilight3/CloveLib)
 
 A basic Library Plugin for Plugins
@@ -119,18 +131,6 @@ No description provided.
 ⭐ 0 | 🍴 0
 
 Last updated: 10:18 18 November, 2025 (UTC)
-
----
-
-#### [web](https://github.com/CloveTwilight3/web)
-
-No description provided.
-
-**Language:** JavaScript
-
-⭐ 0 | 🍴 0
-
-Last updated: 10:19 18 November, 2025 (UTC)
 
 ---
 
