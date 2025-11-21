@@ -4,6 +4,18 @@
 
 ### Personal Projects
 
+#### [PluralKitStatus](https://github.com/CloveTwilight3/PluralKitStatus)
+
+No description provided.
+
+**Language:** JavaScript
+
+⭐ 0 | 🍴 0
+
+Last updated: 18:38 21 November, 2025 (UTC)
+
+---
+
 #### [docker](https://github.com/CloveTwilight3/docker)
 
 No description provided.
