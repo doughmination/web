@@ -4,6 +4,18 @@
 
 ### Personal Projects
 
+#### [nginx](https://github.com/CloveTwilight3/nginx)
+
+The NGINX Setup for all websites
+
+**Language:** DIGITAL Command Language
+
+⭐ 0 | 🍴 0
+
+Last updated: 10:20 18 November, 2025 (UTC)
+
+---
+
 #### [web](https://github.com/CloveTwilight3/web)
 
 No description provided.
@@ -155,18 +167,6 @@ A basic medication reminder system
 ⭐ 2 | 🍴 0
 
 Last updated: 12:59 25 October, 2025 (UTC)
-
----
-
-#### [nginx](https://github.com/CloveTwilight3/nginx)
-
-The NGINX Setup for all websites
-
-**Language:** DIGITAL Command Language
-
-⭐ 0 | 🍴 0
-
-Last updated: 10:20 18 November, 2025 (UTC)
 
 ---
 
