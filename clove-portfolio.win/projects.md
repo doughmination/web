@@ -4,6 +4,18 @@
 
 ### Personal Projects
 
+#### [web](https://github.com/CloveTwilight3/web)
+
+No description provided.
+
+**Language:** JavaScript
+
+⭐ 0 | 🍴 0
+
+Last updated: 10:19 18 November, 2025 (UTC)
+
+---
+
 #### [docker](https://github.com/CloveTwilight3/docker)
 
 No description provided.
@@ -25,18 +37,6 @@ My GitHub profile repository with custom README and configuration.
 ⭐ 0 | 🍴 0
 
 Last updated: 14:38 2 May, 2025 (UTC)
-
----
-
-#### [web](https://github.com/CloveTwilight3/web)
-
-No description provided.
-
-**Language:** JavaScript
-
-⭐ 0 | 🍴 0
-
-Last updated: 10:19 18 November, 2025 (UTC)
 
 ---
 
