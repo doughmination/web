@@ -1,4 +1,4 @@
-const API = "http://localhost:8003";
+const API = "http://t4t:8003";
 
 // List posts
 if (document.location.pathname.endsWith("index.html") || document.location.pathname === "/") {
