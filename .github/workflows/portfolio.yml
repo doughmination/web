@@ -15,7 +15,7 @@ jobs:
   # Remove working-directory default so scripts run from repo root
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
