@@ -113,3 +113,4 @@ services:
 volumes:
   backend_data:
   backend_avatars:
+  
