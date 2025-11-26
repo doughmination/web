@@ -1,4 +1,4 @@
-const API = "https://wwwtrans4trans.win:8003";
+const API = "https://www.trans4trans.win:8003";
 
 // List posts
 if (document.location.pathname.endsWith("index.html") || document.location.pathname === "/") {
