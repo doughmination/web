@@ -1,0 +1,32 @@
+# CDN assets (do not commit)
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.svg
+*.avif
+*.ico
+*.cur
+*.ani
+*.mp3
+*.wav
+
+# Asset directories
+cpc/
+gifs/
+pk/
+pfp/
+selfies/
+audio/
+porn/
+backgrounds/
+banners/
+artists/
+flags/
+cursors/
+animated-emojis/
+app-icons/
+sketching/
+old-delisted-music/
+
