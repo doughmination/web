@@ -97,6 +97,12 @@ services:
     depends_on:
       - status-back
     restart: unless-stopped
+  lib-web:
+    image: clovetwilight3/clovelib
+    container_name: lib
+    ports:
+      - "8012:8012"
+    restart: unless-stopped
   yuri:
     build:
       context: ./yuri-lover.win
