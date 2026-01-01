@@ -1,0 +1,518 @@
+/* app.css - Unified styles for entire site */
+
+/* Comic Code font declarations */
+@font-face {
+    font-family: 'Comic Code';
+    src: url('https://doughmination.win/fonts/ComicCode-Regular_2022-05-24-151938_hsmz.woff2') format('woff2'),
+        url('https://doughmination.win/fonts/ComicCode-Regular_2022-05-24-151938_hsmz.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Comic Code';
+    src: url('https://doughmination.win/fonts/ComicCode-Italic_2022-05-24-151939_rdtu.woff2') format('woff2'),
+        url('https://doughmination.win/fonts/ComicCode-Italic_2022-05-24-151939_rdtu.woff') format('woff');
+    font-weight: 400;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Comic Code';
+    src: url('https://doughmination.win/fonts/ComicCode-Medium_2022-05-24-151941_ugqm.woff2') format('woff2'),
+        url('https://doughmination.win/fonts/ComicCode-Medium_2022-05-24-151941_ugqm.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Comic Code';
+    src: url('https://doughmination.win/fonts/ComicCode-Bold_2022-05-24-152309_zqkm.woff2') format('woff2'),
+        url('https://doughmination.win/fonts/ComicCode-Bold_2022-05-24-152309_zqkm.woff') format('woff');
+    font-weight: 700;
+    font-style: normal;
+}
+
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body Styles */
+body {
+    font-family: "Comic Code", monospace;
+    background-color: #0e0e1a;
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+/* Title and Header */
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1000px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.title-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transform: rotate(-2deg);
+}
+
+.title-logo {
+    width: 50px;
+    height: 50px;
+    animation: tilt 2s infinite ease-in-out;
+}
+
+@keyframes tilt {
+    0%, 100% { transform: rotate(-5deg); }
+    50% { transform: rotate(5deg); }
+}
+
+#page-title, .login-title h1, .admin-title h1 {
+    font-size: 2rem;
+    color: #ff6fff;
+    margin: 0;
+}
+
+/* Admin Button in Header */
+.admin-button-container {
+    display: flex;
+    align-items: center;
+}
+
+.admin-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: #ff6fff;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+}
+
+.admin-button:hover {
+    background: #e55fe5;
+    text-decoration: none;
+}
+
+.admin-icon {
+    font-size: 1.2rem;
+}
+
+/* Loading Screen */
+#loading, .loading-logo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #0e0e1a;
+    z-index: 1000;
+    gap: 15px;
+}
+
+#loading img, .loading-logo img {
+    width: 80px;
+    height: auto;
+}
+
+#loading span, .loading-logo span {
+    font-size: 1.2rem;
+    color: #ff6fff;
+}
+
+/* Main File Container */
+#file-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    width: 100%;
+    max-width: 1000px;
+    margin-top: 20px;
+}
+
+/* Cards */
+.card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    background: #1a1a2e;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    width: 150px;
+    min-height: 150px;
+    transition: transform 0.2s, background-color 0.2s;
+    overflow: hidden;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    background: #252545;
+}
+
+/* Folder and file emoji icons */
+.folder-icon, 
+.file-icon {
+    font-size: 4rem;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100px;
+    width: 100%;
+}
+
+/* Image preview styling */
+.image-preview {
+    width: 100%;
+    max-height: 100px;
+    object-fit: cover;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    transition: opacity 0.3s ease;
+}
+
+.image-placeholder {
+    font-size: 4rem;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100px;
+    width: 100%;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+
+/* File name container with heart icon */
+.file-name {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    justify-content: center;
+    margin-top: 8px;
+    word-wrap: break-word;
+    width: 100%;
+}
+
+.heart-icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+.file-name span {
+    font-size: 0.9rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Back Button Card */
+.card.back {
+    background: #33334d;
+}
+
+.card.back:hover {
+    background: #4a4a6a;
+}
+
+/* Swipe Animations */
+.swipe-in {
+    opacity: 0;
+    transform: translateX(50px);
+    animation: swipeIn 0.4s ease-out forwards;
+}
+
+@keyframes swipeIn {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.swipe-out {
+    opacity: 1;
+    transform: translateX(0);
+    animation: swipeOut 0.3s ease-in forwards;
+}
+
+@keyframes swipeOut {
+    to {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+}
+
+/* Admin and Login Containers */
+.admin-container,
+.login-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.login-container {
+    max-width: 400px;
+    margin: 100px auto;
+}
+
+/* Form Containers */
+.form-container,
+.login-form {
+    background: #1a1a2e;
+    padding: 30px;
+    border-radius: 12px;
+    border: 2px solid #ff6fff;
+    margin-top: 20px;
+}
+
+.login-form {
+    padding: 40px;
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #ff6fff;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ff6fff;
+    border-radius: 8px;
+    background: #0e0e1a;
+    color: white;
+    font-size: 16px;
+    font-family: "Comic Code", monospace;
+}
+
+.form-group input[type="file"] {
+    padding: 8px;
+}
+
+/* Buttons */
+.admin-button,
+.login-button {
+    background: #ff6fff;
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    margin-top: 10px;
+    font-family: "Comic Code", monospace;
+    transition: background-color 0.2s;
+}
+
+.admin-button:hover,
+.login-button:hover {
+    background: #e55fe5;
+}
+
+.login-button:disabled,
+.admin-button:disabled {
+    background: #666;
+    cursor: not-allowed;
+}
+
+.login-button {
+    margin-top: 20px;
+}
+
+/* Special visibility toggles */
+.new-folder {
+    display: none;
+    margin-top: 10px;
+}
+
+/* Text styles */
+.small-text {
+    font-size: 14px;
+    color: #aaa;
+    margin-top: 5px;
+}
+
+/* Result messages */
+#result {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.success {
+    background: #2a5a2a;
+    color: #4CAF50;
+    border: 1px solid #4CAF50;
+}
+
+.error,
+.error-message {
+    background: #5a2a2a;
+    color: #f44336;
+    border: 1px solid #f44336;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Titles */
+.admin-title,
+.login-title {
+    text-align: center;
+    color: #ff6fff;
+    margin-bottom: 20px;
+}
+
+.login-title {
+    margin-bottom: 30px;
+}
+
+/* Navigation Links */
+.nav-links {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.nav-link,
+.back-link {
+    color: #ff6fff;
+    text-decoration: none;
+    font-size: 1.1rem;
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+
+.nav-link:hover,
+.back-link:hover {
+    background-color: rgba(255, 111, 255, 0.1);
+    text-decoration: none;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.logout-link {
+    background: #ff4444;
+    color: white;
+}
+
+.logout-link:hover {
+    background: #cc3333;
+}
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+/* Turnstile container */
+.turnstile-container {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #0e0e1a;
+}
+::-webkit-scrollbar-thumb {
+    background: #ff6fff;
+    border-radius: 4px;
+}
+
+/* Responsive layout */
+@media (max-width: 600px) {
+    .card {
+        width: 120px;
+        min-height: 120px;
+    }
+    
+    .folder-icon, 
+    .file-icon {
+        font-size: 3rem;
+        height: 80px;
+    }
+    
+    .image-preview {
+        max-height: 80px;
+    }
+    
+    .image-placeholder {
+        font-size: 3rem;
+        height: 80px;
+    }
+    
+    .header-container {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .admin-container,
+    .login-container {
+        margin: 20px auto;
+        padding: 15px;
+    }
+    
+    .form-container,
+    .login-form {
+        padding: 20px;
+    }
+    
+    .login-form {
+        padding: 30px;
+    }
+}

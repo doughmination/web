@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta settings -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yuri Lover Files</title>
+
+    <!-- Web app settings -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Yuri Lover Files" />
+    <link rel="apple-touch-icon" href="https://www.yuri-lover.win/cdn/pfp/yuri.png" />
+
+    <!-- Open Graph -->
+    <meta property="og:site_name" content="Butterfly Network">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.yuri-lover.win/">
+    <meta property="og:title" content="Yuri Lover Files">
+    <meta property="og:description" content="My collection of media and files!">
+    <meta property="og:image" content="https://www.yuri-lover.win/cdn/pfp/yuri.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary">
+    <meta property="twitter:url" content="https://www.yuri-lover.win/">
+    <meta property="twitter:title" content="Yuri Lover Files">
+    <meta property="twitter:description" content="My collection of media and files!">
+    <meta property="twitter:image" content="https://www.yuri-lover.win/cdn/pfp/yuri.png">
+
+    <!-- Theme color -->
+    <meta name="theme-color" content="#ff6fff" />
+
+    <!-- Favicon and CSS -->
+    <link rel="icon" type="image/png" href="https://www.yuri-lover.win/cdn/pfp/yuri.png">
+    <link rel="stylesheet" href="/app.css">
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+</head>
+<body class="login-page">
+    <div class="login-container">
+        <a href="/" class="back-link">← Back to Files</a>
+        
+        <div class="login-form">
+            <div class="title-container login-title">
+                <img src="https://www.yuri-lover.win/cdn/animated-emojis/cl_heart.gif" alt="Animated logo" class="title-logo">
+                <h1>Admin Login</h1>
+            </div>
+            
+            {% if error %}
+            <div class="error-message">{{ error }}</div>
+            {% endif %}
+            
+            <form method="POST" action="/yuri/admin" id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" name="username" id="username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" name="password" id="password" required>
+                </div>
+                
+                {% if turnstile_site_key %}
+                <div class="turnstile-container">
+                    <div class="cf-turnstile" data-sitekey="{{ turnstile_site_key }}" data-callback="onTurnstileCallback"></div>
+                </div>
+                {% endif %}
+                
+                <button type="submit" class="login-button" id="submitButton" {% if turnstile_site_key %}disabled{% endif %}>
+                    Login to Admin Panel
+                </button>
+            </form>
+        </div>
+    </div>
+    <script src="/app.js"></script>
+</body>
+</html>
