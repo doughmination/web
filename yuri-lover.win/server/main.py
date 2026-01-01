@@ -17,15 +17,18 @@ PASSWORD = os.getenv("CDN_PASSWORD", "password")
 TURNSTILE_SECRET = os.getenv("TURNSTILE_SECRET_KEY", "")
 TURNSTILE_SITE_KEY = os.getenv("TURNSTILE_SITE_KEY", "")
 
-# Base directories
-BASE_DIR = Path(__file__).resolve().parent.parent
+# Base directories - use current working directory when run as module
+BASE_DIR = Path.cwd()
 CDN_DIR = BASE_DIR / "cdn"
+WEB_DIR = BASE_DIR / "web"
+PAGES_DIR = WEB_DIR / "pages"
+STATIC_DIR = WEB_DIR / "static"
 
 # Create CDN directory if it doesn't exist
 CDN_DIR.mkdir(exist_ok=True)
 
 app = FastAPI()
-templates = Jinja2Templates(directory=ROOT_DIR)
+templates = Jinja2Templates(directory=str(PAGES_DIR))
 
 # Simple in-memory session storage (use Redis or database in production)
 sessions = {}
@@ -158,7 +161,7 @@ async def admin_login_post(request: Request):
 async def upload_page(request: Request):
     """Show upload page (requires authentication)"""
     user = require_auth(request)  # This will raise HTTPException if not authenticated
-    return FileResponse(ROOT_DIR / "admin.html")
+    return FileResponse(PAGES_DIR / "admin.html")
 
 @app.get("/yuri/logout")
 async def logout(request: Request):
@@ -383,6 +386,23 @@ async def serve_cdn_file_alt(file_path: str):
 # Static File Serving (Frontend)
 # --------------------
 
+# Serve static CSS and JS files
+@app.get("/app.css")
+async def serve_app_css():
+    """Serve app.css"""
+    css_path = STATIC_DIR / "css" / "app.css"
+    if not css_path.exists():
+        raise HTTPException(status_code=404, detail="CSS file not found")
+    return FileResponse(css_path, media_type="text/css")
+
+@app.get("/app.js")
+async def serve_app_js():
+    """Serve app.js"""
+    js_path = STATIC_DIR / "js" / "app.js"
+    if not js_path.exists():
+        raise HTTPException(status_code=404, detail="JS file not found")
+    return FileResponse(js_path, media_type="application/javascript")
+
 # Serve index.html for all non-API, non-CDN routes
 @app.get("/{full_path:path}")
 async def catch_all(full_path: str):
@@ -394,14 +414,26 @@ async def catch_all(full_path: str):
     # Check if requesting a static asset (CSS, JS, etc.)
     static_extensions = {'.css', '.js', '.png', '.jpg', '.jpeg', '.gif', '.ico', '.svg', '.woff', '.woff2', '.ttf'}
     if any(full_path.endswith(ext) for ext in static_extensions):
-        file_path = BASE_DIR / "web" / full_path
+        file_path = WEB_DIR / full_path
         if file_path.exists() and file_path.is_file():
             return FileResponse(file_path)
         raise HTTPException(status_code=404, detail="Not Found")
     
     # For all other routes (including folder paths), serve index.html
-    index_path = BASE_DIR / "web" / "index.html"
+    index_path = PAGES_DIR / "index.html"
     if not index_path.exists():
         raise HTTPException(status_code=404, detail="index.html not found")
     
     return FileResponse(index_path)
+
+# --------------------
+# Run the server
+# --------------------
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(
+        "server.main:app",
+        host="0.0.0.0",
+        port=8080,
+        reload=True  # Enable auto-reload during development
+    )
