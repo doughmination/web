@@ -18,8 +18,7 @@ TURNSTILE_SECRET = os.getenv("TURNSTILE_SECRET_KEY", "")
 TURNSTILE_SITE_KEY = os.getenv("TURNSTILE_SITE_KEY", "")
 
 # Base directories
-BASE_DIR = Path(__file__).parent
-ROOT_DIR = BASE_DIR / "root"
+BASE_DIR = Path(__file__).resolve().parent.parent
 CDN_DIR = BASE_DIR / "cdn"
 
 # Create CDN directory if it doesn't exist
@@ -395,13 +394,13 @@ async def catch_all(full_path: str):
     # Check if requesting a static asset (CSS, JS, etc.)
     static_extensions = {'.css', '.js', '.png', '.jpg', '.jpeg', '.gif', '.ico', '.svg', '.woff', '.woff2', '.ttf'}
     if any(full_path.endswith(ext) for ext in static_extensions):
-        file_path = ROOT_DIR / full_path
+        file_path = BASE_DIR / "web" / full_path
         if file_path.exists() and file_path.is_file():
             return FileResponse(file_path)
         raise HTTPException(status_code=404, detail="Not Found")
     
     # For all other routes (including folder paths), serve index.html
-    index_path = ROOT_DIR / "index.html"
+    index_path = BASE_DIR / "web" / "index.html"
     if not index_path.exists():
         raise HTTPException(status_code=404, detail="index.html not found")
     
