@@ -9,6 +9,3 @@ python-multipart==0.0.21
 aiofiles==25.1.0
 websockets==16.0
 Pillow==12.1.0
-ecdsa==0
-rsa==0
-pyasn1==0
