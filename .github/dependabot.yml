@@ -1,13 +1,11 @@
-# Most updated version of Dependabot
 version: 2
 updates:
 
-# ================================
-# GitHub Actions
-# ================================
-
+  # ================================
+  # GitHub Actions
+  # ================================
   - package-ecosystem: "github-actions"
-    directory: "/.github/workflows"
+    directory: "/"
     schedule:
       interval: "daily"
       time: "08:00"
@@ -17,12 +15,11 @@ updates:
       - "Dependabot"
     open-pull-requests-limit: 99
 
-# ================================
-# Yuri Lover Files Website
-# ================================
-
+  # ================================
+  # Yuri Lover Files Website
+  # ================================
   - package-ecosystem: "pip"
-    directory: "yuri-lover.win"
+    directory: "/yuri-lover.win"
     schedule:
       interval: "daily"
       time: "09:45"
@@ -31,4 +28,34 @@ updates:
     labels:
       - "Dependabot"
       - "Python"
+    open-pull-requests-limit: 99
+
+  # ================================
+  # Doughmination System Backend
+  # ================================
+  - package-ecosystem: "pip"
+    directory: "/doughmination.win/backend"
+    schedule:
+      interval: "daily"
+      time: "09:45"
+    assignees:
+      - "EstrogenHRT"
+    labels:
+      - "Dependabot"
+      - "Python"
+    open-pull-requests-limit: 99
+
+  # ================================
+  # Doughmination System Frontend (React)
+  # ================================
+  - package-ecosystem: "npm"
+    directory: "/doughmination.win/frontend"
+    schedule:
+      interval: "daily"
+      time: "09:45"
+    assignees:
+      - "EstrogenHRT"
+    labels:
+      - "Dependabot"
+      - "JavaScript"
     open-pull-requests-limit: 99
