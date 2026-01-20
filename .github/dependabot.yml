@@ -18,22 +18,6 @@ updates:
     open-pull-requests-limit: 99
 
 # ================================
-# Trans4Trans Letters
-# ================================
-
-  - package-ecosystem: "pip"
-    directory: "trans4trans.win/backend"
-    schedule:
-      interval: "daily"
-      time: "09:30"
-    assignees:
-      - "EstrogenHRT"
-    labels:
-      - "Dependabot"
-      - "Python"
-    open-pull-requests-limit: 99
-
-# ================================
 # Yuri Lover Files Website
 # ================================
 
