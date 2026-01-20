@@ -7,5 +7,5 @@ passlib[bcrypt]==1.7.4
 python-jose[cryptography]==3.5.0
 python-multipart==0.0.21
 aiofiles==24.1.0
-websockets==15.0.1
+websockets==16.0
 Pillow==11.0.0
