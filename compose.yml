@@ -4,7 +4,7 @@ services:
     container_name: discord
     ports:
       - "8002:3000"
-    env_file: .env
+    env_file: .env.discord
     restart: unless-stopped
   dough-back:
     image: clovetwilight3/doughmination-backend:latest
