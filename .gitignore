@@ -37,5 +37,5 @@ coverage/
 *.tmp
 
 yuri-lover.win/videos/*
-
+.env.discord
 dough-data/
