@@ -7,3 +7,4 @@ subsystems.json
 member_tags.json
 avatars/
 dough-data/
+.env.keys

@@ -13,9 +13,6 @@ from app.core.startup import startup_tasks
 from app.api import static, system, members, fronting, auth, users, metrics, admin, member_status, bot
 from app.core.config import get_cors_origins
 
-# Load environment variables
-load_dotenv()
-
 # Create FastAPI app
 app = FastAPI(
     title="Doughmination System API",

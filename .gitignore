@@ -1,13 +1,13 @@
 # .gitignore
 # Node
 node_modules/
-.env
 npm-debug.log*
 
 # Python
 __pycache__/
 *.pyc
 .env
+.env.keys
 
 # VS Code
 .vscode/

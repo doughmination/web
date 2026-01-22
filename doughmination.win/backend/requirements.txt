@@ -1,7 +1,7 @@
 fastapi==0.128.0
 uvicorn[standard]==0.40.0
 httpx==0.28.1
-python-dotenv==1.2.1
+python-dotenvx==0.3.0
 bcrypt==5.0.0
 passlib[bcrypt]==1.7.4
 python-jose[cryptography]==3.5.0

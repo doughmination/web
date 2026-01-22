@@ -5,13 +5,11 @@ from fastapi import FastAPI, Depends, UploadFile, HTTPException, Query, Form, Re
 from fastapi.responses import HTMLResponse, FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from dotenv import load_dotenv
 import httpx
 import secrets
 from datetime import datetime, timedelta
 
 # Load credentials from .env
-load_dotenv()
 USERNAME = os.getenv("CDN_USERNAME", "admin")
 PASSWORD = os.getenv("CDN_PASSWORD", "password")
 TURNSTILE_SECRET = os.getenv("TURNSTILE_SECRET_KEY", "")

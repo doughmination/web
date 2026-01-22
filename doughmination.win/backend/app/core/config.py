@@ -6,9 +6,6 @@ Centralizes all environment variables and settings
 import os
 from pathlib import Path
 from typing import List
-from dotenv import load_dotenv
-
-load_dotenv()
 
 # Directories
 BASE_DIR = Path(__file__).resolve().parent.parent.parent

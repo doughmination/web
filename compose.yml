@@ -11,18 +11,19 @@ services:
     container_name: dough-back
     ports:
       - "8000:8000"
-    env_file:
-      - .env
     volumes:
       - "./dough-data:/app/dough-data"
+      - "./.env:/app/.env:ro"
+      - "./.env.keys:/app/.envkeys:ro"
     restart: unless-stopped
   dough-front:
     image: clovetwilight3/doughmination-frontend:latest
     container_name: dough-front
     ports:
       - "8001:8001"
-    env_file:
-      - .env
+    volumes:
+      - "./.env:/app/.env:ro"
+      - "./.env.keys:/app/.envkeys:ro"
     depends_on:
       - dough-back
   yuri:
@@ -35,8 +36,10 @@ services:
     env_file:
       - .env
     volumes:
-      - ./yuri-lover.win/root:/app/root
-      - ./yuri-lover.win/cdn:/app/cdn
+      - "./yuri-lover.win/root:/app/root"
+      - "./yuri-lover.win/cdn:/app/cdn"
+      - "./.env:/app/.env:ro"
+      - "./.env.keys:/app/.envkeys:ro"
     restart: unless-stopped
 volumes:
   backend_data:
