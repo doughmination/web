@@ -7,7 +7,9 @@ services:
     env_file: .env.discord
     restart: unless-stopped
   dough-back:
-    image: clovetwilight3/doughmination-backend:latest
+    build:
+      context: ./doughmination.win/backend
+      dockerfile: Dockerfile
     container_name: dough-back
     ports:
       - "8000:8000"
@@ -17,7 +19,9 @@ services:
       - "./.env.keys:/app/.envkeys:ro"
     restart: unless-stopped
   dough-front:
-    image: clovetwilight3/doughmination-frontend:latest
+    build:
+      context: ./doughmination.win/frontend
+      dockerfile: Dockerfile
     container_name: dough-front
     ports:
       - "8001:8001"
