@@ -16,7 +16,7 @@ services:
     volumes:
       - "./dough-data:/app/dough-data"
       - "./.env:/app/.env:ro"
-      - "./.env.keys:/app/.envkeys:ro"
+      - "./.env.keys:/app/.env.keys:ro"
     restart: unless-stopped
   dough-front:
     build:
@@ -27,7 +27,7 @@ services:
       - "8001:8001"
     volumes:
       - "./.env:/app/.env:ro"
-      - "./.env.keys:/app/.envkeys:ro"
+      - "./.env.keys:/app/.env.keys:ro"
     depends_on:
       - dough-back
   yuri:
