@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM python:3.14-slim
 
 WORKDIR /app
 
@@ -14,4 +14,4 @@ COPY . .
 EXPOSE 8080
 
 # Run the FastAPI server
-CMD ["python", "-m", "server.main"]
+CMD ["dotenvx", "run", "--", "python", "-m", "server.main"]
