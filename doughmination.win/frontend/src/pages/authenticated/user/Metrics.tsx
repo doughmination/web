@@ -350,11 +350,11 @@ const Metrics: React.FC = () => {
 
                       {/* Avatar */}
                       <img
-                        src={member.avatar_url || 'https://yuri-lover.win/cdn/pfp/fallback_avatar.png'}
+                        src={member.avatar_url || 'https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png'}
                         alt={member.display_name || member.name}
                         className="w-10 h-10 rounded-full object-cover"
                         onError={(e) => {
-                          (e.target as HTMLImageElement).src = 'https://yuri-lover.win/cdn/pfp/fallback_avatar.png';
+                          (e.target as HTMLImageElement).src = 'https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png';
                         }}
                       />
 

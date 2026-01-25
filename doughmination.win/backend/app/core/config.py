@@ -46,7 +46,7 @@ MAX_AVATAR_SIZE = 2 * 1024 * 1024  # 2MB
 ALLOWED_AVATAR_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif']
 
 # Default avatar
-DEFAULT_AVATAR = "https://yuri-lover.win/cdn/pfp/fallback_avatar.png"
+DEFAULT_AVATAR = "https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png"
 
 # Base URL
 BASE_URL = os.getenv("BASE_URL", "https://doughmination.win").rstrip('/')

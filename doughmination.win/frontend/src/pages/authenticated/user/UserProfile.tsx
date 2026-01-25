@@ -85,7 +85,7 @@ export default function UserProfile() {
     console.error('Failed to load avatar:', userData?.avatar_url);
     console.error('Image error event:', e);
     setImageError(true);
-    (e.target as HTMLImageElement).src = 'https://yuri-lover.win/cdn/pfp/fallback_avatar.png';
+    (e.target as HTMLImageElement).src = 'https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png';
   };
 
   const handleImageLoad = () => {

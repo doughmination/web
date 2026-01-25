@@ -270,7 +270,7 @@ async def serve_fronting_page(request: Request):
         primary_name = escape_html(primary.get("display_name") or primary.get("name", "Unknown"))
         primary_pronouns = escape_html(primary.get("pronouns") or "they/them")
         primary_color = normalize_hex(primary.get("color"))
-        primary_avatar = primary.get("avatar_url") or "https://yuri-lover.win/cdn/pfp/fallback_avatar.png"
+        primary_avatar = primary.get("avatar_url") or "https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png"
         primary_description = escape_html(
             primary.get("description") or "Currently fronting in the Doughmination System®"
         )
@@ -290,7 +290,7 @@ async def serve_fronting_page(request: Request):
         members_structured = []
         for member in members:
             member_name = escape_html(member.get("display_name") or member.get("name", "Unknown"))
-            member_avatar = member.get("avatar_url") or "https://yuri-lover.win/cdn/pfp/fallback_avatar.png"
+            member_avatar = member.get("avatar_url") or "https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png"
             member_url_name = member.get("name", "").replace(" ", "%20")
             
             members_structured.append({
@@ -368,7 +368,7 @@ async def serve_member_page(member_name: str, request: Request):
         description = escape_html(
             member.get("description") or f"Member of the Doughmination System®"
         )
-        avatar_url = member.get("avatar_url") or "https://yuri-lover.win/cdn/pfp/fallback_avatar.png"
+        avatar_url = member.get("avatar_url") or "https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png"
         member_id = member.get("id", "")
         
         # Build keywords

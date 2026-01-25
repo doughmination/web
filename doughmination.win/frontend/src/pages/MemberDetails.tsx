@@ -146,7 +146,7 @@ export default function MemberDetails({ members = [], defaultAvatar }: MemberDet
                 </div>
               )}
               <img 
-                src={member.avatar_url || defaultAvatar || 'https://yuri-lover.win/cdn/pfp/fallback_avatar.png'} 
+                src={member.avatar_url || defaultAvatar || 'https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png'} 
                 alt={member.display_name || member.name}
                 className="w-32 h-32 rounded-full mx-auto object-cover border-[4px] transition-all"
                 style={{
@@ -154,7 +154,7 @@ export default function MemberDetails({ members = [], defaultAvatar }: MemberDet
                   boxShadow: `0 0 20px ${borderColor}40`
                 }}
                 onError={(e) => {
-                  (e.target as HTMLImageElement).src = defaultAvatar || 'https://yuri-lover.win/cdn/pfp/fallback_avatar.png';
+                  (e.target as HTMLImageElement).src = defaultAvatar || 'https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png';
                 }}
               />
             </div>

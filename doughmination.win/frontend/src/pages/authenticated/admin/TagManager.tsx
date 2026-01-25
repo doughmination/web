@@ -197,11 +197,11 @@ const TagManager: React.FC = () => {
                     <SelectItem key={member.id} value={member.name} className="font-comic">
                       <div className="flex items-center gap-2">
                         <img
-                          src={member.avatar_url || 'https://yuri-lover.win/cdn/pfp/fallback_avatar.png'}
+                          src={member.avatar_url || 'https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png'}
                           alt={member.display_name || member.name}
                           className="w-6 h-6 rounded-full object-cover"
                           onError={(e) => {
-                            (e.target as HTMLImageElement).src = 'https://yuri-lover.win/cdn/pfp/fallback_avatar.png';
+                            (e.target as HTMLImageElement).src = 'https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png';
                           }}
                         />
                         <span>{member.display_name || member.name}</span>
@@ -315,11 +315,11 @@ const TagManager: React.FC = () => {
                     className="flex items-start gap-3 p-3 bg-muted rounded-lg border border-border hover:border-primary transition-colors cursor-pointer"
                   >
                     <img
-                      src={member.avatar_url || 'https://yuri-lover.win/cdn/pfp/fallback_avatar.png'}
+                      src={member.avatar_url || 'https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png'}
                       alt={member.display_name || member.name}
                       className="w-12 h-12 rounded-full object-cover flex-shrink-0"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = 'https://yuri-lover.win/cdn/pfp/fallback_avatar.png';
+                        (e.target as HTMLImageElement).src = 'https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png';
                       }}
                     />
 

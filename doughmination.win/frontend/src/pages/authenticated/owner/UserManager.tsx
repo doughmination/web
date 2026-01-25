@@ -329,11 +329,11 @@ const UserManager: React.FC = () => {
                     >
                       {/* Avatar */}
                       <img
-                        src={user.avatar_url || 'https://yuri-lover.win/cdn/pfp/fallback_avatar.png'}
+                        src={user.avatar_url || 'https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png'}
                         alt={user.display_name || user.username}
                         className="w-12 h-12 rounded-full object-cover flex-shrink-0"
                         onError={(e) => {
-                          (e.target as HTMLImageElement).src = 'https://yuri-lover.win/cdn/pfp/fallback_avatar.png';
+                          (e.target as HTMLImageElement).src = 'https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png';
                         }}
                       />
 
