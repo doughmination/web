@@ -1,0 +1,430 @@
+/* ============================================================================
+   FONT IMPORTS - Comic Code Font Declarations
+   ============================================================================ */
+@font-face {
+  font-family: 'Comic Code';
+  src: url('https://doughmination.win/fonts/ComicCode-Regular_2022-05-24-151938_hsmz.woff2') format('woff2'),
+    url('https://doughmination.win/fonts/ComicCode-Regular_2022-05-24-151938_hsmz.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Comic Code';
+  src: url('https://doughmination.win/fonts/ComicCode-Bold_2022-05-24-152309_zqkm.woff2') format('woff2'),
+    url('https://doughmination.win/fonts/ComicCode-Bold_2022-05-24-152309_zqkm.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* ============================================================================
+   DARK THEME VARIABLES - Charcoal Black/Neon Green
+   ============================================================================ */
+:root {
+  --background: hsl(0, 0%, 8%);
+  --foreground: hsl(120, 100%, 50%);
+  --card: hsl(0, 0%, 12%);
+  --card-foreground: hsl(120, 100%, 50%);
+  --primary: hsl(120, 100%, 50%);
+  --primary-foreground: hsl(0, 0%, 8%);
+  --secondary: hsl(0, 0%, 15%);
+  --secondary-foreground: hsl(120, 100%, 50%);
+  --muted: hsl(0, 0%, 15%);
+  --muted-foreground: hsl(120, 50%, 75%);
+  --accent: hsl(120, 100%, 60%);
+  --accent-foreground: hsl(0, 0%, 8%);
+  --border: hsl(0, 0%, 20%);
+  --ring: hsl(120, 100%, 50%);
+}
+
+/* ============================================================================
+   GLOBAL RESET & BASE STYLES  
+   ============================================================================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Comic Code', sans-serif;
+  background: var(--background);
+  color: var(--foreground);
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ============================================================================
+   BACKGROUND IMAGE
+   ============================================================================ */
+.background-image {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('https://raw.githubusercontent.com/doughmination/Doughmination/main/bg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.15;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* ============================================================================
+   MAIN CONTAINER
+   ============================================================================ */
+.container {
+  max-width: 1200px;
+  width: 100%;
+  padding: 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================================================
+   HEADER
+   ============================================================================ */
+header {
+  text-align: center;
+  margin-bottom: 4rem;
+  animation: fadeInDown 0.8s ease-out;
+}
+
+.logo {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 1.5rem;
+  filter: drop-shadow(0 0 20px var(--primary));
+  animation: pulse 2s ease-in-out infinite;
+}
+
+h1 {
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: var(--foreground);
+  text-shadow: 0 0 30px var(--primary), 0 0 60px var(--primary);
+  margin-bottom: 0.5rem;
+}
+
+/* ============================================================================
+   LINK GRID
+   ============================================================================ */
+.link-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+  animation: fadeInUp 0.8s ease-out 0.2s backwards;
+}
+
+.link-card {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 1rem;
+  padding: 2rem;
+  text-decoration: none;
+  color: var(--card-foreground);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.link-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.link-card:hover::before {
+  left: 100%;
+}
+
+.link-card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 0 30px rgba(0, 255, 0, 0.3), 0 0 60px rgba(0, 255, 0, 0.15);
+  transform: translateY(-5px);
+}
+
+.link-card:active {
+  transform: translateY(-2px);
+}
+
+.link-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  filter: grayscale(0.3);
+}
+
+.link-card h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: var(--foreground);
+}
+
+.link-card p {
+  font-size: 1rem;
+  color: var(--muted-foreground);
+  line-height: 1.5;
+}
+
+/* ============================================================================
+   DISABLED CARD STATE
+   ============================================================================ */
+.link-card.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+  position: relative;
+}
+
+.link-card.disabled::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(0, 0, 0, 0.3) 10px,
+    rgba(0, 0, 0, 0.3) 20px
+  );
+  pointer-events: none;
+}
+
+.dev-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: var(--secondary);
+  color: var(--muted-foreground);
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid var(--border);
+}
+
+/* ============================================================================
+   ADD LINKS SECTION
+   ============================================================================ */
+.add-links-section {
+  text-align: center;
+  margin-bottom: 3rem;
+  animation: fadeIn 0.8s ease-out 0.4s backwards;
+}
+
+.hint-text {
+  color: var(--muted-foreground);
+  font-size: 1rem;
+  font-style: italic;
+}
+
+/* ============================================================================
+   FOOTER
+   ============================================================================ */
+footer {
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+  animation: fadeIn 0.8s ease-out 0.6s backwards;
+}
+
+.source-link {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.source-link a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--foreground);
+  text-decoration: none;
+  font-size: 1.125rem;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border: 2px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--card);
+  transition: all 0.3s ease;
+}
+
+.source-link a:hover {
+  border-color: var(--primary);
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+  transform: translateY(-2px);
+}
+
+.github-icon {
+  width: 24px;
+  height: 24px;
+  filter: brightness(0) invert(1);
+}
+
+.copyright {
+  text-align: center;
+}
+
+.copyright p {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+}
+
+/* ============================================================================
+   SCROLLBAR STYLING - DARK THEME
+   ============================================================================ */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(120, 100%, 35%);
+  border-radius: 6px;
+  border: 2px solid var(--background);
+  transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(120, 100%, 45%);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: var(--primary);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(120, 100%, 35%) var(--background);
+}
+
+/* ============================================================================
+   ANIMATIONS
+   ============================================================================ */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 20px var(--primary));
+  }
+  50% {
+    filter: drop-shadow(0 0 40px var(--primary)) drop-shadow(0 0 60px var(--primary));
+  }
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+@media (max-width: 768px) {
+  .container {
+    padding: 1.5rem;
+  }
+
+  header {
+    margin-bottom: 2.5rem;
+  }
+
+  .logo {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+  }
+
+  .link-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .link-card {
+    padding: 1.5rem;
+  }
+
+  .link-card h2 {
+    font-size: 1.5rem;
+  }
+
+  .link-icon {
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 2rem;
+  }
+
+  .logo {
+    width: 60px;
+    height: 60px;
+  }
+
+  .link-card {
+    padding: 1.25rem;
+  }
+
+  .link-card h2 {
+    font-size: 1.25rem;
+  }
+}
