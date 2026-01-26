@@ -428,3 +428,7 @@ footer {
     font-size: 1.25rem;
   }
 }
+
+a {
+  color: var(--secondary-);
+}
