@@ -5,7 +5,7 @@ python-dotenvx==0.3.0
 bcrypt==5.0.0
 passlib[bcrypt]==1.7.4
 python-jose[cryptography]==3.5.0
-python-multipart==0.0.21
+python-multipart==0.0.22
 aiofiles==25.1.0
 websockets==16.0
 Pillow==12.1.0
