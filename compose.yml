@@ -30,21 +30,21 @@ services:
       - "./.env.keys:/app/.env.keys:ro"
     depends_on:
       - dough-back
-  yuri:
-    build:
-      context: ./yuri-lover.win
-      dockerfile: Dockerfile
-    container_name: yuri-cdn
-    ports:
-      - "8080:8080"
-    env_file:
-      - .env
-    volumes:
-      - "./yuri-lover.win/root:/app/root"
-      - "./yuri-lover.win/cdn:/app/cdn"
-      - "./.env:/app/.env:ro"
-      - "./.env.keys:/app/.envkeys:ro"
-    restart: unless-stopped
+#  yuri:
+#    build:
+#      context: ./yuri-lover.win
+#      dockerfile: Dockerfile
+#    container_name: yuri-cdn
+#    ports:
+#      - "8080:8080"
+#    env_file:
+#      - .env
+#    volumes:
+#      - "./yuri-lover.win/root:/app/root"
+#      - "./yuri-lover.win/cdn:/app/cdn"
+#      - "./.env:/app/.env:ro"
+#      - "./.env.keys:/app/.envkeys:ro"
+#    restart: unless-stopped
 volumes:
   backend_data:
   backend_avatars:
