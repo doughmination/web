@@ -1,0 +1,3 @@
+[submodule "discord"]
+	path = discord
+	url = https://github.com/ariarees/basic-landing-page.git
