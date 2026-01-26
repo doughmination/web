@@ -147,12 +147,12 @@ const ComingSoon: React.FC<ComingSoonProps> = ({
               <p className="text-sm text-muted-foreground font-comic">
                 Want to stay updated?{' '}
                 <a 
-                  href="https://www.butterfly-network.win" 
+                  href="https://doughmination.win" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-primary hover:underline font-semibold"
                 >
-                  Visit the Butterfly Network
+                  Visit the Homepage
                 </a>
               </p>
             </div>

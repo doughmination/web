@@ -12,8 +12,7 @@ console.log(`
 %cWelcome to the Doughmination System®!
 
 %c🎨 Looking for easter eggs? You never know where they are! :D
-%c💼 Interested in the code? Check out our GitHub: https://github.com/CloveTwilight3/docker
-%c🦋 Part of the Butterfly Network: https://www.butterfly-network.win
+%c💼 Interested in the code? Check out our GitHub: https://github.com/doughmination/web
 
 `, 
 'color: #FF69B4; font-size: 18px; font-weight: bold;',

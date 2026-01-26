@@ -480,12 +480,12 @@ export default function Index() {
             <ThemeToggle />
             <Button variant="outline" size="sm" asChild>
               <a
-                href="https://www.butterfly-network.win"
+                href="https://doughmination.win"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-comic"
               >
-                Butterfly Network
+                Homepage
               </a>
             </Button>
             {loggedIn ? (
@@ -559,13 +559,13 @@ export default function Index() {
                 )}
                 <li>
                   <a
-                    href="https://www.butterfly-network.win"
+                    href="https://doughmination.win"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="block w-full px-4 py-3 rounded-lg text-sm text-center transition-all font-comic bg-primary text-primary-foreground hover:bg-primary/80"
                     onClick={toggleMenu}
                   >
-                    Butterfly Network
+                    Homepage
                   </a>
                 </li>
                 {loggedIn ? (

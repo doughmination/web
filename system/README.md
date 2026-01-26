@@ -207,8 +207,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📝 License
 
-This project is protected by The Butterfly Network Open License (Version 1.0). Doughmination System® is a registered trademark in the United Kingdom (UK00004263144).
-
+This project is protected by ESAL-1.3
 ---
 
 **Built with ❤️ by the Doughmination System®**
