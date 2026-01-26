@@ -40,9 +40,10 @@ if (-not $isAdmin) {
     
     try {
         # Start a new elevated PowerShell process and wait for it to complete
-        $process = Start-Process powershell.exe -Verb RunAs -ArgumentList "-NoExit -ExecutionPolicy Bypass -File `"$scriptPath`"" -PassThru
+        $process = Start-Process powershell.exe -Verb RunAs -ArgumentList "-ExecutionPolicy Bypass -File `"$scriptPath`"" -PassThru
         
         if ($process) {
+            Write-Host "Waiting for elevated process to complete..." -ForegroundColor Gray
             $process.WaitForExit()
             Write-Host ""
             Write-Host "Elevated process completed." -ForegroundColor Green
@@ -50,21 +51,19 @@ if (-not $isAdmin) {
         
         # Clean up temp file if we created one
         if ($cleanupTemp -and (Test-Path $scriptPath)) {
-            Start-Sleep -Seconds 2
+            Start-Sleep -Seconds 1
             Remove-Item $scriptPath -Force -ErrorAction SilentlyContinue
         }
         
-        Write-Host "Press any key to exit..." -ForegroundColor Gray
-        $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+        Write-Host "You can continue using this terminal." -ForegroundColor Cyan
+        Write-Host ""
     } catch {
         Write-Host ""
         Write-Host "ERROR: Failed to start elevated process: $_" -ForegroundColor Red
-        Write-Host "Press any key to exit..." -ForegroundColor Gray
-        $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
     }
     
-    # Exit the current non-elevated process
-    exit
+    # Return to prompt instead of exiting
+    return
 }
 
 Write-Host "========================================" -ForegroundColor Cyan
