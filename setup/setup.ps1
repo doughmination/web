@@ -241,15 +241,39 @@ if ($customizeChoice -eq 'Y') {
         
         # Small taskbar icons (Windows 11)
         Write-Host ""
-        $smallIconsChoice = Get-YesNoChoice -Prompt "Use small taskbar icons?"
-        if ($smallIconsChoice -eq 'Y') {
-            Write-Host "Enabling small taskbar icons..." -ForegroundColor Gray
-            Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarSi" -Value 0 -ErrorAction SilentlyContinue
-            Write-Host "Small taskbar icons enabled!" -ForegroundColor Green
-        } else {
-            Write-Host "Using normal taskbar icons..." -ForegroundColor Gray
-            Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarSi" -Value 1 -ErrorAction SilentlyContinue
-            Write-Host "Normal taskbar icons set!" -ForegroundColor Green
+        Write-Host "Show smaller taskbar buttons:" -ForegroundColor Cyan
+        Write-Host "1. Always (Default)"
+        Write-Host "2. When taskbar is full"
+        Write-Host "3. Never"
+        Write-Host "4. No change"
+        $smallIconsChoice = Read-Host "Choose taskbar button size (1/2/3/4)"
+        
+        if ([string]::IsNullOrWhiteSpace($smallIconsChoice)) {
+            $smallIconsChoice = "1"
+        }
+        
+        switch ($smallIconsChoice) {
+            '1' {
+                Write-Host "Setting taskbar buttons to always be small..." -ForegroundColor Gray
+                Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarSi" -Value 0 -Type DWord -Force
+                Write-Host "Small taskbar buttons set to: Always" -ForegroundColor Green
+            }
+            '2' {
+                Write-Host "Setting taskbar buttons to be small when full..." -ForegroundColor Gray
+                Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarSi" -Value 2 -Type DWord -Force
+                Write-Host "Small taskbar buttons set to: When taskbar is full" -ForegroundColor Green
+            }
+            '3' {
+                Write-Host "Setting taskbar buttons to normal size..." -ForegroundColor Gray
+                Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarSi" -Value 1 -Type DWord -Force
+                Write-Host "Small taskbar buttons set to: Never" -ForegroundColor Green
+            }
+            '4' {
+                Write-Host "No taskbar button size changes applied." -ForegroundColor Yellow
+            }
+            default {
+                Write-Host "Invalid choice. No taskbar button size changes applied." -ForegroundColor Yellow
+            }
         }
     } else {
         # Windows 10 specific options
@@ -260,11 +284,11 @@ if ($customizeChoice -eq 'Y') {
         $smallIconsChoice = Get-YesNoChoice -Prompt "Use small taskbar icons?"
         if ($smallIconsChoice -eq 'Y') {
             Write-Host "Enabling small taskbar icons..." -ForegroundColor Gray
-            Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarSmallIcons" -Value 1 -ErrorAction SilentlyContinue
+            Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarSmallIcons" -Value 1 -Type DWord -Force
             Write-Host "Small taskbar icons enabled!" -ForegroundColor Green
         } else {
             Write-Host "Using normal taskbar icons..." -ForegroundColor Gray
-            Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarSmallIcons" -Value 0 -ErrorAction SilentlyContinue
+            Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarSmallIcons" -Value 0 -Type DWord -Force
             Write-Host "Normal taskbar icons set!" -ForegroundColor Green
         }
     }
