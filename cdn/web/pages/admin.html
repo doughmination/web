@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta settings -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yuri Lover Files</title>
+
+    <!-- Web app settings -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Yuri Lover Files" />
+    <link rel="apple-touch-icon" href="https://www.yuri-lover.win/cdn/pfp/yuri.png" />
+
+    <!-- Open Graph -->
+    <meta property="og:site_name" content="Butterfly Network">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.yuri-lover.win/">
+    <meta property="og:title" content="Yuri Lover Files">
+    <meta property="og:description" content="My collection of media and files!">
+    <meta property="og:image" content="https://www.yuri-lover.win/cdn/pfp/yuri.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary">
+    <meta property="twitter:url" content="https://www.yuri-lover.win/">
+    <meta property="twitter:title" content="Yuri Lover Files">
+    <meta property="twitter:description" content="My collection of media and files!">
+    <meta property="twitter:image" content="https://www.yuri-lover.win/cdn/pfp/yuri.png">
+
+    <!-- Theme color -->
+    <meta name="theme-color" content="#ff6fff" />
+
+    <!-- Favicon and CSS -->
+    <link rel="icon" type="image/png" href="https://www.yuri-lover.win/cdn/pfp/yuri.png">
+    <link rel="stylesheet" href="/app.css">
+</head>
+<body class="admin-page">
+    <div class="admin-container">
+        <div class="nav-links">
+            <a href="/" class="nav-link">← Back to Files</a>
+            <a href="/yuri/logout" class="nav-link logout-link">Logout →</a>
+        </div>
+        
+        <div class="title-container admin-title">
+            <img src="https://www.yuri-lover.win/cdn/animated-emojis/cl_heart.gif" alt="Animated logo" class="title-logo">
+            <h1>Yuri Lover CDN Admin</h1>
+        </div>
+        
+        <div class="form-container">
+            <form id="uploadForm" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="file">Select file to upload:</label>
+                    <input name="file" type="file" required>
+                    <div class="small-text">Supported: images, videos, audio, documents, archives (max 100MB)</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="destination">Upload destination:</label>
+                    <select name="destination" id="destination">
+                        <option value="">Root directory</option>
+                        <option value="__new__">📁 Create new folder...</option>
+                    </select>
+                </div>
+                
+                <div class="form-group new-folder" id="newFolderGroup">
+                    <label for="newFolder">New folder path:</label>
+                    <input type="text" id="newFolder" name="newFolder" placeholder="e.g., images/avatars or just avatars">
+                    <div class="small-text">Use / to create nested folders (e.g., images/avatars)</div>
+                </div>
+                
+                <button type="submit" class="admin-button">Upload to CDN</button>
+            </form>
+        </div>
+        
+        <div id="result"></div>
+    </div>
+    
+    <script src="/app.js"></script>
+</body>
+</html>
