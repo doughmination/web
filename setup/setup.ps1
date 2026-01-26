@@ -255,17 +255,17 @@ if ($customizeChoice -eq 'Y') {
         switch ($smallIconsChoice) {
             '1' {
                 Write-Host "Setting taskbar buttons to always be small..." -ForegroundColor Gray
-                Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarSi" -Value 0 -Type DWord -Force
+                Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "IconSizePreference" -Value 0 -Type DWord -Force
                 Write-Host "Small taskbar buttons set to: Always" -ForegroundColor Green
             }
             '2' {
                 Write-Host "Setting taskbar buttons to be small when full..." -ForegroundColor Gray
-                Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarSi" -Value 2 -Type DWord -Force
+                Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "IconSizePreference" -Value 2 -Type DWord -Force
                 Write-Host "Small taskbar buttons set to: When taskbar is full" -ForegroundColor Green
             }
             '3' {
                 Write-Host "Setting taskbar buttons to normal size..." -ForegroundColor Gray
-                Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarSi" -Value 1 -Type DWord -Force
+                Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "IconSizePreference" -Value 1 -Type DWord -Force
                 Write-Host "Small taskbar buttons set to: Never" -ForegroundColor Green
             }
             '4' {
