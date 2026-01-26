@@ -1,6 +1,0 @@
-# Env Vars
-.env
-check-lines.py
-fonts/
-.venv/
-__pycache__/

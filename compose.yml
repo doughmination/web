@@ -8,7 +8,7 @@ services:
     restart: unless-stopped
   dough-back:
     build:
-      context: ./doughmination.win/backend
+      context: ./system/backend
       dockerfile: Dockerfile
     container_name: dough-back
     ports:
@@ -20,7 +20,7 @@ services:
     restart: unless-stopped
   dough-front:
     build:
-      context: ./doughmination.win/frontend
+      context: ./system/frontend
       dockerfile: Dockerfile
     container_name: dough-front
     ports:
@@ -32,7 +32,7 @@ services:
       - dough-back
 #  yuri:
 #    build:
-#      context: ./yuri-lover.win
+#      context: ./cdn
 #      dockerfile: Dockerfile
 #    container_name: yuri-cdn
 #    ports:
@@ -40,10 +40,10 @@ services:
 #    env_file:
 #      - .env
 #    volumes:
-#      - "./yuri-lover.win/root:/app/root"
-#      - "./yuri-lover.win/cdn:/app/cdn"
+#      - "./cdn/root:/app/root"
+#      - "./cdn/cdn:/app/cdn"
 #      - "./.env:/app/.env:ro"
-#      - "./.env.keys:/app/.envkeys:ro"
+#      - "./.env.keys:/app/.env.keys:ro"
 #    restart: unless-stopped
 volumes:
   backend_data:
