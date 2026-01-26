@@ -19,12 +19,12 @@ updates:
   # Yuri Lover Files Website
   # ================================
   - package-ecosystem: "pip"
-    directory: "/yuri-lover.win"
+    directory: "/cdn"
     schedule:
       interval: "daily"
       time: "09:45"
     assignees:
-      - "EstrogenHRT"
+      - "Doughmination"
     labels:
       - "Dependabot"
       - "Python"
@@ -34,12 +34,12 @@ updates:
   # Doughmination System Backend
   # ================================
   - package-ecosystem: "pip"
-    directory: "/doughmination.win/backend"
+    directory: "/system/backend"
     schedule:
       interval: "daily"
       time: "09:45"
     assignees:
-      - "EstrogenHRT"
+      - "Doughmination"
     labels:
       - "Dependabot"
       - "Python"
@@ -49,12 +49,12 @@ updates:
   # Doughmination System Frontend (React)
   # ================================
   - package-ecosystem: "npm"
-    directory: "/doughmination.win/frontend"
+    directory: "/system/frontend"
     schedule:
       interval: "daily"
       time: "09:45"
     assignees:
-      - "EstrogenHRT"
+      - "Doughmination"
     labels:
       - "Dependabot"
       - "JavaScript"
