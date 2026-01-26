@@ -6,8 +6,41 @@
 # Clove Nytrix Doughmination Twilight
 # ========================================
 
+# Check if we are using Windows
+if (-not $isWindows -and $PSVersionTable.PSVersion.Major -ge 6) {
+    # PowerShell Core 6+ on non-Windows
+    Write-Host "========================================" -ForegroundColor Red
+    Write-Host "  ERROR: Windows Required" -ForegroundColor Red
+    Write-Host "========================================" -ForegroundColor Red
+    Write-Host ""
+    Write-Host "This script is designed for Windows only." -ForegroundColor Yellow
+    Write-Host "Detected OS: $($PSVersionTable.OS)" -ForegroundColor Gray
+    Write-Host ""
+    Write-Host "Please run this script on a Windows machine." -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "Press any key to exit..." -ForegroundColor Gray
+    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+    exit
+} elseif ($PSVersionTable.PSVersion.Major -lt 6 -and -not [System.Environment]::OSVersion.Platform.ToString().StartsWith("Win")) {
+    # PowerShell 5.1 or earlier on non-Windows (unlikely but possible)
+    Write-Host "========================================" -ForegroundColor Red
+    Write-Host "  ERROR: Windows Required" -ForegroundColor Red
+    Write-Host "========================================" -ForegroundColor Red
+    Write-Host ""
+    Write-Host "This script is designed for Windows only." -ForegroundColor Yellow
+    Write-Host ""
+    Write-Host "Please run this script on a Windows machine." -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "Press any key to exit..." -ForegroundColor Gray
+    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+    exit
+}
+
 # Check for admin privileges and elevate if necessary
 $isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+
+# Initialize cleanup flag
+$cleanupTemp = $false
 
 if (-not $isAdmin) {
     Write-Host "Not running as Administrator. Requesting elevation..." -ForegroundColor Yellow
@@ -47,12 +80,19 @@ if (-not $isAdmin) {
             $process.WaitForExit()
             Write-Host ""
             Write-Host "Elevated process completed." -ForegroundColor Green
-        }
-        
-        # Clean up temp file if we created one
-        if ($cleanupTemp -and (Test-Path $scriptPath)) {
-            Start-Sleep -Seconds 1
-            Remove-Item $scriptPath -Force -ErrorAction SilentlyContinue
+            
+            # Clean up temp file if we created one
+            if ($cleanupTemp -and (Test-Path $scriptPath)) {
+                Write-Host "Cleaning up temporary file..." -ForegroundColor Gray
+                Start-Sleep -Seconds 2  # Give Windows time to release the file
+                try {
+                    Remove-Item $scriptPath -Force -ErrorAction Stop
+                    Write-Host "Temporary file removed." -ForegroundColor Green
+                } catch {
+                    Write-Host "Note: Could not remove temporary file at $scriptPath" -ForegroundColor Yellow
+                    Write-Host "You may want to delete it manually." -ForegroundColor Yellow
+                }
+            }
         }
         
         Write-Host "You can continue using this terminal." -ForegroundColor Cyan
@@ -200,6 +240,37 @@ if ($customizeChoice -eq 'Y') {
         Write-Host "File extensions now visible!" -ForegroundColor Green
     } else {
         Write-Host "File extensions will remain hidden." -ForegroundColor Yellow
+    }
+    Write-Host ""
+    
+    # Hide desktop icons
+    $hideDesktopChoice = Get-YesNoChoice -Prompt "Hide desktop icons?"
+    if ($hideDesktopChoice -eq 'Y') {
+        Write-Host "Hiding desktop icons..." -ForegroundColor Gray
+        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideIcons" -Value 1
+        Write-Host "Desktop icons hidden!" -ForegroundColor Green
+    } else {
+        Write-Host "Desktop icons will remain visible." -ForegroundColor Yellow
+    }
+    Write-Host ""
+    
+    # Display scaling
+    $scalingChoice = Get-YesNoChoice -Prompt "Set display scaling to 100%?"
+    if ($scalingChoice -eq 'Y') {
+        Write-Host "Setting display scaling to 100%..." -ForegroundColor Gray
+        try {
+            # Set DPI scaling to 100% (96 DPI)
+            Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "LogPixels" -Value 96 -Type DWord -Force
+            Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "Win8DpiScaling" -Value 1 -Type DWord -Force
+            Set-ItemProperty -Path "HKCU:\Control Panel\Desktop\WindowMetrics" -Name "AppliedDPI" -Value 96 -Type DWord -Force
+            
+            Write-Host "Display scaling set to 100%!" -ForegroundColor Green
+            Write-Host "NOTE: You may need to sign out and back in for this change to take full effect." -ForegroundColor Cyan
+        } catch {
+            Write-Host "Error setting display scaling: $_" -ForegroundColor Red
+        }
+    } else {
+        Write-Host "Keeping current display scaling." -ForegroundColor Yellow
     }
     Write-Host ""
     
