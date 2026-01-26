@@ -16,15 +16,52 @@ if (-not $isAdmin) {
     Write-Host "NOTE: This window will wait for the elevated process to complete." -ForegroundColor Cyan
     Write-Host ""
     
-    # Get the path to the current script
-    $scriptPath = $MyInvocation.MyCommand.Path
+    # Get the path to the current script, or create temp file if running from URL
+    if ($PSCommandPath) {
+        $scriptPath = $PSCommandPath
+    } elseif ($MyInvocation.MyCommand.Path) {
+        $scriptPath = $MyInvocation.MyCommand.Path
+    } else {
+        # Script is running from memory (irm | iex), so save it to a temp file
+        Write-Host "Downloading script to temporary location..." -ForegroundColor Gray
+        try {
+            $scriptContent = Invoke-RestMethod "https://setup.doughmination.win"
+            $scriptPath = Join-Path $env:TEMP "DoughminationSetup_$(Get-Date -Format 'yyyyMMddHHmmss').ps1"
+            Set-Content -Path $scriptPath -Value $scriptContent -Encoding UTF8
+            Write-Host "Script saved to: $scriptPath" -ForegroundColor Gray
+            $cleanupTemp = $true
+        } catch {
+            Write-Host "ERROR: Could not download script: $_" -ForegroundColor Red
+            Write-Host "Press any key to exit..." -ForegroundColor Gray
+            $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+            exit
+        }
+    }
     
-    # Start a new elevated PowerShell process and wait for it to complete
-    $process = Start-Process powershell.exe -Verb RunAs -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$scriptPath`"" -PassThru -Wait
-    
-    Write-Host ""
-    Write-Host "Elevated process completed. Press any key to exit..." -ForegroundColor Green
-    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+    try {
+        # Start a new elevated PowerShell process and wait for it to complete
+        $process = Start-Process powershell.exe -Verb RunAs -ArgumentList "-NoExit -ExecutionPolicy Bypass -File `"$scriptPath`"" -PassThru
+        
+        if ($process) {
+            $process.WaitForExit()
+            Write-Host ""
+            Write-Host "Elevated process completed." -ForegroundColor Green
+        }
+        
+        # Clean up temp file if we created one
+        if ($cleanupTemp -and (Test-Path $scriptPath)) {
+            Start-Sleep -Seconds 2
+            Remove-Item $scriptPath -Force -ErrorAction SilentlyContinue
+        }
+        
+        Write-Host "Press any key to exit..." -ForegroundColor Gray
+        $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+    } catch {
+        Write-Host ""
+        Write-Host "ERROR: Failed to start elevated process: $_" -ForegroundColor Red
+        Write-Host "Press any key to exit..." -ForegroundColor Gray
+        $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+    }
     
     # Exit the current non-elevated process
     exit
