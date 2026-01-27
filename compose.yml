@@ -1,11 +1,11 @@
 services:
-  discord:
-    image: ghcr.io/the-snesler/discord-github-preview:latest
-    container_name: discord
-    ports:
-      - "8002:3000"
-    env_file: .env.discord
-    restart: unless-stopped
+#  discord:
+#    image: ghcr.io/the-snesler/discord-github-preview:latest
+#    container_name: discord
+#    ports:
+#      - "8002:3000"
+#    env_file: .env.discord
+#    restart: unless-stopped
   dough-back:
     build:
       context: ./system/backend
