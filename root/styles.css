@@ -228,6 +228,34 @@ h1 {
 }
 
 /* ============================================================================
+   PORTFOLIO CARD
+   ============================================================================ */
+
+.link-card.portfolio {
+  border-color: gold;
+  background: hsl(50, 100%, 12%);
+  color: #fff;
+}
+
+.link-card.portfolio .link-icon {
+  font-size: 3rem;
+  color: gold;
+}
+
+.link-card.portfolio h2 {
+  color: gold;
+}
+
+.link-card.portfolio p {
+  color: #f3e6a9;
+}
+
+.link-card.portfolio:hover {
+  box-shadow: 0 0 40px gold, 0 0 80px rgba(225, 215, 0, 0.3);
+  border-color: gold;
+}
+
+/* ============================================================================
    ADD LINKS SECTION
    ============================================================================ */
 .add-links-section {
