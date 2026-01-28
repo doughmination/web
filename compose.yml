@@ -34,7 +34,7 @@ services:
     build:
       context: ./cdn
       dockerfile: Dockerfile
-    container_name: yuri-cdn
+    container_name: cdn
     ports:
       - "8080:8080"
     volumes:
