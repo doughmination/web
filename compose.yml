@@ -30,21 +30,19 @@ services:
       - "./.env.keys:/app/.env.keys:ro"
     depends_on:
       - dough-back
-#  yuri:
-#    build:
-#      context: ./cdn
-#      dockerfile: Dockerfile
-#    container_name: yuri-cdn
-#    ports:
-#      - "8080:8080"
-#    env_file:
-#      - .env
-#    volumes:
-#      - "./cdn/root:/app/root"
-#      - "./cdn/cdn:/app/cdn"
-#      - "./.env:/app/.env:ro"
-#      - "./.env.keys:/app/.env.keys:ro"
-#    restart: unless-stopped
+  yuri:
+    build:
+      context: ./cdn
+      dockerfile: Dockerfile
+    container_name: yuri-cdn
+    ports:
+      - "8080:8080"
+    volumes:
+      - "./cdn/root:/app/root"
+      - "./cdn/cdn:/app/cdn"
+      - "./.env:/app/.env:ro"
+      - "./.env.keys:/app/.env.keys:ro"
+    restart: unless-stopped
 volumes:
   backend_data:
   backend_avatars:
