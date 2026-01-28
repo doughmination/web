@@ -340,7 +340,7 @@ app.post('/api/upload', requireAuth, uploadLimiter, upload.single('file'), async
     let relativePath = safeFilename;
 
     if (destination) {
-      const destParts = destination.split('/').filter(part => part && part !== '.' && part !== '..');
+      const destParts = destination.split('/').filter((part: string) => part && part !== '.' && part !== '..');
       if (destParts.length > 0) {
         targetDir = path.join(config.CDN_DIR, ...destParts);
         relativePath = path.join(...destParts, safeFilename);
@@ -362,7 +362,7 @@ app.post('/api/upload', requireAuth, uploadLimiter, upload.single('file'), async
     // Update relative path if filename changed
     if (finalFilename !== safeFilename) {
       if (destination) {
-        const destParts = destination.split('/').filter(part => part && part !== '.' && part !== '..');
+        const destParts = destination.split('/').filter((part: string) => part && part !== '.' && part !== '..');
         relativePath = destParts.length > 0 
           ? path.join(...destParts, finalFilename)
           : finalFilename;
@@ -438,8 +438,34 @@ app.get('/cdn/:filePath(*)', async (req: Request, res: Response) => {
 
 // Alternative route
 app.get('/files/:filePath(*)', async (req: Request, res: Response) => {
-  req.params.filePath = req.params.filePath;
-  return app.handle(req, res);
+  const filePath = req.params.filePath;
+  if (!filePath) {
+    return res.status(404).json({ error: 'File not found' });
+  }
+
+  // Check file extension
+  const ext = path.extname(filePath).toLowerCase();
+  if (!allowedExtensions.has(ext)) {
+    return res.status(404).json({ error: 'File not found' });
+  }
+
+  const fullPath = path.join(config.CDN_DIR, filePath);
+
+  // Security check
+  if (!isPathSafe(fullPath, config.CDN_DIR)) {
+    return res.status(404).json({ error: 'File not found' });
+  }
+
+  if (!existsSync(fullPath)) {
+    return res.status(404).json({ error: 'File not found' });
+  }
+
+  const stat = await fs.stat(fullPath);
+  if (!stat.isFile()) {
+    return res.status(404).json({ error: 'File not found' });
+  }
+
+  res.sendFile(fullPath);
 });
 
 // --------------------
@@ -451,7 +477,7 @@ app.get('/app.css', (req: Request, res: Response) => {
   if (!existsSync(cssPath)) {
     return res.status(404).send('CSS file not found');
   }
-  res.sendFile(cssPath);
+  return res.sendFile(cssPath);
 });
 
 app.get('/app.js', (req: Request, res: Response) => {
@@ -459,12 +485,12 @@ app.get('/app.js', (req: Request, res: Response) => {
   if (!existsSync(jsPath)) {
     return res.status(404).send('JS file not found');
   }
-  res.sendFile(jsPath);
+  return res.sendFile(jsPath);
 });
 
 // Catch-all route
 app.get('/:fullPath(*)', (req: Request, res: Response) => {
-  const fullPath = req.params.fullPath || '';
+  const fullPath = (req.params.fullPath || '') as string;
   
   // Skip API and admin routes
   if (fullPath.startsWith('api/') || fullPath.startsWith('yuri/')) {
@@ -487,7 +513,7 @@ app.get('/:fullPath(*)', (req: Request, res: Response) => {
     return res.status(404).send('index.html not found');
   }
   
-  res.sendFile(indexPath);
+  return res.sendFile(indexPath);
 });
 
 // --------------------
