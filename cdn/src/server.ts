@@ -27,6 +27,10 @@ const config = {
   get STATIC_DIR() { return path.join(this.WEB_DIR, 'static'); },
 };
 
+// okay wtf
+console.log('🔍 DEBUG - Username:', config.CDN_USERNAME);
+console.log('🔍 DEBUG - Password:', config.CDN_PASSWORD);
+
 // Type augmentation for session
 declare module 'express-session' {
   interface SessionData {
