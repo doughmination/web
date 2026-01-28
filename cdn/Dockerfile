@@ -6,20 +6,21 @@ WORKDIR /app
 RUN npm install -g @dotenvx/dotenvx
 
 # Copy package files
-COPY ./package.json /app/
+COPY package*.json ./
 
-# Install dependencies
-RUN npm i
+# Install ALL dependencies (including devDependencies for build)
+RUN npm install
 
 # Copy source and build
-COPY ./tsconfig.json /app/
-COPY ./src/ /app/src/
-RUN npm install -D typescript @types/node && \
-    npm run build && \
-    npm prune --production
+COPY tsconfig.json ./
+COPY src ./src
+RUN npm run build
+
+# Remove devDependencies to reduce image size
+RUN npm prune --production
 
 # Copy web assets
-COPY web /app/web
+COPY web ./web
 
 # Create cdn directory
 RUN mkdir -p cdn
