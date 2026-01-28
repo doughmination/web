@@ -6,7 +6,7 @@ WORKDIR /app
 RUN npm install -g @dotenvx/dotenvx
 
 # Copy package files
-COPY package*.json ./
+COPY package.json ./
 
 # Install dependencies
 RUN npm i
