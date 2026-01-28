@@ -47,6 +47,9 @@ async function ensureDirectories() {
 
 const app = express();
 
+// Trust proxy - we're behind nginx
+app.set('trust proxy', 1);
+
 // View engine setup
 app.set('view engine', 'ejs');
 app.set('views', config.PAGES_DIR);
