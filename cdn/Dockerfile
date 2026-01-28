@@ -9,7 +9,7 @@ RUN npm install -g @dotenvx/dotenvx
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci --only=production
+RUN npm i
 
 # Copy source and build
 COPY tsconfig.json ./
