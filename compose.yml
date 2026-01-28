@@ -30,7 +30,7 @@ services:
       - "./.env.keys:/app/.env.keys:ro"
     depends_on:
       - dough-back
-  yuri:
+  cdn:
     build:
       context: ./cdn
       dockerfile: Dockerfile
