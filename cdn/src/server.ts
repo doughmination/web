@@ -232,9 +232,9 @@ app.post('/yuri/admin', async (req: Request, res: Response) => {
   });
 });
 
-app.get('/yuri/upload', requireAuth, async (req: Request, res: Response) => {
+app.get('/yuri/upload', requireAuth, async (_req: Request, res: Response) => {
   const adminHtmlPath = path.join(config.PAGES_DIR, 'admin.html');
-  res.sendFile(adminHtmlPath);
+  return res.sendFile(adminHtmlPath);
 });
 
 app.get('/yuri/logout', (req: Request, res: Response) => {
@@ -290,14 +290,14 @@ app.get('/api/list', async (req: Request, res: Response) => {
       return a.name.localeCompare(b.name);
     });
 
-    res.json({ items });
+    return res.json({ items });
   } catch (error) {
     console.error('List files error:', error);
-    res.status(500).json({ error: 'Error listing files' });
+    return res.status(500).json({ error: 'Error listing files' });
   }
 });
 
-app.get('/api/folders', requireAuth, async (req: Request, res: Response) => {
+app.get('/api/folders', requireAuth, async (_req: Request, res: Response) => {
   try {
     const folders: string[] = [];
 
@@ -319,10 +319,10 @@ app.get('/api/folders', requireAuth, async (req: Request, res: Response) => {
     }
 
     await scanFolders(config.CDN_DIR);
-    res.json({ folders });
+    return res.json({ folders });
   } catch (error) {
     console.error('List folders error:', error);
-    res.status(500).json({ error: 'Error listing folders' });
+    return res.status(500).json({ error: 'Error listing folders' });
   }
 });
 
@@ -402,7 +402,7 @@ const allowedExtensions = new Set([
 
 app.get('/cdn/:filePath(*)', async (req: Request, res: Response) => {
   try {
-    const filePath = req.params.filePath;
+    const filePath = req.params.filePath as string;
     if (!filePath) {
       return res.status(404).json({ error: 'File not found' });
     }
@@ -429,16 +429,16 @@ app.get('/cdn/:filePath(*)', async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'File not found' });
     }
 
-    res.sendFile(fullPath);
+    return res.sendFile(fullPath);
   } catch (error) {
     console.error('File serving error:', error);
-    res.status(500).json({ error: 'Error serving file' });
+    return res.status(500).json({ error: 'Error serving file' });
   }
 });
 
 // Alternative route
 app.get('/files/:filePath(*)', async (req: Request, res: Response) => {
-  const filePath = req.params.filePath;
+  const filePath = req.params.filePath as string;
   if (!filePath) {
     return res.status(404).json({ error: 'File not found' });
   }
@@ -465,14 +465,14 @@ app.get('/files/:filePath(*)', async (req: Request, res: Response) => {
     return res.status(404).json({ error: 'File not found' });
   }
 
-  res.sendFile(fullPath);
+  return res.sendFile(fullPath);
 });
 
 // --------------------
 // Static File Serving (Frontend)
 // --------------------
 
-app.get('/app.css', (req: Request, res: Response) => {
+app.get('/app.css', (_req: Request, res: Response) => {
   const cssPath = path.join(config.STATIC_DIR, 'css', 'app.css');
   if (!existsSync(cssPath)) {
     return res.status(404).send('CSS file not found');
@@ -480,7 +480,7 @@ app.get('/app.css', (req: Request, res: Response) => {
   return res.sendFile(cssPath);
 });
 
-app.get('/app.js', (req: Request, res: Response) => {
+app.get('/app.js', (_req: Request, res: Response) => {
   const jsPath = path.join(config.STATIC_DIR, 'js', 'app.js');
   if (!existsSync(jsPath)) {
     return res.status(404).send('JS file not found');
