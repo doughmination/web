@@ -151,6 +151,8 @@ section {
   position: relative;
   overflow: hidden;
   cursor: pointer;
+  max-width: 400px;
+  width: 100%;
 }
 
 .link-card::before {
