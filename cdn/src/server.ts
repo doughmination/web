@@ -27,12 +27,6 @@ const config = {
   get STATIC_DIR() { return path.join(this.WEB_DIR, 'static'); },
 };
 
-// TEMPORARY DEBUG - REMOVE AFTER TESTING
-console.log('🔐 Loaded credentials:');
-console.log('   Username:', config.CDN_USERNAME);
-console.log('   Password:', config.CDN_PASSWORD);
-console.log('   Password length:', config.CDN_PASSWORD.length);
-
 // Type augmentation for session
 declare module 'express-session' {
   interface SessionData {
@@ -216,15 +210,6 @@ app.post('/yuri/admin', async (req: Request, res: Response) => {
   const { username, password } = req.body;
   const turnstileToken = req.body['cf-turnstile-response'];
   const clientIp = getClientIp(req);
-
-    // TEMPORARY DEBUG - REMOVE AFTER FIXING
-  console.log('🔍 Login attempt:');
-  console.log('   Received username:', username, '(length:', username?.length, ')');
-  console.log('   Received password:', password, '(length:', password?.length, ')');
-  console.log('   Expected username:', config.CDN_USERNAME, '(length:', config.CDN_USERNAME.length, ')');
-  console.log('   Expected password:', config.CDN_PASSWORD, '(length:', config.CDN_PASSWORD.length, ')');
-  console.log('   Username match:', username === config.CDN_USERNAME);
-  console.log('   Password match:', password === config.CDN_PASSWORD);
 
   // Verify Turnstile
   if (config.TURNSTILE_SECRET) {
