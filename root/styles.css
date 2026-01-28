@@ -120,11 +120,23 @@ h1 {
 /* ============================================================================
    LINK GRID
    ============================================================================ */
+.section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin-bottom: 1.5rem;
+  text-align: center;
+  text-shadow: 0 0 20px var(--primary);
+}
+
+section {
+  margin-bottom: 3rem;
+}
+
 .link-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
-  margin-bottom: 3rem;
   animation: fadeInUp 0.8s ease-out 0.2s backwards;
 }
 
@@ -172,7 +184,7 @@ h1 {
   filter: grayscale(0.3);
 }
 
-.link-card h2 {
+.link-card h3 {
   font-size: 1.75rem;
   font-weight: 700;
   margin-bottom: 0.75rem;
@@ -227,6 +239,22 @@ h1 {
   border: 1px solid var(--border);
 }
 
+.new-tag {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: hsl(50, 100%, 15%);
+  color: gold;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid gold;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
 /* ============================================================================
    PORTFOLIO CARD
    ============================================================================ */
@@ -242,7 +270,7 @@ h1 {
   color: gold;
 }
 
-.link-card.portfolio h2 {
+.link-card.portfolio h3 {
   color: gold;
 }
 
@@ -429,7 +457,7 @@ footer {
     padding: 1.5rem;
   }
 
-  .link-card h2 {
+  .link-card h3 {
     font-size: 1.5rem;
   }
 
@@ -452,7 +480,7 @@ footer {
     padding: 1.25rem;
   }
 
-  .link-card h2 {
+  .link-card h3 {
     font-size: 1.25rem;
   }
 }
