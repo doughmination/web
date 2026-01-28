@@ -374,7 +374,7 @@ app.post('/api/upload', requireAuth, uploadLimiter, upload.single('file'), async
     // Write file
     await fs.writeFile(finalPath, req.file.buffer);
 
-    res.json({
+    return res.json({
       status: 'success',
       filename: finalFilename,
       original_filename: req.file.originalname,
@@ -385,7 +385,7 @@ app.post('/api/upload', requireAuth, uploadLimiter, upload.single('file'), async
     });
   } catch (error) {
     console.error('Upload error:', error);
-    res.status(500).json({ error: 'Upload failed' });
+    return res.status(500).json({ error: 'Upload failed' });
   }
 });
 
