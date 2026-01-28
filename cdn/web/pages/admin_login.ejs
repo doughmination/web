@@ -33,7 +33,9 @@
     <!-- Favicon and CSS -->
     <link rel="icon" type="image/png" href="https://www.yuri-lover.win/cdn/pfp/yuri.png">
     <link rel="stylesheet" href="/app.css">
+    <% if (turnstile_site_key) { %>
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    <% } %>
 </head>
 <body class="login-page">
     <div class="login-container">
@@ -45,9 +47,9 @@
                 <h1>Admin Login</h1>
             </div>
             
-            {% if error %}
-            <div class="error-message">{{ error }}</div>
-            {% endif %}
+            <% if (error) { %>
+            <div class="error-message"><%= error %></div>
+            <% } %>
             
             <form method="POST" action="/yuri/admin" id="loginForm">
                 <div class="form-group">
@@ -60,13 +62,13 @@
                     <input type="password" name="password" id="password" required>
                 </div>
                 
-                {% if turnstile_site_key %}
+                <% if (turnstile_site_key) { %>
                 <div class="turnstile-container">
-                    <div class="cf-turnstile" data-sitekey="{{ turnstile_site_key }}" data-callback="onTurnstileCallback"></div>
+                    <div class="cf-turnstile" data-sitekey="<%= turnstile_site_key %>" data-callback="onTurnstileCallback"></div>
                 </div>
-                {% endif %}
+                <% } %>
                 
-                <button type="submit" class="login-button" id="submitButton" {% if turnstile_site_key %}disabled{% endif %}>
+                <button type="submit" class="login-button" id="submitButton" <%= turnstile_site_key ? 'disabled' : '' %>>
                     Login to Admin Panel
                 </button>
             </form>
