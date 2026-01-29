@@ -1,14 +1,7 @@
 services:
-#  discord:
-#    image: ghcr.io/the-snesler/discord-github-preview:latest
-#    container_name: discord
-#    ports:
-#      - "8002:3000"
-#    env_file: .env.discord
-#    restart: unless-stopped
   dough-back:
     build:
-      context: ./system/backend
+      context: ./win/system/backend
       dockerfile: Dockerfile
     container_name: dough-back
     ports:
@@ -20,7 +13,7 @@ services:
     restart: unless-stopped
   dough-front:
     build:
-      context: ./system/frontend
+      context: ./win/system/frontend
       dockerfile: Dockerfile
     container_name: dough-front
     ports:
@@ -32,7 +25,7 @@ services:
       - dough-back
   cdn:
     build:
-      context: ./cdn
+      context: ./win/cdn
       dockerfile: Dockerfile
     container_name: cdn
     ports:
