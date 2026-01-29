@@ -16,10 +16,10 @@ updates:
     open-pull-requests-limit: 99
 
   # ================================
-  # Yuri Lover Files Website
+  # CDN
   # ================================
-  - package-ecosystem: "pip"
-    directory: "/cdn"
+  - package-ecosystem: "npm"
+    directory: "/win/cdn"
     schedule:
       interval: "daily"
       time: "09:45"
@@ -34,7 +34,7 @@ updates:
   # Doughmination System Backend
   # ================================
   - package-ecosystem: "pip"
-    directory: "/system/backend"
+    directory: "/win/system/backend"
     schedule:
       interval: "daily"
       time: "09:45"
@@ -49,7 +49,7 @@ updates:
   # Doughmination System Frontend (React)
   # ================================
   - package-ecosystem: "npm"
-    directory: "/system/frontend"
+    directory: "/win/system/frontend"
     schedule:
       interval: "daily"
       time: "09:45"
