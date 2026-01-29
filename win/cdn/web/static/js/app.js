@@ -37,8 +37,8 @@ function getCurrentPage() {
     
     if (body.classList.contains('admin-page')) return 'admin';
     if (body.classList.contains('login-page')) return 'login';
-    if (path.includes('/yuri/admin') && !body.classList.contains('login-page')) return 'admin';
-    if (path.includes('/yuri/admin')) return 'login';
+    if (path.includes('/admin') && !body.classList.contains('login-page')) return 'admin';
+    if (path.includes('/admin')) return 'login';
     return 'index';
 }
 
@@ -298,7 +298,7 @@ function initAdminPanel() {
             const response = await fetch('/api/folders');
             
             if (response.status === 401) {
-                window.location.href = '/yuri/admin';
+                window.location.href = '/admin';
                 return;
             }
             
@@ -361,7 +361,7 @@ function initAdminPanel() {
                 if (response.status === 401) {
                     showResult('Session expired or not authenticated. Redirecting to login...', 'error');
                     setTimeout(() => {
-                        window.location.href = '/yuri/admin';
+                        window.location.href = '/admin';
                     }, 1500);
                     return;
                 }
