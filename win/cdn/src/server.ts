@@ -79,7 +79,7 @@ app.use(session({
   secret: config.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  name: 'yuri_session',
+  name: 'admin_session',
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
@@ -195,9 +195,9 @@ function requireAuth(req: Request, res: Response, next: NextFunction) {
 // Admin Routes
 // --------------------
 
-app.get('/yuri/admin', (req: Request, res: Response) => {
+app.get('/admin', (req: Request, res: Response) => {
   if (req.session.authenticated) {
-    return res.redirect('/yuri/upload');
+    return res.redirect('/admin/upload');
   }
   
   res.render('admin_login', {
@@ -206,7 +206,7 @@ app.get('/yuri/admin', (req: Request, res: Response) => {
   });
 });
 
-app.post('/yuri/admin', async (req: Request, res: Response) => {
+app.post('/admin', async (req: Request, res: Response) => {
   const { username, password } = req.body;
   const turnstileToken = req.body['cf-turnstile-response'];
   const clientIp = getClientIp(req);
@@ -226,7 +226,7 @@ app.post('/yuri/admin', async (req: Request, res: Response) => {
   if (username === config.CDN_USERNAME && password === config.CDN_PASSWORD) {
     req.session.authenticated = true;
     req.session.username = username;
-    return res.redirect('/yuri/upload');
+    return res.redirect('/admin/upload');
   }
 
   res.render('admin_login', {
@@ -235,17 +235,17 @@ app.post('/yuri/admin', async (req: Request, res: Response) => {
   });
 });
 
-app.get('/yuri/upload', requireAuth, async (_req: Request, res: Response) => {
+app.get('/admin/upload', requireAuth, async (_req: Request, res: Response) => {
   const adminHtmlPath = path.join(config.PAGES_DIR, 'admin.html');
   return res.sendFile(adminHtmlPath);
 });
 
-app.get('/yuri/logout', (req: Request, res: Response) => {
+app.get('/admin/logout', (req: Request, res: Response) => {
   req.session.destroy((err) => {
     if (err) {
       console.error('Session destruction error:', err);
     }
-    res.clearCookie('yuri_session');
+    res.clearCookie('admin_session');
     res.redirect('/');
   });
 });
@@ -496,7 +496,7 @@ app.get('/:fullPath(*)', (req: Request, res: Response) => {
   const fullPath = (req.params.fullPath || '') as string;
   
   // Skip API and admin routes
-  if (fullPath.startsWith('api/') || fullPath.startsWith('yuri/')) {
+  if (fullPath.startsWith('api/') || fullPath.startsWith('admin/')) {
     return res.status(404).send('Not Found');
   }
   
@@ -531,7 +531,7 @@ async function startServer() {
       console.log(`🚀 CDN Server running on http://0.0.0.0:${config.PORT}`);
       console.log(`📁 CDN Directory: ${config.CDN_DIR}`);
       console.log(`🌐 Web Directory: ${config.WEB_DIR}`);
-      console.log(`🔐 Admin Panel: http://localhost:${config.PORT}/yuri/admin`);
+      console.log(`🔐 Admin Panel: http://localhost:${config.PORT}/admin`);
     });
   } catch (error) {
     console.error('Failed to start server:', error);
