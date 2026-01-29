@@ -403,7 +403,7 @@ const allowedExtensions = new Set([
   '.json', '.jsonc', '.xml', '.csv', '.md', '.js'
 ]);
 
-app.get('/cdn/:filePath(*)', async (req: Request, res: Response) => {
+app.get('/cdn/*filePath', async (req: Request, res: Response) => {
   try {
     const filePath = req.params.filePath as string;
     if (!filePath) {
@@ -440,7 +440,7 @@ app.get('/cdn/:filePath(*)', async (req: Request, res: Response) => {
 });
 
 // Alternative route
-app.get('/files/:filePath(*)', async (req: Request, res: Response) => {
+app.get('/files/*filePath', async (req: Request, res: Response) => {
   const filePath = req.params.filePath as string;
   if (!filePath) {
     return res.status(404).json({ error: 'File not found' });
