@@ -1,0 +1,6 @@
+id,name,value,notes
+1,scan_result,null,no exploitable content found
+2,confidence,high,unfortunately misplaced
+3,skill,low,see above
+4,prize,,there is no prize
+5,exploit,false,this was a waste of time
