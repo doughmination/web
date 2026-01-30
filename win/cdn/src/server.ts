@@ -406,7 +406,8 @@ const allowedExtensions = new Set([
 
 app.get('/cdn/*filePath', async (req: Request, res: Response) => {
   try {
-    const filePath = req.params.filePath as string;
+    // Ensure filePath is a string
+    const filePath = String(req.params.filePath || '');
     if (!filePath) {
       return res.status(404).json({ error: 'File not found' });
     }
@@ -442,7 +443,8 @@ app.get('/cdn/*filePath', async (req: Request, res: Response) => {
 
 // Alternative route
 app.get('/files/*filePath', async (req: Request, res: Response) => {
-  const filePath = req.params.filePath as string;
+  // Ensure filePath is a string
+  const filePath = String(req.params.filePath || '');
   if (!filePath) {
     return res.status(404).json({ error: 'File not found' });
   }
@@ -494,7 +496,8 @@ app.get('/app.js', (_req: Request, res: Response) => {
 
 // Catch-all route
 app.get('/*fullPath', (req: Request, res: Response) => {
-  const fullPath = (req.params.fullPath || '') as string;
+  // Ensure fullPath is a string - Express 5 might pass it as different types
+  const fullPath = String(req.params.fullPath || '');
   
   // Skip API and admin routes
   if (fullPath.startsWith('api/') || fullPath.startsWith('admin/')) {
