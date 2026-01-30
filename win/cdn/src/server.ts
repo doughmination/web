@@ -54,11 +54,11 @@ app.set('trust proxy', 1);
 app.set('view engine', 'ejs');
 app.set('views', config.PAGES_DIR);
 
-// Security middleware
-app.use(helmet({
-  contentSecurityPolicy: false, // Disable CSP for now, customize as needed
-  crossOriginResourcePolicy: { policy: "cross-origin" }
-}));
+// Security middleware - all headers handled by nginx
+// app.use(helmet({
+//   contentSecurityPolicy: false,
+//   crossOriginResourcePolicy: { policy: "cross-origin" }
+// }));
 
 // CORS configuration
 app.use(cors({
