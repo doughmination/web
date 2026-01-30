@@ -4,7 +4,8 @@ import path from 'path';
 import fs from 'fs/promises';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
-// nginx is handling this import helmet from 'helmet';
+// nginx is handling security headers
+// import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import compression from 'compression';
 import cors from 'cors';
