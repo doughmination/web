@@ -29,14 +29,17 @@ const config = {
 };
 
 const TEAPOT_FILES = [
-  'content.txt',
+  'content.conf',
+  'content.env',
+  'content.log',
+  'content.manifest',
+  'content.sql',
+  'content.tar.txt',
+  'content.yml',
   'contents.csv',
   'contents.json',
-  'content.env',
-  'content.sql',
-  'content.log',
-  'content.yml'
-];
+  'content.txt' 
+]
 
 function isScannerPath(p: string): boolean {
   return (
