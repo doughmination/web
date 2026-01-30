@@ -494,6 +494,15 @@ app.get('/app.js', (_req: Request, res: Response) => {
   return res.sendFile(jsPath);
 });
 
+// Root route (must come before catch-all)
+app.get('/', (_req: Request, res: Response) => {
+  const indexPath = path.join(config.PAGES_DIR, 'index.html');
+  if (!existsSync(indexPath)) {
+    return res.status(404).send('index.html not found');
+  }
+  return res.sendFile(indexPath);
+});
+
 // Catch-all route
 app.get('/*fullPath', (req: Request, res: Response) => {
   // Ensure fullPath is a string - Express 5 might pass it as different types
