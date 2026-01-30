@@ -404,13 +404,15 @@ const allowedExtensions = new Set([
   '.json', '.jsonc', '.xml', '.csv', '.md', '.js'
 ]);
 
-app.get('/cdn/*filePath', async (req: Request, res: Response) => {
+app.get('/cdn/*', async (req: Request, res: Response) => {
   try {
-    const filePath = String(req.params.filePath || '');
+    // Get the path after /cdn/
+    const filePath = req.path.replace(/^\/cdn\//, '');
     
     // DEBUG LOGGING
     console.log('=== CDN Request Debug ===');
     console.log('Requested URL:', req.url);
+    console.log('req.path:', req.path);
     console.log('filePath param:', filePath);
     console.log('CDN_DIR:', config.CDN_DIR);
     
@@ -421,7 +423,6 @@ app.get('/cdn/*filePath', async (req: Request, res: Response) => {
 
     const ext = path.extname(filePath).toLowerCase();
     console.log('File extension:', ext);
-    console.log('Extension allowed?', allowedExtensions.has(ext));
     
     if (!allowedExtensions.has(ext)) {
       console.log('ERROR: Extension not allowed');
@@ -430,7 +431,6 @@ app.get('/cdn/*filePath', async (req: Request, res: Response) => {
 
     const fullPath = path.join(config.CDN_DIR, filePath);
     console.log('Full path:', fullPath);
-    console.log('Path is safe?', isPathSafe(fullPath, config.CDN_DIR));
     console.log('File exists?', existsSync(fullPath));
     
     if (!isPathSafe(fullPath, config.CDN_DIR)) {
@@ -440,28 +440,16 @@ app.get('/cdn/*filePath', async (req: Request, res: Response) => {
 
     if (!existsSync(fullPath)) {
       console.log('ERROR: File does not exist');
-      // List what IS in the directory
-      const dirPath = path.dirname(fullPath);
-      console.log('Directory path:', dirPath);
-      if (existsSync(dirPath)) {
-        const dirContents = await fs.readdir(dirPath);
-        console.log('Directory contents:', dirContents);
-      } else {
-        console.log('Directory does not exist');
-      }
       return res.status(404).json({ error: 'File not found' });
     }
 
     const stat = await fs.stat(fullPath);
-    console.log('Is file?', stat.isFile());
-    
     if (!stat.isFile()) {
       console.log('ERROR: Path is not a file');
       return res.status(404).json({ error: 'File not found' });
     }
 
     console.log('SUCCESS: Serving file');
-    console.log('========================');
     return res.sendFile(fullPath);
   } catch (error) {
     console.error('File serving error:', error);
@@ -470,9 +458,8 @@ app.get('/cdn/*filePath', async (req: Request, res: Response) => {
 });
 
 // Alternative route
-app.get('/files/*filePath', async (req: Request, res: Response) => {
-  // Ensure filePath is a string
-  const filePath = String(req.params.filePath || '');
+app.get('/files/*', async (req: Request, res: Response) => {
+  const filePath = req.path.replace(/^\/files\//, '');
   if (!filePath) {
     return res.status(404).json({ error: 'File not found' });
   }
