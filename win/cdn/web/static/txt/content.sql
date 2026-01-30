@@ -1,0 +1,4 @@
+-- dump complete
+-- tables: none
+-- rows: zero
+-- dignity: lost

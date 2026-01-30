@@ -1,0 +1,15 @@
+{
+  "status": 418,
+  "message": "I'm a teapot",
+  "content": null,
+  "analysis": {
+    "exploit_found": false,
+    "confidence_level": "very high",
+    "correctness_level": "very low"
+  },
+  "notes": [
+    "This endpoint is intentionally boring.",
+    "No vulnerabilities were harmed in the making of this file.",
+    "Skill issue."
+  ]
+}

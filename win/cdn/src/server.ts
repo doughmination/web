@@ -28,6 +28,31 @@ const config = {
   get STATIC_DIR() { return path.join(this.WEB_DIR, 'static'); },
 };
 
+const TEAPOT_FILES = [
+  'content.txt',
+  'contents.csv',
+  'contents.json',
+  'content.env',
+  'content.sql',
+  'content.log',
+  'content.yml'
+];
+
+function isScannerPath(p: string): boolean {
+  return (
+    p.includes('${') ||
+    p.includes('%7b') ||
+    p.includes('%7B') ||
+    p.includes('..') ||
+    p.includes('%2e%2e') ||
+    p.includes('%24') // $
+  );
+}
+
+function pickRandomTeapotFile(): string {
+  return TEAPOT_FILES[Math.floor(Math.random() * TEAPOT_FILES.length)];
+}
+
 // Type augmentation for session
 declare module 'express-session' {
   interface SessionData {
@@ -200,7 +225,7 @@ app.get('/admin', (req: Request, res: Response) => {
   if (req.session.authenticated) {
     return res.redirect('/admin/upload');
   }
-  
+
   res.render('admin_login', {
     turnstile_site_key: config.TURNSTILE_SITE_KEY,
     error: null
@@ -307,13 +332,13 @@ app.get('/api/folders', requireAuth, async (_req: Request, res: Response) => {
 
     async function scanFolders(dir: string, prefix: string = '') {
       const files = await fs.readdir(dir);
-      
+
       for (const file of files) {
         if (file.startsWith('.')) continue;
-        
+
         const filePath = path.join(dir, file);
         const stat = await fs.stat(filePath);
-        
+
         if (stat.isDirectory()) {
           const folderPath = prefix ? `${prefix}/${file}` : file;
           folders.push(folderPath);
@@ -362,12 +387,12 @@ app.post('/api/upload', requireAuth, uploadLimiter, upload.single('file'), async
     // Get unique file path
     const finalPath = await getUniqueFilePath(targetDir, safeFilename);
     const finalFilename = path.basename(finalPath);
-    
+
     // Update relative path if filename changed
     if (finalFilename !== safeFilename) {
       if (destination) {
         const destParts = destination.split('/').filter((part: string) => part && part !== '.' && part !== '..');
-        relativePath = destParts.length > 0 
+        relativePath = destParts.length > 0
           ? path.join(...destParts, finalFilename)
           : finalFilename;
       } else {
@@ -408,14 +433,34 @@ app.get('/cdn/*filePath', async (req: Request, res: Response) => {
   try {
     // Get the path after /cdn/
     const filePath = String(req.path.replace(/^\/cdn\//, '') || '');
-    
+
+    // ☕ TEAPOT MODE ☕
+    if (isScannerPath(filePath)) {
+      const teapotFile = pickRandomTeapotFile();
+      const teapotPath = path.join(config.STATIC_DIR, 'txt', teapotFile);
+
+      if (existsSync(teapotPath)) {
+        res.status(418);
+        res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+        res.setHeader(
+          'Content-Disposition',
+          `attachment; filename="contents${path.extname(teapotFile)}"`
+        );
+        return res.sendFile(teapotPath);
+      }
+
+      // fallback if file missing
+      return res.status(418).send("I'm a teapot.");
+    }
+
+
     // DEBUG LOGGING
     console.log('=== CDN Request Debug ===');
     console.log('Requested URL:', req.url);
     console.log('req.path:', req.path);
     console.log('filePath param:', filePath);
     console.log('CDN_DIR:', config.CDN_DIR);
-    
+
     if (!filePath) {
       console.log('ERROR: No filePath provided');
       return res.status(404).json({ error: 'File not found' });
@@ -423,7 +468,7 @@ app.get('/cdn/*filePath', async (req: Request, res: Response) => {
 
     const ext = path.extname(filePath).toLowerCase();
     console.log('File extension:', ext);
-    
+
     if (!allowedExtensions.has(ext)) {
       console.log('ERROR: Extension not allowed');
       return res.status(404).json({ error: 'File not found' });
@@ -432,7 +477,7 @@ app.get('/cdn/*filePath', async (req: Request, res: Response) => {
     const fullPath = path.join(config.CDN_DIR, filePath);
     console.log('Full path:', fullPath);
     console.log('File exists?', existsSync(fullPath));
-    
+
     if (!isPathSafe(fullPath, config.CDN_DIR)) {
       console.log('ERROR: Path not safe');
       return res.status(404).json({ error: 'File not found' });
@@ -460,6 +505,26 @@ app.get('/cdn/*filePath', async (req: Request, res: Response) => {
 // Alternative route
 app.get('/files/*filePath', async (req: Request, res: Response) => {
   const filePath = String(req.path.replace(/^\/files\//, '') || '');
+
+  // ☕ TEAPOT MODE ☕
+  if (isScannerPath(filePath)) {
+    const teapotFile = pickRandomTeapotFile();
+    const teapotPath = path.join(config.STATIC_DIR, 'txt', teapotFile);
+
+    if (existsSync(teapotPath)) {
+      res.status(418);
+      res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+      res.setHeader(
+        'Content-Disposition',
+        `attachment; filename="contents${path.extname(teapotFile)}"`
+      );
+      return res.sendFile(teapotPath);
+    }
+
+    // fallback if file missing
+    return res.status(418).send("I'm a teapot.");
+  }
+
   if (!filePath) {
     return res.status(404).json({ error: 'File not found' });
   }
@@ -522,12 +587,31 @@ app.get('/', (_req: Request, res: Response) => {
 app.get('/*fullPath', (req: Request, res: Response) => {
   // Ensure fullPath is a string - Express 5 might pass it as different types
   const fullPath = String(req.params.fullPath || '');
-  
+
+  // ☕ TEAPOT MODE ☕
+  if (isScannerPath(fullPath)) {
+    const teapotFile = pickRandomTeapotFile();
+    const teapotPath = path.join(config.STATIC_DIR, 'txt', teapotFile);
+
+    if (existsSync(teapotPath)) {
+      res.status(418);
+      res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+      res.setHeader(
+        'Content-Disposition',
+        `attachment; filename="contents${path.extname(teapotFile)}"`
+      );
+      return res.sendFile(teapotPath);
+    }
+
+    // fallback if file missing
+    return res.status(418).send("I'm a teapot.");
+  }
+
   // Skip API and admin routes
   if (fullPath.startsWith('api/') || fullPath.startsWith('admin/')) {
     return res.status(404).send('Not Found');
   }
-  
+
   // Check for static assets
   const staticExtensions = ['.css', '.js', '.png', '.jpg', '.jpeg', '.gif', '.ico', '.svg', '.woff', '.woff2', '.ttf'];
   if (staticExtensions.some(ext => fullPath.endsWith(ext))) {
@@ -537,13 +621,13 @@ app.get('/*fullPath', (req: Request, res: Response) => {
     }
     return res.status(404).send('Not Found');
   }
-  
+
   // Serve index.html for SPA
   const indexPath = path.join(config.PAGES_DIR, 'index.html');
   if (!existsSync(indexPath)) {
     return res.status(404).send('index.html not found');
   }
-  
+
   return res.sendFile(indexPath);
 });
 
@@ -554,7 +638,7 @@ app.get('/*fullPath', (req: Request, res: Response) => {
 async function startServer() {
   try {
     await ensureDirectories();
-    
+
     app.listen(config.PORT, () => {
       console.log(`🚀 CDN Server running on http://0.0.0.0:${config.PORT}`);
       console.log(`📁 CDN Directory: ${config.CDN_DIR}`);
