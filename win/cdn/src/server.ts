@@ -492,7 +492,7 @@ app.get('/app.js', (_req: Request, res: Response) => {
 });
 
 // Catch-all route
-app.get('/:fullPath(*)', (req: Request, res: Response) => {
+app.get('/*fullPath', (req: Request, res: Response) => {
   const fullPath = (req.params.fullPath || '') as string;
   
   // Skip API and admin routes
