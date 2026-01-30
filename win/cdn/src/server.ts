@@ -4,7 +4,7 @@ import path from 'path';
 import fs from 'fs/promises';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
-// ngins is handling this import helmet from 'helmet';
+// nginx is handling this import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import compression from 'compression';
 import cors from 'cors';
@@ -403,9 +403,9 @@ const allowedExtensions = new Set([
   '.json', '.jsonc', '.xml', '.csv', '.md', '.js'
 ]);
 
-app.get('/cdn/*filePath', async (req: Request, res: Response) => {
+app.get('/cdn/*', async (req: Request, res: Response) => {
   try {
-    const filePath = req.params.filePath as string;
+    const filePath = req.params[0];
     if (!filePath) {
       return res.status(404).json({ error: 'File not found' });
     }
@@ -440,8 +440,8 @@ app.get('/cdn/*filePath', async (req: Request, res: Response) => {
 });
 
 // Alternative route
-app.get('/files/*filePath', async (req: Request, res: Response) => {
-  const filePath = req.params.filePath as string;
+app.get('/files/*', async (req: Request, res: Response) => {
+  const filePath = req.params[0];
   if (!filePath) {
     return res.status(404).json({ error: 'File not found' });
   }
@@ -491,19 +491,19 @@ app.get('/app.js', (_req: Request, res: Response) => {
   return res.sendFile(jsPath);
 });
 
-// Catch-all route
-app.get('/*fullPath', (req: Request, res: Response) => {
-  const fullPath = (req.params.fullPath || '') as string;
+// Catch-all route - FIXED
+app.get('*', (req: Request, res: Response) => {
+  const requestPath = req.path;
   
   // Skip API and admin routes
-  if (fullPath.startsWith('api/') || fullPath.startsWith('admin/')) {
+  if (requestPath.startsWith('/api/') || requestPath.startsWith('/admin/')) {
     return res.status(404).send('Not Found');
   }
   
   // Check for static assets
   const staticExtensions = ['.css', '.js', '.png', '.jpg', '.jpeg', '.gif', '.ico', '.svg', '.woff', '.woff2', '.ttf'];
-  if (staticExtensions.some(ext => fullPath.endsWith(ext))) {
-    const filePath = path.join(config.WEB_DIR, fullPath);
+  if (staticExtensions.some(ext => requestPath.endsWith(ext))) {
+    const filePath = path.join(config.WEB_DIR, requestPath);
     if (existsSync(filePath)) {
       return res.sendFile(filePath);
     }
