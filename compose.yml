@@ -31,7 +31,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - "./cdn/cdn:/app/cdn"
+      - "./win/cdn/cdn:/app/cdn"
       - "./.env:/app/.env:ro"
       - "./.env.keys:/app/.env.keys:ro"
     restart: unless-stopped
