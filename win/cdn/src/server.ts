@@ -404,10 +404,10 @@ const allowedExtensions = new Set([
   '.json', '.jsonc', '.xml', '.csv', '.md', '.js'
 ]);
 
-app.get('/cdn/*', async (req: Request, res: Response) => {
+app.get('/cdn/*filePath', async (req: Request, res: Response) => {
   try {
     // Get the path after /cdn/
-    const filePath = req.path.replace(/^\/cdn\//, '');
+    const filePath = String(req.path.replace(/^\/cdn\//, '') || '');
     
     // DEBUG LOGGING
     console.log('=== CDN Request Debug ===');
@@ -458,8 +458,8 @@ app.get('/cdn/*', async (req: Request, res: Response) => {
 });
 
 // Alternative route
-app.get('/files/*', async (req: Request, res: Response) => {
-  const filePath = req.path.replace(/^\/files\//, '');
+app.get('/files/*filePath', async (req: Request, res: Response) => {
+  const filePath = String(req.path.replace(/^\/files\//, '') || '');
   if (!filePath) {
     return res.status(404).json({ error: 'File not found' });
   }
