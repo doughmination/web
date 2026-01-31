@@ -1,10 +1,10 @@
 /* ============================================================================
-   FONT IMPORTS - Comic Code Font Declarations
+   FONT IMPORTS - Comic Code
    ============================================================================ */
 @font-face {
   font-family: 'Comic Code';
   src: url('https://fonts.doughmination.win/ComicCode-Regular_2022-05-24-151938_hsmz.woff2') format('woff2'),
-    url('https://fonts.doughmination.win/ComicCode-Regular_2022-05-24-151938_hsmz.woff') format('woff');
+       url('https://fonts.doughmination.win/ComicCode-Regular_2022-05-24-151938_hsmz.woff') format('woff');
   font-weight: 400;
   font-style: normal;
 }
@@ -12,33 +12,34 @@
 @font-face {
   font-family: 'Comic Code';
   src: url('https://fonts.doughmination.win/ComicCode-Bold_2022-05-24-152309_zqkm.woff2') format('woff2'),
-    url('https://fonts.doughmination.win/ComicCode-Bold_2022-05-24-152309_zqkm.woff') format('woff');
+       url('https://fonts.doughmination.win/ComicCode-Bold_2022-05-24-152309_zqkm.woff') format('woff');
   font-weight: 700;
   font-style: normal;
 }
 
 /* ============================================================================
-   DARK THEME VARIABLES - Charcoal Black/Neon Green
+   COLOR VARIABLES - Hex Pastel Cozy Theme
    ============================================================================ */
 :root {
-  --background: hsl(0, 0%, 8%);
-  --foreground: hsl(120, 100%, 50%);
-  --card: hsl(0, 0%, 12%);
-  --card-foreground: hsl(120, 100%, 50%);
-  --primary: hsl(120, 100%, 50%);
-  --primary-foreground: hsl(0, 0%, 8%);
-  --secondary: hsl(0, 0%, 15%);
-  --secondary-foreground: hsl(120, 100%, 50%);
-  --muted: hsl(0, 0%, 15%);
-  --muted-foreground: hsl(120, 50%, 75%);
-  --accent: hsl(120, 100%, 60%);
-  --accent-foreground: hsl(0, 0%, 8%);
-  --border: hsl(0, 0%, 20%);
-  --ring: hsl(120, 100%, 50%);
+  --background: #77CBDA;       /* pastel blue */
+  --foreground: #555555;       /* soft grey default text */
+  --border: #B0B0B0;
+
+  /* Card colors */
+  --card-win: #F8C8D8;         /* pastel pink */
+  --card-co: #D6C8F8;          /* pastel purple */
+  --card-foreground: #555555;
+
+  /* Tags */
+  --tag-new: #F4E1A1;          /* pastel gold */
+  --tag-dev: #F2A1A1;          /* pastel red */
+
+  /* Hover accent */
+  --primary: #6EC0D4;          /* soft blue accent */
 }
 
 /* ============================================================================
-   GLOBAL RESET & BASE STYLES  
+   GLOBAL RESET & BASE STYLES
    ============================================================================ */
 * {
   margin: 0;
@@ -57,28 +58,53 @@ body {
   background: var(--background);
   color: var(--foreground);
   min-height: 100vh;
-  position: relative;
   display: flex;
-  align-items: center;
   justify-content: center;
+  padding: 2rem;
+  position: relative;
 }
 
 /* ============================================================================
-   BACKGROUND IMAGE
+   BACKGROUND
    ============================================================================ */
 .background-image {
+  background-color: var(--background);
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('https://raw.githubusercontent.com/doughmination/Doughmination/main/bg.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  opacity: 0.15;
   z-index: -1;
   pointer-events: none;
+}
+
+/* ============================================================================
+   GLOBAL TEXT COLORS
+   ============================================================================ */
+body, body * {
+    color: #555555;
+}
+
+.domain-hint {
+    color: #333333; /* slightly darker for visibility */
+}
+
+a {
+    color: #555555;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: #333333;
+}
+
+.link-card, .link-card h3, .link-card p {
+    color: #555555;
+}
+
+.new-tag, .dev-badge {
+    color: #1A1A1A; /* readable on card background */
 }
 
 /* ============================================================================
@@ -105,7 +131,7 @@ header {
   width: 120px;
   height: 120px;
   margin-bottom: 1.5rem;
-  filter: drop-shadow(0 0 20px var(--primary));
+  filter: drop-shadow(0 0 10px var(--primary));
   animation: pulse 2s ease-in-out infinite;
 }
 
@@ -113,22 +139,30 @@ h1 {
   font-size: 3.5rem;
   font-weight: 700;
   color: var(--foreground);
-  text-shadow: 0 0 30px var(--primary), 0 0 60px var(--primary);
   margin-bottom: 0.5rem;
+}
+
+/* ============================================================================
+   DOMAIN LABEL & HINT
+   ============================================================================ */
+.domain-label {
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin-bottom: 0.25rem;
+}
+
+.domain-hint {
+  text-align: center;
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+  font-style: italic;
 }
 
 /* ============================================================================
    LINK GRID
    ============================================================================ */
-.section-title {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--foreground);
-  margin-bottom: 1.5rem;
-  text-align: center;
-  text-shadow: 0 0 20px var(--primary);
-}
-
 section {
   margin-bottom: 3rem;
 }
@@ -140,73 +174,89 @@ section {
   animation: fadeInUp 0.8s ease-out 0.2s backwards;
 }
 
+/* ============================================================================
+   LINK CARDS
+   ============================================================================ */
 .link-card {
-  background: var(--card);
-  border: 2px solid var(--border);
   border-radius: 1rem;
   padding: 2rem;
   text-decoration: none;
-  color: var(--card-foreground);
+  border: 1px solid var(--border);
   transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
   max-width: 400px;
   width: 100%;
+  position: relative;
+  overflow: hidden;
 }
 
-.link-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.1), transparent);
-  transition: left 0.5s ease;
+/* Card variants */
+.link-card.win {
+  background: var(--card-win);
 }
 
-.link-card:hover::before {
-  left: 100%;
+.link-card.co {
+  background: var(--card-co);
 }
 
+/* Hover effect */
 .link-card:hover {
-  border-color: var(--primary);
-  box-shadow: 0 0 30px rgba(0, 255, 0, 0.3), 0 0 60px rgba(0, 255, 0, 0.15);
-  transform: translateY(-5px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  transform: translateY(-3px);
 }
 
-.link-card:active {
-  transform: translateY(-2px);
-}
-
+/* Icon & text */
 .link-icon {
   font-size: 3rem;
   margin-bottom: 1rem;
-  filter: grayscale(0.3);
 }
 
 .link-card h3 {
-  font-size: 1.75rem;
+  font-size: 1.5rem;
   font-weight: 700;
-  margin-bottom: 0.75rem;
-  color: var(--foreground);
+  margin-bottom: 0.5rem;
 }
 
 .link-card p {
   font-size: 1rem;
-  color: var(--muted-foreground);
   line-height: 1.5;
 }
 
 /* ============================================================================
-   DISABLED CARD STATE
+   TAGS
+   ============================================================================ */
+.new-tag {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: var(--tag-new);
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 1px solid var(--border);
+}
+
+.dev-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: var(--tag-dev);
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 1px solid var(--border);
+}
+
+/* ============================================================================
+   DISABLED CARDS WITH DIAGONAL LINES
    ============================================================================ */
 .link-card.disabled {
-  opacity: 0.5;
+  opacity: 0.5;            
   cursor: not-allowed;
   pointer-events: none;
   position: relative;
+  overflow: hidden;
 }
 
 .link-card.disabled::after {
@@ -214,75 +264,16 @@ section {
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
+  width: 100%;
+  height: 100%;
   background: repeating-linear-gradient(
     45deg,
-    transparent,
-    transparent 10px,
-    rgba(0, 0, 0, 0.3) 10px,
-    rgba(0, 0, 0, 0.3) 20px
+    rgba(0,0,0,0.1),
+    rgba(0,0,0,0.1) 10px,
+    rgba(255,255,255,0.05) 10px,
+    rgba(255,255,255,0.05) 20px
   );
   pointer-events: none;
-}
-
-.dev-badge {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: var(--secondary);
-  color: var(--muted-foreground);
-  padding: 0.25rem 0.75rem;
-  border-radius: 0.5rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border: 1px solid var(--border);
-}
-
-.new-tag {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: hsl(50, 100%, 15%);
-  color: gold;
-  padding: 0.25rem 0.75rem;
-  border-radius: 0.5rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border: 1px solid gold;
-  box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-}
-
-/* ============================================================================
-   PORTFOLIO CARD
-   ============================================================================ */
-
-.link-card.portfolio {
-  border-color: gold;
-  background: hsl(50, 100%, 12%);
-  color: #fff;
-}
-
-.link-card.portfolio .link-icon {
-  font-size: 3rem;
-  color: gold;
-}
-
-.link-card.portfolio h3 {
-  color: gold;
-}
-
-.link-card.portfolio p {
-  color: #f3e6a9;
-}
-
-.link-card.portfolio:hover {
-  box-shadow: 0 0 40px gold, 0 0 80px rgba(225, 215, 0, 0.3);
-  border-color: gold;
 }
 
 /* ============================================================================
@@ -295,7 +286,6 @@ section {
 }
 
 .hint-text {
-  color: var(--muted-foreground);
   font-size: 1rem;
   font-style: italic;
 }
@@ -304,55 +294,55 @@ section {
    FOOTER
    ============================================================================ */
 footer {
-  margin-top: 4rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--border);
-  animation: fadeIn 0.8s ease-out 0.6s backwards;
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    animation: fadeIn 0.8s ease-out 0.6s backwards;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
 }
 
 .source-link {
-  text-align: center;
-  margin-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
 }
 
 .source-link a {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  color: var(--foreground);
-  text-decoration: none;
-  font-size: 1.125rem;
-  font-weight: 600;
-  padding: 0.75rem 1.5rem;
-  border: 2px solid var(--border);
-  border-radius: 0.75rem;
-  background: var(--card);
-  transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #555555;
+    text-decoration: none;
+    font-size: 1.125rem;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border: 2px solid var(--border);
+    border-radius: 0.75rem;
+    background: #FFFFFF33;
+    transition: all 0.3s ease;
 }
 
 .source-link a:hover {
-  border-color: var(--primary);
-  box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
-  transform: translateY(-2px);
+    border-color: var(--primary);
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
 }
 
 .github-icon {
-  width: 24px;
-  height: 24px;
-  filter: brightness(0) invert(1);
+    width: 24px;
+    height: 24px;
 }
 
-.copyright {
-  text-align: center;
-}
-
-.copyright p {
-  color: var(--muted-foreground);
-  font-size: 0.875rem;
+footer .copyright p {
+    margin: 0;
+    font-size: 0.875rem;
 }
 
 /* ============================================================================
-   SCROLLBAR STYLING - DARK THEME
+   SCROLLBAR STYLING
    ============================================================================ */
 ::-webkit-scrollbar {
   width: 12px;
@@ -365,14 +355,14 @@ footer {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: hsl(120, 100%, 35%);
+  background: var(--primary);
   border-radius: 6px;
   border: 2px solid var(--background);
   transition: background-color 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: hsl(120, 100%, 45%);
+  background: #5EB0C8;
 }
 
 ::-webkit-scrollbar-thumb:active {
@@ -382,111 +372,49 @@ footer {
 /* Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: hsl(120, 100%, 35%) var(--background);
+  scrollbar-color: var(--primary) var(--background);
 }
 
 /* ============================================================================
    ANIMATIONS
    ============================================================================ */
 @keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-30px);}
+  to { opacity: 1; transform: translateY(0);}
 }
 
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(30px);}
+  to { opacity: 1; transform: translateY(0);}
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0;}
+  to { opacity: 1;}
 }
 
 @keyframes pulse {
-  0%, 100% {
-    filter: drop-shadow(0 0 20px var(--primary));
-  }
-  50% {
-    filter: drop-shadow(0 0 40px var(--primary)) drop-shadow(0 0 60px var(--primary));
-  }
+  0%, 100% { filter: drop-shadow(0 0 10px var(--primary));}
+  50% { filter: drop-shadow(0 0 20px var(--primary));}
 }
 
 /* ============================================================================
    RESPONSIVE DESIGN
    ============================================================================ */
 @media (max-width: 768px) {
-  .container {
-    padding: 1.5rem;
-  }
-
-  header {
-    margin-bottom: 2.5rem;
-  }
-
-  .logo {
-    width: 80px;
-    height: 80px;
-    margin-bottom: 1rem;
-  }
-
-  h1 {
-    font-size: 2.5rem;
-  }
-
-  .link-grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-
-  .link-card {
-    padding: 1.5rem;
-  }
-
-  .link-card h3 {
-    font-size: 1.5rem;
-  }
-
-  .link-icon {
-    font-size: 2.5rem;
-  }
+  .container { padding: 1.5rem;}
+  header { margin-bottom: 2.5rem;}
+  .logo { width: 80px; height: 80px; margin-bottom: 1rem;}
+  h1 { font-size: 2.5rem;}
+  .link-grid { grid-template-columns: 1fr; gap: 1.5rem;}
+  .link-card { padding: 1.5rem;}
+  .link-card h3 { font-size: 1.5rem;}
+  .link-icon { font-size: 2.5rem;}
 }
 
 @media (max-width: 480px) {
-  h1 {
-    font-size: 2rem;
-  }
-
-  .logo {
-    width: 60px;
-    height: 60px;
-  }
-
-  .link-card {
-    padding: 1.25rem;
-  }
-
-  .link-card h3 {
-    font-size: 1.25rem;
-  }
-}
-
-a {
-  color: var(--secondary-);
+  h1 { font-size: 2rem;}
+  .logo { width: 60px; height: 60px;}
+  .link-card { padding: 1.25rem;}
+  .link-card h3 { font-size: 1.25rem;}
 }
