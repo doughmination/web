@@ -1,4 +1,8 @@
-// app.js - Unified JavaScript for all site functionality
+/*
+ * Copyright (c) 2026 Clove Twilight
+ * Licensed under the ESAL-1.3 Licence.
+ * See LICENCE.md in the project root for full licence information.
+ */
 
 // Define Turnstile callback immediately when script loads (before DOM is ready)
 window.onTurnstileCallback = function(token) {

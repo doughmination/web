@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2026 Clove Twilight
+ * Licensed under the ESAL-1.3 Licence.
+ * See LICENCE.md in the project root for full licence information.
+ */
+
 import { GripVertical } from "lucide-react";
 import * as ResizablePrimitive from "react-resizable-panels";
 

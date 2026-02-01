@@ -1,8 +1,13 @@
+/*
+ * Copyright (c) 2026 Clove Twilight
+ * Licensed under the ESAL-1.3 Licence.
+ * See LICENCE.md in the project root for full licence information.
+ */
+
 import "@/eggs/partyMode";
 import "@/eggs/nyanMode";
 import "@/eggs/matrix";
 import "@/eggs/butterflyMode"
-// import "@/eggs/maraudersMap";
 import "@/eggs/relic";
 import "@/eggs/spike";
 import "@/eggs/sudoMode";

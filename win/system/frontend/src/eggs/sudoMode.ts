@@ -1,4 +1,9 @@
-// sudo_run.ts - System administration parody easter egg
+/*
+ * Copyright (c) 2026 Clove Twilight
+ * Licensed under the ESAL-1.3 Licence.
+ * See LICENCE.md in the project root for full licence information.
+ */
+
 (() => {
   let activeOverlay: HTMLDivElement | null = null;
   let activeAnimation: number | null = null;

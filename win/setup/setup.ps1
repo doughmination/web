@@ -1,10 +1,9 @@
+# Copyright (c) 2026 Clove Twilight
+# Licensed under the ESAL-1.3 Licence.
+# See LICENCE.md in the project root for full licence information.
+
 # Doughmination Setup Script
 # This script debloats Windows and activates it
-
-# ========================================
-# Licenced by ESAL-1.3
-# Clove Nytrix Doughmination Twilight
-# ========================================
 
 # Check if we are using Windows
 if (-not $isWindows -and $PSVersionTable.PSVersion.Major -ge 6) {

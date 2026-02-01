@@ -1,32 +1,10 @@
-(() => {
-  /**
-   * Valorant-style "plant_spike" easter egg
-   *
-   * Usage:
-   *   window.plant_spike()
-   *
-   * Requirements:
-   *   Place these audio files in your public root:
-   *     /plant.mp3
-   *     /countdown.mp3
-   *     /explode.mp3
-   *     /defuse.mp3
-   *
-   * Behavior:
-   *   - Plant: 4s (plays plant.mp3)
-   *   - Countdown (after plant): 45s (plays countdown.mp3 starting at plant)
-   *       Visual countdown never pauses.
-   *   - Defuse: 7s total to defuse, with a 3.5s checkpoint (50%).
-   *       - Defuse audio (defuse.mp3) only plays while holding the defuse button.
-   *       - Defuse progress persists to checkpoint if you reach 3.5s and release early.
-   *   - If defuse completes -> show "DEFUSED" overlay, prevent explosion.
-   *   - If timer reaches 0 -> explode (explosion visuals + explode.mp3).
-   *
-   * Notes:
-   *   - countdown audio is intentionally not paused by defuse and will continue playing
-   *     independently. It will be stopped/cleaned up on final reset (after defuse/explode).
-   */
+/*
+ * Copyright (c) 2026 Clove Twilight
+ * Licensed under the ESAL-1.3 Licence.
+ * See LICENCE.md in the project root for full licence information.
+ */
 
+(() => {
   // STATE
   let running = false;
   let planted = false;

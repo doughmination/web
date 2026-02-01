@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2026 Clove Twilight
+ * Licensed under the ESAL-1.3 Licence.
+ * See LICENCE.md in the project root for full licence information.
+ */
+
 import { useTheme } from "next-themes";
 import { Toaster as Sonner, toast } from "sonner";
 

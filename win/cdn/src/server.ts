@@ -1,11 +1,15 @@
+/*
+ * Copyright (c) 2026 Clove Twilight
+ * Licensed under the ESAL-1.3 Licence.
+ * See LICENCE.md in the project root for full licence information.
+ */
+
 import express, { Request, Response, NextFunction } from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs/promises';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
-// nginx is handling security headers
-// import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import compression from 'compression';
 import cors from 'cors';
@@ -82,12 +86,6 @@ app.set('trust proxy', 1);
 // View engine setup
 app.set('view engine', 'ejs');
 app.set('views', config.PAGES_DIR);
-
-// Security middleware - all headers handled by nginx
-// app.use(helmet({
-//   contentSecurityPolicy: false,
-//   crossOriginResourcePolicy: { policy: "cross-origin" }
-// }));
 
 // CORS configuration
 app.use(cors({
