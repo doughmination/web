@@ -2,6 +2,12 @@
 # Licensed under the ESAL-1.3 Licence.
 # See LICENCE.md in the project root for full licence information.
 services:
+  modding:
+    image: clovetwilight3/doughmination-modding
+    ports:
+      - "8002:8002"
+    container_name: modding
+    restart: unless-stopped
   dough-back:
     build:
       context: ./win/system/backend
