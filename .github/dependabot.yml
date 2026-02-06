@@ -14,7 +14,7 @@ updates:
       interval: "daily"
       time: "08:00"
     assignees:
-      - "EstrogenHRT"
+      - "doughmination"
     labels:
       - "Dependabot"
     open-pull-requests-limit: 99
@@ -28,7 +28,7 @@ updates:
       interval: "daily"
       time: "09:45"
     assignees:
-      - "Doughmination"
+      - "doughmination"
     labels:
       - "Dependabot"
       - "Python"
@@ -43,7 +43,7 @@ updates:
       interval: "daily"
       time: "09:45"
     assignees:
-      - "Doughmination"
+      - "doughmination"
     labels:
       - "Dependabot"
       - "Python"
@@ -58,7 +58,7 @@ updates:
       interval: "daily"
       time: "09:45"
     assignees:
-      - "Doughmination"
+      - "doughmination"
     labels:
       - "Dependabot"
       - "JavaScript"
