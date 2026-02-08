@@ -35,6 +35,8 @@
   --card-win: #F8C8D8;         /* pastel pink */
   --card-co: #D6C8F8;          /* pastel purple */
   --card-foreground: #555555;
+  --card-discord: #C9CCF8; /* pastel Discord purple */
+
 
   /* Tags */
   --tag-new: #F4E1A1;          /* pastel gold */
@@ -202,6 +204,15 @@ section {
 
 .link-card.co {
   background: var(--card-co);
+}
+
+.link-card.discord {
+  background: var(--card-discord);
+  border-color: #9FA8F5;
+}
+
+.link-card.discord:hover {
+  box-shadow: 0 4px 15px rgba(88, 101, 242, 0.25);
 }
 
 /* Hover effect */
