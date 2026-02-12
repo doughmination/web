@@ -63,3 +63,18 @@ updates:
       - "Dependabot"
       - "JavaScript"
     open-pull-requests-limit: 99
+
+  # ================================
+  # Company (React)
+  # ================================
+  - package-ecosystem: "npm"
+    directory: "/win/root"
+    schedule:
+      interval: "daily"
+      time: "09:45"
+    assignees:
+      - "doughmination"
+    labels:
+      - "Dependabot"
+      - "JavaScript"
+    open-pull-requests-limit: 99
