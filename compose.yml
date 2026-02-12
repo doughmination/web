@@ -2,6 +2,16 @@
 # Licensed under the ESAL-1.3 Licence.
 # See LICENCE.md in the project root for full licence information.
 services:
+
+  company:
+    build:
+      context: ./win/root
+      dockerfile: Dockerfile
+    container_name: company
+    ports:
+      - "8003:8003"
+    restart: always
+
   modding:
     image: clovetwilight3/doughmination-modding
     ports:
