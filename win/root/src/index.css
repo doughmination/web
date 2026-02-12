@@ -1,0 +1,237 @@
+/*
+ * Copyright (c) 2026 Clove Twilight
+ * Licensed under the ESAL-1.3 Licence.
+ * See LICENCE.md in the project root for full licence information.
+ */
+
+/* ============================================================================
+   FONT IMPORTS
+   ============================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap');
+
+@font-face {
+    font-family: 'Comic Code';
+    src: url('https://fonts.doughmination.win/ComicCode-Regular_2022-05-24-151938_hsmz.woff2') format('woff2'),
+        url('https://fonts.doughmination.win/ComicCode-Regular_2022-05-24-151938_hsmz.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Comic Code';
+    src: url('https://fonts.doughmination.win/ComicCode-Italic_2022-05-24-151939_rdtu.woff2') format('woff2'),
+        url('https://fonts.doughmination.win/ComicCode-Italic_2022-05-24-151939_rdtu.woff') format('woff');
+    font-weight: 400;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Comic Code';
+    src: url('https://fonts.doughmination.win/ComicCode-Medium_2022-05-24-151941_ugqm.woff2') format('woff2'),
+        url('https://fonts.doughmination.win/ComicCode-Medium_2022-05-24-151941_ugqm.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Comic Code';
+    src: url('https://fonts.doughmination.win/ComicCode-Bold_2022-05-24-152309_zqkm.woff2') format('woff2'),
+        url('https://fonts.doughmination.win/ComicCode-Bold_2022-05-24-152309_zqkm.woff') format('woff');
+    font-weight: 700;
+    font-style: normal;
+}
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --background: 0 0% 100%;
+        --foreground: 222 47% 11%;
+
+        --card: 0 0% 100%;
+        --card-foreground: 222 47% 11%;
+
+        --popover: 0 0% 100%;
+        --popover-foreground: 222 47% 11%;
+
+        --primary: 187 85% 43%;
+        --primary-foreground: 0 0% 100%;
+
+        --secondary: 25 95% 53%;
+        --secondary-foreground: 0 0% 100%;
+
+        --muted: 210 40% 96%;
+        --muted-foreground: 215 16% 47%;
+
+        --accent: 210 40% 96%;
+        --accent-foreground: 222 47% 11%;
+
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 0 0% 98%;
+
+        --border: 214 32% 91%;
+        --input: 214 32% 91%;
+        --ring: 187 85% 43%;
+
+        --radius: 0.5rem;
+
+        --a: 187 85% 43%;
+        --a-glow: 187 85% 53%;
+
+        --code-bg: 210 40% 96%;
+        --code-border: 214 32% 91%;
+
+        --sidebar-background: 0 0% 98%;
+        --sidebar-foreground: 215 16% 47%;
+        --sidebar-primary: 187 85% 43%;
+        --sidebar-primary-foreground: 0 0% 100%;
+        --sidebar-accent: 210 40% 96%;
+        --sidebar-accent-foreground: 222 47% 11%;
+        --sidebar-border: 214 32% 91%;
+        --sidebar-ring: 187 85% 43%;
+    }
+
+    .dark {
+        --background: 222 47% 6%;
+        --foreground: 210 40% 96%;
+
+        --card: 222 47% 8%;
+        --card-foreground: 210 40% 96%;
+
+        --popover: 222 47% 8%;
+        --popover-foreground: 210 40% 96%;
+
+        --primary: 187 85% 53%;
+        --primary-foreground: 222 47% 6%;
+
+        --secondary: 25 95% 53%;
+        --secondary-foreground: 222 47% 6%;
+
+        --muted: 222 30% 14%;
+        --muted-foreground: 215 20% 55%;
+
+        --accent: 222 30% 18%;
+        --accent-foreground: 210 40% 96%;
+
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 210 40% 98%;
+
+        --border: 222 30% 18%;
+        --input: 222 30% 18%;
+        --ring: 187 85% 53%;
+
+        --a: 187 85% 53%;
+        --a-glow: 187 85% 63%;
+
+        --code-bg: 222 47% 10%;
+        --code-border: 222 30% 20%;
+
+        --sidebar-background: 222 47% 7%;
+        --sidebar-foreground: 215 20% 65%;
+        --sidebar-primary: 187 85% 53%;
+        --sidebar-primary-foreground: 222 47% 6%;
+        --sidebar-accent: 222 30% 14%;
+        --sidebar-accent-foreground: 210 40% 96%;
+        --sidebar-border: 222 30% 15%;
+        --sidebar-ring: 187 85% 53%;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground font-sans antialiased;
+        font-family: 'Comic Code', 'Inter', system-ui, sans-serif;
+    }
+
+    code,
+    pre {
+        font-family: 'JetBrains Mono', monospace;
+    }
+}
+
+@layer components {
+    .code-block {
+        @apply bg-[hsl(var(--code-bg))] border border-[hsl(var(--code-border))] rounded-lg p-4 overflow-x-auto;
+    }
+
+    .nav-link {
+        @apply text-muted-foreground hover:text-foreground transition-colors duration-200;
+    }
+
+    .nav-link-active {
+        @apply text-[hsl(var(--primary))] font-medium;
+    }
+
+    .glow {
+        box-shadow: 0 0 30px -5px hsl(var(--a) / 0.3);
+    }
+
+    .gradient-text {
+        @apply bg-gradient-to-r from-[hsl(var(--a))] to-[hsl(var(--a-glow))] bg-clip-text text-transparent;
+    }
+}
+
+@layer utilities {
+    .scrollbar-thin {
+        scrollbar-width: thin;
+        scrollbar-color: hsl(var(--muted)) transparent;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+        background-color: hsl(var(--muted));
+        border-radius: 3px;
+    }
+}
+
+
+@layer utilities {
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-in {
+        animation: fade-in 0.5s ease-out forwards;
+    }
+
+    .scrollbar-thin {
+        scrollbar-width: thin;
+        scrollbar-color: hsl(var(--muted)) transparent;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+        background-color: hsl(var(--muted));
+        border-radius: 3px;
+    }
+}

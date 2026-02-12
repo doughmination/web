@@ -1,194 +1,87 @@
-<!--
-Copyright (c) 2026 Clove Twilight
-Licensed under the ESAL-1.3 Licence.
-See LICENCE.md in the project root for full licence information.
--->
-
-<!DOCTYPE html>
-<html lang="en" class="dark">
-
-<head>
-    <meta charset="UTF-8">
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/x-icon" href="https://doughmination.win/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
 
     <!-- Page Title -->
-    <title>Doughmination | Projects, Tools & Mods Hub</title>
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/png"
-        href="https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png">
-
-    <!-- Stylesheet -->
-    <link rel="stylesheet" href="/win/root/styles.css">
+    <title>Doughmination System | UnifiedGaming Systems Ltd</title>
 
     <!-- SEO Meta Tags -->
-    <meta name="description"
-        content="Explore all Doughmination projects, tools, mods, and personal experiments across multiple domains. Discover GitCommit, PowerShell scripts, modding projects, and more.">
-    <meta name="author" content="Clove Twilight">
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="description" content="Doughmination System is the ecosystem of UnifiedGaming Systems Ltd, housing Doughmination Legal, Doughmination Modding, and Doughmination Coding, with a focus on accessibility and innovation." />
+    <meta name="author" content="UnifiedGaming Systems Ltd" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
 
-    <!-- Canonical -->
-    <link rel="canonical" href="https://doughmination.win/">
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://doughmination.win/" />
+    <link rel="alternate" media="only screen and (max-width: 640px)" href="https://doughmination.win/" />
 
-    <!-- Apple / Mobile -->
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Doughmination">
-    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png">
+    <!-- iOS Web App Meta Tags -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Doughmination System" />
+    <link rel="apple-touch-icon" href="https://doughmination.win/favicon.png" />
 
-    <!-- Theme -->
-    <meta name="theme-color" content="#4A9DAE">
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#8b5cf6" />
 
-    <!-- Open Graph -->
-    <meta property="og:site_name" content="Doughmination">
-    <meta property="og:title" content="Doughmination | Projects, Tools & Mods Hub">
-    <meta property="og:description"
-        content="Explore all Doughmination projects, tools, mods, and personal experiments across multiple domains. Discover GitCommit, PowerShell scripts, modding projects, and more.">
-    <meta property="og:image" content="https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://doughmination.win/">
-    <meta property="og:locale" content="en_GB">
+    <!-- Open Graph / Discord / Facebook -->
+    <meta property="og:site_name" content="Doughmination System" />
+    <meta property="og:title" content="Doughmination System | UnifiedGaming Systems Ltd" />
+    <meta property="og:description" content="Doughmination System is the ecosystem of UnifiedGaming Systems Ltd, housing Doughmination Legal, Modding, and Coding, with a focus on accessibility and innovation." />
+    <meta property="og:image" content="https://doughmination.win/favicon.png" />
+    <meta property="og:image:width" content="100" />
+    <meta property="og:image:height" content="100" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://doughmination.win/" />
+    <meta property="og:locale" content="en_GB" />
 
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Doughmination | Projects, Tools & Mods Hub">
-    <meta name="twitter:description"
-        content="Explore all Doughmination projects, tools, mods, and personal experiments across multiple domains. Discover GitCommit, PowerShell scripts, modding projects, and more.">
-    <meta name="twitter:image" content="https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Doughmination System | UnifiedGaming Systems Ltd" />
+    <meta name="twitter:description" content="Doughmination System is the ecosystem of UnifiedGaming Systems Ltd, housing Doughmination Legal, Modding, and Coding, with a focus on accessibility and innovation." />
+    <meta name="twitter:image" content="https://doughmination.win/favicon.png" />
+    <meta name="twitter:site" content="@Doughmination" />
 
-    <!-- Site Name Structured Data -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "Doughmination",
-      "alternateName": "Doughmination Projects Hub",
-      "url": "https://doughmination.win/"
-    }
-    </script>
-
-    <!-- Organization -->
+    <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
       "name": "Doughmination System",
       "url": "https://doughmination.win/",
-      "logo": "https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png"
+      "description": "Doughmination System is the ecosystem of UnifiedGaming Systems Ltd, including Doughmination Legal, Modding, and Coding, focused on accessibility and innovation.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "UnifiedGaming Systems Ltd",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://doughmination.win/favicon.png"
+        }
+      },
+      "inLanguage": "en-GB"
     }
     </script>
-</head>
 
-<body>
-    <div class="background-image"></div>
-
-    <div class="container">
-        <header>
-            <img src="https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png"
-                alt="Doughmination Logo" class="logo">
-            <h1>Doughmination</h1>
-        </header>
-
-        <main>
-            <!-- WIN SECTION -->
-            <section>
-                <p class="domain-label">doughmination.win</p>
-                <p class="domain-hint">Personal projects, scripts, and experiments</p>
-                <nav class="link-grid">
-                    <a href="https://cdn.doughmination.win" class="link-card win">
-                        <div class="link-icon">📦</div>
-                        <h3>CDN</h3>
-                        <p>Content delivery network</p>
-                        <span class="new-tag">NEW</span>
-                    </a>
-
-                    <a href="https://system.doughmination.win" class="link-card win">
-                        <div class="link-icon">👥</div>
-                        <h3>Plural System</h3>
-                        <p>System information and members</p>
-                    </a>
-
-                    <a href="https://setup.doughmination.win" class="link-card win">
-                        <div class="link-icon">⚡</div>
-                        <h3>PowerShell Script</h3>
-                        <p>Setup and automation tools</p>
-                    </a>
-                </nav>
-            </section>
-
-            <!-- CO.UK SECTION -->
-            <section>
-                <p class="domain-label">doughmination.co.uk</p>
-                <p class="domain-hint">Professional projects, portfolio, and published tools</p>
-                <nav class="link-grid">
-                    <a href="https://doughmination.co.uk" class="link-card co">
-                        <div class="link-icon">💼</div>
-                        <h3>Portfolio</h3>
-                        <p>My personal and professional coding portfolio</p>
-                    </a>
-                    <a href="https://modding.doughmination.co.uk" class="link-card co">
-                        <div class="link-icon">🎮</div>
-                        <h3>Modding</h3>
-                        <p>My collection of game mods and plugins</p>
-                        <span class="new-tag">NEW</span>
-                    </a>
-                    <a href="https://gitcommit.doughmination.co.uk" class="link-card co disabled">
-                        <div class="link-icon">🦋</div>
-                        <h3>GitCommit</h3>
-                        <p>Automated Git workflow across AUR, Chocolatey, PPA, and Fedora</p>
-                        <span class="dev-badge">In Dev</span>
-                    </a>
-                </nav>
-            </section>
-
-            <!-- Social Media Section -->
-            <section>
-                <p class="domain-label">community</p>
-                <p class="domain-hint">Chat, updates, and support</p>
-                <nav class="link-grid">
-                    <a href="https://discord.gg/RQDRzK3VBe" class="link-card win discord" target="_blank"
-                        rel="noopener noreferrer">
-                        <div class="link-icon">💬</div>
-                        <h3>Discord</h3>
-                        <p>Join the community server</p>
-                    </a>
-                    <a href="https://x.com/Doughmination_" class="link-card win discord" target="_blank" rel="noopener noreferrer">
-                        <div class="link-icon">🐦</div>
-                        <h3>Twitter</h3>
-                        <p>Follow our development</p>
-                    </a>
-                </nav>
-            </section>
-
-
-            <!-- Placeholder for future links -->
-            <div class="add-links-section">
-                <p class="hint-text">More links coming soon...</p>
-            </div>
-        </main>
-
-        <footer>
-            <div class="source-link">
-                <a href="https://github.com/doughmination/web" target="_blank" rel="noopener noreferrer">
-                    <img src="https://raw.githubusercontent.com/doughmination/Doughmination/main/github.svg"
-                        alt="GitHub" class="github-icon">
-                    <span>Source Code</span>
-                </a>
-            </div>
-            <div class="copyright">
-                <p>&copy; 2026 Clove Twilight. All rights reserved.</p>
-                <p>Doughmination System® is a trademark in the United Kingdom under trademark number <a
-                        href="https://www.ipo.gov.uk/t-tmj.htm/t-tmj/tm-journals/2025-039/UK00004263144.html"
-                        target="_blank">UK00004263144</a></p>
-            </div>
-            <div class="sponsor">
-                <p class="sponsor-label">Support the project</p>
-                <iframe src="https://github.com/sponsors/doughmination/card" title="Sponsor doughmination" height="100"
-                    width="600" style="border: 0; max-width: 600px;">
-                </iframe>
-            </div>
-        </footer>
-    </div>
-</body>
-
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "UnifiedGaming Systems Ltd",
+      "url": "https://doughmination.win/",
+      "logo": "https://doughmination.win/favicon.png",
+      "description": "UnifiedGaming Systems Ltd operates the Doughmination System ecosystem, including Doughmination Legal, Modding, and Coding, with a focus on accessibility and software innovation.",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "General Inquiry",
+        "email": "admin@doughmination.win"
+      }
+    }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>
