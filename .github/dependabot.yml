@@ -6,20 +6,6 @@ version: 2
 updates:
 
   # ================================
-  # GitHub Actions
-  # ================================
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "daily"
-      time: "08:00"
-    assignees:
-      - "doughmination"
-    labels:
-      - "Dependabot"
-    open-pull-requests-limit: 99
-
-  # ================================
   # CDN
   # ================================
   - package-ecosystem: "npm"
