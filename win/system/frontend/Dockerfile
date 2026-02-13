@@ -3,7 +3,7 @@
 # See LICENCE.md in the project root for full licence information.
 
 # Option 1: Use Ubuntu base instead of Alpine (most reliable)
-FROM node:20-slim
+FROM node:25-slim
 
 # Install curl for healthcheck
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
