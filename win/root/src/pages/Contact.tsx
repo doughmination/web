@@ -73,7 +73,7 @@ const Contact = () => {
                 <div className="container mx-auto px-4 relative">
                     <div className="max-w-3xl mx-auto text-center">
                         <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-fade-in">
-                            <span className="gradient-text-minecraft">Contact Us</span>
+                            <span className="gradient-text">Contact Us</span>
                         </h1>
                         <p className="text-xl text-muted-foreground mb-8 animate-fade-in">
                            There are several ways you can contact us, find them below!
@@ -86,7 +86,7 @@ const Contact = () => {
             <section className="py-16 px-4">
                 <div className="container mx-auto max-w-6xl">
                     <h2 className="text-3xl font-bold text-center mb-12">
-                        <span className="gradient-text-minecraft">Get In Touch</span>
+                        <span className="gradient-text">Get In Touch</span>
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {footerLinks.contact.map((item) => {
@@ -119,7 +119,7 @@ const Contact = () => {
             <section className="py-16 px-4 bg-muted/30">
                 <div className="container mx-auto max-w-6xl">
                     <h2 className="text-3xl font-bold text-center mb-12">
-                        <span className="gradient-text-minecraft">Follow Us</span>
+                        <span className="gradient-text">Follow Us</span>
                     </h2>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                         {footerLinks.socials.map((item) => {

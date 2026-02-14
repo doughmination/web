@@ -5,8 +5,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 
-// 404 page
+// 404 and Coming Soon page
 import NotFound from "@/pages/NotFound";
+import ComingSoon from "./pages/ComingSoon";
 
 // Main pages
 import Index from "@/pages/Index";
@@ -38,12 +39,12 @@ const App = () => (
                     <Routes>
 
                         {/* Divisions Pages */}
-                        <Route path="/divisions/modding" element={<DivModding />} />
-                        <Route path="/divisions/coding" element={<DivCoding />} />
+                        <Route path="/divisions/modding" element={<ComingSoon />} />
+                        <Route path="/divisions/coding" element={<ComingSoon />} />
 
                         {/* Projects Pages */}
-                        <Route path="/projects/modding" element={<ProModding />} />
-                        <Route path="/projects/coding" element={<ProCoding />} />
+                        <Route path="/projects/modding" element={<ComingSoon />} />
+                        <Route path="/projects/coding" element={<ComingSoon />} />
 
                         {/* Legal Pages */}
                         <Route path="/legal" element={<Legal />} />
