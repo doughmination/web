@@ -88,7 +88,7 @@ const Team = () => {
                 {/* Links */}
                 <div className="flex flex-col gap-3 w-full">
                   <a 
-                    href="#" 
+                    href="https://doughmination.co.uk" 
                     className="w-full px-6 py-3 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-semibold transition-colors duration-200 flex items-center justify-center gap-2"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -99,7 +99,7 @@ const Team = () => {
                   
                   <div className="flex gap-3 justify-center">
                     <a 
-                      href="#" 
+                      href="https://www.linkedin.com/in/estrogen/" 
                       className="w-10 h-10 rounded-lg bg-muted hover:bg-primary/20 flex items-center justify-center transition-colors duration-200"
                       aria-label="LinkedIn"
                     >
@@ -108,7 +108,7 @@ const Team = () => {
                       </svg>
                     </a>
                     <a 
-                      href="#" 
+                      href="https://x.com/DoughminCEO" 
                       className="w-10 h-10 rounded-lg bg-muted hover:bg-primary/20 flex items-center justify-center transition-colors duration-200"
                       aria-label="Twitter"
                     >
@@ -117,7 +117,7 @@ const Team = () => {
                       </svg>
                     </a>
                     <a 
-                      href="#" 
+                      href="https://github.com/Doughmination" 
                       className="w-10 h-10 rounded-lg bg-muted hover:bg-primary/20 flex items-center justify-center transition-colors duration-200"
                       aria-label="GitHub"
                     >
