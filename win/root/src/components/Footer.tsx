@@ -4,7 +4,7 @@ import { Separator } from "@/components/ui/separator";
 const footerLinks = {
   legal: [
     { name: "Legal", href: "/legal" },
-    { name: "Our Pledge", href: "/pledge" },
+    { name: "Our Pledge", href: "/about" },
     { name: "Contact Us", href: "/contact" }
   ],
 };

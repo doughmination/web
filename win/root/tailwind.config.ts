@@ -57,13 +57,9 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        hytale: {
-          DEFAULT: "hsl(var(--hytale))",
-          glow: "hsl(var(--hytale-glow))",
-        },
-        minecraft: {
-          DEFAULT: "hsl(var(--minecraft))",
-          glow: "hsl(var(--minecraft-glow))",
+        a: {
+          DEFAULT: "hsl(var(--a))",
+          glow: "hsl(var(--a-glow))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
