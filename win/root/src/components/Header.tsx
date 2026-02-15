@@ -47,7 +47,7 @@ export const Header = ({ onMenuClick }: HeaderProps) => {
           )}
           <Link to="/" className="flex items-center gap-2">
             <img
-              src="https://doughmination.win/favicon.png"
+              src="/favicon.png"
               alt="Doughmination System"
               className="w-8 h-8 rounded-lg"
             />

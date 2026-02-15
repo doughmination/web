@@ -8,7 +8,9 @@ const footerLinks = {
     { name: "YouTube", href: "https://www.youtube.com/@DoughminationOfficial", icon: "YouTube" },
     { name: "Instagram", href: "https://www.instagram.com/doughminationmods", icon: "Instagram"},
     { name: "Facebook", href: "https://www.facebook.com/profile.php?id=61588102340112", icon: "Facebook"},
-    { name: "Discord", href: "https://discord.gg/RQDRzK3VBe", icon: "Discord"}
+    { name: "Discord", href: "https://discord.gg/RQDRzK3VBe", icon: "Discord"},
+    { name: "BlueSky", href: "https://bsky.app/", icon: "BlueSky"},
+    { name: "Mastodon", href: "#", icon: "Mastodon"}
   ],
   contact: [
     { name: "Phone", href: "tel:+447523790924", icon: "Phone" },
@@ -57,6 +59,16 @@ const icons = {
   LinkedIn: () => (
     <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
       <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+    </svg>
+  ),
+  BlueSky: () => (
+    <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M12 11.3c-1.8-3.5-6-7.4-9-9C1.1 1.2 0 2.2 0 4c0 3.3 4.1 8.7 6.3 9.9-2 .2-3.8 1.1-3.8 3.3 0 2.4 2 4.1 5.1 4.1 2.8 0 4.3-1.5 4.4-3.4.1 1.9 1.6 3.4 4.4 3.4 3.1 0 5.1-1.7 5.1-4.1 0-2.2-1.8-3.1-3.8-3.3C19.9 12.7 24 7.2 24 4c0-1.8-1.1-2.8-3-1.7-3 1.6-7.2 5.5-9 9z" />
+    </svg>
+  ),
+  Mastodon: () => (
+    <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M21.5 7.1c0-4.1-2.7-5.3-2.7-5.3C17.4 1.1 15 1 12 1h-.1c-3 0-5.4.1-6.8.8 0 0-2.7 1.2-2.7 5.3 0 .9 0 2 .1 3.2.2 4 2.2 8 9.4 8.7.3 0 .6.1.9.1 1.5 0 2.9-.4 2.9-.4l-.1-2.1s-1.3.4-2.7.4c-2.7 0-3.4-1.3-3.6-1.8-.1-.1 0-.2 0-.2 2.4.6 4.5.3 5.1.2 1.7-.2 3.2-1.2 3.4-2.1.3-1.4.3-3.4.3-3.4zM17 12h-2V7.6c0-.9-.4-1.4-1.1-1.4-.8 0-1.2.6-1.2 1.7V10h-2V7.9c0-1.1-.4-1.7-1.2-1.7-.7 0-1.1.5-1.1 1.4V12h-2V7.4c0-1 .3-1.8.9-2.4.6-.6 1.4-.9 2.4-.9 1.2 0 2.1.5 2.7 1.4l.6 1 .6-1c.6-.9 1.5-1.4 2.7-1.4 1 0 1.8.3 2.4.9.6.6.9 1.4.9 2.4V12z"/>
     </svg>
   )
 };
