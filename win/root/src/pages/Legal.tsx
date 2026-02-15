@@ -278,9 +278,9 @@ All matters relating to trademarks, Trademarked Components, and trademark enforc
             {/* Contact Section */}
             <div className="bg-gradient-to-br from-primary/10 to-purple-500/10 rounded-2xl p-8 border border-primary/20">
               <div className="text-center">
-                <h3 className="text-2xl font-bold mb-4">Questions About Licensing?</h3>
+                <h3 className="text-2xl font-bold mb-4">Questions About Legal Information?</h3>
                 <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-                  If you have questions about our license, need clarification on usage terms, or want to 
+                  If you have questions about our legal branding, need clarification on usage terms, or want to 
                   discuss commercial licensing options, we're here to help.
                 </p>
                 <a 
