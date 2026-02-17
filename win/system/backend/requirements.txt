@@ -3,7 +3,7 @@
 # See LICENCE.md in the project root for full licence information.
 
 fastapi==0.129.0
-uvicorn[standard]==0.40.0
+uvicorn[standard]==0.41.0
 httpx==0.28.1
 python-dotenvx==0.3.0
 bcrypt==5.0.0
