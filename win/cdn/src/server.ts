@@ -426,7 +426,7 @@ app.post('/api/upload', requireAuth, uploadLimiter, upload.single('file'), async
 const allowedExtensions = new Set([
   '.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.bmp', '.ico',
   '.pdf', '.txt', '.mp4', '.mp3', '.wav',
-  '.zip', '.rar', '.7z', '.tar', '.gz', '.xz',
+  '.zip', '.rar', '.7z', '.tar', '.gz', '.xz', '.jar', '.mrpack',
   '.json', '.jsonc', '.xml', '.csv', '.md', '.js'
 ]);
 
