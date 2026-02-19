@@ -433,7 +433,7 @@ const allowedExtensions = new Set([
 app.get('/cdn/*filePath', async (req: Request, res: Response) => {
   try {
     // Get the path after /cdn/
-    const filePath = decodeURIComponent(String(req.path.replace(/^\/cdn\//, '') || ''));
+    const filePath = String(req.path.replace(/^\/cdn\//, '') || '');
 
     // ☕ TEAPOT MODE ☕
     if (isScannerPath(filePath)) {
@@ -505,7 +505,7 @@ app.get('/cdn/*filePath', async (req: Request, res: Response) => {
 
 // Alternative route
 app.get('/files/*filePath', async (req: Request, res: Response) => {
-  const filePath = decodeURIComponent(String(req.path.replace(/^\/files\//, '') || ''));
+  const filePath = String(req.path.replace(/^\/files\//, '') || '');
 
   // ☕ TEAPOT MODE ☕
   if (isScannerPath(filePath)) {
