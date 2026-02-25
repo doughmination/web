@@ -2,7 +2,7 @@
 # Licensed under the ESAL-1.3 Licence.
 # See LICENCE.md in the project root for full licence information.
 
-fastapi==0.132.1
+fastapi==0.133.0
 uvicorn[standard]==0.41.0
 httpx==0.28.1
 python-dotenvx==0.3.0
