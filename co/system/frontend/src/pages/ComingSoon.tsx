@@ -153,7 +153,7 @@ const ComingSoon: React.FC<ComingSoonProps> = ({
               <p className="text-sm text-muted-foreground font-comic">
                 Want to stay updated?{' '}
                 <a 
-                  href="https://doughmination.win" 
+                  href="https://doughmination.co.uk" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-primary hover:underline font-semibold"
