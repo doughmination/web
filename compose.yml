@@ -9,51 +9,55 @@ services:
       dockerfile: Dockerfile
     container_name: company
     ports:
-      - "8003:8003"
+      - "127.0.0.1:8003:8003"
     restart: always
 
   modding:
     image: clovetwilight3/doughmination-modding
     ports:
-      - "8002:8002"
+      - "127.0.0.1:8002:8002"
     container_name: modding
     restart: unless-stopped
+
   dough-back:
     build:
-      context: ./win/system/backend
+      context: ./co/system/backend
       dockerfile: Dockerfile
     container_name: dough-back
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     volumes:
       - "./dough-data:/app/dough-data"
       - "./.env:/app/.env:ro"
       - "./.env.keys:/app/.env.keys:ro"
     restart: unless-stopped
+
   dough-front:
     build:
-      context: ./win/system/frontend
+      context: ./co/system/frontend
       dockerfile: Dockerfile
     container_name: dough-front
     ports:
-      - "8001:8001"
+      - "127.0.0.1:8001:8001"
     volumes:
       - "./.env:/app/.env:ro"
       - "./.env.keys:/app/.env.keys:ro"
     depends_on:
       - dough-back
+
   cdn:
     build:
       context: ./win/cdn
       dockerfile: Dockerfile
     container_name: cdn
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
     volumes:
       - "./win/cdn/cdn:/app/cdn"
       - "./.env:/app/.env:ro"
       - "./.env.keys:/app/.env.keys:ro"
     restart: unless-stopped
+
 volumes:
   backend_data:
   backend_avatars:
