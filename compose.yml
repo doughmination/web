@@ -37,6 +37,8 @@ services:
       context: ./co/system/frontend
       dockerfile: Dockerfile
     container_name: dough-front
+    environment:
+      - NODE_ENV=production
     ports:
       - "127.0.0.1:8001:8001"
     volumes:
@@ -50,6 +52,8 @@ services:
       context: ./win/cdn
       dockerfile: Dockerfile
     container_name: cdn
+    environment:
+      - NODE_ENV=development
     ports:
       - "127.0.0.1:8080:8080"
     volumes:
