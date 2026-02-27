@@ -57,7 +57,7 @@ if (-not $isAdmin) {
         # Script is running from memory (irm | iex), so save it to a temp file
         Write-Host "Downloading script to temporary location..." -ForegroundColor Gray
         try {
-            $scriptContent = Invoke-RestMethod "https://setup.doughmination.win"
+            $scriptContent = Invoke-RestMethod "https://setup.doughmination.co.uk"
             $scriptPath = Join-Path $env:TEMP "DoughminationSetup_$(Get-Date -Format 'yyyyMMddHHmmss').ps1"
             Set-Content -Path $scriptPath -Value $scriptContent -Encoding UTF8
             Write-Host "Script saved to: $scriptPath" -ForegroundColor Gray

@@ -139,7 +139,7 @@ Disallow: /admin/
 Disallow: /ws
 
 # Sitemap
-Sitemap: https://system.doughmination.win/sitemap.xml
+Sitemap: https://system.doughmination.co.uk/sitemap.xml
 """
     return Response(content=robots_content, media_type="text/plain")
 
@@ -154,7 +154,7 @@ async def sitemap_xml():
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <!-- Homepage -->
   <url>
-    <loc>https://system.doughmination.win/</loc>
+    <loc>https://system.doughmination.co.uk/</loc>
     <lastmod>{datetime.now(timezone.utc).strftime('%Y-%m-%d')}</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -162,7 +162,7 @@ async def sitemap_xml():
   
   <!-- Admin/Login Pages -->
   <url>
-    <loc>https://system.doughmination.win/admin/login</loc>
+    <loc>https://system.doughmination.co.uk/admin/login</loc>
     <lastmod>{datetime.now(timezone.utc).strftime('%Y-%m-%d')}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
@@ -177,7 +177,7 @@ async def sitemap_xml():
             
             sitemap += f"""  <!-- Member: {display_name} -->
   <url>
-    <loc>https://system.doughmination.win/{member_name}</loc>
+    <loc>https://system.doughmination.co.uk/{member_name}</loc>
     <lastmod>{datetime.now(timezone.utc).strftime('%Y-%m-%d')}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>"""
@@ -202,7 +202,7 @@ async def sitemap_xml():
             content=f"""<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://system.doughmination.win/</loc>
+    <loc>https://system.doughmination.co.uk/</loc>
     <lastmod>{datetime.now(timezone.utc).strftime('%Y-%m-%d')}</lastmod>
   </url>
 </urlset>""",
@@ -303,7 +303,7 @@ async def serve_fronting_page(request: Request):
                 "@type": "Person",
                 "name": member_name,
                 "image": member_avatar,
-                "url": f"https://system.doughmination.win/{member_url_name}",
+                "url": f"https://system.doughmination.co.uk/{member_url_name}",
                 "identifier": member.get("id", "")
             })
         
@@ -333,7 +333,7 @@ async def serve_fronting_page(request: Request):
     <meta property="og:title" content="{title}" />
     <meta property="og:description" content="{description}" />
     <meta property="og:image" content="{primary_avatar}" />
-    <meta property="og:url" content="https://system.doughmination.win/fronting" />
+    <meta property="og:url" content="https://system.doughmination.co.uk/fronting" />
     {structured_data}
 </head>
 """
@@ -393,7 +393,7 @@ async def serve_member_page(member_name: str, request: Request):
       "name": "{display_name}",
       "description": "{description}",
       "image": "{avatar_url}",
-      "url": "https://system.doughmination.win/{member_name}",
+      "url": "https://system.doughmination.co.uk/{member_name}",
       "identifier": "{member_id}"
     }}
     </script>"""
@@ -413,7 +413,7 @@ async def serve_member_page(member_name: str, request: Request):
     <meta property="og:title" content="{display_name} - {pronouns}" />
     <meta property="og:description" content="{description}" />
     <meta property="og:image" content="{avatar_url}" />
-    <meta property="og:url" content="https://system.doughmination.win/{member_name}" />
+    <meta property="og:url" content="https://system.doughmination.co.uk/{member_name}" />
     {structured_data}
 </head>
 """

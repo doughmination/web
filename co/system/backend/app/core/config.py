@@ -55,19 +55,19 @@ ALLOWED_AVATAR_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif']
 DEFAULT_AVATAR = "https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png"
 
 # Base URL
-BASE_URL = os.getenv("BASE_URL", "https://doughmination.win").rstrip('/')
+BASE_URL = os.getenv("BASE_URL", "https://doughmination.co.uk").rstrip('/')
 
 def get_cors_origins() -> List[str]:
     """Get CORS allowed origins"""
     return [
         "http://localhost:8080",
         "http://127.0.0.1:8080",
-        "https://www.doughmination.win",
-        "http://www.doughmination.win",
+        "https://www.doughmination.co.uk",
+        "http://www.doughmination.co.uk",
         "http://frontend",
         "http://frontend:80",
-        "http://doughmination.win",
-        "https://doughmination.win"
+        "http://doughmination.co.uk",
+        "https://doughmination.co.uk"
     ]
 
 def get_pluralkit_headers() -> dict:

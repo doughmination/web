@@ -486,7 +486,7 @@ export default function Index() {
             <ThemeToggle />
             <Button variant="outline" size="sm" asChild>
               <a
-                href="https://doughmination.win"
+                href="https://doughmination.co.uk"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-comic"
@@ -565,7 +565,7 @@ export default function Index() {
                 )}
                 <li>
                   <a
-                    href="https://doughmination.win"
+                    href="https://doughmination.co.uk"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="block w-full px-4 py-3 rounded-lg text-sm text-center transition-all font-comic bg-primary text-primary-foreground hover:bg-primary/80"
