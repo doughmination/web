@@ -47,11 +47,11 @@ services:
     depends_on:
       - dough-back
 
-  cdn:
+  my-cdn:
     build:
       context: ./win/cdn
       dockerfile: Dockerfile
-    container_name: cdn
+    container_name: clove-cdn
     environment:
       - NODE_ENV=development
     ports:
