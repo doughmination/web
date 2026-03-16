@@ -24,7 +24,7 @@ updates:
   # Doughmination System Backend
   # ================================
   - package-ecosystem: "pip"
-    directory: "/win/system/backend"
+    directory: "/co/system/backend"
     schedule:
       interval: "daily"
       time: "09:45"
@@ -39,7 +39,7 @@ updates:
   # Doughmination System Frontend (React)
   # ================================
   - package-ecosystem: "npm"
-    directory: "/win/system/frontend"
+    directory: "/co/system/frontend"
     schedule:
       interval: "daily"
       time: "09:45"
