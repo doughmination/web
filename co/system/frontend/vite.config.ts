@@ -17,19 +17,19 @@ export default defineConfig(({ mode }) => {
   return {
     server: {
       host: '0.0.0.0',  // Listen on all network interfaces
-      port: 8001,       // The port the UI runs on
+      port: 5001,       // The port the UI runs on
       // Add this line to allow your domain
       allowedHosts: ['localhost', '127.0.0.1', 'system.doughmination.co.uk'],
       proxy: {
         // Proxy API requests to backend during development
         '/api': {
-          target: 'http://127.0.0.1:8000',
+          target: 'http://127.0.0.1:5000',
           changeOrigin: true,
           secure: false,
         },
         // Proxy avatar requests 
         '/avatars': {
-          target: 'http://127.0.0.1:8000',
+          target: 'http://127.0.0.1:5000',
           changeOrigin: true,
           secure: false,
         }
