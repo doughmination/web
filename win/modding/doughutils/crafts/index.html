@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crafts — Modding Docs</title>
+  <link rel="stylesheet" href="/assets/style.css" />
+</head>
+<body>
+
+  <nav>
+    <a class="nav-brand" href="/">Modding Docs</a>
+    <div class="nav-links">
+      <a href="/doughutils/crafts" class="active">Crafts</a>
+      <div class="dropdown">
+        <button class="dropdown-toggle">
+          Mods
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8">
+            <polyline points="2,4 6,8 10,4"/>
+          </svg>
+        </button>
+        <div class="dropdown-menu">
+          <a href="/plural">Plural</a>
+          <a href="/doughutils">DoughUtils</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <a class="home-btn" href="/">← Home</a>
+
+    <br><br>
+
+    <div class="page-header">
+      <h1>Crafting Recipes</h1>
+      <p>All custom crafting recipes.</p>
+    </div>
+
+    <div id="craft-grid" class="craft-grid">
+      <!-- Cards injected by JS -->
+    </div>
+
+    <p id="no-crafts" style="display:none; color: var(--text-muted); font-size:0.82rem; margin-top:2rem;">
+      No craft images found, add images to the folder.
+    </p>
+  </main>
+
+  <script src="/assets/nav.js"></script>
+  <script>
+  function fileNameToTitle(filename) {
+    return filename
+      .replace(/\.(png|jpe?g|gif|webp)$/i, '')
+      .replace(/[-_]/g, ' ')
+      .replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  async function loadCrafts() {
+    const grid = document.getElementById('craft-grid');
+    const empty = document.getElementById('no-crafts');
+
+    try {
+      const res = await fetch('/assets/crafts/manifest.json');
+      const craftFiles = await res.json();
+
+      if (craftFiles.length === 0) {
+        empty.style.display = 'block';
+        return;
+      }
+
+      craftFiles.forEach(file => {
+        const card = document.createElement('div');
+        card.className = 'craft-card';
+        card.innerHTML = `
+          <img src="/assets/crafts/${file}" alt="${fileNameToTitle(file)}" loading="lazy" />
+          <div class="craft-name">${fileNameToTitle(file)}</div>
+        `;
+        grid.appendChild(card);
+      });
+    } catch (e) {
+      empty.style.display = 'block';
+      console.error('Could not load manifest:', e);
+    }
+  }
+
+  loadCrafts();
+</script>
+</body>
+</html>
