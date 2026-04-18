@@ -109,7 +109,7 @@ Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "  Doughmination Windows Setup Script" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "Licenced by ESAL-1.3" -ForegroundColor Gray
+Write-Host "Licenced by ESAL-1.4" -ForegroundColor Gray
 Write-Host "Clove Nytrix Doughmination Twilight" -ForegroundColor Gray
 Write-Host ""
 Write-Host "Running with Administrator privileges" -ForegroundColor Green
@@ -145,7 +145,7 @@ function Get-YesNoChoice {
 }
 
 # Step 1: Debloat Windows
-$debloatChoice = Get-YesNoChoice -Prompt "[1/5] Do you want to debloat Windows?"
+$debloatChoice = Get-YesNoChoice -Prompt "[1/5] Do you want to debloat Windows? (the debloat script may cause issues, and may make things harder to debug, please make sure you know what you are doing before running the debloat script, as it may uninstall unintended features)"
 if ($debloatChoice -eq 'Y') {
     Write-Host ""
     Write-Host "Debloating Windows..." -ForegroundColor Yellow
