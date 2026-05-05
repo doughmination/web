@@ -294,14 +294,14 @@ class HelperPing(BaseModel):
     referer: Optional[str] = None
 
 
-@router.post("/api/helper")
+@router.post("/helper")
 async def helper_ping(payload: HelperPing, request: Request):
     """Log a page visit. Called by the frontend on every navigation."""
     _visitor_logger.log_visitor(request=request, path=payload.path)
     return {"ok": True}
 
 
-@router.get("/api/helper")
+@router.get("/helper")
 async def helper_ping_get(request: Request):
     """GET fallback (e.g. sendBeacon image, no-CORS)."""
     _visitor_logger.log_visitor(
