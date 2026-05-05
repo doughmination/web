@@ -5,17 +5,7 @@ See LICENCE.md in the project root for full licence information.
 """
 
 """
-Visitor-log relay / browser.
-
-Standalone FastAPI app on :9091 that lets you browse the SQLite database
-written by helper.py. Reuses LogQuery for the read paths.
-
-Run locally:
-    cd backend
-    python relay.py
-
-By default it binds to 127.0.0.1 — visitor logs contain IPs, full headers,
-and cookies, so the server should NOT be exposed publicly. Tunnel via SSH
+Tunnel via SSH
 (`ssh -L 9091:localhost:9091 host`) if accessing remotely.
 """
 

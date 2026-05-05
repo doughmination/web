@@ -52,7 +52,7 @@ app.include_router(metrics.router, prefix="/api", tags=["Metrics"])
 app.include_router(admin.router, prefix="/api", tags=["Admin"])
 app.include_router(member_status.router, prefix="/api", tags=["Member Status"])
 app.include_router(bot.router, tags=["Bot API"])
-app.include_router(helper.router, tags=["Helper"])  # Visitor logging — must be before static catch-all
+app.include_router(helper.router, prefix="/api", tags=["Helper"])  # Visitor logging — must be before static catch-all
 app.include_router(static.router, tags=["Static Files"])  # Must be last for catch-all routes
 
 if __name__ == "__main__":
