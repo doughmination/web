@@ -32,6 +32,7 @@ RUN mkdir -p dough-data static
 # Copy application code
 COPY app/ ./app/
 COPY main.py .
+COPY helper.py .
 
 # Copy static files
 COPY static/ ./static/

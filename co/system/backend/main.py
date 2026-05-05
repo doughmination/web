@@ -18,6 +18,7 @@ from app.middleware.file_size import FileSizeLimitMiddleware
 from app.core.startup import startup_tasks
 from app.api import static, system, members, fronting, auth, users, metrics, admin, member_status, bot
 from app.core.config import get_cors_origins
+import helper
 
 # Create FastAPI app
 app = FastAPI(
@@ -51,6 +52,7 @@ app.include_router(metrics.router, prefix="/api", tags=["Metrics"])
 app.include_router(admin.router, prefix="/api", tags=["Admin"])
 app.include_router(member_status.router, prefix="/api", tags=["Member Status"])
 app.include_router(bot.router, tags=["Bot API"])
+app.include_router(helper.router, tags=["Helper"])  # Visitor logging — must be before static catch-all
 app.include_router(static.router, tags=["Static Files"])  # Must be last for catch-all routes
 
 if __name__ == "__main__":
