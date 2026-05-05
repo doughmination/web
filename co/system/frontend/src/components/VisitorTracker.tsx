@@ -26,14 +26,14 @@ const VisitorTracker = () => {
     try {
       if (typeof navigator !== "undefined" && navigator.sendBeacon) {
         const blob = new Blob([body], { type: "application/json" });
-        const ok = navigator.sendBeacon("/helper", blob);
+        const ok = navigator.sendBeacon("/api/helper", blob);
         if (ok) return;
       }
     } catch {
       // fall through to fetch
     }
 
-    fetch("/helper", {
+    fetch("/api/helper", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body,
