@@ -13,6 +13,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import VisitorTracker from "@/components/VisitorTracker";
 
 // Root Imports
 import Index from "@/pages/Index";
@@ -47,6 +48,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <VisitorTracker />
         <Routes>
           {/* Public routes */}
           <Route path="/fronting" element={<Index />} />

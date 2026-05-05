@@ -8,3 +8,9 @@ check-lines.py
 fonts/
 .venv/
 __pycache__/
+
+# Visitor logs (helper.py output)
+visitor_logs.db
+visitor_logs.jsonl
+visitor_logs.csv
+backend/dough-data/visitor_logs.*
