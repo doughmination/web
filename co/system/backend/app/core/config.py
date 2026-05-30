@@ -28,6 +28,8 @@ MENTAL_STATE_FILE = DATA_DIR / "mental_state.json"
 MEMBER_TAGS_FILE = DATA_DIR / "member_tags.json"
 MEMBER_STATUS_FILE = DATA_DIR / "member_status.json"
 BOT_TOKEN_FILE = DATA_DIR / "bot_access_token.json"
+BATTERY_KEY_FILE = DATA_DIR / "battery_access_key.json"
+BATTERY_LEVELS_FILE = DATA_DIR / "battery_levels.json"
 
 # PluralKit API
 PLURALKIT_BASE_URL = "https://api.pluralkit.me/v2"
