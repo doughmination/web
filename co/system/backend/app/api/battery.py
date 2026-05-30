@@ -40,15 +40,15 @@ async def update_battery(
 
 
 @router.get("", response_model=Dict[str, BatteryLevel])
-async def get_all_battery(authenticated: bool = Depends(verify_battery_access)):
-    """Get the latest battery level for all known devices."""
+async def get_all_battery():
+    """Get the latest battery level for all known devices. (Public)"""
     levels = get_all_levels()
     return {device: {"device": device, **record} for device, record in levels.items()}
 
 
 @router.get("/{device}", response_model=BatteryLevel)
-async def get_battery(device: str, authenticated: bool = Depends(verify_battery_access)):
-    """Get the latest battery level for a single device."""
+async def get_battery(device: str):
+    """Get the latest battery level for a single device. (Public)"""
     record = get_device_level(device)
     if record is None:
         raise HTTPException(
