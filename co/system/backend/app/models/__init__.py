@@ -71,6 +71,20 @@ class MultiSwitchResponse(BaseModel):
     fronters: list
     count: int
 
+# Battery models
+class BatteryLevel(BaseModel):
+    """Latest battery level for a single device"""
+    device: str
+    level: int = Field(..., ge=0, le=100)
+    updated_at: datetime
+
+class BatteryUpdateResponse(BaseModel):
+    """Response after storing a battery level"""
+    success: bool
+    device: str
+    level: int
+    updated_at: datetime
+
 # Export all
 __all__ = [
     'User',
@@ -86,4 +100,6 @@ __all__ = [
     'MultiSwitchRequest',
     'FronterUpdateResponse',
     'MultiSwitchResponse',
+    'BatteryLevel',
+    'BatteryUpdateResponse',
 ]
