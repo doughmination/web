@@ -15,10 +15,11 @@ updates:
       time: "09:45"
     assignees:
       - "doughmination"
-    labels:
-      - "Dependabot"
-      - "Python"
-    open-pull-requests-limit: 99
+    groups:
+        dependencies:
+            applies-to: version-updates
+            patterns:
+                - "*"
 
   # ================================
   # Doughmination System Backend
@@ -30,10 +31,11 @@ updates:
       time: "09:45"
     assignees:
       - "doughmination"
-    labels:
-      - "Dependabot"
-      - "Python"
-    open-pull-requests-limit: 99
+    groups:
+        dependencies:
+            applies-to: version-updates
+            patterns:
+                - "*"
 
   # ================================
   # Doughmination System Frontend (React)
@@ -45,10 +47,11 @@ updates:
       time: "09:45"
     assignees:
       - "doughmination"
-    labels:
-      - "Dependabot"
-      - "JavaScript"
-    open-pull-requests-limit: 99
+    groups:
+        dependencies:
+            applies-to: version-updates
+            patterns:
+                - "*"
 
   # ================================
   # Company (React)
@@ -60,7 +63,8 @@ updates:
       time: "09:45"
     assignees:
       - "doughmination"
-    labels:
-      - "Dependabot"
-      - "JavaScript"
-    open-pull-requests-limit: 99
+    groups:
+        dependencies:
+            applies-to: version-updates
+            patterns:
+                - "*"
