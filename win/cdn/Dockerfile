@@ -2,7 +2,7 @@
 # Licensed under the ESAL-1.3 Licence.
 # See LICENCE.md in the project root for full licence information.
 
-FROM node:20-slim
+FROM node:24-slim
 
 WORKDIR /app
 
