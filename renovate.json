@@ -1,32 +1,33 @@
 {
-"$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
 
-"extends": [
-"config:recommended"
-],
+  "extends": ["config:recommended"],
 
-"assignees": [
-"doughmination"
-],
+  "dependencyDashboard": false,
 
-"schedule": [
-"before 10am every weekday"
-],
+  "assignees": ["doughmination"],
 
-"prHourlyLimit": 2,
+  "schedule": ["before 10am every weekday"],
 
-"packageRules": [
-{
-"matchManagers": ["npm"],
-"groupName": "npm dependencies"
-},
-{
-"matchManagers": ["pip_requirements"],
-"groupName": "python dependencies"
-},
-{
-"matchManagers": ["dockerfile", "docker-compose"],
-"groupName": "docker dependencies"
-}
-]
+  "prHourlyLimit": 2,
+  "prConcurrentLimit": 5,
+
+  "packageRules": [
+    {
+      "matchManagers": ["npm"],
+      "groupName": "npm dependencies"
+    },
+    {
+      "matchManagers": ["pip_requirements"],
+      "groupName": "python dependencies"
+    },
+    {
+      "matchManagers": ["dockerfile", "docker-compose"],
+      "groupName": "docker dependencies"
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true
+    }
+  ]
 }
