@@ -4,6 +4,9 @@
  * See LICENCE.md in the project root for full licence information.
  */
 
+@import "tailwindcss";
+@config "../tailwind.config.ts";
+
 /* ============================================================================
    FONT IMPORTS - Comic Code Font Declarations
    ============================================================================ */
@@ -38,10 +41,6 @@
   font-weight: 700;
   font-style: normal;
 }
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 /* ============================================================================
    DESIGN SYSTEM WITH DUAL THEMES
