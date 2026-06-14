@@ -3,25 +3,9 @@
 # See LICENCE.md in the project root for full licence information.
 services:
 
-  company:
-    build:
-      context: ./win/root
-      dockerfile: Dockerfile
-    container_name: company
-    ports:
-      - "127.0.0.1:5003:8003"
-    restart: always
-
-  modding:
-    image: clovetwilight3/doughmination-modding
-    ports:
-      - "127.0.0.1:5002:8002"
-    container_name: modding
-    restart: unless-stopped
-
   dough-back:
     build:
-      context: ./co/system/backend
+      context: ./win/system/backend
       dockerfile: Dockerfile
     container_name: dough-back
     ports:
@@ -34,7 +18,7 @@ services:
 
   dough-front:
     build:
-      context: ./co/system/frontend
+      context: ./win/system/frontend
       dockerfile: Dockerfile
     container_name: dough-front
     environment:
