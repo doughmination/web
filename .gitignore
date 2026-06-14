@@ -6,6 +6,7 @@
 # Node
 node_modules/
 npm-debug.log*
+package-lock.json
 
 # Python
 __pycache__/
@@ -23,8 +24,8 @@ __pycache__/
 *.log
 
 # Build
-/dist/
-/build/
+dist/
+build/
 
 # Docker
 *.pid
