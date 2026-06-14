@@ -14,7 +14,7 @@ import logging
 from datetime import datetime, timedelta
 from typing import Optional
 from jose import jwt, JWTError
-from passlib.hash import bcrypt
+import bcrypt
 from fastapi import HTTPException, status
 
 from app.core.config import (
@@ -31,12 +31,29 @@ logger = logging.getLogger(__name__)
 # ============================================================================
 
 def hash_password(password: str) -> str:
-    """Hash a password using bcrypt"""
-    return bcrypt.hash(password)
+    """Hash a password using bcrypt.
+
+    bcrypt only considers the first 72 bytes of input, and bcrypt>=4.1
+    raises if a longer value is passed. We truncate to 72 bytes to keep
+    behaviour stable and avoid errors on long passwords.
+    """
+    password_bytes = password.encode("utf-8")[:72]
+    hashed = bcrypt.hashpw(password_bytes, bcrypt.gensalt())
+    return hashed.decode("utf-8")
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verify a password against a hash"""
-    return bcrypt.verify(plain_password, hashed_password)
+    """Verify a password against a hash.
+
+    Returns False (rather than raising) if the stored hash is missing or
+    malformed, e.g. a record left behind by a failed startup.
+    """
+    if not hashed_password:
+        return False
+    try:
+        password_bytes = plain_password.encode("utf-8")[:72]
+        return bcrypt.checkpw(password_bytes, hashed_password.encode("utf-8"))
+    except (ValueError, TypeError):
+        return False
 
 # ============================================================================
 # JWT TOKEN MANAGEMENT
