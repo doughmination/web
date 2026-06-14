@@ -5,7 +5,7 @@ services:
 
   dough-back:
     build:
-      context: ./win/system/backend
+      context: ./co/system/backend
       dockerfile: Dockerfile
     container_name: dough-back
     ports:
@@ -18,7 +18,7 @@ services:
 
   dough-front:
     build:
-      context: ./win/system/frontend
+      context: ./co/system/frontend
       dockerfile: Dockerfile
     container_name: dough-front
     environment:
