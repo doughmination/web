@@ -929,15 +929,13 @@ export default function Index() {
       {/* Footer */}
       <footer className="github-footer">
         <a
-          href="https://github.com/CloveTwilight3/docker"
+          href="https://git.gay/doughmination/web"
           target="_blank"
           rel="noopener noreferrer"
           className="github-button"
         >
-          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z" clipRule="evenodd" />
-          </svg>
-          View on GitHub
+          <svg xmlns="http://www.w3.org/2000/svg" xmlSpace="preserve" viewBox="0 0 120 120" width="32" height="32"><defs><clipPath id="a" clipPathUnits="userSpaceOnUse"><path stroke-width="1.306" d="m117.728 54.656-52.39-52.39a7.727 7.727 0 0 0-10.931 0l-10.875 10.88 13.797 13.8a9.18 9.18 0 0 1 11.622 11.702l13.3 13.3a9.18 9.18 0 0 1 9.505 2.183 9.194 9.194 0 0 1 0 13.003 9.205 9.205 0 0 1-13.013 0 9.2 9.2 0 0 1-1.995-10.003L64.343 44.728v32.645c5.642 2.788 6.879 10.294 2.428 14.744a9.19 9.19 0 0 1-13.002 0 9.194 9.194 0 0 1 0-13.005 9.2 9.2 0 0 1 3.009-2.01V44.158a9.206 9.206 0 0 1-4.988-12.06L38.186 18.493 2.26 54.41a7.74 7.74 0 0 0 0 10.931l52.392 52.399a7.736 7.736 0 0 0 10.93 0l52.157-52.152a7.74 7.74 0 0 0 0-10.932"/></clipPath></defs><g clip-path="url(#a)" paint-order="markers stroke fill"><rect width="120" height="22.5" fill="#fe9494" ry="0"/><rect width="120" height="22.5" y="20" fill="#ffc783" ry="0"/><rect width="120" height="22.5" y="40" fill="#fff683" ry="0"/><rect width="120" height="22.5" y="60.001" fill="#69cb86" ry="0"/><rect width="120" height="22.5" y="80.001" fill="#83a8ff" ry="0"/><rect width="120" height="19.999" y="100.002" fill="#c56ad4" ry="0"/></g></svg>
+          View on GitGay
         </a>
         <p className="mt-4 text-sm text-muted-foreground font-comic">
           Doughmination System® is a trade mark in the United Kingdom under trademark number{' '}
