@@ -10,6 +10,13 @@ RUN mkdir -p "$PNPM_HOME/bin"
 
 RUN npm i -g pnpm@latest
 
+# Build tools needed to compile native modules (better-sqlite3, bcrypt)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 \
+    make \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 # Install dependencies first (better layer caching)
@@ -20,6 +27,9 @@ RUN pnpm install --frozen-lockfile
 COPY tsconfig.json ./
 COPY src/ ./src/
 RUN pnpm run build
+
+# Trim devDependencies out of node_modules, keep only what's needed at runtime
+RUN pnpm prune --prod
 
 
 FROM node:24-slim AS runtime
@@ -38,9 +48,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-# Install production dependencies only
+# Copy package files (kept for metadata / scripts referencing package.json)
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-RUN pnpm install --frozen-lockfile --prod
+
+# Copy already-installed, pruned production node_modules from build stage
+# (avoids recompiling native modules like better-sqlite3/bcrypt here)
+COPY --from=build /app/node_modules ./node_modules
 
 # Copy built output
 COPY --from=build /app/dist ./dist
