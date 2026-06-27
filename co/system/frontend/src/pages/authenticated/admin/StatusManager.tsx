@@ -237,11 +237,11 @@ export default function StatusManager() {
                       <SelectItem key={member.id} value={member.name} className="font-comic">
                         <div className="flex items-center gap-2">
                           <img 
-                            src={member.avatar_url && member.avatar_url.trim() !== '' ? member.avatar_url : 'https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png'}
+                            src={member.avatar_url && member.avatar_url.trim() !== '' ? member.avatar_url : 'https://c.stupid.cat/assets/favicon/avatar.png'}
                             alt={member.display_name || member.name}
                             className="w-6 h-6 rounded-full object-cover"
                             onError={(e) => {
-                              (e.target as HTMLImageElement).src = 'https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png';
+                              (e.target as HTMLImageElement).src = 'https://c.stupid.cat/assets/favicon/avatar.png';
                             }}
                           />
                           <span>{member.display_name || member.name}</span>
@@ -376,11 +376,11 @@ export default function StatusManager() {
                     className="flex items-center gap-3 p-3 bg-muted rounded-lg border border-border hover:border-primary transition-colors cursor-pointer"
                   >
                     <img
-                      src={member.avatar_url && member.avatar_url.trim() !== '' ? member.avatar_url : 'https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png'}
+                      src={member.avatar_url && member.avatar_url.trim() !== '' ? member.avatar_url : 'https://c.stupid.cat/assets/favicon/avatar.png'}
                       alt={member.display_name || member.name}
                       className="w-10 h-10 rounded-full object-cover"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = 'https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png';
+                        (e.target as HTMLImageElement).src = 'https://c.stupid.cat/assets/favicon/avatar.png';
                       }}
                     />
 

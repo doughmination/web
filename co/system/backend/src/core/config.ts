@@ -61,7 +61,7 @@ export const ALLOWED_AVATAR_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif'] as co
 
 // Default avatar
 export const DEFAULT_AVATAR =
-  'https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png';
+  'https://c.stupid.cat/assets/favicon/avatar.png';
 
 // Base URL
 export const BASE_URL = (process.env.BASE_URL ?? 'https://doughmination.co.uk').replace(/\/+$/, '');

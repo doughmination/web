@@ -139,7 +139,7 @@ export default function UserEdit() {
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     console.error('Failed to load avatar preview:', avatarPreview);
     setImageError(true);
-    (e.target as HTMLImageElement).src = 'https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png';
+    (e.target as HTMLImageElement).src = 'https://c.stupid.cat/assets/favicon/avatar.png';
   };
 
   const handleImageLoad = () => {

@@ -179,7 +179,7 @@ function initFileExplorer() {
                 backButton.innerHTML = `
                     <div class="folder-icon">⬅️</div>
                     <div class="file-name">
-                        <img src="https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png" class="heart-icon">
+                        <img src="https://c.stupid.cat/assets/favicon/avatar.png" class="heart-icon">
                         <span>Back</span>
                     </div>
                 `;
@@ -238,7 +238,7 @@ function initFileExplorer() {
                     item.innerHTML = `
                         ${iconHtml}
                         <div class="file-name">
-                            <img src="https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png" class="heart-icon">
+                            <img src="https://c.stupid.cat/assets/favicon/avatar.png" class="heart-icon">
                             <span>${file.name}</span>
                         </div>
                     `;
