@@ -48,6 +48,7 @@ COPY static/ ./static/
 
 # Create necessary directories
 RUN mkdir -p dough-data && chmod 755 dough-data
+RUN chmod 755 static
 
 # Expose application port
 EXPOSE 5000
