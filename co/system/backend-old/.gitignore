@@ -2,15 +2,13 @@
 # Licensed under the ESAL-1.3 Licence.
 # See LICENCE.md in the project root for full licence information.
 
-# Env Vars
 .env
-check-lines.py
-fonts/
-.venv/
+gen-hash.py
+users.json
+venv/
 __pycache__/
-
-# Visitor logs (helper.py output)
-visitor_logs.db
-visitor_logs.jsonl
-visitor_logs.csv
-backend/dough-data/visitor_logs.*
+subsystems.json
+member_tags.json
+avatars/
+dough-data/
+.env.keys
