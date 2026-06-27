@@ -4,15 +4,16 @@
 
 FROM node:24-slim AS build
 
-ENV PNPM_HOME="/pnpm" \
-    PATH="/pnpm:$PATH"
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME/bin:$PNPM_HOME:$PATH"
+RUN mkdir -p "$PNPM_HOME/bin"
 
-RUN corepack enable && corepack prepare pnpm@11.9.0 --activate
+RUN npm i -g pnpm@latest
 
 WORKDIR /app
 
 # Install dependencies first (better layer caching)
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 
 # Copy source and build
@@ -23,11 +24,12 @@ RUN pnpm run build
 
 FROM node:24-slim AS runtime
 
-ENV NODE_ENV=production \
-    PNPM_HOME="/pnpm" \
-    PATH="/pnpm:$PATH"
+ENV NODE_ENV=production
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME/bin:$PNPM_HOME:$PATH"
+RUN mkdir -p "$PNPM_HOME/bin"
 
-RUN corepack enable && corepack prepare pnpm@11.9.0 --activate
+RUN npm i -g pnpm@latest
 
 # Install OS-level deps needed by sharp
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -37,7 +39,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 # Install production dependencies only
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile --prod
 
 # Copy built output
