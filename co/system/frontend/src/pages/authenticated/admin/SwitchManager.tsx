@@ -273,11 +273,11 @@ const SwitchManager: React.FC = () => {
                           />
 
                           <img
-                            src={member.avatar_url || 'https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png'}
+                            src={member.avatar_url || 'https://c.stupid.cat/assets/favicon/avatar.png'}
                             alt={member.display_name || member.name}
                             className="w-10 h-10 rounded-full object-cover"
                             onError={(e) => {
-                              (e.target as HTMLImageElement).src = 'https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png';
+                              (e.target as HTMLImageElement).src = 'https://c.stupid.cat/assets/favicon/avatar.png';
                             }}
                           />
 
@@ -341,11 +341,11 @@ const SwitchManager: React.FC = () => {
                     {currentFronters.map((member) => (
                       <div key={member.id} className="flex items-center gap-2">
                         <img
-                          src={member.avatar_url || 'https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png'}
+                          src={member.avatar_url || 'https://c.stupid.cat/assets/favicon/avatar.png'}
                           alt={member.display_name || member.name}
                           className="w-8 h-8 rounded-full object-cover"
                           onError={(e) => {
-                            (e.target as HTMLImageElement).src = 'https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png';
+                            (e.target as HTMLImageElement).src = 'https://c.stupid.cat/assets/favicon/avatar.png';
                           }}
                         />
                         <span className="font-comic text-sm">
@@ -376,11 +376,11 @@ const SwitchManager: React.FC = () => {
                     {getSelectedMembersList().map((member) => (
                       <div key={member.id} className="flex items-center gap-2">
                         <img
-                          src={member.avatar_url || 'https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png'}
+                          src={member.avatar_url || 'https://c.stupid.cat/assets/favicon/avatar.png'}
                           alt={member.display_name || member.name}
                           className="w-8 h-8 rounded-full object-cover"
                           onError={(e) => {
-                            (e.target as HTMLImageElement).src = 'https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png';
+                            (e.target as HTMLImageElement).src = 'https://c.stupid.cat/assets/favicon/avatar.png';
                           }}
                         />
                         <span className="font-comic text-sm flex-1">

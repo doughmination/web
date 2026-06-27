@@ -17,7 +17,7 @@ import { escapeHtml, normalizeHex } from '../utils/html.js';
 export const staticRouter = Router();
 
 const INDEX_HTML_PATH = join(STATIC_DIR, 'index.html');
-const DEFAULT_AVATAR = 'https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png';
+const DEFAULT_AVATAR = 'https://c.stupid.cat/assets/favicon/avatar.png';
 
 // ============================================================================
 // SEO & CRAWLER FILES

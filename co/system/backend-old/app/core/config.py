@@ -54,7 +54,7 @@ MAX_AVATAR_SIZE = 2 * 1024 * 1024  # 2MB
 ALLOWED_AVATAR_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif']
 
 # Default avatar
-DEFAULT_AVATAR = "https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png"
+DEFAULT_AVATAR = "https://c.stupid.cat/assets/favicon/avatar.png"
 
 # Base URL
 BASE_URL = os.getenv("BASE_URL", "https://doughmination.co.uk").rstrip('/')

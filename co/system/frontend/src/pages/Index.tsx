@@ -706,7 +706,7 @@ export default function Index() {
                             <Link to={`/${member.name}`}>
                               <div className="relative">
                                 <img
-                                  src={member.avatar_url || 'https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png'}
+                                  src={member.avatar_url || 'https://c.stupid.cat/assets/favicon/avatar.png'}
                                   alt={member.display_name || member.name}
                                   className="w-16 h-16 rounded-full object-cover border-[3px] transition-all cursor-pointer hover:scale-105"
                                   style={{
@@ -715,7 +715,7 @@ export default function Index() {
                                   }}
                                   loading="lazy"
                                   onError={(e) => {
-                                    (e.target as HTMLImageElement).src = 'https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png';
+                                    (e.target as HTMLImageElement).src = 'https://c.stupid.cat/assets/favicon/avatar.png';
                                   }}
                                 />
                               </div>
@@ -842,7 +842,7 @@ export default function Index() {
                             <div className="text-center">
                               <div className="relative inline-block">
                                 <img
-                                  src={member.avatar_url || 'https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png'}
+                                  src={member.avatar_url || 'https://c.stupid.cat/assets/favicon/avatar.png'}
                                   alt={member.display_name || member.name}
                                   className="w-16 h-16 mx-auto rounded-full object-cover mb-2 border-[3px] transition-all hover:scale-105 member-avatar"
                                   style={{
@@ -850,7 +850,7 @@ export default function Index() {
                                     boxShadow: `0 0 12px ${borderColor}40`
                                   }}
                                   onError={(e) => {
-                                    (e.target as HTMLImageElement).src = 'https://raw.githubusercontent.com/doughmination/Doughmination/main/icon.png';
+                                    (e.target as HTMLImageElement).src = 'https://c.stupid.cat/assets/favicon/avatar.png';
                                   }}
                                 />
                               </div>
