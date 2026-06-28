@@ -2,26 +2,23 @@
 # Licensed under the ESAL-2.0 Licence.
 # See LICENCE.md in the project root for full licence information.
 
-FROM node:24-slim
+FROM oven/bun:1-slim
 
 WORKDIR /app
 
-# Install dotenvx globally
-RUN npm install -g @dotenvx/dotenvx
-
 # Copy package files
-COPY package*.json ./
+COPY package.json bun.lockb ./
 
 # Install ALL dependencies (including devDependencies for build)
-RUN npm install
+RUN bun install --frozen-lockfile
 
 # Copy source and build
 COPY tsconfig.json ./
 COPY src ./src
-RUN npm run build
+RUN bun run build
 
 # Remove devDependencies to reduce image size
-RUN npm prune --production
+RUN bun install --frozen-lockfile --production
 
 # Copy web assets
 COPY web ./web
@@ -30,7 +27,7 @@ COPY web ./web
 RUN mkdir -p cdn
 
 # Expose port
-EXPOSE 8080
+EXPOSE 5080
 
 # Run with dotenvx
-CMD ["dotenvx", "run", "--", "node", "dist/server.js"]
+CMD ["bunx", "dotenvx", "run", "--", "bun", "dist/server.js"]

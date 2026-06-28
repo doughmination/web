@@ -4,10 +4,10 @@
     "description": "TypeScript CDN Server with file upload and management",
     "main": "dist/server.js",
     "scripts": {
-        "dev": "dotenvx run -- tsx watch src/server.ts",
+        "dev": "dotenvx run -- bun --watch src/server.ts",
         "build": "tsc",
-        "start": "dotenvx run -- node dist/server.js",
-        "start:prod": "dotenvx run -- node dist/server.js"
+        "start": "dotenvx run -- bun dist/server.js",
+        "start:prod": "dotenvx run -- bun dist/server.js"
     },
     "keywords": [
         "cdn",
@@ -36,7 +36,6 @@
         "@types/express-session": "^1.18.1",
         "@types/multer": "^2.0.0",
         "@types/node": "^25.1.0",
-        "tsx": "^4.19.2",
         "typescript": "^6.0.3"
     }
 }

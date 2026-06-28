@@ -5,7 +5,7 @@ services:
 
   dough-back:
     build:
-      context: ./co/system/backend
+      context: ./system/backend
       dockerfile: Dockerfile
     container_name: dough-back
     ports:
@@ -18,7 +18,7 @@ services:
 
   dough-front:
     build:
-      context: ./co/system/frontend
+      context: ./system/frontend
       dockerfile: Dockerfile
     container_name: dough-front
     environment:
@@ -31,17 +31,17 @@ services:
     depends_on:
       - dough-back
 
-  my-cdn:
+  cdn:
     build:
-      context: ./win/cdn
+      context: ./cdn
       dockerfile: Dockerfile
-    container_name: clove-cdn
+    container_name: cdn
     environment:
       - NODE_ENV=development
     ports:
-      - "127.0.0.1:5080:8080"
+      - "127.0.0.1:5080:5080"
     volumes:
-      - "./win/cdn/cdn:/app/cdn"
+      - "./cdn/cdn:/app/cdn"
       - "./.env:/app/.env:ro"
       - "./.env.keys:/app/.env.keys:ro"
     restart: unless-stopped
