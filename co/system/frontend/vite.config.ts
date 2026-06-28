@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2026 Clove Twilight
- * Licensed under the ESAL-1.3 Licence.
+ * Licensed under the ESAL-2.0 Licence.
  * See LICENCE.md in the project root for full licence information.
  */
 
@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => {
   // Load environment variables from the parent directory (where the main .env is)
   const parentDir = path.resolve(__dirname, '..');
   const env = loadEnv(mode, parentDir, '');
-  
+
   return {
     server: {
       host: '0.0.0.0',  // Listen on all network interfaces
@@ -29,7 +29,7 @@ export default defineConfig(({ mode }) => {
         },
         // Proxy avatar requests 
         '/avatars': {
-          target: 'http://127.0.0.1:5000',
+          target: 'http://127.0.0.1:5000', 
           changeOrigin: true,
           secure: false,
         }
@@ -50,7 +50,9 @@ export default defineConfig(({ mode }) => {
     // Add path resolution for @ alias
     resolve: {
       alias: {
-        "@": path.resolve(__dirname, "./src"),
+        "@pages": path.resolve(__dirname, "./src/pages"),
+        "@components": path.resolve(__dirname, "./src/components"),
+        "@util": path.resolve(__dirname, "./src/util"),
       },
     },
     // Define environment variables that will be available in the app

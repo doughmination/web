@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2026 Clove Twilight
- * Licensed under the ESAL-1.3 Licence.
+ * Licensed under the ESAL-2.0 Licence.
  * See LICENCE.md in the project root for full licence information.
  */
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import useTheme from '@/hooks/useTheme';
+import { Button } from '@components/button';
+import { Input } from '@components/input';
+import { Label } from '@components/label';
+import { Alert, AlertDescription } from '@components/alert';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@components/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@components/select';
+import useTheme from '@util/useTheme';
 
 interface Member {
   id: string;

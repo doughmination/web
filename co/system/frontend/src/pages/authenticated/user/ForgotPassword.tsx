@@ -1,12 +1,12 @@
 /*
  * Copyright (c) 2026 Clove Twilight
- * Licensed under the ESAL-1.3 Licence.
+ * Licensed under the ESAL-2.0 Licence.
  * See LICENCE.md in the project root for full licence information.
  */
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import useTheme from '@/hooks/useTheme';
+import useTheme from '@util/useTheme';
 
 const ForgotPassword: React.FC = () => {
   const [theme] = useTheme();

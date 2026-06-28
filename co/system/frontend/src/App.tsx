@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2026 Clove Twilight
- * Licensed under the ESAL-1.3 Licence.
+ * Licensed under the ESAL-2.0 Licence.
  * See LICENCE.md in the project root for full licence information.
  */
 
@@ -9,36 +9,36 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 // Component Imports
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import ProtectedRoute from "@/components/ProtectedRoute";
-import VisitorTracker from "@/components/VisitorTracker";
+import { Toaster } from "@components/toaster";
+import { Toaster as Sonner } from "@components/sonner";
+import { TooltipProvider } from "@components/tooltip";
+import ProtectedRoute from "@components/ProtectedRoute";
+import VisitorTracker from "@components/VisitorTracker";
 
 // Root Imports
-import Index from "@/pages/Index";
-import NotFound from "@/pages/NotFound";
-import MemberDetails from "@/pages/MemberDetails";
+import Index from "@pages/Index";
+import NotFound from "@pages/NotFound";
+import MemberDetails from "@pages/MemberDetails";
 
 // Coming Soon Route
-import ComingSoon from "@/pages/ComingSoon";
+import ComingSoon from "@pages/ComingSoon";
 
 // User Imports
-import Login from "@/pages/authenticated/user/Login";
-import UserProfile from "@/pages/authenticated/user/UserProfile";
-import UserEdit from "@/pages/authenticated/user/UserEdit";
-import Metrics from "@/pages/authenticated/user/Metrics";
+import Login from "@pages/authenticated/user/Login";
+import UserProfile from "@pages/authenticated/user/UserProfile";
+import UserEdit from "@pages/authenticated/user/UserEdit";
+import Metrics from "@pages/authenticated/user/Metrics";
 
 // Admin Imports
-import AdminDashboard from "@/pages/authenticated/admin/AdminDash";
-import StatusManager from "@/pages/authenticated/admin/StatusManager";
-import SwitchManager from "@/pages/authenticated/admin/SwitchManager";
-import MentalHealthManager from "@/pages/authenticated/admin/MentalHealthManager";
-import TagManager from "@/pages/authenticated/admin/TagManager";
+import AdminDashboard from "@pages/authenticated/admin/AdminDash";
+import StatusManager from "@pages/authenticated/admin/StatusManager";
+import SwitchManager from "@pages/authenticated/admin/SwitchManager";
+import MentalHealthManager from "@pages/authenticated/admin/MentalHealthManager";
+import TagManager from "@pages/authenticated/admin/TagManager";
 
 // Owner Imports
-import UserManager from "@/pages/authenticated/owner/UserManager";
-import OwnerDash from "@/pages/authenticated/owner/OwnerDash"
+import UserManager from "@pages/authenticated/owner/UserManager";
+import OwnerDash from "@pages/authenticated/owner/OwnerDash"
 
 const queryClient = new QueryClient();
 

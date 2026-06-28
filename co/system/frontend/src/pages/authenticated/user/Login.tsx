@@ -1,12 +1,12 @@
 /*
  * Copyright (c) 2026 Clove Twilight
- * Licensed under the ESAL-1.3 Licence.
+ * Licensed under the ESAL-2.0 Licence.
  * See LICENCE.md in the project root for full licence information.
  */
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import useTheme from '@/hooks/useTheme';
+import useTheme from '@util/useTheme';
 
 interface LoginProps {
   onLogin?: () => void;

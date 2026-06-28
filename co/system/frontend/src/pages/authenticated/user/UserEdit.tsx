@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2026 Clove Twilight
- * Licensed under the ESAL-1.3 Licence.
+ * Licensed under the ESAL-2.0 Licence.
  * See LICENCE.md in the project root for full licence information.
  */
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Separator } from '@/components/ui/separator';
-import useTheme from '@/hooks/useTheme';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@components/card';
+import { Button } from '@components/button';
+import { Input } from '@components/input';
+import { Label } from '@components/label';
+import { Alert, AlertDescription } from '@components/alert';
+import { Separator } from '@components/separator';
+import useTheme from '@util/useTheme';
 
 interface UserData {
   id: number;

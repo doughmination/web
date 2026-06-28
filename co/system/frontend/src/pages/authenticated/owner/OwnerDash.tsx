@@ -1,14 +1,14 @@
 /*
  * Copyright (c) 2026 Clove Twilight
- * Licensed under the ESAL-1.3 Licence.
+ * Licensed under the ESAL-2.0 Licence.
  * See LICENCE.md in the project root for full licence information.
  */
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import useTheme from '@/hooks/useTheme';
+import { Button } from '@components/button';
+import { Alert, AlertDescription } from '@components/alert';
+import useTheme from '@util/useTheme';
 
 const OwnerDash: React.FC = () => {
   const [theme] = useTheme();
