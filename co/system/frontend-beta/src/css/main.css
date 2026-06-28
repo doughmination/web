@@ -1,0 +1,706 @@
+/*
+ * Copyright (c) 2026 Clove Twilight
+ * Licensed under the ESAL-2.0 Licence.
+ * See LICENCE.md in the project root for full licence information.
+ */
+
+@import "./fonts.css";
+@import "./themes/latte.css";
+@import "./themes/frappe.css";
+@import "./themes/macchiato.css";
+@import "./themes/mocha.css";
+
+@import "tailwindcss";
+@config "../../tailwind.config.ts";
+
+/* ============================================================================
+   SEMANTIC VARIABLE BRIDGE
+   Maps Tailwind's semantic tokens (background, foreground, primary, ...) onto
+   the raw Catppuccin variables defined per-flavor in ./themes/*.css.
+   These are hex values, NOT hsl() triples - tailwind.config.ts must reference
+   them directly (no hsl() wrapper) or colors will render as invalid CSS.
+   ============================================================================ */
+@layer base {
+  html[data-flavor] {
+    --background: var(--base);
+    --foreground: var(--text);
+
+    --card: var(--base);
+    --card-foreground: var(--text);
+
+    --popover: var(--mantle);
+    --popover-foreground: var(--text);
+
+    --primary: var(--mauve);
+    --primary-foreground: var(--base);
+
+    --secondary: var(--surface-0);
+    --secondary-foreground: var(--text);
+
+    --muted: var(--surface-0);
+    --muted-foreground: var(--subtext-0);
+
+    --accent: var(--pink);
+    --accent-foreground: var(--base);
+
+    --destructive: var(--red);
+    --destructive-foreground: var(--base);
+
+    --border: var(--surface-0);
+    --input: var(--surface-0);
+    --ring: var(--mauve);
+
+    --radius: 0.75rem;
+
+    --sidebar-background: var(--mantle);
+    --sidebar-foreground: var(--text);
+    --sidebar-primary: var(--mauve);
+    --sidebar-primary-foreground: var(--base);
+    --sidebar-accent: var(--surface-0);
+    --sidebar-accent-foreground: var(--text);
+    --sidebar-border: var(--surface-0);
+    --sidebar-ring: var(--mauve);
+  }
+}
+
+/* ============================================================================
+   GLOBAL RESET & BASE STYLES
+   ============================================================================ */
+@layer base {
+  * {
+    @apply border-border;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  body {
+    font-family: 'Comic Code', sans-serif;
+    background: var(--background);
+    color: var(--foreground);
+    min-height: 100vh;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* Typography System with Comic Code */
+  h1, h2, h3, h4, h5, h6,
+  .logo-text, .header-title, .mental-state-label, .mental-state-level,
+  label, input, select, textarea, button {
+    font-family: 'Comic Code', cursive;
+  }
+
+  /* Standardized font sizes */
+  h1 { font-size: 2.5rem; font-weight: 700; }
+  h2 { font-size: 2rem; font-weight: 600; }
+  h3 { font-size: 1.75rem; font-weight: 600; }
+
+  .member-name, .fronting-member-name, .member-details-name {
+    font-size: 1.5rem;
+    font-family: 'Comic Code' !important;
+    font-weight: 600;
+  }
+
+  .mental-state-label, .mental-state-level { font-size: 1.75rem; font-weight: 600; }
+  .mental-state-notes { font-size: 1.5rem; }
+  .mental-state-updated { font-size: 1.25rem; }
+
+  /* Smooth scroll behavior */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Remove default focus outlines and add custom ones */
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+}
+
+/* ============================================================================
+   COMPONENT STYLES WITH THEME SUPPORT
+   ============================================================================ */
+@layer components {
+  /* Font class for consistent theming */
+  .font-comic {
+    font-family: 'Comic Code', cursive;
+    font-weight: 600;
+  }
+
+  /* Container and layout */
+  #root {
+    max-width: none;
+    margin: 0 auto;
+    padding: 1rem;
+    text-align: center;
+    overflow-x: hidden;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Header styles - theme aware */
+  header.fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 40;
+    height: 68px;
+    background-color: color-mix(in srgb, var(--card) 90%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
+    box-shadow: 0 1px 3px color-mix(in srgb, var(--foreground) 8%, transparent);
+  }
+
+  header.fixed .container {
+    height: 100%;
+    padding: 0 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: none;
+  }
+
+  /* Navigation styles */
+  .desktop-nav {
+    display: none;
+    gap: 1rem;
+    align-items: center;
+    margin-left: auto;
+  }
+
+  @media (min-width: 768px) {
+    .desktop-nav {
+      display: flex;
+    }
+  }
+
+  .desktop-nav button,
+  .desktop-nav a {
+    padding: 0.75rem 1.25rem;
+    min-height: 3rem;
+    border-radius: 0.375rem;
+    transition: all 0.2s ease;
+    font-family: 'Comic Code' !important;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    background-color: var(--secondary);
+    color: var(--secondary-foreground);
+    border: 1px solid var(--border);
+  }
+
+  .desktop-nav button:hover,
+  .desktop-nav a:hover {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+    border-color: var(--ring);
+  }
+
+  /* Member grid styling */
+  .member-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem;
+    width: 100%;
+    max-width: none;
+    overflow: visible;
+    box-sizing: border-box;
+  }
+
+  .member-grid-item a {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    border-radius: 0.75rem;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    text-decoration: none !important;
+    background-color: color-mix(in srgb, var(--card) 70%, transparent);
+    border: 1px solid color-mix(in srgb, var(--border) 30%, transparent);
+    color: var(--card-foreground);
+  }
+
+  .member-grid-item a:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px color-mix(in srgb, var(--primary) 40%, transparent);
+    border-color: color-mix(in srgb, var(--primary) 70%, transparent);
+    background-color: color-mix(in srgb, var(--card) 90%, transparent);
+  }
+
+  /* Enhanced hover effect with member color */
+  .member-grid-item a:hover .member-avatar {
+    box-shadow: 0 0 20px var(--member-color) !important;
+  }
+
+  /* Avatar styles */
+  .avatar-container, .fronting-avatar {
+    position: relative;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    margin: 0 auto;
+    box-sizing: border-box;
+    width: 4.5rem !important;
+    height: 4.5rem !important;
+    border: 2px solid var(--border);
+    background-color: var(--muted);
+  }
+
+  .avatar-container img, .fronting-avatar img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center center !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Fronting members container */
+  .fronting-members-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .fronting-member {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 140px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .fronting-member-name {
+    margin-top: 0.75rem;
+    font-family: 'Comic Code' !important;
+    font-weight: 600;
+    font-size: 1.5rem;
+    line-height: 1.2;
+    word-wrap: break-word;
+    max-width: 100%;
+    color: var(--foreground);
+  }
+
+  /* Mental state banners */
+  .mental-state-banner {
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 0.5rem;
+    border: 2px solid;
+    position: relative;
+    font-family: 'Comic Code' !important;
+    font-weight: 600;
+  }
+
+  .mental-state-banner * {
+    font-family: 'Comic Code' !important;
+    font-weight: 600;
+  }
+
+  .mental-state-banner.safe {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(34, 197, 94, 0.05) 100%);
+    border-color: rgba(34, 197, 94, 0.5);
+    color: #10b981;
+  }
+
+  .mental-state-banner.unstable {
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(251, 191, 36, 0.05) 100%);
+    border-color: rgba(251, 191, 36, 0.5);
+    color: #f59e0b;
+  }
+
+  .mental-state-banner.self-harming {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.1) 100%);
+    border-color: rgba(239, 68, 68, 0.7);
+    color: #f87171;
+  }
+
+  .mental-state-banner.highly-at-risk {
+    background: linear-gradient(135deg, rgba(220, 38, 38, 0.2) 0%, rgba(220, 38, 38, 0.15) 100%);
+    border-color: rgba(220, 38, 38, 0.8);
+    color: #fca5a5;
+    animation: pulse 2s infinite;
+  }
+
+  /* Beautiful badges with theme support */
+  .host-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    padding: 0.15rem 0.55rem;
+    border-radius: 0.35rem;
+    margin-left: 0.5rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    vertical-align: middle;
+    letter-spacing: 0.5px;
+    font-family: 'Comic Code', sans-serif;
+    background: var(--primary);
+    color: var(--primary-foreground);
+    box-shadow: 0 2px 4px color-mix(in srgb, var(--primary) 50%, transparent);
+  }
+
+  /* Container */
+  .container {
+    width: 100%;
+    max-width: none;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+  }
+
+  /* Footer */
+  .github-footer {
+    margin-top: 3rem;
+    padding: 1.5rem 0;
+    text-align: center;
+    width: 100%;
+    font-family: 'Comic Code' !important;
+    border-top: 1px solid color-mix(in srgb, var(--border) 30%, transparent);
+  }
+
+  .github-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    min-height: 3.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    font-family: 'Comic Code' !important;
+    text-decoration: none;
+    background: var(--secondary);
+    color: var(--secondary-foreground) !important;
+    box-shadow: 0 2px 4px color-mix(in srgb, var(--foreground) 10%, transparent);
+    border: 1px solid var(--border);
+  }
+
+  .github-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px color-mix(in srgb, var(--primary) 30%, transparent);
+    background: var(--accent);
+    color: var(--accent-foreground) !important;
+  }
+
+  /* Search bar theming */
+  .search-container {
+    position: relative;
+    max-width: 28rem;
+    margin: 0 auto 1.5rem;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 3rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border);
+    background-color: var(--input);
+    color: var(--foreground);
+    font-family: 'Comic Code', cursive;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: var(--ring);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--ring) 20%, transparent);
+  }
+
+  .search-input::placeholder {
+    color: var(--muted-foreground);
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted-foreground);
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .search-clear {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted-foreground);
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 0.25rem;
+    transition: all 0.2s ease;
+  }
+
+  .search-clear:hover {
+    color: var(--foreground);
+    background-color: var(--muted);
+  }
+
+  /* Filter buttons */
+  .filter-button {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+    font-family: 'Comic Code', cursive;
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    border: 1px solid var(--border);
+  }
+
+  .filter-button.active {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+    border-color: var(--primary);
+  }
+
+  .filter-button:not(.active) {
+    background-color: var(--secondary);
+    color: var(--secondary-foreground);
+  }
+
+  .filter-button:not(.active):hover {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+    border-color: var(--ring);
+  }
+
+  /* ============================================================================
+     FRONTING GLOW EFFECTS - WITH MEMBER COLOR SUPPORT
+     ============================================================================ */
+  .member-grid-item.fronting-glow {
+    position: relative;
+    animation: fronting-pulse 2s ease-in-out infinite;
+  }
+
+  .member-grid-item.fronting-glow a {
+    background: linear-gradient(135deg, color-mix(in srgb, var(--member-color) 15%, transparent) 0%, color-mix(in srgb, var(--member-color) 5%, transparent) 100%);
+    border: 2px solid color-mix(in srgb, var(--member-color) 50%, transparent);
+    box-shadow:
+      0 0 20px color-mix(in srgb, var(--member-color) 30%, transparent),
+      0 0 40px color-mix(in srgb, var(--member-color) 20%, transparent),
+      inset 0 0 20px color-mix(in srgb, var(--member-color) 10%, transparent);
+  }
+
+  .member-grid-item.fronting-glow a:hover {
+    border-color: color-mix(in srgb, var(--member-color) 80%, transparent);
+    box-shadow:
+      0 0 30px color-mix(in srgb, var(--member-color) 50%, transparent),
+      0 0 60px color-mix(in srgb, var(--member-color) 30%, transparent),
+      inset 0 0 30px color-mix(in srgb, var(--member-color) 15%, transparent);
+  }
+
+  .member-grid-item.fronting-glow img {
+    border-color: var(--member-color) !important;
+    box-shadow: 0 0 15px color-mix(in srgb, var(--member-color) 40%, transparent) !important;
+  }
+
+  /* Add a "FRONTING" badge with member color */
+  .member-grid-item.fronting-glow a::before {
+    content: "FRONTING";
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--member-color);
+    color: white;
+    font-size: 0.65rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 0.25rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    font-family: 'Comic Code', sans-serif;
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--member-color) 40%, transparent);
+    z-index: 10;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+
+/* Mobile styles */
+@media (max-width: 640px) {
+  .container {
+    padding: 0 1rem;
+    max-width: 100%;
+  }
+
+  header.fixed {
+    height: 60px;
+    padding: 0.5rem 1rem;
+  }
+
+  .member-grid {
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+
+  .avatar-container, .fronting-avatar {
+    width: 3.5rem !important;
+    height: 3.5rem !important;
+  }
+
+  .fronting-members-container {
+    gap: 1rem;
+  }
+
+  .fronting-member {
+    max-width: 100px;
+    min-width: 90px;
+  }
+
+  .fronting-member-name {
+    font-size: 1.25rem;
+    margin-top: 0.5rem;
+  }
+
+  .member-name {
+    font-size: 1.25rem;
+  }
+
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.75rem; }
+  h3 { font-size: 1.5rem; }
+}
+
+/* Tablet styles */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .container {
+    padding: 0 1.5rem;
+  }
+
+  .member-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 1rem;
+  }
+
+  .avatar-container, .fronting-avatar {
+    width: 4rem !important;
+    height: 4rem !important;
+  }
+}
+
+/* Ultra-wide screens */
+@media (min-width: 1920px) {
+  .member-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1.75rem;
+  }
+}
+
+/* ============================================================================
+   ANIMATIONS
+   ============================================================================ */
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
+}
+
+@keyframes fronting-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+@keyframes fronting-glow {
+  0%, 100% {
+    box-shadow:
+      0 0 20px color-mix(in srgb, var(--member-color) 30%, transparent),
+      0 0 40px color-mix(in srgb, var(--member-color) 20%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 0 30px color-mix(in srgb, var(--member-color) 50%, transparent),
+      0 0 60px color-mix(in srgb, var(--member-color) 30%, transparent);
+  }
+}
+
+/* ============================================================================
+   UTILITY CLASSES
+   ============================================================================ */
+.theme-transition {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* ============================================================================
+   SCROLLBAR STYLING - THEME AWARE
+   Driven entirely by the bridged CSS variables, so it automatically
+   re-themes for whichever data-flavor is active - no per-flavor blocks needed.
+   ============================================================================ */
+html[data-flavor] ::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+html[data-flavor] ::-webkit-scrollbar-track {
+  background: var(--mantle);
+  border-radius: 6px;
+}
+
+html[data-flavor] ::-webkit-scrollbar-thumb {
+  background: var(--mauve);
+  border-radius: 6px;
+  border: 2px solid var(--mantle);
+  transition: background-color 0.2s ease;
+}
+
+html[data-flavor] ::-webkit-scrollbar-thumb:hover {
+  background: var(--pink);
+}
+
+html[data-flavor] ::-webkit-scrollbar-thumb:active {
+  background: var(--lavender);
+}
+
+/* Firefox */
+html[data-flavor] {
+  scrollbar-width: thin;
+  scrollbar-color: var(--mauve) var(--mantle);
+}
+
+/* Ensure scrollbar transitions smoothly when switching themes */
+::-webkit-scrollbar-thumb {
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+::-webkit-scrollbar-track {
+  transition: background-color 0.3s ease;
+}
