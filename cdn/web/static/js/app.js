@@ -5,7 +5,7 @@
  */
 
 // Define Turnstile callback immediately when script loads (before DOM is ready)
-window.onTurnstileCallback = function(token) {
+window.onTurnstileCallback = function (token) {
     console.log('Turnstile verified!', token);
     const submitButton = document.getElementById('submitButton');
     if (submitButton) {
@@ -16,9 +16,9 @@ window.onTurnstileCallback = function(token) {
 document.addEventListener("DOMContentLoaded", () => {
     // Determine current page based on URL or page identifier
     const currentPage = getCurrentPage();
-    
+
     // Initialize appropriate functionality based on page
-    switch(currentPage) {
+    switch (currentPage) {
         case 'index':
             initFileExplorer();
             break;
@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
             initLoginForm();
             break;
     }
-    
+
     // Initialize common functionality
     initCommonFeatures();
 });
@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function getCurrentPage() {
     const path = window.location.pathname;
     const body = document.body;
-    
+
     if (body.classList.contains('admin-page')) return 'admin';
     if (body.classList.contains('login-page')) return 'login';
     if (path.includes('/admin') && !body.classList.contains('login-page')) return 'admin';
@@ -139,7 +139,7 @@ function initFileExplorer() {
     async function loadFolder(folder = "", isGoingBack = false) {
         const loading = document.getElementById("loading");
         const container = document.getElementById("file-container");
-        
+
         folder = normalizePath(folder);
         currentFolder = folder;
 
@@ -156,11 +156,11 @@ function initFileExplorer() {
 
         try {
             const response = await fetch(`/api/list?folder=${encodeURIComponent(folder)}`);
-            
+
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            
+
             const data = await response.json();
             const files = data.items || [];
 
@@ -204,18 +204,18 @@ function initFileExplorer() {
                     item.className = "card";
 
                     let iconHtml = '';
-                    
+
                     if (file.is_dir) {
                         iconHtml = '<div class="folder-icon">📁</div>';
                     } else if (isImage(file.name)) {
                         const imageUrl = getFileUrl(folder, file.name);
                         const cachedImage = imageCache.get(imageUrl);
-                        
+
                         if (cachedImage) {
                             iconHtml = `<img src="${imageUrl}" alt="${file.name}" class="image-preview">`;
                         } else {
                             iconHtml = `<div class="image-placeholder">🖼️</div>`;
-                            
+
                             preloadImage(imageUrl).then(() => {
                                 const cards = container.querySelectorAll('.card');
                                 cards.forEach(card => {
@@ -238,7 +238,7 @@ function initFileExplorer() {
                     item.innerHTML = `
                         ${iconHtml}
                         <div class="file-name">
-                            <img src="https://c.stupid.cat/assets/favicon/avatar.png" class="heart-icon">
+                            <img src="https://stupid.cat/assets/cat.svg" class="heart-icon">
                             <span>${file.name}</span>
                         </div>
                     `;
@@ -254,7 +254,7 @@ function initFileExplorer() {
                             window.open(fileUrl, '_blank');
                         }
                     });
-                    
+
                     container.appendChild(item);
                 });
             }
@@ -290,7 +290,7 @@ function initAdminPanel() {
     const destinationSelect = document.getElementById('destination');
     const newFolderGroup = document.getElementById('newFolderGroup');
     const resultDiv = document.getElementById('result');
-    
+
     if (!destinationSelect || !newFolderGroup || !resultDiv) {
         console.warn('Admin panel elements not found');
         return;
@@ -300,18 +300,18 @@ function initAdminPanel() {
     async function loadFolders() {
         try {
             const response = await fetch('/api/folders');
-            
+
             if (response.status === 401) {
                 window.location.href = '/admin';
                 return;
             }
-            
+
             const data = await response.json();
-            
+
             while (destinationSelect.children.length > 2) {
                 destinationSelect.removeChild(destinationSelect.lastChild);
             }
-            
+
             data.folders.forEach(folder => {
                 const option = document.createElement('option');
                 option.value = folder;
@@ -323,25 +323,25 @@ function initAdminPanel() {
             showResult('Failed to load folders. Please refresh the page.', 'error');
         }
     }
-    
+
     // Handle destination change
-    destinationSelect.addEventListener('change', function() {
+    destinationSelect.addEventListener('change', function () {
         if (this.value === '__new__') {
             newFolderGroup.style.display = 'block';
         } else {
             newFolderGroup.style.display = 'none';
         }
     });
-    
+
     // Handle form submission
     const uploadForm = document.getElementById('uploadForm');
     if (uploadForm) {
-        uploadForm.addEventListener('submit', async function(e) {
+        uploadForm.addEventListener('submit', async function (e) {
             e.preventDefault();
-            
+
             const formData = new FormData(this);
             const destination = destinationSelect.value;
-            
+
             if (destination === '__new__') {
                 const newFolder = document.getElementById('newFolder').value.trim();
                 if (!newFolder) {
@@ -352,15 +352,15 @@ function initAdminPanel() {
             } else {
                 formData.set('destination', destination);
             }
-            
+
             try {
                 resultDiv.innerHTML = '<p style="color: #ff6fff;">Uploading...</p>';
-                
+
                 const response = await fetch('/api/upload', {
                     method: 'POST',
                     body: formData
                 });
-                
+
                 // Handle common HTTP errors BEFORE trying to parse JSON
                 if (response.status === 401) {
                     showResult('Session expired or not authenticated. Redirecting to login...', 'error');
@@ -369,47 +369,47 @@ function initAdminPanel() {
                     }, 1500);
                     return;
                 }
-                
+
                 if (response.status === 413) {
                     showResult('File too large! Maximum upload size is 100MB. Check your nginx configuration if you need to upload larger files.', 'error');
                     return;
                 }
-                
+
                 if (response.status === 403) {
                     showResult('Permission denied. You do not have access to upload files.', 'error');
                     return;
                 }
-                
+
                 if (response.status === 404) {
                     showResult('Upload endpoint not found. Please check your server configuration.', 'error');
                     return;
                 }
-                
+
                 if (response.status === 500) {
                     showResult('Server error occurred during upload. Please check server logs or try again.', 'error');
                     return;
                 }
-                
+
                 // For any other non-2xx status codes
                 if (!response.ok) {
                     const text = await response.text();
                     showResult(`Upload failed (${response.status}): ${text.substring(0, 200)}`, 'error');
                     return;
                 }
-                
+
                 // Get the response text first to check what we're dealing with
                 const responseText = await response.text();
-                
+
                 // Check if response starts with '<' (likely HTML error page)
                 if (responseText.trim().startsWith('<')) {
                     showResult(`Upload failed (${response.status}): Server returned HTML instead of JSON. This usually means a proxy or web server error. Response: ${responseText.substring(0, 200)}`, 'error');
                     return;
                 }
-                
+
                 // Try to parse JSON response only for successful responses
                 let result;
                 const contentType = response.headers.get('content-type');
-                
+
                 // Check if content type is JSON
                 if (contentType && contentType.includes('application/json')) {
                     try {
@@ -423,12 +423,12 @@ function initAdminPanel() {
                     showResult(`Upload completed but server returned unexpected response format. Content-Type: ${contentType}. Response: ${responseText.substring(0, 200)}`, 'error');
                     return;
                 }
-                
+
                 // If we made it here, we have a successful response with JSON
                 showResult(`Successfully uploaded: ${result.filename}<br>
                            Size: ${(result.size / 1024).toFixed(1)} KB<br>
                            Location: <a href="/cdn/${result.path}" target="_blank" style="color: #ff6fff;">/${result.path}</a>`, 'success');
-                
+
                 loadFolders();
                 this.reset();
                 newFolderGroup.style.display = 'none';
@@ -437,11 +437,11 @@ function initAdminPanel() {
             }
         });
     }
-    
+
     function showResult(message, type) {
         resultDiv.innerHTML = `<div class="${type}">${message}</div>`;
     }
-    
+
     loadFolders();
 }
 
@@ -449,7 +449,7 @@ function initAdminPanel() {
 function initLoginForm() {
     const submitButton = document.getElementById('submitButton');
     const turnstileDiv = document.querySelector('.cf-turnstile');
-    
+
     // If no Turnstile is configured, enable the button immediately
     if (!turnstileDiv && submitButton) {
         submitButton.disabled = false;
