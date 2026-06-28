@@ -65,7 +65,7 @@ function initFileExplorer() {
     const imageCache = new Map();
 
     function isImage(filename) {
-        const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'];
+        const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'png', 'bmp'];
         const extension = filename.split('.').pop().toLowerCase();
         return imageExtensions.includes(extension);
     }
@@ -179,7 +179,7 @@ function initFileExplorer() {
                 backButton.innerHTML = `
                     <div class="folder-icon">⬅️</div>
                     <div class="file-name">
-                        <img src="https://stupid.cat/assets/cat.svg" class="heart-icon">
+                        <img src="https://stupid.cat/assets/cat.png" class="heart-icon">
                         <span>Back</span>
                     </div>
                 `;
@@ -238,7 +238,7 @@ function initFileExplorer() {
                     item.innerHTML = `
                         ${iconHtml}
                         <div class="file-name">
-                            <img src="https://stupid.cat/assets/cat.svg" class="heart-icon">
+                            <img src="https://stupid.cat/assets/cat.png" class="heart-icon">
                             <span>${file.name}</span>
                         </div>
                     `;
