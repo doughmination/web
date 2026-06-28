@@ -18,7 +18,7 @@ import { existsSync } from 'fs';
 
 // Configuration
 const config = {
-  PORT: process.env.CDN_PORT || 8080,
+  PORT: process.env.CDN_PORT || 5080,
   CDN_USERNAME: process.env.CDN_USERNAME || 'admin',
   CDN_PASSWORD: process.env.CDN_PASSWORD || 'password',
   SESSION_SECRET: process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex'),

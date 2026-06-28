@@ -2,31 +2,25 @@
 # Licensed under the ESAL-2.0 Licence.
 # See LICENCE.md in the project root for full licence information.
 
-FROM node:24-slim AS build
-
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME/bin:$PNPM_HOME:$PATH"
-RUN mkdir -p "$PNPM_HOME/bin"
-
-RUN npm i -g pnpm@latest
+FROM oven/bun:1-slim AS build
 
 WORKDIR /app
 
 # Install dependencies first (better layer caching)
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile --ignore-scripts
+COPY package.json bun.lockb ./
+RUN bun install --frozen-lockfile --ignore-scripts
 
 # Copy source and build
 COPY . .
-RUN pnpm run build
+RUN bun run build
 
 
-FROM node:24-slim AS runtime
+FROM oven/bun:1-slim AS runtime
 
 # Install curl for healthcheck, and `serve` for static hosting
 RUN apt-get update && apt-get install -y --no-install-recommends curl \
-    && rm -rf /var/lib/apt/lists/* \
-    && npm i -g serve
+    && rm -rf /var/lib/apt/lists/*
+RUN bun add -g serve
 
 WORKDIR /app
 
