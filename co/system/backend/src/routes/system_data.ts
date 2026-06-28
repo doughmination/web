@@ -4,7 +4,7 @@
  * See LICENCE.md in the project root for full licence information.
  */
 
-import Database from 'better-sqlite3';
+import { Database } from 'bun:sqlite';
 import { Router, type Request, type Response, type NextFunction } from 'express';
 
 import { LogQuery, DB_PATH } from './helper.js';

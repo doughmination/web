@@ -1,5 +1,5 @@
 # Copyright (c) 2026 Clove Twilight
-# Licensed under the ESAL-1.3 Licence.
+# Licensed under the ESAL-2.0 Licence.
 # See LICENCE.md in the project root for full licence information.
 
 FROM node:24-slim

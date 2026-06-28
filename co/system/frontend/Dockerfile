@@ -1,34 +1,44 @@
 # Copyright (c) 2026 Clove Twilight
-# Licensed under the ESAL-1.3 Licence.
+# Licensed under the ESAL-2.0 Licence.
 # See LICENCE.md in the project root for full licence information.
 
-# Option 1: Use Ubuntu base instead of Alpine (most reliable)
-FROM node:25-slim
+FROM node:24-slim AS build
 
-# Install curl for healthcheck
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME/bin:$PNPM_HOME:$PATH"
+RUN mkdir -p "$PNPM_HOME/bin"
 
-# Set working directory
+RUN npm i -g pnpm@latest
+
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Install dependencies first (better layer caching)
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
-# Install dependencies with corrected npm configuration for Docker
-RUN npm install --ignore-scripts && npm rebuild
-
-# Copy source code
+# Copy source and build
 COPY . .
+RUN pnpm run build
 
-# Build the application
-RUN npm run build
 
-# Expose port
+FROM node:24-slim AS runtime
+
+# Install curl for healthcheck, and `serve` for static hosting
+RUN apt-get update && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/* \
+    && npm i -g serve
+
+WORKDIR /app
+
+# Only the built static assets are needed at runtime - no node_modules,
+# no source, no devDependencies.
+COPY --from=build /app/dist ./dist
+
 EXPOSE 5001
 
-# Add healthcheck
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:5001/ || exit 1
 
-# Start the preview server
-CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0", "--port", "5001"]
+# -s = SPA mode (rewrites unknown routes to index.html, same as the
+# try_files fallback React Router needs for client-side routing)
+CMD ["serve", "-s", "dist", "-l", "5001"]

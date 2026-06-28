@@ -16,9 +16,9 @@
  * Python version, just available for scripts/tooling.
  *
  * Notes on the port:
- * - Node 20 (our Docker base) has no built-in SQLite module (that landed
- *   experimentally in Node 22.5+), so this uses `better-sqlite3` — a sync
- *   API, which maps cleanly onto Python's sync `sqlite3` module.
+ * - This uses Bun's built-in `bun:sqlite` module — a sync API that maps
+ *   cleanly onto Python's sync `sqlite3` module, with no native compile
+ *   step required (unlike the previous `better-sqlite3` dependency).
  * - Starlette parses `request.cookies` automatically; Express doesn't, so
  *   this uses the lightweight `cookie` package to parse the Cookie header
  *   by hand rather than pulling in full cookie-parser middleware app-wide.
@@ -31,7 +31,7 @@ import { createHash } from 'node:crypto';
 import { appendFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 
-import Database from 'better-sqlite3';
+import { Database } from 'bun:sqlite';
 import { parse as parseCookies } from 'cookie';
 import { Router, type Request, type Response } from 'express';
 
@@ -67,7 +67,7 @@ interface VisitorLogData {
 }
 
 class VisitorLogger {
-  private db: Database.Database;
+  private db: Database;
   private logFile: string;
 
   constructor(dbPath: string, logFile: string) {
@@ -227,7 +227,7 @@ class VisitorLogger {
 // ---------------------------------------------------------------------------
 
 export class LogQuery {
-  private db: Database.Database;
+  private db: Database;
 
   constructor(dbPath: string) {
     this.db = new Database(dbPath, { readonly: true });
@@ -268,9 +268,7 @@ export class LogQuery {
   }
 
   exportToCsv(outputFile = 'visitor_logs.csv'): void {
-    const rows = this.db.prepare('SELECT * FROM visitor_logs ORDER BY timestamp DESC').all() as Array<
-      Record<string, unknown>
-    >;
+    const rows = this.db.prepare('SELECT * FROM visitor_logs ORDER BY timestamp DESC').all() as Array<Record<string, unknown>>;
 
     if (rows.length === 0) {
       console.info('No logs to export');
