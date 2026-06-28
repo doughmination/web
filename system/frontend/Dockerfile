@@ -7,7 +7,7 @@ FROM oven/bun:1-slim AS build
 WORKDIR /app
 
 # Install dependencies first (better layer caching)
-COPY package.json bun.lockb ./
+COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile --ignore-scripts
 
 # Copy source and build
