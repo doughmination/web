@@ -179,7 +179,7 @@ function initFileExplorer() {
                 backButton.innerHTML = `
                     <div class="folder-icon">⬅️</div>
                     <div class="file-name">
-                        <img src="https://c.stupid.cat/assets/favicon/avatar.png" class="heart-icon">
+                        <img src="https://stupid.cat/assets/cat.svg" class="heart-icon">
                         <span>Back</span>
                     </div>
                 `;
