@@ -193,7 +193,7 @@ export default function Index() {
           if (reconnectAttempts < maxReconnectAttempts) {
             const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000);
             console.log(`🔄 Reconnecting in ${delay}ms (attempt ${reconnectAttempts + 1}/${maxReconnectAttempts})`);
-            
+
             reconnectTimeout = setTimeout(() => {
               reconnectAttempts++;
               connectWebSocket();
@@ -484,16 +484,6 @@ export default function Index() {
               </div>
             )}
             <ThemeToggle />
-            <Button variant="outline" size="sm" asChild>
-              <a
-                href="https://doughmination.co.uk"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-comic"
-              >
-                Homepage
-              </a>
-            </Button>
             {loggedIn ? (
               <>
                 {isAdmin && (
@@ -563,17 +553,6 @@ export default function Index() {
                     Logged in as: <span className="text-foreground font-semibold block mt-1">{currentUser.display_name || currentUser.username}</span>
                   </li>
                 )}
-                <li>
-                  <a
-                    href="https://doughmination.co.uk"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block w-full px-4 py-3 rounded-lg text-sm text-center transition-all font-comic bg-primary text-primary-foreground hover:bg-primary/80"
-                    onClick={toggleMenu}
-                  >
-                    Homepage
-                  </a>
-                </li>
                 {loggedIn ? (
                   <>
                     {isAdmin && (
@@ -682,7 +661,7 @@ export default function Index() {
                       {fronting.members.map((member, index) => {
                         const memberColor = normalizeColor((member as any).color);
                         const borderColor = memberColor || 'rgb(var(--primary))';
-                        
+
                         return (
                           <div key={member.id || `${member.name}-${index}`} className="flex flex-col items-center relative">
                             {/* Status Bubble - Thought Bubble Style */}
@@ -811,10 +790,10 @@ export default function Index() {
                       const isFronting = isMemberFronting(member.id, member.name);
                       const memberColor = normalizeColor((member as any).color);
                       const borderColor = memberColor || 'rgb(var(--primary))';
-                      
+
                       return (
-                        <div 
-                          key={member.id} 
+                        <div
+                          key={member.id}
                           className={`member-grid-item ${isFronting ? 'fronting-glow' : ''} relative`}
                           style={{
                             '--member-color': borderColor,
@@ -854,7 +833,7 @@ export default function Index() {
                                   }}
                                 />
                               </div>
-                              <h3 
+                              <h3
                                 className="font-comic font-semibold text-sm transition-colors"
                                 style={{
                                   color: memberColor || 'rgb(var(--card-foreground))'
@@ -929,13 +908,34 @@ export default function Index() {
       {/* Footer */}
       <footer className="github-footer">
         <a
-          href="https://git.gay/doughmination/web"
+          href="https://codeberg.org/clove/web/src/branch/main/system"
           target="_blank"
           rel="noopener noreferrer"
           className="github-button"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" xmlSpace="preserve" viewBox="0 0 120 120" width="32" height="32"><defs><clipPath id="a" clipPathUnits="userSpaceOnUse"><path stroke-width="1.306" d="m117.728 54.656-52.39-52.39a7.727 7.727 0 0 0-10.931 0l-10.875 10.88 13.797 13.8a9.18 9.18 0 0 1 11.622 11.702l13.3 13.3a9.18 9.18 0 0 1 9.505 2.183 9.194 9.194 0 0 1 0 13.003 9.205 9.205 0 0 1-13.013 0 9.2 9.2 0 0 1-1.995-10.003L64.343 44.728v32.645c5.642 2.788 6.879 10.294 2.428 14.744a9.19 9.19 0 0 1-13.002 0 9.194 9.194 0 0 1 0-13.005 9.2 9.2 0 0 1 3.009-2.01V44.158a9.206 9.206 0 0 1-4.988-12.06L38.186 18.493 2.26 54.41a7.74 7.74 0 0 0 0 10.931l52.392 52.399a7.736 7.736 0 0 0 10.93 0l52.157-52.152a7.74 7.74 0 0 0 0-10.932"/></clipPath></defs><g clip-path="url(#a)" paint-order="markers stroke fill"><rect width="120" height="22.5" fill="#fe9494" ry="0"/><rect width="120" height="22.5" y="20" fill="#ffc783" ry="0"/><rect width="120" height="22.5" y="40" fill="#fff683" ry="0"/><rect width="120" height="22.5" y="60.001" fill="#69cb86" ry="0"/><rect width="120" height="22.5" y="80.001" fill="#83a8ff" ry="0"/><rect width="120" height="19.999" y="100.002" fill="#c56ad4" ry="0"/></g></svg>
-          View on GitGay
+          <svg width="32" height="32" viewBox="0 0 4.2333332 4.2333335" xmlns="http://www.w3.org/2000/svg">
+            <title>Codeberg logo</title>
+            <defs>
+              <linearGradient id="cbGradient" x1="42519.285" y1="-7078.7891" x2="42575.336" y2="-6966.9307" gradientUnits="userSpaceOnUse">
+                <stop offset="0" style={{ stopColor: '#2185d0', stopOpacity: 0 }} />
+                <stop offset="0.49517274" style={{ stopColor: '#2185d0', stopOpacity: 0.3 }} />
+                <stop offset="1" style={{ stopColor: '#2185d0', stopOpacity: 0.3 }} />
+              </linearGradient>
+            </defs>
+            <g transform="matrix(0.06551432,0,0,0.06551432,-2.232417,-1.431776)">
+              <path
+                fill="url(#cbGradient)"
+                d="m 42519.285,-7078.7891 a 0.76086879,0.56791688 0 0 0 -0.738,0.6739 l 33.586,125.8886 a 87.182358,87.182358 0 0 0 39.381,-33.7636 l -71.565,-92.5196 a 0.76086879,0.56791688 0 0 0 -0.664,-0.2793 z"
+                transform="matrix(0.37058478,0,0,0.37058478,-15690.065,2662.0533)"
+              />
+              <path
+                fill="#2185d0"
+                d="m 11249.461,-1883.6961 c -12.74,0 -23.067,10.3275 -23.067,23.0671 0,4.3335 1.22,8.5795 3.522,12.2514 l 19.232,-24.8636 c 0.138,-0.1796 0.486,-0.1796 0.624,0 l 19.233,24.8646 c 2.302,-3.6721 3.523,-7.9185 3.523,-12.2524 0,-12.7396 -10.327,-23.0671 -23.067,-23.0671 z"
+                transform="matrix(1.4006354,0,0,1.4006354,-15690.065,2662.0533)"
+              />
+            </g>
+          </svg>
+          View on Codeberg
         </a>
         <p className="mt-4 text-sm text-muted-foreground font-comic">
           Doughmination System® is a trade mark in the United Kingdom under trademark number{' '}

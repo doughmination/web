@@ -136,7 +136,7 @@ const ComingSoon: React.FC<ComingSoonProps> = ({
               
               <Button size="lg" asChild className="font-comic">
                 <a 
-                  href="https://github.com/CloveTwilight3/docker/issues" 
+                  href="https://codeberg.org/clove/web/src/branch/main/system" 
                   target="_blank" 
                   rel="noopener noreferrer"
                 >
