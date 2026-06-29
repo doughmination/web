@@ -128,6 +128,15 @@
           "under the trade mark 'doughmination system'. Big on Linux, Catppuccin, and cats."
       };
     },
+    whoami() {
+      return {
+        text:
+          "Clove Twilight, fae/faer\n" +
+          "Transfem developer from Southampton, UK. I make Projects,\n" +
+          "personal-site nonsense, and run a small corner of the internet\n" +
+          "under the trade mark 'doughmination system'. Big on Linux, Catppuccin, and cats."
+      };
+    },
     hyfetch() {
       const info = [
         '<b class="t-accent">arch</b>@<b class="t-accent">arch</b>',
