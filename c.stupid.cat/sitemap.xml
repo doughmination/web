@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?xml-stylesheet type="text/xsl" href="/css/sitemap.xsl"?>
+
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+    <url>
+        <loc>https://c.stupid.cat/</loc>
+        <lastmod>2026-06-20T20:56:16+00:00</lastmod>
+    </url>
+
+    <url>
+        <loc>https://c.stupid.cat/cool-people/</loc>
+        <lastmod>2026-06-24T04:46:56+00:00</lastmod>
+    </url>
+
+    <url>
+        <loc>https://c.stupid.cat/dev-info/</loc>
+        <lastmod>2026-06-24T04:46:56+00:00</lastmod>
+    </url>
+
+    <url>
+        <loc>https://c.stupid.cat/discord/</loc>
+        <lastmod>2026-06-24T07:33:08+00:00</lastmod>
+    </url>
+
+    <url>
+        <loc>https://c.stupid.cat/projects/</loc>
+        <lastmod>2026-06-24T04:46:56+00:00</lastmod>
+    </url>
+
+    <url>
+        <loc>https://c.stupid.cat/music/</loc>
+        <lastmod>2026-06-24T23:38:23+00:00</lastmod>
+    </url>
+
+    <url>
+        <loc>https://c.stupid.cat/88x31/</loc>
+        <lastmod>2026-06-25T14:38:21+00:00</lastmod>
+    </url>
+
+    <url>
+        <loc>https://c.stupid.cat/guestbook/</loc>
+        <lastmod>2026-06-24T04:46:56+00:00</lastmod>
+    </url>
+
+</urlset>

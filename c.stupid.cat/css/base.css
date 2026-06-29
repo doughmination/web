@@ -1,0 +1,152 @@
+/* ============================================================
+   base.css — global reset, custom cursors, and the background watermark layers. Loaded on every page.
+   ============================================================ */
+
+/* ============================================================
+   1. BASE & RESET
+   ============================================================ */
+* {
+  box-sizing: border-box;
+}
+
+/* Default cursor lives on <html> so it INHERITS down the tree.
+   Setting it on `*` paints it directly onto every element, which beats
+   inheritance and makes children of links/buttons (spans, icons, imgs)
+   fall back to the default cursor instead of the pointer. */
+html {
+  cursor: url('/assets/cursor/default_0.png') 3 3, auto;
+}
+
+/* Smooth cross-fade between pages */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.35s;
+  animation-timing-function: ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+html {
+  background: linear-gradient(135deg, var(--base) 0%, var(--mantle) 60%, var(--crust) 100%);
+}
+
+body {
+  font-family: 'Comic Code', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  height: 100dvh;
+  margin: 0;
+  padding: 1.5rem 1rem;
+  background: linear-gradient(135deg, var(--base) 0%, var(--mantle) 60%, var(--crust) 100%);
+  color: var(--text);
+}
+
+
+/* clickable */
+a,
+button,
+[role="button"],
+[role="link"],
+[data-href],
+label[for],
+select,
+summary,
+.pc-name--link,
+#oneko {
+  cursor: url('../assets/cursor/pointer_0.png'), pointer;
+}
+
+/* text entry / editing */
+input:not([type="button"]):not([type="submit"]):not([type="checkbox"]):not([type="radio"]),
+textarea,
+[contenteditable="true"] {
+  cursor: url('../assets/cursor/text_0.png'), text;
+}
+
+/* loading */
+[aria-busy="true"],
+.is-loading {
+  cursor: url('../assets/cursor/wait_0.png'), wait;
+}
+
+/* busy but interactive */
+.is-progress {
+  cursor: url('../assets/cursor/progress_0.png'), progress;
+}
+
+/* help */
+[title]:not(a):not(button),
+.help {
+  cursor: url('../assets/cursor/help_0.png'), help;
+}
+
+/* disabled */
+:disabled,
+[disabled],
+[aria-disabled="true"] {
+  cursor: url('../assets/cursor/not-allowed_0.png'), not-allowed;
+}
+
+/* draggable */
+[draggable="true"] {
+  cursor: url('../assets/cursor/openhand_0.png'), grab;
+}
+
+/* crosshair / zoom (if you use them) */
+.crosshair {
+  cursor: url('../assets/cursor/crosshair_0.png'), crosshair;
+}
+
+.zoom-in {
+  cursor: url('../assets/cursor/zoom-in_0.png'), zoom-in;
+}
+
+.zoom-out {
+  cursor: url('../assets/cursor/zoom-out_0.png'), zoom-out;
+}
+
+/* Estrogen watermark blended into the background */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: url(/assets/theme/estrogen.svg) center / cover no-repeat;
+  filter: invert(86%) sepia(8%) saturate(900%) hue-rotate(190deg) brightness(105%);
+  opacity: 0.05;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Miku chibi tucked into the bottom-right corner */
+body::after {
+  content: "";
+  position: fixed;
+  right: 0.5rem;
+  bottom: 0.5rem;
+  width: clamp(96px, 14vw, 168px);
+  aspect-ratio: 564 / 547;
+  background: url(/assets/theme/miku.png) center / contain no-repeat;
+  opacity: 0.18;
+  pointer-events: none;
+  z-index: 0;
+}
+
+

@@ -1,0 +1,86 @@
+[
+  {
+    "name": "Blue Butterfly",
+    "sprite": "/assets/oneko/other-animals/blue-butterfly.png",
+    "unlockMethod": "timer",
+    "category": "Other Animals"
+  },
+  {
+    "name": "Bunny",
+    "sprite": "/assets/oneko/other-animals/bunny.png",
+    "unlockMethod": "timer",
+    "category": "Other Animals"
+  },
+  {
+    "name": "Bxter",
+    "sprite": "/assets/oneko/other-animals/bxter.png",
+    "unlockMethod": "timer",
+    "category": "Other Animals"
+  },
+  {
+    "name": "Dog",
+    "sprite": "/assets/oneko/other-animals/dog.png",
+    "unlockMethod": "timer",
+    "category": "Other Animals"
+  },
+  {
+    "name": "Fox",
+    "sprite": "/assets/oneko/other-animals/fox.png",
+    "unlockMethod": "timer",
+    "category": "Other Animals"
+  },
+  {
+    "name": "Humming Bird",
+    "sprite": "/assets/oneko/other-animals/humming_bird.png",
+    "unlockMethod": "timer",
+    "category": "Other Animals"
+  },
+  {
+    "name": "Jerry",
+    "sprite": "/assets/oneko/other-animals/jerry.png",
+    "unlockMethod": "timer",
+    "category": "Other Animals"
+  },
+  {
+    "name": "Poochy",
+    "sprite": "/assets/oneko/other-animals/poochy.png",
+    "unlockMethod": "timer",
+    "category": "Other Animals"
+  },
+  {
+    "name": "Red Butterfly",
+    "sprite": "/assets/oneko/other-animals/red-butterfly.png",
+    "unlockMethod": "timer",
+    "category": "Other Animals"
+  },
+  {
+    "name": "Santino",
+    "sprite": "/assets/oneko/other-animals/santino.png",
+    "unlockMethod": "timer",
+    "category": "Other Animals"
+  },
+  {
+    "name": "Skunk",
+    "sprite": "/assets/oneko/other-animals/skunk.png",
+    "unlockMethod": "timer",
+    "category": "Other Animals"
+  },
+  {
+    "name": "Stingray",
+    "sprite": "/assets/oneko/other-animals/stingray.png",
+    "unlockMethod": "timer",
+    "category": "Other Animals"
+  },
+  {
+    "name": "Tato",
+    "sprite": "/assets/oneko/other-animals/tato.png",
+    "unlockMethod": "timer",
+    "category": "Other Animals"
+  },
+  {
+    "name": "Tentacle",
+    "sprite": "/assets/oneko/other-animals/tentacle.png",
+    "unlockMethod": "timer",
+    "category": "Other Animals"
+  }
+]
