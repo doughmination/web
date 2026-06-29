@@ -1,0 +1,58 @@
+/* ============================================================
+   88x31.css — the /88x31 button wall page.
+   ============================================================ */
+
+/* ---- 88x31 button wall (lives on the dedicated /88x31 page) ---- */
+.button-wall {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+  margin: 0 auto;
+}
+
+.button-wall a {
+  display: block;
+  line-height: 0;
+}
+
+.button-wall img {
+  width: 132px;
+  height: 46px;
+  border: 1px solid var(--surface-1);
+  border-radius: 2px;
+  transition: transform 0.12s ease, border-color 0.12s ease;
+}
+
+.button-wall a:hover img,
+.button-wall img:hover {
+  transform: translateY(-2px);
+  border-color: rgb(var(--accent-rgb));
+}
+/* ---- 88x31 page: scrolls like the other content pages ---- */
+html:has(.button-page),
+body:has(.button-page) {
+  height: auto;
+  min-height: 100dvh;
+  overflow-y: auto;
+}
+
+body:has(.button-page) {
+  align-items: flex-start;
+}
+
+body:has(.button-page) .hub {
+  max-width: 560px;
+}
+
+.button-page {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 4.5rem;
+}
+
+@media (max-width: 640px) {
+  .button-wall {
+    max-width: 100%;
+  }
+}

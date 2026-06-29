@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Warm up the origins this page's JS fetches on load (guestbook API + Turnstile) -->
+    <link rel="preconnect" href="https://guestbook.doughmination.uk" crossorigin>
+    <link rel="dns-prefetch" href="https://guestbook.doughmination.uk">
+    <link rel="preconnect" href="https://challenges.cloudflare.com">
+    <link rel="dns-prefetch" href="https://challenges.cloudflare.com">
+
+    <title>Clove Twilight</title>
+    <link rel="stylesheet" href="/css/main.css">
+    <script>try { var f = localStorage.getItem('ctpFlavor'); document.documentElement.setAttribute('data-flavor', ['mocha', 'macchiato', 'frappe', 'latte'].indexOf(f) >= 0 ? f : 'mocha'); } catch (e) { document.documentElement.setAttribute('data-flavor', 'mocha'); }</script>
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon/favicon.svg">
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Sign Clove Twilight's guestbook — leave a message and say hello.">
+    <meta name="keywords" content="Clove Twilight, c.stupid.cat, guestbook, messages, sign">
+    <meta name="author" content="doughmination">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://c.stupid.cat/guestbook">
+
+    <!-- Alternate for mobile -->
+    <link rel="alternate" media="only screen and (max-width: 640px)" href="https://c.stupid.cat/guestbook">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#f5c2e7">
+
+    <!-- Open Graph / Discord / Facebook -->
+    <meta property="og:image" content="https://c.stupid.cat/assets/favicon/favicon.png">
+    <meta property="og:site_name" content="c.stupid.cat">
+    <meta property="og:title" content="Clove Twilight">
+    <meta property="og:description" content="Sign Clove Twilight's guestbook — leave a message and say hello.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://c.stupid.cat/guestbook">
+    <meta property="og:locale" content="en_GB">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:image" content="https://c.stupid.cat/assets/favicon/favicon.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Clove Twilight">
+    <meta name="twitter:description" content="Sign Clove Twilight's guestbook — leave a message and say hello.">
+
+    <!-- Prefetch other pages for faster navigation -->
+    <link rel="prefetch" href="/">
+    <link rel="prefetch" href="/cool-people">
+    <link rel="prefetch" href="/dev-info">
+    <link rel="prefetch" href="/discord">
+    <link rel="prefetch" href="/projects">
+    <link rel="prefetch" href="/music">
+    <link rel="prefetch" href="/88x31">
+</head>
+
+<body>
+
+    <header class="nav">
+        <nav class="nav-links">
+            <a class="nav-link" data-href="/">Home</a>
+            <a class="nav-link" data-href="/cool-people">Cool People</a>
+            <a class="nav-link" data-href="/dev-info">Dev Info</a>
+            <a class="nav-link" data-href="/discord">Discord</a>
+            <a class="nav-link" data-href="/projects">Projects</a>
+            <a class="nav-link" data-href="/music">Music</a>
+            <a class="nav-link" data-href="/88x31">88x31</a>
+            <a class="nav-link selected" data-href="/guestbook">Guestbook</a>
+            <a class="nav-link" data-href="/ascii">ASCII</a>
+        </nav>
+    </header>
+
+    <div class="hub friends-wrap guestbook-wrap">
+        <header class="hub-header">
+            <h1>Guestbook</h1>
+            <p class="tagline">Leave a little note before you go &lt;3</p>
+        </header>
+
+        <!-- Sign form -->
+        <form id="gb-form" class="gb-form" autocomplete="off" novalidate>
+            <div class="gb-field">
+                <label for="gb-name">Name</label>
+                <input type="text" id="gb-name" name="name" maxlength="40" required
+                    placeholder="what should I call you?">
+            </div>
+            <div class="gb-field">
+                <label for="gb-website">Website <span class="gb-optional">(optional)</span></label>
+                <input type="url" id="gb-website" name="website" maxlength="200"
+                    placeholder="https://your-cool-site.com">
+            </div>
+            <div class="gb-field">
+                <label for="gb-message">Message</label>
+                <textarea id="gb-message" name="message" maxlength="500" rows="3" required
+                    placeholder="say hi!"></textarea>
+                <span class="gb-counter" id="gb-counter">0 / 500</span>
+            </div>
+
+            <!-- Honeypot: hidden from humans, bots tend to fill it. -->
+            <div class="gb-hp" aria-hidden="true">
+                <label for="gb-url2">Leave this empty</label>
+                <input type="text" id="gb-url2" name="url2" tabindex="-1" autocomplete="off">
+            </div>
+
+            <!-- Turnstile widget renders here when a site key is configured. -->
+            <div id="gb-turnstile" class="gb-turnstile"></div>
+
+            <div class="gb-actions">
+                <button type="submit" id="gb-submit">Sign guestbook</button>
+                <span class="gb-status" id="gb-status" role="status"></span>
+            </div>
+        </form>
+
+        <!-- Entries rendered by js/guestbook.js -->
+        <div id="gb-entries" class="gb-entries" aria-live="polite">
+            <p class="gb-empty">Loading messages…</p>
+        </div>
+    </div>
+
+    <script src="/js/core.js" data-cat="/assets/oneko/classics/classic.png"></script>
+    <script src="/js/guestbook.js" data-api="https://guestbook.doughmination.uk"
+        data-turnstile-key="0x4AAAAAAB08ZhSxKn5rAD3d"></script>
+</body>
+
+</html>

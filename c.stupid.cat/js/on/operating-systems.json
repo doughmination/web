@@ -1,0 +1,8 @@
+[
+  {
+    "name": "Bsd",
+    "sprite": "/assets/oneko/operating-systems/bsd.png",
+    "unlockMethod": "filter",
+    "category": "Operating Systems"
+  }
+]

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Clove Twilight</title>
+    <link rel="stylesheet" href="/css/main.css">
+    <script>try { var f = localStorage.getItem('ctpFlavor'); document.documentElement.setAttribute('data-flavor', ['mocha', 'macchiato', 'frappe', 'latte'].indexOf(f) >= 0 ? f : 'mocha'); } catch (e) { document.documentElement.setAttribute('data-flavor', 'mocha'); }</script>
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon/favicon.svg">
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Browse a gallery of selfies from Clove Twilight.">
+    <meta name="keywords" content="Clove Twilight, c.stupid.cat, selfies, photos, gallery, personal">
+    <meta name="author" content="doughmination">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://c.stupid.cat/selfies">
+
+    <!-- Alternate for mobile -->
+    <link rel="alternate" media="only screen and (max-width: 640px)" href="https://c.stupid.cat/selfies">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#f5c2e7">
+
+    <!-- Open Graph / Discord / Facebook -->
+    <meta property="og:image" content="https://c.stupid.cat/assets/favicon/favicon.png">
+    <meta property="og:site_name" content="c.stupid.cat">
+    <meta property="og:title" content="Clove Twilight">
+    <meta property="og:description" content="Browse a gallery of selfies from Clove Twilight.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://c.stupid.cat/selfies">
+    <meta property="og:locale" content="en_GB">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:image" content="https://c.stupid.cat/assets/favicon/favicon.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Clove Twilight">
+    <meta name="twitter:description" content="Browse a gallery of selfies from Clove Twilight.">
+
+    <!-- Prefetch other pages for faster navigation -->
+    <link rel="prefetch" href="/">
+    <link rel="prefetch" href="/cool-people">
+    <link rel="prefetch" href="/dev-info">
+    <link rel="prefetch" href="/discord">
+    <link rel="prefetch" href="/projects">
+    <link rel="prefetch" href="/music">
+    <link rel="prefetch" href="/88x31">
+</head>
+
+<body>
+
+    <header class="nav">
+        <nav class="nav-links">
+            <a class="nav-link" data-href="/">Home</a>
+            <a class="nav-link" data-href="/cool-people">Cool People</a>
+            <a class="nav-link" data-href="/dev-info">Dev Info</a>
+            <a class="nav-link" data-href="/discord">Discord</a>
+            <a class="nav-link" data-href="/projects">Projects</a>
+            <a class="nav-link" data-href="/music">Music</a>
+            <a class="nav-link" data-href="/88x31">88x31</a>
+            <a class="nav-link" data-href="/guestbook">Guestbook</a>
+        </nav>
+    </header>
+
+    <div class="hub selfies-wrap">
+        <header class="hub-header">
+            <h1>Selfies</h1>
+            <p class="tagline">A gallery of my selfies &mdash; tap any photo to view it full size</p>
+        </header>
+
+        <!-- Thumbnails are rendered by selfies.js from /assets/selfies/selfies.json -->
+        <div id="selfies-root" class="selfie-grid" aria-label="Selfies gallery"></div>
+    </div>
+
+    <script src="/js/core.js" data-cat="/assets/oneko/classics/classic.png"></script>
+    <script src="/js/selfies.js"></script>
+</body>
+
+</html>
