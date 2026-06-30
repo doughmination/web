@@ -284,6 +284,10 @@ a.fc-name:hover {
   content: "🩵 ";
 }
 
+.fc-name.cl§oser::before {
+  content: "💜 ";
+}
+
 .fc-name.known::before {
   content: "💛 ";
 }
