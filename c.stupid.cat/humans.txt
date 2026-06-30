@@ -8,7 +8,7 @@ Language: English
 
 /* THANKS */
 Ari for helping with some CSS (@AriTheStupidCat on GitHub)
-git.gay for hosting the repo
+codeberg for hosting the repo
 
 
 
