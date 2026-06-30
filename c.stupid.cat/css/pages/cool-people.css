@@ -284,7 +284,7 @@ a.fc-name:hover {
   content: "🩵 ";
 }
 
-.fc-name.cl§oser::before {
+.fc-name.closer::before {
   content: "💜 ";
 }
 
