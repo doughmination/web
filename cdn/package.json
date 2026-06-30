@@ -1,0 +1,41 @@
+{
+    "name": "cdn-ts",
+    "version": "1.0.0",
+    "description": "TypeScript CDN Server with file upload and management",
+    "main": "dist/server.js",
+    "scripts": {
+        "dev": "dotenvx run -- bun --watch src/server.ts",
+        "build": "tsc",
+        "start": "dotenvx run -- bun dist/server.js",
+        "start:prod": "dotenvx run -- bun dist/server.js"
+    },
+    "keywords": [
+        "cdn",
+        "file-server",
+        "upload"
+    ],
+    "author": "Doughmination",
+    "license": "SEE LICENCE IN LICENCE",
+    "dependencies": {
+        "@dotenvx/dotenvx": "^1.75.1",
+        "compression": "^1.8.1",
+        "cookie-parser": "^1.4.7",
+        "cors": "^2.8.6",
+        "ejs": "^6.0.1",
+        "express": "^5.2.1",
+        "express-rate-limit": "^8.5.2",
+        "express-session": "^1.19.0",
+        "multer": "^2.2.0"
+    },
+    "devDependencies": {
+        "@types/compression": "^1.8.1",
+        "@types/cookie-parser": "^1.4.10",
+        "@types/cors": "^2.8.19",
+        "@types/ejs": "^3.1.5",
+        "@types/express": "^5.0.6",
+        "@types/express-session": "^1.19.0",
+        "@types/multer": "^2.1.0",
+        "@types/node": "^26.0.0",
+        "typescript": "^6.0.3"
+    }
+}
