@@ -483,6 +483,10 @@ a.fc-name:hover {
   content: "🩵 ";
 }
 
+.presence-card.is-mini.tier-closer .pc-name::before {
+  content: "💜 ";
+}
+
 .presence-card.is-mini.tier-known .pc-name::before {
   content: "💛 ";
 }
