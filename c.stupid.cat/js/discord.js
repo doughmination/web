@@ -899,7 +899,7 @@
       title: "Close Friends",
       members: [
         { name: "Ari", tier: "close", discordId: "1474568910736199825", link: "https://a.stupid.cat" },
-        // { name: "Lilly", tier: "close", discordId: "908055723659898902", link: null }, // Currently commented out as she's blocked me and idk if I should keep her displayed </3
+        { name: "Lilly", tier: "closer", discordId: "908055723659898902", link: null },
         { name: "Ria", tier: "close", discordId: "1513506390088618145", link: null },
         { name: "Camilla", tier: "close", discordId: "1110542429838397471", link: "https://cammy-the-cat.com" },
         { name: "Saphie", tier: "close", discordId: "527709099186716673", link: null }
@@ -919,7 +919,8 @@
       subtitle: "You can request to be added here!",
       members: [
         { name: "furi", tier: "known", discordId: "781445370177126401", link: "https://furina.is-a.dev" },
-        { name: "pokemon", tier: "known", discordId: "784443338627612673", link: "https://devmatei.com/" }
+        { name: "pokemon", tier: "known", discordId: "784443338627612673", link: "https://devmatei.com/" },
+        { name: "animosity", teir: "known", discordId: "1491137614525370589", link: "https://0c6a.site/"}
       ]
     },
     {
