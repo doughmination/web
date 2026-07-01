@@ -1,0 +1,13 @@
+[
+  { "label": "Home", "href": "/" },
+  { "label": "Cool People", "href": "/cool-people" },
+  { "label": "Dev Info", "href": "/dev-info" },
+  { "label": "Discord", "href": "/discord" },
+  { "label": "Servers", "href": "/servers" },
+  { "label": "Projects", "href": "/projects" },
+  { "label": "Music", "href": "/music" },
+  { "label": "88x31", "href": "/88x31" },
+  { "label": "Guestbook", "href": "/guestbook" },
+  { "label": "ASCII", "href": "/ascii" },
+  { "label": "Selfies", "href": "/selfies" }
+]

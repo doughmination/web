@@ -37,7 +37,7 @@ console.log(`
 ⣿⣿⣿⣿⡿⢿⣿⣿⣿⣿⡀⠘⣿⣄⢻⡘⡇⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⣸⣿⡀⠀⣷⡘⣿⠇⣼⣿⣿⣿⡿⢸⣿⣿⣿⣿⣿⣿⣿⣿`);
 /* mmmmmmmmmmmmmmmmm girls kissing,,,,, */
 
-document.querySelectorAll("[data-href]").forEach((el) => {
+function wireDataHref(el) {
   /* Cursor is handled in CSS ([data-href] + [role="link"]) so the custom PNG isn't overridden. */
   if (!el.hasAttribute("role")) el.setAttribute("role", "link");
   if (!el.hasAttribute("tabindex")) el.setAttribute("tabindex", "0");
@@ -55,7 +55,44 @@ document.querySelectorAll("[data-href]").forEach((el) => {
       go();
     }
   });
-});
+}
+
+document.querySelectorAll("[data-href]").forEach(wireDataHref);
+
+/* ===================== nav.js (auto nav builder) ===================== */
+async function buildNav() {
+  const container = document.querySelector(".nav-links");
+  if (!container) return;
+
+  let items;
+  try {
+    items = await fetch("/js/nav.json").then((r) => {
+      if (!r.ok) throw new Error(`nav.json (${r.status})`);
+      return r.json();
+    });
+  } catch (err) {
+    console.error("Could not load nav.json:", err);
+    return;
+  }
+
+  const currentPath = location.pathname.replace(/\/+$/, "") || "/";
+
+  container.innerHTML = "";
+  items.forEach(({ label, href }) => {
+    const a = document.createElement("a");
+    a.className = "nav-link";
+    a.dataset.href = href;
+    a.textContent = label;
+
+    const linkPath = href.replace(/\/+$/, "") || "/";
+    if (linkPath === currentPath) a.classList.add("selected");
+
+    wireDataHref(a);
+    container.appendChild(a);
+  });
+}
+
+buildNav();
 
 /* ========================== flavors.js ========================= */
 (function flavors() {
