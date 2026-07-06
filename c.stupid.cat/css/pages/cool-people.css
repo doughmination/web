@@ -66,8 +66,8 @@ body:has(.friends-wrap) .hub {
 
 .friend-card:hover {
   transform: translateY(-3px);
-  border-color: rgb(var(--accent-rgb));
-  box-shadow: 0 8px 22px -12px rgba(var(--accent-rgb), 0.5);
+  border-color: var(--pink);
+  box-shadow: 0 8px 22px -12px rgba(var(--pink), 0.5);
 }
 
 /* Nitro profile gradient — recolours the card body (mirrors the /discord card) */
@@ -117,7 +117,7 @@ body:has(.friends-wrap) .hub {
 .fc-banner {
   height: 54px;
   background:
-    linear-gradient(135deg, rgba(var(--accent-rgb), 0.45), rgba(var(--accent-rgb), 0.12));
+    linear-gradient(135deg, rgba(var(--pink), 0.45), rgba(var(--pink), 0.12));
   background-size: cover;
   background-position: center;
   /* keep the banner corners rounded even on hover, when the card switches
@@ -262,7 +262,7 @@ body:has(.friends-wrap) .hub {
 }
 
 a.fc-name:hover {
-  color: rgb(var(--accent-rgb));
+  color: var(--pink);
 }
 
 /* Nitro display-name gradient (clipped to the text). Keep the tier heart in

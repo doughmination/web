@@ -29,7 +29,7 @@
   margin: 0 0 0.75rem;
   font-size: 1.8rem;
   font-weight: 700;
-  color: rgb(var(--accent-rgb));
+  color: var(--pink);
   transition: color 0.6s ease;
 }
 
@@ -58,8 +58,8 @@
 .four-zero-four a:hover {
   transform: translateY(-2px);
   background: var(--surface-2);
-  border-color: rgb(var(--accent-rgb));
-  box-shadow: 0 6px 20px rgba(var(--accent-rgb), 0.22);
+  border-color: var(--pink);
+  box-shadow: 0 6px 20px rgba(var(--pink), 0.22);
 }
 
 @media (max-width: 560px) {

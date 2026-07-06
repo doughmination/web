@@ -509,19 +509,10 @@
           const rgb = near ? `${near.r}, ${near.g}, ${near.b}` : `${r}, ${g}, ${b}`;
           card.style.setProperty("--dc-accent", rgb);
           card.classList.add("has-accent");
-          // Only the full-size card recolours the whole page; mini friend cards
-          // keep their accent local so they don't fight over --accent-rgb.
-          if (!opts.mini) document.documentElement.style.setProperty("--accent-rgb", rgb);
         } catch (e) { resetAccent(); }
       };
       img.onerror = resetAccent;
       img.src = url;
-    }
-    function resetAccent() {
-      lastArtUrl = null;
-      card.classList.remove("has-accent");
-      card.style.removeProperty("--dc-accent");
-      if (!opts.mini) document.documentElement.style.removeProperty("--accent-rgb");
     }
 
     // ---- section (row) builders --------------------------------------------

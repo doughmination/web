@@ -86,8 +86,8 @@ body:has(.friend-grid) {
 .project-card:focus-visible {
   transform: translateY(-3px);
   background: var(--surface-1);
-  border-color: rgb(var(--accent-rgb));
-  box-shadow: 0 6px 20px rgba(var(--accent-rgb), 0.22);
+  border-color: var(--pink);
+  box-shadow: 0 6px 20px rgba(var(--pink), 0.22);
 }
 
 .project-card-img {
@@ -97,7 +97,7 @@ body:has(.friend-grid) {
   border-radius: 14px;
   object-fit: cover;
   border: 2px solid var(--yellow);
-  box-shadow: 0 4px 14px rgba(var(--accent-rgb), 0.22);
+  box-shadow: 0 4px 14px rgba(var(--pink), 0.22);
 }
 
 .project-card-body {

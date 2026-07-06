@@ -89,15 +89,10 @@
         r = Math.round(r / count); g = Math.round(g / count); b = Math.round(b / count);
         const near = nearestAccent(r, g, b);
         const rgb = near ? `${near.r}, ${near.g}, ${near.b}` : `${r}, ${g}, ${b}`;
-        document.documentElement.style.setProperty("--accent-rgb", rgb);
       } catch (e) { resetAccent(); }
     };
     img.onerror = resetAccent;
     img.src = url;
-  }
-  function resetAccent() {
-    lastArtUrl = null;
-    document.documentElement.style.removeProperty("--accent-rgb");
   }
 
   // ---- DOM refs -----------------------------------------------------------

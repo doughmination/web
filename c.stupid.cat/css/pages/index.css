@@ -33,8 +33,8 @@
 .link-card:hover {
   transform: translateY(-3px);
   background: var(--surface-1);
-  border-color: rgb(var(--accent-rgb));
-  box-shadow: 0 6px 20px rgba(var(--accent-rgb), 0.22);
+  border-color: var(--pink);
+  box-shadow: 0 6px 20px rgba(var(--pink), 0.22);
 }
 
 .icon {
@@ -62,7 +62,7 @@
   padding: 0.5rem 0.75rem;
   border-radius: 10px;
   background: var(--crust);
-  border: 1px solid rgb(var(--accent-rgb));
+  border: 1px solid var(--pink);
   box-shadow: 0 6px 18px rgba(17, 17, 27, 0.55);
   white-space: nowrap;
   line-height: 1.3;
@@ -79,7 +79,7 @@
   left: 50%;
   transform: translateX(-50%);
   border: 6px solid transparent;
-  border-top-color: rgb(var(--accent-rgb));
+  border-top-color: var(--pink);
 }
 
 .link-card:hover .link-text,
@@ -185,14 +185,14 @@ body:has(.terminal) .hub .terminal {
 
 .t-banner {
   margin: 0 0 0.5rem;
-  color: rgb(var(--accent-rgb));
+  color: var(--pink);
   /* scale to the terminal's width (1cqw = 1% of it) so the 42-char banner
      always fits; capped so it never gets oversized on a wide terminal */
   font-size: min(0.78rem, 1.9cqw);
   line-height: 1.04;
   white-space: pre;
   overflow: hidden;
-  text-shadow: 0 0 14px rgba(var(--accent-rgb), 0.35);
+  text-shadow: 0 0 14px rgba(var(--pink), 0.35);
 }
 
 .t-greet {
@@ -201,7 +201,7 @@ body:has(.terminal) .hub .terminal {
 }
 
 .t-greet b {
-  color: rgb(var(--accent-rgb));
+  color: var(--pink);
 }
 
 .t-dim {
@@ -209,7 +209,7 @@ body:has(.terminal) .hub .terminal {
 }
 
 .t-accent {
-  color: rgb(var(--accent-rgb));
+  color: var(--pink);
 }
 
 .t-inputline {
@@ -239,7 +239,7 @@ body:has(.terminal) .hub .terminal {
   outline: none;
   color: var(--text);
   font: inherit;
-  caret-color: rgb(var(--accent-rgb));
+  caret-color: var(--pink);
 }
 
 .t-output {
@@ -310,7 +310,7 @@ body:has(.terminal) .hub .terminal {
 
 .t-social:hover {
   background: var(--surface-0);
-  border-color: rgba(var(--accent-rgb), 0.4);
+  border-color: rgba(var(--pink), 0.4);
 }
 
 .t-social-ic {
@@ -320,7 +320,7 @@ body:has(.terminal) .hub .terminal {
 }
 
 .t-social-key {
-  color: rgb(var(--accent-rgb));
+  color: var(--pink);
 }
 
 .t-social-label {
@@ -356,7 +356,7 @@ body:has(.terminal) .hub .terminal {
 }
 
 .t-ls-item {
-  color: rgb(var(--accent-rgb));
+  color: var(--pink);
 }
 
 .t-ls-foot {

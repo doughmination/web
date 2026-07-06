@@ -66,7 +66,7 @@ async function buildNav() {
 
   let items;
   try {
-    items = await fetch("/js/nav.json").then((r) => {
+    items = await fetch("/js/on/nav.json").then((r) => {
       if (!r.ok) throw new Error(`nav.json (${r.status})`);
       return r.json();
     });
@@ -471,14 +471,14 @@ const spriteFor = (c) => c.sprite || BASE_SPRITE;
 (async function catModes() {
   try {
     /* index.json lists which per-folder configs to load, one per oneko folder. */
-    const index = await fetch("/js/on/index.json").then((r) => {
+    const index = await fetch("/js/on/oneko/index.json").then((r) => {
       if (!r.ok) throw new Error(`index.json (${r.status})`);
       return r.json();
     });
-    /* Load every /js/on/<folder>.json and merge them into one list. */
+    /* Load every /js/on/oneko/<folder>.json and merge them into one list. */
     const lists = await Promise.all(
       index.map((name) =>
-        fetch(`/js/on/${name}.json`)
+        fetch(`/js/on/oneko/${name}.json`)
           .then((r) => (r.ok ? r.json() : []))
           .catch(() => [])
       )

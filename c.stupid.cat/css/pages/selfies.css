@@ -62,8 +62,8 @@ body:has(.selfies-wrap) .hub-header {
 .selfie-thumb:hover,
 .selfie-thumb:focus-visible {
   transform: translateY(-3px);
-  border-color: rgb(var(--accent-rgb));
-  box-shadow: 0 6px 20px rgba(var(--accent-rgb), 0.22);
+  border-color: var(--pink);
+  box-shadow: 0 6px 20px rgba(var(--pink), 0.22);
   outline: none;
 }
 
@@ -112,7 +112,7 @@ body:has(.selfies-wrap) .hub-header {
   max-height: 86vh;
   object-fit: contain;
   border-radius: 12px;
-  border: 2px solid rgba(var(--accent-rgb), 0.55);
+  border: 2px solid rgba(var(--pink), 0.55);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
 }
 
@@ -136,7 +136,7 @@ body:has(.selfies-wrap) .hub-header {
 .lightbox-close:focus-visible,
 .lightbox-nav:focus-visible {
   background: var(--surface-1);
-  border-color: rgb(var(--accent-rgb));
+  border-color: var(--pink);
   outline: none;
 }
 

@@ -193,7 +193,7 @@ body:has(.waka) {
 .waka-total-num {
   font-size: 2.1rem;
   font-weight: 700;
-  color: rgb(var(--accent-rgb));
+  color: var(--pink);
   line-height: 1.1;
 }
 
@@ -236,7 +236,7 @@ body:has(.waka) {
 .waka-day-fill {
   width: 100%;
   min-height: 3px;
-  background: rgb(var(--accent-rgb));
+  background: var(--pink);
   border-radius: 7px 7px 0 0;
   transition: height 0.5s ease;
 }
@@ -279,7 +279,7 @@ body:has(.waka) {
   display: block;
   height: 100%;
   width: 0;
-  background: rgb(var(--accent-rgb));
+  background: var(--pink);
   border-radius: 999px;
   transition: width 0.6s ease;
 }
@@ -354,7 +354,7 @@ body:has(.waka) {
 .waka-steps a,
 .waka-empty a,
 .waka-credit a {
-  color: rgb(var(--accent-rgb));
+  color: var(--pink);
   text-decoration: none;
 }
 
@@ -368,7 +368,7 @@ body:has(.waka) {
   display: inline-block;
   padding: 0.45rem 1rem;
   border-radius: 999px;
-  background: rgb(var(--accent-rgb));
+  background: var(--pink);
   color: var(--crust);
   font-size: 0.82rem;
   font-weight: 600;
@@ -422,11 +422,11 @@ summary.section-title::marker {
 }
 
 summary.section-title:hover {
-  color: rgb(var(--accent-rgb));
+  color: var(--pink);
 }
 
 summary.section-title:focus-visible {
-  outline: 2px solid rgb(var(--accent-rgb));
+  outline: 2px solid var(--pink);
   outline-offset: 3px;
   border-radius: 6px;
 }

@@ -31,14 +31,14 @@
 }
 
 .nav-link:hover {
-  border-color: rgb(var(--accent-rgb));
+  border-color: var(--pink);
   color: var(--text);
   transform: translateX(2px);
 }
 
 .nav-link.selected {
-  background: rgb(var(--accent-rgb));
-  border-color: rgb(var(--accent-rgb));
+  background: var(--pink);
+  border-color: var(--pink);
   color: var(--crust);
   font-weight: 700;
   margin-left: 14px;
@@ -63,7 +63,7 @@
   top: 50%;
   transform: translateY(-50%);
   border: 6px solid transparent;
-  border-left-color: rgb(var(--accent-rgb));
+  border-left-color: var(--pink);
 }
 
 

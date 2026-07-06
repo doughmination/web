@@ -27,7 +27,7 @@
 .button-wall a:hover img,
 .button-wall img:hover {
   transform: translateY(-2px);
-  border-color: rgb(var(--accent-rgb));
+  border-color: var(--pink);
 }
 /* ---- 88x31 page: scrolls like the other content pages ---- */
 html:has(.button-page),
