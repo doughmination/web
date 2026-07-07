@@ -823,14 +823,20 @@
 
     function loadSelfHosted() {
       return fetch(SELF_BASE + DISCORD_USER_ID, { cache: "no-store" })
-        .then(function (r) { return r.ok ? r.json().catch(function () { return null; }) : null; })
+        .then(function (r) {
+          if (!r.ok) { console.warn("[presence]", DISCORD_USER_ID, "HTTP", r.status); return null; }
+          return r.json().catch(function () { console.warn("[presence]", DISCORD_USER_ID, "bad JSON"); return null; });
+        })
         .then(function (j) {
           // render whenever the API has the user; presence may be null (offline)
-          if (!j || !j.success || !j.data || !j.data.user) return false;
+          if (!j || !j.success || !j.data || !j.data.user) {
+            console.warn("[presence]", DISCORD_USER_ID, "response failed shape check:", j);
+            return false;
+          }
           renderFromSelfHost(j);
           return true;
         })
-        .catch(function () { return false; });
+        .catch(function (err) { console.error("[presence]", DISCORD_USER_ID, "fetch failed:", err); return false; });
     }
 
     function pollSelfHost() {
@@ -911,7 +917,7 @@
       members: [
         { name: "furi", tier: "known", discordId: "781445370177126401", link: "https://furina.is-a.dev" },
         { name: "pokemon", tier: "known", discordId: "784443338627612673", link: "https://devmatei.com/" },
-        { name: "animosity", teir: "known", discordId: "1491137614525370589", link: "https://0c6a.site/"}
+        { name: "animosity", tier: "known", discordId: "1491137614525370589", link: "https://0c6a.site/"}
       ]
     },
     {
