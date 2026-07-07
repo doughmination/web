@@ -483,6 +483,11 @@
       return best;
     }
     let lastArtUrl = null;
+    function resetAccent() {
+      lastArtUrl = null;
+      card.style.removeProperty("--dc-accent");
+      card.classList.remove("has-accent");
+    }
     function applyAccent(url) {
       if (!url || url === lastArtUrl) return;
       lastArtUrl = url;
