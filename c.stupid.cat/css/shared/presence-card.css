@@ -270,6 +270,14 @@ html[data-theme] body.api-body {
   background: var(--overlay-0);
 }
 
+/* Discord's own client shows this purple "live" indicator in place of the
+   regular status dot whenever the user has an active stream (type:1
+   activity), regardless of their underlying online/idle/dnd status. Matches
+   the .pc-stream-thumb ring below and the .pc-stream dot in section pc-row. */
+.presence-card[data-status="streaming"] .pc-status {
+  background: var(--mauve);
+}
+
 .pc-id {
   display: flex;
   flex-direction: column;
@@ -297,7 +305,7 @@ html[data-theme] body.api-body {
   display: none;
 }
 
-/* status word (Online / Idle / Do Not Disturb / Offline) */
+/* status word (Online / Idle / Do Not Disturb / Offline / Streaming) */
 .pc-status-text {
   font-size: 0.7rem;
   font-weight: 600;
@@ -350,6 +358,14 @@ html[data-theme] body.api-body {
 
 .presence-card[data-status="offline"] .pc-status-text::before {
   background: var(--overlay-0);
+}
+
+.presence-card[data-status="streaming"] .pc-status-text {
+  color: var(--mauve);
+}
+
+.presence-card[data-status="streaming"] .pc-status-text::before {
+  background: var(--mauve);
 }
 
 /* ---- expandable sections ---- */
@@ -439,6 +455,19 @@ a.pc-row:hover,
   border-radius: 7px;
   object-fit: cover;
   flex-shrink: 0;
+}
+
+/* Twitch/YouTube live preview thumbnail (streamRow's assets.large_image_url).
+   Wider than the square game/app icons above since it's a 16:9-ish video
+   preview, not an app icon; a slim mauve ring ties it to the streaming
+   status dot/color above. */
+.pc-stream-thumb {
+  width: 56px;
+  height: 38px;
+  border-radius: 7px;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1.5px solid var(--mauve);
 }
 
 .pc-row-ic.pc-dot {
@@ -1151,6 +1180,13 @@ body:has(.presence-stage) {
   height: 56px;
 }
 
+/* stream preview scales up on the big /discord card too, keeping its 16:9-ish
+   proportions rather than becoming square like the game icons above */
+.presence-stage .pc-stream-thumb {
+  width: 84px;
+  height: 56px;
+}
+
 .presence-stage .pc-row-title {
   font-size: 0.95rem;
   max-width: none;
@@ -1214,4 +1250,3 @@ body:has(.presence-stage) {
     font-size: 1.25rem;
   }
 }
-

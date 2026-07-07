@@ -102,7 +102,7 @@
     const userEl = card.querySelector(".pc-user");
     const platformsEl = card.querySelector(".pc-platforms");
     const statusTextEl = card.querySelector(".pc-status-text");
-    const STATUS_TITLE = { online: "Online", idle: "Idle", dnd: "Do Not Disturb", offline: "Offline" };
+    const STATUS_TITLE = { online: "Online", idle: "Idle", dnd: "Do Not Disturb", offline: "Offline", streaming: "Streaming" };
     const metaEl = card.querySelector(".pc-meta");
     const badgesEl = card.querySelector(".pc-badges");
     const sections = card.querySelector(".pc-sections");
@@ -619,8 +619,18 @@
       }
       const platform = (a.url && /twitch/i.test(a.url)) ? "Twitch"
         : (a.url && /youtube/i.test(a.url)) ? "YouTube" : "Live";
+      // Stream previews (e.g. Twitch's live thumbnail) come pre-resolved as a
+      // plain external URL in assets.large_image_url — NOT a Discord app-asset
+      // id, so this must NOT go through assetUrl(). proxyImg() is still safe to
+      // call: it only rewrites discordapp.com/.net URLs and passes anything
+      // else (like static-cdn.jtvnw.net) straight through unchanged.
+      const assets = a.assets || {};
+      const thumb = assets.large_image_url ? proxyImg(assets.large_image_url, { w: 240 }) : null;
+      const iconHtml = thumb
+        ? '<img class="pc-stream-thumb" src="' + esc(thumb) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.replaceWith(Object.assign(document.createElement(\'span\'),{className:\'pc-row-ic pc-dot\'}))">'
+        : '<span class="pc-row-ic pc-dot" aria-hidden="true"></span>';
       row.innerHTML =
-        '<span class="pc-row-ic pc-dot" aria-hidden="true"></span>' +
+        iconHtml +
         rowText("Streaming on " + platform, a.details || a.name || "", a.state || "");
       return row;
     }
@@ -647,8 +657,15 @@
 
       const u = d.discord_user || {};
       const status = d.discord_status || "offline";
-      card.dataset.status = status;
-      if (statusTextEl) statusTextEl.textContent = STATUS_TITLE[status] || "Offline";
+      const acts = d.activities || [];
+      // Discord shows the special purple "Streaming" indicator in place of the
+      // regular status dot whenever a type:1 (STREAMING) activity is present —
+      // even if the underlying status is dnd/idle/online. Mirror that here.
+      const isStreaming = acts.some((a) => a.type === 1);
+      const effectiveStatus = isStreaming ? "streaming" : status;
+      card.dataset.status = effectiveStatus;
+      card.dataset.realStatus = status; // raw status kept around in case CSS wants both
+      if (statusTextEl) statusTextEl.textContent = STATUS_TITLE[effectiveStatus] || "Offline";
 
       avImg.src = avatarUrl(u);
       const deco = u.avatar_decoration_data;
@@ -698,8 +715,6 @@
       } else {
         metaEl.hidden = true;
       }
-
-      const acts = d.activities || [];
 
       sections.innerHTML = "";
 
