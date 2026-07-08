@@ -13,6 +13,7 @@ import { Router, type Request, type Response, type NextFunction } from 'express'
 import multer from 'multer';
 
 import { UserCreateSchema, UserUpdateSchema, toUserResponse } from '../models/user.js';
+import { asString } from '../utils/request.js';
 import {
   getUsers,
   createUser,
@@ -63,7 +64,7 @@ usersRouter.put(
   '/users/:user_id',
   requireAuth,
   async (req: Request, res: Response, next: NextFunction) => {
-    const userId = req.params.user_id;
+    const userId = asString(req.params.user_id);
     const currentUser = req.user as User;
 
     // Only admins or the user themselves can update their info
@@ -103,7 +104,7 @@ usersRouter.delete(
   requireAuth,
   requireAdmin,
   async (req: Request, res: Response, next: NextFunction) => {
-    const userId = req.params.user_id;
+    const userId = asString(req.params.user_id);
     const currentUser = req.user as User;
 
     // Prevent self-deletion
@@ -132,7 +133,7 @@ usersRouter.post(
   requireAuth,
   upload.single('avatar'),
   async (req: Request, res: Response, next: NextFunction) => {
-    const userId = req.params.user_id;
+    const userId = asString(req.params.user_id);
     const currentUser = req.user as User;
 
     // Only admins or the user themselves can update their avatar

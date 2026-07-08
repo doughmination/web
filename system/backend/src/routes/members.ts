@@ -18,6 +18,7 @@ import {
 import { enrichMembersWithStatus } from '../services/status_service.js';
 import { requireAuth, requireAdmin } from '../dependencies/auth.js';
 import { setInCache } from '../utils/cache.js';
+import { asString } from '../utils/request.js';
 import { HttpError } from '../core/errors.js';
 
 export const membersRouter = Router();
@@ -43,7 +44,7 @@ membersRouter.get('/members', async (_req: Request, res: Response, next: NextFun
 /** Get details for a specific member */
 membersRouter.get('/member/:member_id', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const memberId = req.params.member_id;
+    const memberId = asString(req.params.member_id);
     const members = await getMembers();
 
     // Find member by ID or name
@@ -101,7 +102,7 @@ membersRouter.post(
       return;
     }
     const tags = parsed.data;
-    const memberIdentifier = req.params.member_identifier;
+    const memberIdentifier = asString(req.params.member_identifier);
 
     try {
       const success = await updateMemberTags(memberIdentifier, tags);
@@ -127,7 +128,7 @@ membersRouter.post(
   requireAdmin,
   async (req: Request, res: Response, next: NextFunction) => {
     const tag = req.body?.tag;
-    const memberIdentifier = req.params.member_identifier;
+    const memberIdentifier = asString(req.params.member_identifier);
 
     if (typeof tag !== 'string') {
       res.status(422).json({ detail: "Body must include a 'tag' string field" });
@@ -157,7 +158,8 @@ membersRouter.delete(
   requireAuth,
   requireAdmin,
   async (req: Request, res: Response, next: NextFunction) => {
-    const { member_identifier: memberIdentifier, tag } = req.params;
+    const memberIdentifier = asString(req.params.member_identifier);
+    const tag = asString(req.params.tag);
 
     try {
       const success = await removeMemberTag(memberIdentifier, tag);

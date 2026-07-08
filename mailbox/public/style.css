@@ -349,3 +349,129 @@ button {
   width: 0;
   overflow: hidden;
 }
+
+.back-btn {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--pink);
+  font: inherit;
+  font-weight: 600;
+  padding: 0.25rem 0;
+  margin-bottom: 0.75rem;
+  cursor: pointer;
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 768px) {
+  .topbar {
+    padding: 0.6rem 0.85rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .topbar h1 {
+    font-size: 1rem;
+  }
+
+  .topbar-right {
+    gap: 0.5rem;
+  }
+
+  .topbar-right button {
+    padding: 0.45rem 0.7rem;
+    font-size: 0.85rem;
+  }
+
+  .layout {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .folder-nav {
+    flex: 0 0 auto;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 0.5rem;
+    gap: 0.4rem;
+    border-right: none;
+    border-bottom: 1px solid var(--surface0);
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .folder-item {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .list,
+  .detail {
+    flex: 1;
+    min-height: 0;
+    border-right: none;
+    overflow-y: auto;
+  }
+
+  /* Only one of list/detail is visible at a time; .show-detail toggles which. */
+  .detail {
+    display: none;
+    padding: 1rem 1.1rem;
+  }
+
+  .layout.show-detail .list {
+    display: none;
+  }
+
+  .layout.show-detail .detail {
+    display: block;
+  }
+
+  .back-btn {
+    display: inline-block;
+  }
+
+  .msg-head {
+    font-size: 0.9rem;
+  }
+
+  .modal {
+    align-items: flex-end;
+  }
+
+  .compose {
+    width: 100%;
+    max-width: 100%;
+    max-height: 92vh;
+    overflow-y: auto;
+    border-radius: 14px 14px 0 0;
+  }
+
+  .compose .actions {
+    flex-wrap: wrap;
+  }
+
+  .compose .actions button {
+    flex: 1 1 auto;
+  }
+
+  .login-card {
+    width: 100%;
+    max-width: 360px;
+  }
+
+  .list-item {
+    padding: 0.9rem 1rem;
+  }
+
+  /* iOS Safari zooms in on focus if an input's font-size is under 16px */
+  .compose input,
+  .compose textarea {
+    font-size: 16px;
+  }
+
+  button {
+    min-height: 40px;
+  }
+}

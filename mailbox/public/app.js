@@ -1,5 +1,7 @@
 const listEl = document.getElementById("list");
-const detailEl = document.getElementById("detail");
+const detailEl = document.getElementById("detailContent");
+const backBtn = document.getElementById("backBtn");
+const layoutEl = document.querySelector(".layout");
 const composeModal = document.getElementById("composeModal");
 const composeForm = document.getElementById("composeForm");
 const composeError = document.getElementById("composeError");
@@ -80,6 +82,7 @@ function goToFolder(folder, { push = true } = {}) {
   setActiveFolderButton(folder);
   activeId = null;
   detailEl.innerHTML = '<p class="muted">Select an email to read it.</p>';
+  layoutEl.classList.remove("show-detail");
   if (push) history.pushState(null, "", pathForFolder(folder));
   loadEmails(folder);
 }
@@ -135,6 +138,7 @@ function attachmentsHtml(email) {
 async function openEmail(id) {
   activeId = id;
   renderList();
+  layoutEl.classList.add("show-detail");
 
   const res = await fetch(`/api/emails/${id}/thread`);
   if (!res.ok) {
@@ -178,6 +182,7 @@ async function openEmail(id) {
 async function openDraft(id) {
   activeId = id;
   renderList();
+  layoutEl.classList.add("show-detail");
 
   const draft = emails.find((e) => e.id === id);
   if (!draft) return;
@@ -389,10 +394,15 @@ async function deleteDraftAndClose() {
   composeModal.classList.add("hidden");
   activeId = null;
   loadEmails();
+  layoutEl.classList.remove("show-detail");
   detailEl.innerHTML = '<p class="muted">Select an email to read it.</p>';
 }
 
 document.getElementById("composeBtn").addEventListener("click", openNewMessage);
+
+backBtn.addEventListener("click", () => {
+  layoutEl.classList.remove("show-detail");
+});
 
 document.getElementById("logoutBtn").addEventListener("click", async () => {
   await fetch("/api/logout", { method: "POST" });

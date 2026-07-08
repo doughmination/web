@@ -46,5 +46,8 @@
     "better-sqlite3",
     "sharp",
     "esbuild"
-  ]
+  ],
+  "overrides": {
+    "@types/express": "^5.0.0"
+  }
 }

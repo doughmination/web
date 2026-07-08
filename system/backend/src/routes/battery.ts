@@ -10,6 +10,7 @@ import { Router, type Request, type Response } from 'express';
 
 import { getAllLevels, getDeviceLevel, setDeviceLevel } from '../services/battery_service.js';
 import { verifyBatteryAccess } from '../dependencies/battery.js';
+import { asString } from '../utils/request.js';
 
 export const batteryRouter = Router();
 
@@ -49,7 +50,7 @@ batteryRouter.get('/api/battery', async (_req: Request, res: Response) => {
 /** Get the latest battery level for a single device. (Public) */
 batteryRouter.get('/api/battery/:device', async (req: Request, res: Response) => {
   const { device } = req.params;
-  const record = await getDeviceLevel(device);
+  const record = await getDeviceLevel(asString(device));
   if (record === null) {
     res.status(404).json({ detail: `No battery level recorded for device '${device}'` });
     return;

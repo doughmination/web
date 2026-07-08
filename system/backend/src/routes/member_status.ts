@@ -17,6 +17,7 @@ import { Router, type Request, type Response, type NextFunction } from 'express'
 import { getMemberStatus, setMemberStatus, clearMemberStatus } from '../services/status_service.js';
 import { requireAuth, requireAdmin } from '../dependencies/auth.js';
 import { HttpError } from '../core/errors.js';
+import { asString } from '../utils/request.js';
 
 export const memberStatusRouter = Router();
 
@@ -25,7 +26,7 @@ memberStatusRouter.get(
   '/members/:member_identifier/status',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const memberIdentifier = req.params.member_identifier;
+      const memberIdentifier = asString(req.params.member_identifier);
       const status = await getMemberStatus(memberIdentifier);
 
       res.json({ success: true, member_identifier: memberIdentifier, status });
@@ -41,7 +42,7 @@ memberStatusRouter.post(
   requireAuth,
   requireAdmin,
   async (req: Request, res: Response, next: NextFunction) => {
-    const memberIdentifier = req.params.member_identifier;
+    const memberIdentifier = asString(req.params.member_identifier);
     const statusData = req.body ?? {};
     const statusText = statusData.text;
     const emoji = statusData.emoji;
@@ -78,7 +79,7 @@ memberStatusRouter.delete(
   requireAdmin,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const memberIdentifier = req.params.member_identifier;
+      const memberIdentifier = asString(req.params.member_identifier);
       const success = await clearMemberStatus(memberIdentifier);
 
       if (success) {

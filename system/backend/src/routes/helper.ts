@@ -32,7 +32,7 @@ import { appendFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { Database } from 'bun:sqlite';
-import { parse as parseCookies } from 'cookie';
+import { parseCookie as parseCookies } from 'cookie';
 import { Router, type Request, type Response } from 'express';
 
 import { DATA_DIR } from '../core/config.js';

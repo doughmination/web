@@ -13,6 +13,7 @@ import { Router, type Request, type Response } from 'express';
 import { STATIC_DIR, DATA_DIR } from '../core/config.js';
 import { getMembers, getFronters } from '../services/pluralkit.js';
 import { escapeHtml, normalizeHex } from '../utils/html.js';
+import { asString } from '../utils/request.js';
 
 export const staticRouter = Router();
 
@@ -155,7 +156,7 @@ staticRouter.get('/favicon.ico', (_req: Request, res: Response) => {
 /** Serve avatar images with proper content type */
 staticRouter.get('/avatars/:filename', (req: Request, res: Response) => {
   // Sanitize filename (strips any directory traversal, like Path(filename).name)
-  const safeFilename = basename(req.params.filename);
+  const safeFilename = basename(asString(req.params.filename));
   const filePath = join(DATA_DIR, safeFilename);
 
   if (!existsSync(filePath)) {
@@ -288,7 +289,7 @@ const SKIP_ROUTES = ['api', 'admin', 'assets', 'avatars', 'favicon.ico', 'robots
 
 /** Serve member page with dynamic meta tags */
 staticRouter.get('/:member_name', async (req: Request, res: Response) => {
-  const memberName = req.params.member_name;
+  const memberName = asString(req.params.member_name);
 
   // Skip non-member routes
   if (SKIP_ROUTES.some((route) => memberName.startsWith(route))) {

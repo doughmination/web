@@ -10,6 +10,7 @@ import { Router, type Request, type Response, type NextFunction } from 'express'
 import { LogQuery, DB_PATH } from './helper.js';
 import { requireAuth, requireAdmin } from '../dependencies/auth.js';
 import { HttpError } from '../core/errors.js';
+import { asString } from '../utils/request.js';
 
 export const systemDataRouter = Router();
 
@@ -71,7 +72,7 @@ systemDataRouter.get('/api/recent', (req: Request, res: Response) => {
 });
 
 systemDataRouter.get('/api/by-ip/:ip', (req: Request, res: Response) => {
-  res.json(logQuery.findByIp(req.params.ip));
+  res.json(logQuery.findByIp(asString(req.params.ip)));
 });
 
 systemDataRouter.get('/api/by-path', (req: Request, res: Response, next: NextFunction) => {

@@ -137,6 +137,7 @@ const PUBLIC_PATHS = new Set([
   "/login.js",
   "/style.css",
   "/favicon.ico",
+  "/apple-touch-icon.png",
   "/api/login",
 ]);
 
