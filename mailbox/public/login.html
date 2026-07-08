@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign in — Inbox</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body class="login-body">
+  <form id="loginForm" class="compose login-card">
+    <h2>Sign in</h2>
+
+    <label>
+      Username
+      <input name="username" type="text" autocomplete="username" required autofocus />
+    </label>
+
+    <label>
+      Password
+      <input name="password" type="password" autocomplete="current-password" required />
+    </label>
+
+    <p id="loginError" class="error hidden"></p>
+
+    <div class="actions">
+      <button type="submit" class="btn-accent">Sign in</button>
+    </div>
+  </form>
+
+  <script src="/login.js"></script>
+</body>
+</html>

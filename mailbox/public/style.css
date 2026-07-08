@@ -1,0 +1,274 @@
+:root {
+  /* Catppuccin Mocha */
+  --base: #1e1e2e;
+  --mantle: #181825;
+  --crust: #11111b;
+  --surface0: #313244;
+  --surface1: #45475a;
+  --surface2: #585b70;
+  --text: #cdd6f4;
+  --subtext0: #a6adc8;
+  --subtext1: #bac2de;
+  --overlay0: #6c7086;
+  --red: #f38ba8;
+  --pink: #f5c2e7; /* accent */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--base);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 15px;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+  background: var(--mantle);
+  border-bottom: 1px solid var(--surface0);
+}
+
+.topbar h1 {
+  font-size: 1.1rem;
+  margin: 0;
+  font-weight: 600;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.layout {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  overflow: hidden;
+}
+
+.list {
+  overflow-y: auto;
+  border-right: 1px solid var(--surface0);
+  background: var(--mantle);
+}
+
+.list-item {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--surface0);
+  cursor: pointer;
+}
+
+.list-item:hover {
+  background: var(--surface0);
+}
+
+.list-item.active {
+  background: var(--surface0);
+  border-left: 3px solid var(--pink);
+}
+
+.list-item .from {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.list-item .subject {
+  color: var(--subtext1);
+  font-size: 0.9rem;
+  margin-top: 0.15rem;
+}
+
+.list-item .time {
+  color: var(--overlay0);
+  font-size: 0.75rem;
+  margin-top: 0.35rem;
+}
+
+.detail {
+  padding: 1.5rem 2rem;
+  overflow-y: auto;
+}
+
+.detail h2 {
+  margin: 0 0 0.25rem 0;
+}
+
+.detail .meta {
+  color: var(--subtext0);
+  font-size: 0.85rem;
+  margin-bottom: 1.25rem;
+}
+
+.detail .body {
+  border-top: 1px solid var(--surface0);
+  padding-top: 1.25rem;
+  line-height: 1.6;
+}
+
+.muted {
+  color: var(--overlay0);
+  padding: 1rem;
+}
+
+.muted-inline {
+  color: var(--overlay0);
+  font-size: 0.85rem;
+}
+
+.message {
+  border: 1px solid var(--surface0);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.msg-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.dir-badge {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  background: var(--surface1);
+  color: var(--subtext1);
+}
+
+.dir-badge.outbound {
+  background: var(--pink);
+  color: var(--crust);
+}
+
+.thread-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+button {
+  font: inherit;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.btn-accent {
+  background: var(--pink);
+  color: var(--crust);
+  font-weight: 600;
+}
+
+.btn-accent:hover {
+  filter: brightness(1.05);
+}
+
+.btn-ghost {
+  background: transparent;
+  border-color: var(--surface2);
+  color: var(--text);
+}
+
+.btn-ghost:hover {
+  background: var(--surface0);
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 17, 27, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.compose {
+  background: var(--mantle);
+  border: 1px solid var(--surface0);
+  border-radius: 10px;
+  padding: 1.5rem;
+  width: 420px;
+  max-width: 90vw;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.compose h2 {
+  margin: 0 0 0.25rem 0;
+}
+
+.compose label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--subtext1);
+}
+
+.compose input,
+.compose textarea {
+  background: var(--surface0);
+  border: 1px solid var(--surface1);
+  border-radius: 6px;
+  padding: 0.5rem 0.6rem;
+  color: var(--text);
+  font: inherit;
+  resize: vertical;
+}
+
+.compose input:focus,
+.compose textarea:focus {
+  outline: 2px solid var(--pink);
+  outline-offset: 1px;
+}
+
+.compose .actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.error {
+  color: var(--red);
+  font-size: 0.85rem;
+}
+
+.error.hidden {
+  display: none;
+}
+
+.login-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.login-card {
+  position: static;
+}
