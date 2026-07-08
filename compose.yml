@@ -36,7 +36,7 @@ services:
       context: ./mailbox
       dockerfile: Dockerfile
     ports:
-      - "4040:4040"
+      - "127.0.0.1:4040:4040"
     volumes:
       - "./.env:/app/.env:ro"
       - "./.env.keys:/app/.env.keys:ro"
