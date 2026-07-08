@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 COPY package.json bun.lock ./
-RUN bun install --frozen-lockfile
+RUN bun install
 
 COPY tsconfig.json ./
 COPY src/ ./src/
@@ -16,7 +16,7 @@ RUN bun run build
 
 # Bun doesn't need a separate prod-prune step the way pnpm does,
 # but you can still strip devDependencies if desired:
-RUN bun install --frozen-lockfile --production
+RUN bun install
 
 
 FROM oven/bun:1-slim AS runtime
