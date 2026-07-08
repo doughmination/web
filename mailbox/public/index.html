@@ -4,16 +4,26 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Inbox</title>
+  <link rel="icon" href="/favicon.ico" sizes="any" />
   <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
   <div class="app">
     <header class="topbar">
       <h1>Inbox</h1>
-      <button id="composeBtn" class="btn-accent">New message</button>
+      <div class="topbar-right">
+        <button id="composeBtn" class="btn-accent">New message</button>
+        <button id="logoutBtn" class="btn-ghost">Log out</button>
+      </div>
     </header>
 
     <div class="layout">
+      <nav id="folderNav" class="folder-nav">
+        <button class="folder-item active" data-folder="inbox">Inbox</button>
+        <button class="folder-item" data-folder="sent">Sent</button>
+        <button class="folder-item" data-folder="drafts">Drafts</button>
+      </nav>
+
       <aside id="list" class="list">
         <p class="muted">Loading…</p>
       </aside>
@@ -43,9 +53,17 @@
         <textarea name="html" rows="8" required></textarea>
       </label>
 
+      <label>
+        Attachments
+        <input name="attachments" type="file" multiple />
+      </label>
+      <ul id="attachmentList" class="attachment-list"></ul>
+
       <p id="composeError" class="error hidden"></p>
 
       <div class="actions">
+        <button type="button" id="deleteDraftBtn" class="btn-ghost hidden">Delete draft</button>
+        <button type="button" id="saveDraftBtn" class="btn-ghost">Save draft</button>
         <button type="button" id="cancelBtn" class="btn-ghost">Cancel</button>
         <button type="submit" class="btn-accent">Send</button>
       </div>

@@ -2,7 +2,18 @@ import { Hono } from "hono";
 import { serveStatic } from "hono/bun";
 import { getCookie, setCookie, deleteCookie } from "hono/cookie";
 import { Resend } from "resend";
-import { addEmail, getEmail, listEmails, listByThreadKey } from "./lib/store";
+import {
+  addEmail,
+  getEmail,
+  listEmails,
+  listByThreadKey,
+  createDraft,
+  updateDraft,
+  deleteDraft,
+  type Folder,
+  type StoredAttachment,
+} from "./lib/store";
+import { readAttachment, saveAttachment, toResendAttachment, persistInboundAttachments } from "./lib/attachments";
 import {
   verifyCredentials,
   createSession,
@@ -11,9 +22,76 @@ import {
   ADMIN_DISPLAY_NAME,
 } from "./lib/auth";
 
+// Attachments the frontend uploads arrive as base64; this turns them into
+// StoredAttachment rows on disk and, in parallel, the shape Resend wants.
+type UploadedAttachment = { filename: string; contentType: string; content: string };
+
+async function persistUploads(uploads: UploadedAttachment[] | undefined): Promise<StoredAttachment[]> {
+  if (!uploads?.length) return [];
+  return Promise.all(uploads.map((u) => saveAttachment(u.filename, u.contentType, u.content)));
+}
+
+// A draft's attachment list, once loaded back into the compose form, is a
+// mix of already-stored attachments (only an id/filename/contentType/size —
+// no bytes) and freshly-picked files (base64 content, no id yet). Only the
+// latter need to be written to disk; the former are kept as-is.
+type MixedAttachment =
+  | { id: string; filename: string; contentType: string; size: number }
+  | UploadedAttachment;
+
+async function resolveAttachments(items: MixedAttachment[] | undefined): Promise<StoredAttachment[]> {
+  if (!items?.length) return [];
+  const resolved = await Promise.all(
+    items.map((item) =>
+      "id" in item && item.id
+        ? Promise.resolve(item as StoredAttachment)
+        : saveAttachment((item as UploadedAttachment).filename, (item as UploadedAttachment).contentType, (item as UploadedAttachment).content)
+    )
+  );
+  return resolved;
+}
+
+async function toResendAttachments(attachments: StoredAttachment[]) {
+  const resolved = await Promise.all(attachments.map(toResendAttachment));
+  return resolved.filter((a): a is { filename: string; content: string } => a !== null);
+}
+
+function parseFolder(value: string | undefined): Folder | undefined {
+  return value === "inbox" || value === "sent" || value === "drafts" ? value : undefined;
+}
+
 const resend = new Resend(process.env.RESEND_API_KEY);
 const webhookSecret = process.env.RESEND_WEBHOOK_SECRET ?? "";
 const sendFrom = process.env.SEND_FROM ?? "";
+const turnstileSecret = process.env.TURNSILE_SECRET ?? "";
+
+// Verifies a Cloudflare Turnstile token against Cloudflare's siteverify
+// endpoint. Fails closed: no secret configured or no token supplied both
+// result in a rejected login rather than silently skipping the check.
+async function verifyTurnstile(token: unknown, remoteIp: string | undefined): Promise<boolean> {
+  if (!turnstileSecret) {
+    console.error("TURNSILE_SECRET is not set — refusing all logins.");
+    return false;
+  }
+  if (typeof token !== "string" || !token) return false;
+
+  const form = new URLSearchParams();
+  form.set("secret", turnstileSecret);
+  form.set("response", token);
+  if (remoteIp) form.set("remoteip", remoteIp);
+
+  try {
+    const res = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+      method: "POST",
+      body: form,
+    });
+    const data = (await res.json()) as { success?: boolean };
+    return data.success === true;
+  } catch (err) {
+    console.error("Turnstile verification request failed", err);
+    return false;
+  }
+}
 
 // --- Threading helpers ---
 
@@ -21,7 +99,7 @@ const sendFrom = process.env.SEND_FROM ?? "";
 function bareAddress(input: string | undefined | null): string {
   if (!input) return "";
   const match = input.match(/<([^>]+)>/);
-  return (match ? match[1] : input).trim().toLowerCase();
+  return (match?.[1] ? match[1] : input).trim().toLowerCase();
 }
 
 // Groups inbound + outbound messages into one conversation using
@@ -53,7 +131,14 @@ const app = new Hono();
 // --- Auth gate ---
 // Everything requires a valid session except: the webhook (Resend
 // authenticates via signature, not cookies) and the login page/assets.
-const PUBLIC_PATHS = new Set(["/login", "/login.html", "/login.js", "/style.css", "/api/login"]);
+const PUBLIC_PATHS = new Set([
+  "/login",
+  "/login.html",
+  "/login.js",
+  "/style.css",
+  "/favicon.ico",
+  "/api/login",
+]);
 
 app.use("/*", async (c, next) => {
   const path = c.req.path;
@@ -74,8 +159,30 @@ app.get("/login", async (c) => {
   return c.html(await Bun.file("./public/login.html").text());
 });
 
+// These are client-side "routes" — the SPA in public/app.js reads the path
+// to decide which folder to show and updates it via history.pushState.
+// The server just needs to hand back the same shell for all of them.
+app.get("/", async (c) => c.html(await Bun.file("./public/index.html").text()));
+app.get("/inbox", async (c) => c.html(await Bun.file("./public/index.html").text()));
+app.get("/sent", async (c) => c.html(await Bun.file("./public/index.html").text()));
+app.get("/drafts", async (c) => c.html(await Bun.file("./public/index.html").text()));
+
 app.post("/api/login", async (c) => {
   const body = await c.req.json().catch(() => null);
+
+  // Honeypot: invisible to real users, so anything filling it in is
+  // automation. Fail the same way as bad credentials — don't let a bot
+  // distinguish "caught by honeypot" from "wrong password".
+  if (body?.website) {
+    return c.json({ error: "Incorrect username or password" }, 401);
+  }
+
+  const remoteIp = c.req.header("cf-connecting-ip") ?? c.req.header("x-forwarded-for") ?? undefined;
+  const turnstileOk = await verifyTurnstile(body?.turnstileToken, remoteIp);
+  if (!turnstileOk) {
+    return c.json({ error: "Verification failed. Please try again." }, 401);
+  }
+
   if (!body?.username || !body?.password || !verifyCredentials(body.username, body.password)) {
     return c.json({ error: "Incorrect username or password" }, 401);
   }
@@ -140,6 +247,7 @@ app.post("/webhook/inbound", async (c) => {
   const to = full.to ?? [];
   const inReplyTo = full.headers?.["in-reply-to"] ?? null;
   const references = full.headers?.["references"] ?? null;
+  const attachments = await persistInboundAttachments(full.attachments ?? []);
 
   await addEmail({
     id: full.id,
@@ -149,8 +257,9 @@ app.post("/webhook/inbound", async (c) => {
     html: full.html ?? null,
     text: full.text ?? null,
     receivedAt: full.created_at,
-    attachments: full.attachments ?? [],
+    attachments,
     direction: "inbound",
+    status: "sent",
     messageId: full.message_id ?? null,
     inReplyTo,
     references,
@@ -162,8 +271,30 @@ app.post("/webhook/inbound", async (c) => {
 
 // --- API for the frontend ---
 app.get("/api/emails", async (c) => {
-  const emails = await listEmails();
+  const folder = parseFolder(c.req.query("folder"));
+  const emails = await listEmails(folder);
   return c.json(emails);
+});
+
+// --- Attachment download ---
+app.get("/api/emails/:id/attachments/:attachmentId", async (c) => {
+  const email = await getEmail(c.req.param("id"));
+  if (!email) return c.json({ error: "Not found" }, 404);
+
+  const attachmentId = c.req.param("attachmentId");
+  const meta = email.attachments.find((a) => a.id === attachmentId);
+  if (!meta || !meta.id) return c.json({ error: "Not found" }, 404);
+
+  const bytes = await readAttachment(meta.id);
+  if (!bytes) return c.json({ error: "Not found" }, 404);
+
+  return new Response(bytes, {
+    headers: {
+      "Content-Type": meta.contentType,
+      "Content-Disposition": `attachment; filename="${meta.filename.replace(/"/g, "")}"`,
+      "Content-Length": String(meta.size),
+    },
+  });
 });
 
 app.get("/api/emails/:id", async (c) => {
@@ -178,11 +309,15 @@ app.post("/api/send", async (c) => {
     return c.json({ error: "to, subject, and html are required" }, 400);
   }
 
+  const stored = await persistUploads(body.attachments);
+  const resendAttachments = await toResendAttachments(stored);
+
   const { data, error } = await resend.emails.send({
     from: sendFrom,
     to: body.to,
     subject: body.subject,
     html: body.html,
+    attachments: resendAttachments.length ? resendAttachments : undefined,
   });
 
   if (error) return c.json({ error: error.message }, 400);
@@ -196,8 +331,9 @@ app.post("/api/send", async (c) => {
     html: body.html,
     text: null,
     receivedAt: new Date().toISOString(),
-    attachments: [],
+    attachments: stored,
     direction: "outbound",
+    status: "sent",
     messageId: null, // Resend doesn't hand back the RFC Message-ID it assigned
     inReplyTo: null,
     references: null,
@@ -228,12 +364,16 @@ app.post("/api/emails/:id/reply", async (c) => {
     headers["References"] = buildReferences(original);
   }
 
+  const stored = await persistUploads(body.attachments);
+  const resendAttachments = await toResendAttachments(stored);
+
   const { data, error } = await resend.emails.send({
     from: sendFrom,
     to,
     subject,
     html: body.html,
     headers,
+    attachments: resendAttachments.length ? resendAttachments : undefined,
   });
 
   if (error) return c.json({ error: error.message }, 400);
@@ -246,8 +386,9 @@ app.post("/api/emails/:id/reply", async (c) => {
     html: body.html,
     text: null,
     receivedAt: new Date().toISOString(),
-    attachments: [],
+    attachments: stored,
     direction: "outbound",
+    status: "sent",
     messageId: null,
     inReplyTo: original.messageId,
     references: headers["References"] ?? null,
@@ -293,6 +434,88 @@ app.get("/api/emails/:id/thread", async (c) => {
   if (!original) return c.json({ error: "Not found" }, 404);
   const thread = await listByThreadKey(original.threadKey);
   return c.json(thread);
+});
+
+// --- Drafts ---
+// Stored as ordinary email rows with status "draft"; they don't hit
+// Resend until explicitly sent via /api/drafts/:id/send.
+app.post("/api/drafts", async (c) => {
+  const body = await c.req.json().catch(() => null);
+  if (!body?.subject && !body?.html && !body?.to) {
+    return c.json({ error: "Nothing to save" }, 400);
+  }
+
+  const stored = await resolveAttachments(body.attachments);
+  const draft = await createDraft({
+    to: body.to ? [body.to].flat() : [],
+    subject: body.subject ?? "",
+    html: body.html ?? "",
+    attachments: stored,
+  });
+
+  return c.json(draft);
+});
+
+app.put("/api/drafts/:id", async (c) => {
+  const body = await c.req.json().catch(() => null);
+  if (!body) return c.json({ error: "Invalid body" }, 400);
+
+  const stored = await resolveAttachments(body.attachments);
+  const draft = await updateDraft(c.req.param("id"), {
+    to: body.to ? [body.to].flat() : [],
+    subject: body.subject ?? "",
+    html: body.html ?? "",
+    attachments: stored,
+  });
+
+  if (!draft) return c.json({ error: "Not found" }, 404);
+  return c.json(draft);
+});
+
+app.delete("/api/drafts/:id", async (c) => {
+  const ok = await deleteDraft(c.req.param("id"));
+  if (!ok) return c.json({ error: "Not found" }, 404);
+  return c.json({ ok: true });
+});
+
+app.post("/api/drafts/:id/send", async (c) => {
+  const draft = await getEmail(c.req.param("id"));
+  if (!draft || draft.status !== "draft") return c.json({ error: "Not found" }, 404);
+  if (!draft.to.length || !draft.subject || !draft.html) {
+    return c.json({ error: "to, subject, and html are required" }, 400);
+  }
+
+  const resendAttachments = await toResendAttachments(draft.attachments);
+
+  const { data, error } = await resend.emails.send({
+    from: sendFrom,
+    to: draft.to,
+    subject: draft.subject,
+    html: draft.html,
+    attachments: resendAttachments.length ? resendAttachments : undefined,
+  });
+
+  if (error) return c.json({ error: error.message }, 400);
+
+  await deleteDraft(draft.id);
+  await addEmail({
+    id: data.id,
+    from: sendFrom,
+    to: draft.to,
+    subject: draft.subject,
+    html: draft.html,
+    text: null,
+    receivedAt: new Date().toISOString(),
+    attachments: draft.attachments,
+    direction: "outbound",
+    status: "sent",
+    messageId: null,
+    inReplyTo: null,
+    references: null,
+    threadKey: computeThreadKey(draft.subject, sendFrom, draft.to),
+  });
+
+  return c.json(data);
 });
 
 const port = process.env.MAIL_PORT ? Number(process.env.MAIL_PORT) : 3000;
