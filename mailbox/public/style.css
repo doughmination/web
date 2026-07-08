@@ -149,6 +149,30 @@ body {
   line-height: 1.6;
 }
 
+/* Email bodies often carry inline color/background/font styles from the
+   sender's mail client (signatures, quoted replies, etc). Those inline
+   styles beat our stylesheet by specificity, so on a dark theme you can
+   end up with invisible black-on-black or washed-out white-on-white text.
+   Force every element inside a message body back to the theme's palette,
+   regardless of what the original HTML tried to set. */
+.detail .body,
+.detail .body * {
+  color: var(--text) !important;
+  background-color: transparent !important;
+  font-family: inherit !important;
+  text-shadow: none !important;
+}
+
+.detail .body a {
+  color: var(--pink) !important;
+  text-decoration: underline;
+}
+
+.detail .body img {
+  max-width: 100%;
+  height: auto;
+}
+
 .muted {
   color: var(--overlay0);
   padding: 1rem;
