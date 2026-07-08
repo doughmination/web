@@ -1,6 +1,0 @@
-node_modules/
-dist/
-dough-data/
-.env
-.env.keys
-*.log

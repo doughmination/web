@@ -31,19 +31,16 @@ services:
     depends_on:
       - dough-back
 
-  cdn:
+  inbox:
     build:
-      context: ./cdn
-      dockerfile: Dockerfile
-    container_name: cdn
-    environment:
-      - NODE_ENV=development
+    context: ./mailbox
+    dockerfile: Dockerfile
     ports:
-      - "127.0.0.1:5080:5080"
+      - "4040:4040"
     volumes:
-      - "./cdn/cdn:/app/cdn"
       - "./.env:/app/.env:ro"
       - "./.env.keys:/app/.env.keys:ro"
+      - "./mail-data:/app/data"
     restart: unless-stopped
 
 volumes:

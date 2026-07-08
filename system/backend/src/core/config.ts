@@ -48,7 +48,7 @@ export const JWT_ALGORITHM = 'HS256' as const;
 export const ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24; // 24 hours
 
 // Cloudflare Turnstile
-export const TURNSTILE_SECRET = process.env.DOUGH_TURNSILE_SECRET;
+export const TURNSTILE_SECRET = process.env.TURNSILE_SECRET;
 
 // Admin user (for initial setup)
 export const ADMIN_USERNAME = process.env.ADMIN_USERNAME ?? 'admin';

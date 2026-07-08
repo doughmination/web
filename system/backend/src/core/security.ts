@@ -96,7 +96,7 @@ interface TurnstileResponse {
  */
 export async function verifyTurnstileToken(token: string, remoteIp?: string): Promise<boolean> {
   if (!TURNSTILE_SECRET) {
-    console.error('DOUGH_TURNSILE_SECRET environment variable not set');
+    console.error('TURNSILE_SECRET environment variable not set');
     throw new HttpError(500, 'Server configuration error');
   }
 
