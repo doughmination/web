@@ -33,68 +33,6 @@
   }
   function clamp(n, lo, hi) { return n < lo ? lo : n > hi ? hi : n; }
 
-  // ---- album art → Catppuccin accent (same maths as discord.js) -------
-  const ACCENT_VARS = [
-    "rosewater", "flamingo", "pink", "mauve", "red", "maroon", "peach",
-    "yellow", "green", "teal", "sky", "saphire", "blue", "lavender",
-  ];
-  function hexToRgb(hex) {
-    hex = hex.trim().replace("#", "");
-    if (hex.length === 3) hex = hex.split("").map((c) => c + c).join("");
-    const n = parseInt(hex, 16);
-    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
-  }
-  function themePalette() {
-    const cs = getComputedStyle(document.documentElement);
-    const pal = [];
-    for (const name of ACCENT_VARS) {
-      const v = cs.getPropertyValue("--" + name).trim();
-      if (v.startsWith("#")) { const [r, g, b] = hexToRgb(v); pal.push({ r, g, b }); }
-    }
-    return pal;
-  }
-  function nearestAccent(r, g, b) {
-    const pal = themePalette();
-    let best = null, bestD = Infinity;
-    for (const c of pal) {
-      const rm = (r + c.r) / 2, dr = r - c.r, dg = g - c.g, db = b - c.b;
-      const d = (2 + rm / 256) * dr * dr + 4 * dg * dg + (2 + (255 - rm) / 256) * db * db;
-      if (d < bestD) { bestD = d; best = c; }
-    }
-    return best;
-  }
-  let lastArtUrl = null;
-  function applyAccent(url) {
-    if (!url) { resetAccent(); return; }
-    if (url === lastArtUrl) return;
-    lastArtUrl = url;
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.referrerPolicy = "no-referrer";
-    img.onload = () => {
-      try {
-        const c = document.createElement("canvas");
-        c.width = c.height = 16;
-        const ctx = c.getContext("2d", { willReadFrequently: true });
-        ctx.drawImage(img, 0, 0, 16, 16);
-        const { data } = ctx.getImageData(0, 0, 16, 16);
-        let r = 0, g = 0, b = 0, count = 0;
-        for (let i = 0; i < data.length; i += 4) {
-          if (data[i + 3] < 125) continue;
-          const lum = 0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2];
-          if (lum < 24 || lum > 235) continue;
-          r += data[i]; g += data[i + 1]; b += data[i + 2]; count++;
-        }
-        if (!count) { resetAccent(); return; }
-        r = Math.round(r / count); g = Math.round(g / count); b = Math.round(b / count);
-        const near = nearestAccent(r, g, b);
-        const rgb = near ? `${near.r}, ${near.g}, ${near.b}` : `${r}, ${g}, ${b}`;
-      } catch (e) { resetAccent(); }
-    };
-    img.onerror = resetAccent;
-    img.src = url;
-  }
-
   // ---- DOM refs -----------------------------------------------------------
   const stage = $("#music");
   if (!stage) return;
@@ -145,7 +83,6 @@
       dcLink.removeAttribute("target");
       dcLink.removeAttribute("rel");
       progress.hidden = true;
-      resetAccent();
       return;
     }
     stage.classList.toggle("is-idle", false);
@@ -161,7 +98,6 @@
     // progress bar only makes sense for a live track with real timestamps
     progress.hidden = !(track.live && track.start && track.end);
     if (!progress.hidden) barDur.textContent = mmss(track.duration);
-    applyAccent(track.art);
   }
 
   function setTrack(next) {
