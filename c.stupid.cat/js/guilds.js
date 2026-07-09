@@ -17,14 +17,26 @@
   // ---- which servers to show -----------------------------------------------
   // `invite` is the vanity/invite code used in the API path, e.g. for
   // discord.gg/TransRights you'd use "TransRights" here.
+  // `role` is optional and controls the small badge shown next to the name.
+  // Supported values: "owner", "admin", "mod", "member" (default if omitted).
+  // Any other string is still rendered, just with the default badge styling.
   var GUILDS = [
-    { name: "Girls", invite: "TransRights" },
-    { name: "Lanyard", invite: "Lanyard" },
-    { name: "is-a.dev", invite: "is-a-dev-830872854677422150"},
-    { name: "Furina Mains", invite: "focalorsmains" },
-    { name: "Discord Previews", invite: "discord-603970300668805120" },
-    { name: "Global Badges", invite: "JsgsS8kzz8" },
+    { name: "Doughmination", invite: "KuVW2zSyTU", role: "owner" },
+    { name: "Girls", invite: "TransRights", role: "mod" },
+    { name: "Lanyard", invite: "Lanyard", role: "member" },
+    { name: "is-a.dev", invite: "is-a-dev-830872854677422150", role: "member" },
+    { name: "Furina Mains", invite: "focalorsmains", role: "member" },
+    { name: "Discord Previews", invite: "discord-603970300668805120", role: "member" },
+    { name: "Global Badges", invite: "JsgsS8kzz8", role: "member" },
   ];
+
+  // labels shown on the badge for each role key
+  var ROLE_LABELS = {
+    owner: "Owner",
+    admin: "Admin",
+    mod: "Mod",
+    member: "Member",
+  };
 
   var GUILD_BASE = "https://restful.doughmination.uk/v1/guilds/";
   var GUILD_POLL_MS = 60000; // member/online counts refresh cadence
@@ -59,6 +71,16 @@
       '</div>' +
       '<div class="gc-desc" hidden></div>';
     root.appendChild(card);
+
+    // role badge (owner/admin/mod/member) — set once up front since it
+    // comes from local config, not the API response
+    if (cfg.role) {
+      var roleEl = document.createElement("span");
+      var roleKey = String(cfg.role).toLowerCase();
+      roleEl.className = "gc-role gc-role-" + roleKey;
+      roleEl.textContent = ROLE_LABELS[roleKey] || cfg.role;
+      card.appendChild(roleEl);
+    }
 
     // instant placeholder so the page doesn't feel empty while the fetch is in flight
     var nameEl = card.querySelector(".gc-name");

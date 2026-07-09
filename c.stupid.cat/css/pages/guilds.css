@@ -122,3 +122,37 @@
   font-size: 0.85rem;
   opacity: 0.85;
 }
+
+/* role badge — small pill pinned to the top-right corner of the card */
+.gc-role {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 1;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+  color: #fff;
+  background: var(--role-default, #5865f2);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+  text-transform: uppercase;
+}
+
+.gc-role-owner {
+  background: var(--role-owner, #f5a623); /* gold */
+}
+
+.gc-role-admin {
+  background: var(--role-admin, #ed4245); /* red */
+}
+
+.gc-role-mod {
+  background: var(--role-mod, #43b581); /* green, matches online dot */
+}
+
+.gc-role-member {
+  background: var(--role-member, #5865f2); /* blurple */
+}
