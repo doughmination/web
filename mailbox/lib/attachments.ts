@@ -19,7 +19,8 @@ function filePath(attachmentId: string): string {
 export async function saveAttachment(
   filename: string,
   contentType: string,
-  base64Content: string
+  base64Content: string,
+  contentId?: string | null
 ): Promise<StoredAttachment> {
   await ensureDir();
   const id = crypto.randomUUID();
@@ -30,7 +31,17 @@ export async function saveAttachment(
     filename: filename || "attachment",
     contentType: contentType || "application/octet-stream",
     size: bytes.length,
+    contentId: normalizeContentId(contentId),
   };
+}
+
+// A Content-ID header value is conventionally wrapped in angle brackets
+// (e.g. "<abc123@mail>"), but the matching cid: reference in the HTML body
+// isn't. Strip the brackets so the two sides compare cleanly.
+export function normalizeContentId(raw: unknown): string | null {
+  if (typeof raw !== "string") return null;
+  const trimmed = raw.trim().replace(/^<|>$/g, "").trim();
+  return trimmed || null;
 }
 
 export async function readAttachment(attachmentId: string): Promise<Uint8Array | null> {
@@ -77,16 +88,24 @@ export async function persistInboundAttachments(attachments: unknown): Promise<S
       (typeof a.content_type === "string" && a.content_type) ||
       (typeof a.type === "string" && a.type) ||
       "application/octet-stream";
+    // Content-ID lets us reconnect inline images to their cid: references in
+    // the HTML body. Field name varies across Resend API versions.
+    const contentId = normalizeContentId(
+      (typeof a.contentId === "string" && a.contentId) ||
+        (typeof a.content_id === "string" && a.content_id) ||
+        (typeof a.cid === "string" && a.cid) ||
+        null
+    );
 
     if (!content) {
       // No inline bytes available from the webhook — skip persisting to
       // disk but keep the metadata so the UI can still show the filename.
-      results.push({ id: "", filename, contentType, size: 0 });
+      results.push({ id: "", filename, contentType, size: 0, contentId });
       continue;
     }
 
     try {
-      results.push(await saveAttachment(filename, contentType, content));
+      results.push(await saveAttachment(filename, contentType, content, contentId));
     } catch (err) {
       console.error("Failed to persist inbound attachment", filename, err);
     }

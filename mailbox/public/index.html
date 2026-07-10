@@ -9,6 +9,7 @@
   <title>Inbox</title>
   <link rel="icon" href="/favicon.ico" sizes="any" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
   <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
@@ -17,6 +18,7 @@
       <h1>Inbox</h1>
       <div class="topbar-right">
         <button id="composeBtn" class="btn-accent">New message</button>
+        <a href="/settings" class="btn-ghost">Settings</a>
         <button id="logoutBtn" class="btn-ghost">Log out</button>
       </div>
     </header>
@@ -44,6 +46,11 @@
   <div id="composeModal" class="modal hidden">
     <form id="composeForm" class="compose">
       <h2>New message</h2>
+
+      <label id="fromRow" style="display: none">
+        From
+        <select name="from"></select>
+      </label>
 
       <label>
         To
@@ -76,6 +83,12 @@
       </div>
     </form>
   </div>
+
+  <div id="lightbox" class="lightbox hidden">
+    <img id="lightboxImg" src="" alt="" />
+  </div>
+
+  <div id="toastHost" class="toast-host"></div>
 
   <script src="/app.js"></script>
 </body>

@@ -9,6 +9,7 @@ export type StoredAttachment = {
   filename: string;
   contentType: string;
   size: number; // bytes
+  contentId?: string | null; // RFC Content-ID for inline (cid:) images, if any
 };
 
 export type Folder = "inbox" | "sent" | "drafts";
@@ -37,6 +38,7 @@ export type DraftInput = {
   subject: string;
   html: string;
   attachments: StoredAttachment[];
+  from?: string; // chosen send-from address, resolved/validated at send time
   inReplyTo?: string | null;
   references?: string | null;
   threadKey?: string | null;
@@ -140,7 +142,7 @@ export function createDraft(input: DraftInput) {
     const emails = await readAll();
     const draft: StoredEmail = {
       id: crypto.randomUUID(),
-      from: "",
+      from: input.from ?? "",
       to: input.to,
       subject: input.subject,
       html: input.html,
@@ -172,6 +174,7 @@ export function updateDraft(id: string, input: DraftInput) {
       subject: input.subject,
       html: input.html,
       attachments: input.attachments,
+      from: input.from ?? existing.from,
       receivedAt: new Date().toISOString(),
     };
     emails[idx] = updated;
@@ -188,5 +191,30 @@ export function deleteDraft(id: string) {
     emails.splice(idx, 1);
     await writeAll(emails);
     return true;
+  });
+}
+
+// --- General deletion ---
+// Unlike deleteDraft, these remove any row regardless of status and hand the
+// removed record(s) back so the caller can clean up attachment files on disk.
+
+export function deleteEmail(id: string) {
+  return withLock(async () => {
+    const emails = await readAll();
+    const idx = emails.findIndex((e) => e.id === id);
+    if (idx === -1) return null;
+    const [removed] = emails.splice(idx, 1);
+    await writeAll(emails);
+    return removed ?? null;
+  });
+}
+
+export function deleteByThreadKey(threadKey: string) {
+  return withLock(async () => {
+    const emails = await readAll();
+    const removed = emails.filter((e) => e.threadKey === threadKey);
+    if (removed.length === 0) return [];
+    await writeAll(emails.filter((e) => e.threadKey !== threadKey));
+    return removed;
   });
 }

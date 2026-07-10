@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#1e1e2e" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Settings</title>
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <h1>Settings</h1>
+      <div class="topbar-right">
+        <a href="/inbox" class="btn-ghost">‹ Inbox</a>
+        <button id="logoutBtn" class="btn-ghost">Log out</button>
+      </div>
+    </header>
+
+    <main class="settings-page">
+      <!-- Send-from addresses -->
+      <section class="settings-card">
+        <h2>Send-from addresses</h2>
+        <p class="settings-hint">
+          Addresses you can send as. Each domain must be verified in Resend first.
+          The starred address is the default for new messages.
+        </p>
+
+        <ul id="fromList" class="from-list">
+          <li class="muted">Loading…</li>
+        </ul>
+
+        <form id="addFromForm" class="add-from">
+          <input
+            id="addFromInput"
+            type="text"
+            placeholder="Admin &lt;admin@doughmination.uk&gt; or admin@doughmination.uk"
+            autocomplete="off"
+          />
+          <button type="submit" class="btn-accent">Add</button>
+        </form>
+        <p id="fromError" class="error hidden"></p>
+      </section>
+
+      <!-- Notifications -->
+      <section class="settings-card">
+        <h2>Push notifications</h2>
+        <p class="settings-hint">
+          Get a notification on this device when new mail arrives. On iPhone/iPad
+          you must first add this site to your Home Screen (Share → Add to Home
+          Screen), open it from there, then enable notifications.
+        </p>
+
+        <div id="pushStatus" class="push-status muted">Checking…</div>
+
+        <div class="push-actions">
+          <button id="pushToggleBtn" class="btn-accent" disabled>Enable notifications</button>
+          <button id="pushTestBtn" class="btn-ghost hidden">Send test</button>
+        </div>
+        <p id="pushError" class="error hidden"></p>
+      </section>
+    </main>
+  </div>
+
+  <script src="/settings.js"></script>
+</body>
+</html>

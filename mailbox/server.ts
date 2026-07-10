@@ -10,10 +10,19 @@ import {
   createDraft,
   updateDraft,
   deleteDraft,
+  deleteEmail,
+  deleteByThreadKey,
   type Folder,
+  type StoredEmail,
   type StoredAttachment,
 } from "./lib/store";
-import { readAttachment, saveAttachment, toResendAttachment, persistInboundAttachments } from "./lib/attachments";
+import {
+  readAttachment,
+  saveAttachment,
+  deleteAttachment,
+  toResendAttachment,
+  persistInboundAttachments,
+} from "./lib/attachments";
 import {
   verifyCredentials,
   createSession,
@@ -21,6 +30,24 @@ import {
   destroySession,
   ADMIN_DISPLAY_NAME,
 } from "./lib/auth";
+import {
+  bareAddress,
+  getSettings,
+  resolveFrom,
+  getMyAddresses,
+  addFromAddress,
+  removeFromAddress,
+  setDefaultFrom,
+} from "./lib/settings";
+import {
+  pushConfigured,
+  vapidPublicKey,
+  addSubscription,
+  removeSubscription,
+  subscriptionCount,
+  sendToAll,
+} from "./lib/push";
+import type { PushSubscription } from "web-push";
 
 // Attachments the frontend uploads arrive as base64; this turns them into
 // StoredAttachment rows on disk and, in parallel, the shape Resend wants.
@@ -62,7 +89,9 @@ function parseFolder(value: string | undefined): Folder | undefined {
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const webhookSecret = process.env.RESEND_WEBHOOK_SECRET ?? "";
-const sendFrom = process.env.SEND_FROM ?? "";
+// Last-resort fallback only (settings.json is the real source of from-addresses).
+// SEND_FROM may be a comma/newline list now, so take the first entry.
+const sendFrom = (process.env.SEND_FROM ?? "").split(/[,\n]/)[0]?.trim() ?? "";
 const turnstileSecret = process.env.TURNSILE_SECRET ?? "";
 
 // Verifies a Cloudflare Turnstile token against Cloudflare's siteverify
@@ -94,36 +123,96 @@ async function verifyTurnstile(token: unknown, remoteIp: string | undefined): Pr
 }
 
 // --- Threading helpers ---
-
-// Pulls a bare address out of "Name <addr@domain>" or plain "addr@domain"
-function bareAddress(input: string | undefined | null): string {
-  if (!input) return "";
-  const match = input.match(/<([^>]+)>/);
-  return (match?.[1] ? match[1] : input).trim().toLowerCase();
-}
+// bareAddress lives in lib/settings so the address-matching logic is shared.
 
 // Groups inbound + outbound messages into one conversation using
 // subject (Re:/Fwd: stripped) + the other party's address, since we
 // can't always guarantee an unbroken Message-ID chain across clients.
-function computeThreadKey(subject: string, from: string, to: string[]): string {
+// `myAddresses` is the set of bare addresses that count as "us", so the
+// counterpart is picked correctly no matter which of our identities was used.
+function computeThreadKey(subject: string, from: string, to: string[], myAddresses: string[]): string {
   const cleanSubject = (subject || "")
     .replace(/^\s*(re|fwd?)\s*:\s*/i, "")
     .trim()
     .toLowerCase();
 
-  const me = bareAddress(sendFrom);
+  const me = new Set(myAddresses);
   const participants = [bareAddress(from), ...to.map(bareAddress)]
-    .filter((addr) => addr && addr !== me)
+    .filter((addr) => addr && !me.has(addr))
     .sort();
 
   const counterpart = participants[0] ?? bareAddress(from);
   return `${cleanSubject}::${counterpart}`;
 }
 
+// Picks which of our addresses a reply/forward should come from: the caller's
+// explicit choice if it's allowlisted, otherwise whichever of our addresses the
+// original message involved, otherwise the configured default.
+async function pickReplyFrom(original: StoredEmail, requested?: string | null): Promise<string> {
+  const settings = await getSettings();
+  const inList = (addr: string | undefined | null) =>
+    settings.fromAddresses.find((a) => bareAddress(a) === bareAddress(addr));
+
+  if (requested) {
+    const match = inList(requested);
+    if (match) return match;
+  }
+  const targets = original.direction === "inbound" ? original.to : [original.from];
+  for (const t of targets) {
+    const match = inList(t);
+    if (match) return match;
+  }
+  return settings.defaultFrom ?? settings.fromAddresses[0] ?? sendFrom;
+}
+
 function buildReferences(original: { references: string | null; messageId: string | null }): string {
   const prior = original.references ? original.references.split(/\s+/).filter(Boolean) : [];
   if (original.messageId) prior.push(original.messageId);
   return prior.join(" ");
+}
+
+// --- Deletion / image helpers ---
+
+// Removes the on-disk bytes for every attachment on the given emails. Safe to
+// call with rows that have no attachments or metadata-only ones (id === "").
+async function purgeAttachmentFiles(emails: StoredEmail[]): Promise<void> {
+  const ids = emails.flatMap((e) => e.attachments).map((a) => a.id).filter(Boolean);
+  await Promise.all(ids.map((id) => deleteAttachment(id)));
+}
+
+// An inline image in an HTML body is referenced as <img src="cid:CONTENT-ID">.
+// This rewrites those refs to point at our own attachment endpoint so the
+// browser can actually load them, and flags which attachments were consumed
+// inline so the UI can avoid also listing them as separate downloads.
+type ServableAttachment = StoredAttachment & { inline?: boolean };
+type ServableEmail = Omit<StoredEmail, "attachments"> & { attachments: ServableAttachment[] };
+
+function inlineCidImages(email: StoredEmail): ServableEmail {
+  const attachments: ServableAttachment[] = email.attachments.map((a) => ({ ...a }));
+
+  const byContentId = new Map<string, StoredAttachment>();
+  for (const a of email.attachments) {
+    if (a.id && a.contentId) byContentId.set(a.contentId.toLowerCase(), a);
+  }
+
+  if (!email.html || !email.html.includes("cid:") || byContentId.size === 0) {
+    return { ...email, attachments };
+  }
+
+  const usedIds = new Set<string>();
+  const html = email.html.replace(/cid:([^"'\s>)]+)/gi, (whole, rawId: string) => {
+    const key = rawId.replace(/^<|>$/g, "").trim().toLowerCase();
+    const match = byContentId.get(key);
+    if (!match) return whole; // unknown cid — leave as-is (shows a broken image)
+    usedIds.add(match.id);
+    return `/api/emails/${email.id}/attachments/${match.id}?inline=1`;
+  });
+
+  return {
+    ...email,
+    html,
+    attachments: attachments.map((a) => (usedIds.has(a.id) ? { ...a, inline: true } : a)),
+  };
 }
 
 const app = new Hono();
@@ -139,6 +228,10 @@ const PUBLIC_PATHS = new Set([
   "/favicon.ico",
   "/apple-touch-icon.png",
   "/api/login",
+  // Service worker + manifest must be fetchable for PWA install / push to
+  // register cleanly; neither exposes anything sensitive.
+  "/sw.js",
+  "/manifest.webmanifest",
 ]);
 
 app.use("/*", async (c, next) => {
@@ -167,6 +260,7 @@ app.get("/", async (c) => c.html(await Bun.file("./public/index.html").text()));
 app.get("/inbox", async (c) => c.html(await Bun.file("./public/index.html").text()));
 app.get("/sent", async (c) => c.html(await Bun.file("./public/index.html").text()));
 app.get("/drafts", async (c) => c.html(await Bun.file("./public/index.html").text()));
+app.get("/settings", async (c) => c.html(await Bun.file("./public/settings.html").text()));
 
 app.post("/api/login", async (c) => {
   const body = await c.req.json().catch(() => null);
@@ -249,6 +343,7 @@ app.post("/webhook/inbound", async (c) => {
   const inReplyTo = full.headers?.["in-reply-to"] ?? null;
   const references = full.headers?.["references"] ?? null;
   const attachments = await persistInboundAttachments(full.attachments ?? []);
+  const myAddresses = await getMyAddresses();
 
   await addEmail({
     id: full.id,
@@ -264,8 +359,21 @@ app.post("/webhook/inbound", async (c) => {
     messageId: full.message_id ?? null,
     inReplyTo,
     references,
-    threadKey: computeThreadKey(subject, full.from, to),
+    threadKey: computeThreadKey(subject, full.from, to, myAddresses),
   });
+
+  // Best-effort push. Never let a notification error fail the webhook —
+  // Resend would otherwise retry delivery of an email we already stored.
+  try {
+    await sendToAll({
+      title: full.from ? `New email from ${full.from}` : "New email",
+      body: subject,
+      url: "/inbox",
+      tag: full.id,
+    });
+  } catch (err) {
+    console.error("Push notification failed", err);
+  }
 
   return c.json({ ok: true });
 });
@@ -289,10 +397,14 @@ app.get("/api/emails/:id/attachments/:attachmentId", async (c) => {
   const bytes = await readAttachment(meta.id);
   if (!bytes) return c.json({ error: "Not found" }, 404);
 
+  // ?inline=1 is used for image previews and rewritten cid: images, which need
+  // to render in-page rather than trigger a download.
+  const disposition = c.req.query("inline") === "1" ? "inline" : "attachment";
+
   return new Response(bytes, {
     headers: {
       "Content-Type": meta.contentType,
-      "Content-Disposition": `attachment; filename="${meta.filename.replace(/"/g, "")}"`,
+      "Content-Disposition": `${disposition}; filename="${meta.filename.replace(/"/g, "")}"`,
       "Content-Length": String(meta.size),
     },
   });
@@ -301,7 +413,24 @@ app.get("/api/emails/:id/attachments/:attachmentId", async (c) => {
 app.get("/api/emails/:id", async (c) => {
   const email = await getEmail(c.req.param("id"));
   if (!email) return c.json({ error: "Not found" }, 404);
-  return c.json(email);
+  return c.json(inlineCidImages(email));
+});
+
+// --- Delete a single message (works in any folder) ---
+app.delete("/api/emails/:id", async (c) => {
+  const removed = await deleteEmail(c.req.param("id"));
+  if (!removed) return c.json({ error: "Not found" }, 404);
+  await purgeAttachmentFiles([removed]);
+  return c.json({ ok: true });
+});
+
+// --- Delete an entire conversation at once ---
+app.delete("/api/emails/:id/thread", async (c) => {
+  const original = await getEmail(c.req.param("id"));
+  if (!original) return c.json({ error: "Not found" }, 404);
+  const removed = await deleteByThreadKey(original.threadKey);
+  await purgeAttachmentFiles(removed);
+  return c.json({ ok: true, count: removed.length });
 });
 
 app.post("/api/send", async (c) => {
@@ -310,11 +439,12 @@ app.post("/api/send", async (c) => {
     return c.json({ error: "to, subject, and html are required" }, 400);
   }
 
+  const from = await resolveFrom(body.from);
   const stored = await persistUploads(body.attachments);
   const resendAttachments = await toResendAttachments(stored);
 
   const { data, error } = await resend.emails.send({
-    from: sendFrom,
+    from,
     to: body.to,
     subject: body.subject,
     html: body.html,
@@ -324,9 +454,10 @@ app.post("/api/send", async (c) => {
   if (error) return c.json({ error: error.message }, 400);
 
   const to = [body.to];
+  const myAddresses = await getMyAddresses();
   await addEmail({
     id: data.id,
-    from: sendFrom,
+    from,
     to,
     subject: body.subject,
     html: body.html,
@@ -338,7 +469,7 @@ app.post("/api/send", async (c) => {
     messageId: null, // Resend doesn't hand back the RFC Message-ID it assigned
     inReplyTo: null,
     references: null,
-    threadKey: computeThreadKey(body.subject, sendFrom, to),
+    threadKey: computeThreadKey(body.subject, from, to, myAddresses),
   });
 
   return c.json(data);
@@ -365,11 +496,12 @@ app.post("/api/emails/:id/reply", async (c) => {
     headers["References"] = buildReferences(original);
   }
 
+  const from = await pickReplyFrom(original, body.from);
   const stored = await persistUploads(body.attachments);
   const resendAttachments = await toResendAttachments(stored);
 
   const { data, error } = await resend.emails.send({
-    from: sendFrom,
+    from,
     to,
     subject,
     html: body.html,
@@ -381,7 +513,7 @@ app.post("/api/emails/:id/reply", async (c) => {
 
   await addEmail({
     id: data.id,
-    from: sendFrom,
+    from,
     to: [to],
     subject,
     html: body.html,
@@ -409,18 +541,20 @@ app.post("/api/emails/:id/forward", async (c) => {
   const body = await c.req.json().catch(() => null);
   if (!body?.to) return c.json({ error: "to is required" }, 400);
 
+  const from = await pickReplyFrom(original, body.from);
+
   if (original.direction === "inbound") {
     const { data, error } = await resend.emails.receiving.forward({
       emailId: original.id,
       to: body.to,
-      from: sendFrom,
+      from,
     });
     if (error) return c.json({ error: error.message }, 400);
     return c.json(data);
   }
 
   const { data, error } = await resend.emails.send({
-    from: sendFrom,
+    from,
     to: body.to,
     subject: /^\s*fwd?\s*:/i.test(original.subject) ? original.subject : `Fwd: ${original.subject}`,
     html: original.html ?? `<pre>${original.text ?? ""}</pre>`,
@@ -434,7 +568,7 @@ app.get("/api/emails/:id/thread", async (c) => {
   const original = await getEmail(c.req.param("id"));
   if (!original) return c.json({ error: "Not found" }, 404);
   const thread = await listByThreadKey(original.threadKey);
-  return c.json(thread);
+  return c.json(thread.map(inlineCidImages));
 });
 
 // --- Drafts ---
@@ -451,6 +585,7 @@ app.post("/api/drafts", async (c) => {
     to: body.to ? [body.to].flat() : [],
     subject: body.subject ?? "",
     html: body.html ?? "",
+    from: typeof body.from === "string" ? body.from : undefined,
     attachments: stored,
   });
 
@@ -466,6 +601,7 @@ app.put("/api/drafts/:id", async (c) => {
     to: body.to ? [body.to].flat() : [],
     subject: body.subject ?? "",
     html: body.html ?? "",
+    from: typeof body.from === "string" ? body.from : undefined,
     attachments: stored,
   });
 
@@ -474,8 +610,10 @@ app.put("/api/drafts/:id", async (c) => {
 });
 
 app.delete("/api/drafts/:id", async (c) => {
-  const ok = await deleteDraft(c.req.param("id"));
-  if (!ok) return c.json({ error: "Not found" }, 404);
+  const draft = await getEmail(c.req.param("id"));
+  if (!draft || draft.status !== "draft") return c.json({ error: "Not found" }, 404);
+  await deleteDraft(draft.id);
+  await purgeAttachmentFiles([draft]);
   return c.json({ ok: true });
 });
 
@@ -486,10 +624,11 @@ app.post("/api/drafts/:id/send", async (c) => {
     return c.json({ error: "to, subject, and html are required" }, 400);
   }
 
+  const from = await resolveFrom(draft.from || undefined);
   const resendAttachments = await toResendAttachments(draft.attachments);
 
   const { data, error } = await resend.emails.send({
-    from: sendFrom,
+    from,
     to: draft.to,
     subject: draft.subject,
     html: draft.html,
@@ -498,10 +637,11 @@ app.post("/api/drafts/:id/send", async (c) => {
 
   if (error) return c.json({ error: error.message }, 400);
 
+  const myAddresses = await getMyAddresses();
   await deleteDraft(draft.id);
   await addEmail({
     id: data.id,
-    from: sendFrom,
+    from,
     to: draft.to,
     subject: draft.subject,
     html: draft.html,
@@ -513,10 +653,87 @@ app.post("/api/drafts/:id/send", async (c) => {
     messageId: null,
     inReplyTo: null,
     references: null,
-    threadKey: computeThreadKey(draft.subject, sendFrom, draft.to),
+    threadKey: computeThreadKey(draft.subject, from, draft.to, myAddresses),
   });
 
   return c.json(data);
+});
+
+// --- Settings API: manage the send-from address list ---
+app.get("/api/settings", async (c) => c.json(await getSettings()));
+
+app.post("/api/settings/from", async (c) => {
+  const body = await c.req.json().catch(() => null);
+  if (!body?.address || typeof body.address !== "string") {
+    return c.json({ error: "address is required" }, 400);
+  }
+  try {
+    return c.json(await addFromAddress(body.address));
+  } catch (err) {
+    return c.json({ error: (err as Error).message }, 400);
+  }
+});
+
+app.post("/api/settings/from/remove", async (c) => {
+  const body = await c.req.json().catch(() => null);
+  if (!body?.address || typeof body.address !== "string") {
+    return c.json({ error: "address is required" }, 400);
+  }
+  return c.json(await removeFromAddress(body.address));
+});
+
+app.post("/api/settings/default", async (c) => {
+  const body = await c.req.json().catch(() => null);
+  if (!body?.address || typeof body.address !== "string") {
+    return c.json({ error: "address is required" }, 400);
+  }
+  try {
+    return c.json(await setDefaultFrom(body.address));
+  } catch (err) {
+    return c.json({ error: (err as Error).message }, 400);
+  }
+});
+
+// --- Web Push API ---
+// The client needs the VAPID public key to build a subscription, then POSTs
+// the resulting subscription here so the webhook can notify it later.
+app.get("/api/push/status", async (c) =>
+  c.json({
+    configured: pushConfigured(),
+    publicKey: vapidPublicKey(),
+    count: await subscriptionCount(),
+  })
+);
+
+app.post("/api/push/subscribe", async (c) => {
+  const body = await c.req.json().catch(() => null);
+  const sub = body?.subscription ?? body;
+  if (!sub?.endpoint || !sub?.keys) return c.json({ error: "Invalid subscription" }, 400);
+  await addSubscription(sub as PushSubscription);
+  return c.json({ ok: true });
+});
+
+app.post("/api/push/unsubscribe", async (c) => {
+  const body = await c.req.json().catch(() => null);
+  const endpoint = body?.endpoint ?? body?.subscription?.endpoint;
+  if (!endpoint || typeof endpoint !== "string") {
+    return c.json({ error: "endpoint is required" }, 400);
+  }
+  await removeSubscription(endpoint);
+  return c.json({ ok: true });
+});
+
+app.post("/api/push/test", async (c) => {
+  if (!pushConfigured()) {
+    return c.json({ error: "Push is not configured on the server." }, 400);
+  }
+  const result = await sendToAll({
+    title: "Test notification",
+    body: "Your inbox notifications are working.",
+    url: "/inbox",
+    tag: "mailbox-test",
+  });
+  return c.json(result);
 });
 
 const port = process.env.MAIL_PORT ? Number(process.env.MAIL_PORT) : 3000;
