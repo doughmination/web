@@ -169,189 +169,11 @@ buildNav();
  * navigation (core.js only runs buildNav once, on first load). */
 window.ctpBuildNav = buildNav;
 
-/* ========================== flavors.js ========================= */
-(function flavors() {
-  /* Metadata only, colors are defined in the per-flavor CSS files. */
-  const FLAVORS = {
-    mocha: { label: "Mocha", dot: "#f5c2e7" },
-    macchiato: { label: "Macchiato", dot: "#f5bde6" },
-    frappe: { label: "Frappé", dot: "#f4b8e4" },
-    latte: { label: "Latte", dot: "#ea76cb" },
-  };
-  const ORDER = ["mocha", "macchiato", "frappe", "latte"];
-
-  const root = document.documentElement;
-  const ls = window.localStorage;
-
-  function apply(name) {
-    const f = FLAVORS[name] || FLAVORS.mocha;
-    root.setAttribute("data-flavor", name); /* CSS does the rest */
-    const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute("content", f.dot);
-  }
-
-  let current = ls.getItem("ctpFlavor");
-  if (!ORDER.includes(current)) current = "mocha";
-  apply(current); /* the <head> snippet already set this to avoid a flash */
-
-  /* ---- top-right settings menu: one button that click-expands into the
-   * theme / cat / music controls (tucked away like the Next.js dev button). ---- */
-  const bar = document.createElement("div");
-  bar.className = "beta-bar";
-  bar.innerHTML = `
-    <button class="beta-btn beta-menu-toggle" id="beta-menu-toggle" type="button"
-            aria-label="Settings" aria-haspopup="true" aria-expanded="false" title="Settings">
-      <svg class="beta-menu-ico" viewBox="0 0 24 24" width="22" height="22" fill="none"
-           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <circle cx="12" cy="12" r="3"></circle>
-        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-      </svg>
-    </button>
-    <div class="beta-menu-items" id="beta-menu-items" role="menu" hidden>
-      <button class="beta-btn" id="flavor-btn" type="button" role="menuitem" title="Theme">
-        <img class="beta-icon" alt="">
-      </button>
-    </div>`;
-  /* Group the single-item widgets (discord + theme toggle) into one top
-   * bar. On mobile they sit side by side, on desktop both stay
-   * position:fixed, so this wrapper ends up zero-size and invisible. */
-  let topbar = document.querySelector(".topbar");
-  if (!topbar) {
-    topbar = document.createElement("div");
-    topbar.className = "topbar";
-    topbar.dataset.ctpPersist = ""; /* survives soft navigation, see bottom of file */
-    document.body.insertBefore(topbar, document.body.firstChild);
-    const dc = document.getElementById("discord");
-    /* Don't hijack the presence card when it's the centerpiece of the
-     * dedicated /discord page (it lives inside .presence-stage there). */
-    if (dc && !dc.closest(".presence-stage")) topbar.appendChild(dc);
-  }
-  topbar.appendChild(bar);
-
-  const menuToggle = bar.querySelector("#beta-menu-toggle");
-  const menuItems = bar.querySelector("#beta-menu-items");
-  const btn = bar.querySelector("#flavor-btn");
-  const icon = btn.querySelector(".beta-icon");
-
-  /* ---- expand / collapse the menu ---- */
-  function setMenu(open) {
-    menuItems.hidden = !open;
-    bar.classList.toggle("open", open);
-    menuToggle.setAttribute("aria-expanded", String(open));
-  }
-  menuToggle.addEventListener("click", (e) => {
-    e.stopPropagation();
-    setMenu(menuItems.hidden);
-  });
-  /* Close on outside click / Escape. Clicks on the controls inside stay open. */
-  document.addEventListener("click", (e) => {
-    if (!bar.contains(e.target)) setMenu(false);
-  });
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") setMenu(false);
-  });
-
-  function paintBtn() {
-    const f = FLAVORS[current];
-    icon.src = `/assets/theme/${current}.png`; /* e.g. /assets/theme/mocha.png */
-    icon.alt = f.label;
-    btn.title = `Theme: ${f.label} (click to cycle)`;
-  }
-  paintBtn();
-
-  btn.addEventListener("click", () => {
-    current = ORDER[(ORDER.indexOf(current) + 1) % ORDER.length];
-    ls.setItem("ctpFlavor", current);
-    apply(current);
-    paintBtn();
-  });
-
-  /* ---- cat collection button (sits next to the theme button) ---- */
-  const catBtn = document.createElement("button");
-  catBtn.className = "beta-btn";
-  catBtn.id = "cat-btn";
-  catBtn.type = "button";
-  catBtn.title = "Cat collection";
-  catBtn.setAttribute("aria-label", "Open cat collection");
-  catBtn.innerHTML = `<span class="beta-cat-icon" aria-hidden="true"></span>`;
-  menuItems.appendChild(catBtn);
-
-  catBtn.addEventListener("click", () => {
-    if (typeof window.toggleCatPicker === "function") window.toggleCatPicker();
-  });
-})();
-
-/* ===================== webrings.js (bottom-left dock) =======================
- * A small dock of webring "tabs". Each tab expands its own panel; only one is
- * open at a time. The lanyard.cafe keyring keeps its injected #lc-embed panel
- * (toggled via html.wr-lanyard in keyring.css); stabring gets its own panel we
- * build here (no logo image → knife emoji). */
-(function webrings() {
-  const RING = "https://ring.stabbed.me";
-  const host = location.hostname;
-  const root = document.documentElement;
-
-  const dock = document.createElement("div");
-  dock.className = "webring-dock";
-  dock.dataset.ctpPersist = ""; /* survives soft navigation */
-  dock.innerHTML = `
-    <button class="webring-tab" data-ring="lanyard" type="button"
-            aria-label="lanyard.cafe webring" aria-expanded="false" title="lanyard.cafe webring">
-      <img class="webring-ico" src="/assets/webrings/lanyard.png" alt="">
-    </button>
-    <button class="webring-tab" data-ring="stab" type="button"
-            aria-label="stabring webring" aria-expanded="false" title="stabring — ring.stabbed.me">
-      <span class="webring-ico webring-emoji" aria-hidden="true">🔪</span>
-    </button>`;
-
-  const stab = document.createElement("div");
-  stab.className = "webring-panel stabring";
-  stab.dataset.ctpPersist = "";
-  stab.hidden = true;
-  stab.innerHTML = `
-    <span class="webring-panel-title">🔪 stabring</span>
-    <div class="stabring-nav">
-      <a class="stabring-btn" data-nav="prev" href="${RING}/prev/from/${host}" rel="noopener">← prev</a>
-      <a class="stabring-btn" data-nav="home" href="${RING}" rel="noopener">home</a>
-      <a class="stabring-btn" data-nav="next" href="${RING}/next/from/${host}" rel="noopener">next →</a>
-    </div>`;
-
-  document.body.appendChild(dock);
-  document.body.appendChild(stab);
-
-  const tabs = Array.from(dock.querySelectorAll(".webring-tab"));
-
-  function close() {
-    root.classList.remove("wr-lanyard");
-    stab.hidden = true;
-    tabs.forEach((t) => { t.classList.remove("active"); t.setAttribute("aria-expanded", "false"); });
-  }
-  function open(which) {
-    const isOpen = which === "lanyard"
-      ? root.classList.contains("wr-lanyard")
-      : !stab.hidden;
-    close();
-    if (isOpen) return; // clicking the active tab closes it
-    if (which === "lanyard") root.classList.add("wr-lanyard");
-    else stab.hidden = false;
-    const tab = dock.querySelector('.webring-tab[data-ring="' + which + '"]');
-    if (tab) { tab.classList.add("active"); tab.setAttribute("aria-expanded", "true"); }
-  }
-
-  tabs.forEach((t) => t.addEventListener("click", (e) => {
-    e.stopPropagation();
-    open(t.dataset.ring);
-  }));
-
-  /* Close on outside click / Escape (but not when clicking inside a panel). */
-  document.addEventListener("click", (e) => {
-    if (dock.contains(e.target) || stab.contains(e.target)) return;
-    const lc = document.getElementById("lc-embed");
-    if (lc && lc.contains(e.target)) return;
-    close();
-  });
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
-})();
+/* flavors.js + webrings.js now live as React components
+ * (src/components/chrome/SettingsMenu.tsx + WebringDock.tsx). core.js still
+ * owns the oneko cat, the cat-collection modal (window.toggleCatPicker), the
+ * bg-music <audio>/gate (window.ctpBgm), the nav builder, and the soft-nav
+ * bridge — the React chrome drives those through the window hooks below. */
 
 /* ===================== bg-music.js (click-to-enter gate) ======================= */
 (function bgMusic() {
@@ -377,30 +199,27 @@ window.ctpBuildNav = buildNav;
     }, { once: true });
   }
 
-  /* ---- play/pause toggle, grouped with the theme/cat buttons.
-   * The gate below is what starts things off; this is for stopping and
-   * resuming once you're already in. ---- */
-  const btn = document.createElement("button");
-  btn.className = "beta-btn bgm-btn";
-  btn.type = "button";
-  /* Same 22x22 box as .beta-icon/.beta-cat-icon — text glyphs (▶/⏸) don't
-   * fill that box consistently across fonts, so use flat SVG icons instead. */
-  const ICON_PLAY = '<svg class="bgm-icon" viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
-  const ICON_PAUSE = '<svg class="bgm-icon" viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
-  function paintBtn() {
-    btn.innerHTML = audio.paused ? ICON_PLAY : ICON_PAUSE;
-    btn.title = audio.paused ? "Play background music" : "Pause background music";
-    btn.setAttribute("aria-pressed", String(!audio.paused));
-  }
-  paintBtn();
-  btn.addEventListener("click", () => {
-    if (audio.paused) audio.play().catch(() => { /* file missing/blocked */ });
-    else audio.pause();
-  });
-  audio.addEventListener("play", () => { ss.setItem(PLAYING_KEY, "1"); paintBtn(); });
-  audio.addEventListener("pause", () => { ss.setItem(PLAYING_KEY, "0"); paintBtn(); });
-  const menuItems = document.querySelector(".beta-menu-items");
-  (menuItems || document.querySelector(".beta-bar")).appendChild(btn);
+  /* The play/pause button now lives in React (SettingsMenu.tsx); core.js keeps
+   * the <audio> and exposes a tiny API the button drives. */
+  audio.addEventListener("play", () => { ss.setItem(PLAYING_KEY, "1"); });
+  audio.addEventListener("pause", () => { ss.setItem(PLAYING_KEY, "0"); });
+  window.ctpBgm = {
+    toggle() {
+      if (audio.paused) audio.play().catch(() => {});
+      else audio.pause();
+    },
+    isPaused() { return audio.paused; },
+    subscribe(cb) {
+      const h = () => cb(audio.paused);
+      audio.addEventListener("play", h);
+      audio.addEventListener("pause", h);
+      cb(audio.paused);
+      return () => {
+        audio.removeEventListener("play", h);
+        audio.removeEventListener("pause", h);
+      };
+    },
+  };
 
   function saveTime() {
     if (!isNaN(audio.currentTime)) ss.setItem(TIME_KEY, String(audio.currentTime));

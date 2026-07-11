@@ -373,12 +373,43 @@
     }
     function renderBio(text) {
       if (!bioEl) return;
-      if (text && String(text).trim()) {
-        bioEl.textContent = String(text).trim();
-        bioEl.hidden = false;
-      } else {
-        bioEl.hidden = true;
+      var raw = text == null ? "" : String(text).trim();
+      if (!raw) { bioEl.hidden = true; return; }
+
+      /* Bios can contain Discord custom emoji (<a:name:id> animated,
+       * <:name:id> static) and plain URLs. Tokenise those into <img>/<a>,
+       * escaping everything in between (bio is user-controlled). */
+      var EMOJI = /<(a)?:(\w+):(\d+)>/g;
+      var URL = /https?:\/\/[^\s<]+/g;
+      var html = "";
+      var i = 0;
+      while (i < raw.length) {
+        EMOJI.lastIndex = i;
+        URL.lastIndex = i;
+        var em = EMOJI.exec(raw);
+        var ur = URL.exec(raw);
+        var hit = null, kind = null;
+        if (em && (!ur || em.index <= ur.index)) { hit = em; kind = "emoji"; }
+        else if (ur) { hit = ur; kind = "url"; }
+
+        if (!hit) { html += esc(raw.slice(i)); break; }
+        html += esc(raw.slice(i, hit.index)); /* plain text before the token */
+
+        if (kind === "emoji") {
+          var url = emojiUrl({ id: hit[3], animated: hit[1] === "a" });
+          html += url
+            ? '<img class="pc-bio-emoji" src="' + esc(url) + '" alt=":' + esc(hit[2]) +
+              ':" title=":' + esc(hit[2]) + ':" loading="lazy">'
+            : esc(hit[0]);
+        } else {
+          html += '<a class="pc-bio-link" href="' + esc(hit[0]) +
+            '" target="_blank" rel="noopener noreferrer">' + esc(hit[0]) + '</a>';
+        }
+        i = hit.index + hit[0].length;
       }
+
+      bioEl.innerHTML = html;
+      bioEl.hidden = false;
     }
     // Best-effort profile links for the common connection types.
     const CONNECTION_URLS = {

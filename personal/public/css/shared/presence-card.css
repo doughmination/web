@@ -941,7 +941,7 @@ a.pc-wl-item:hover {
   border-radius: 10px;
   background: var(--mantle);
   font-size: 0.74rem;
-  line-height: 1.4;
+  line-height: 1.25;
   color: var(--subtext-1);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
@@ -949,6 +949,26 @@ a.pc-wl-item:hover {
 
 .pc-bio[hidden] {
   display: none;
+}
+
+/* custom Discord emoji rendered inline in the bio */
+.pc-bio-emoji {
+  width: 1.2em;
+  height: 1.2em;
+  vertical-align: -0.22em;
+  object-fit: contain;
+  margin: 0;
+}
+
+/* linkified URLs in the bio */
+.pc-bio-link {
+  color: var(--blue);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.pc-bio-link:hover {
+  text-decoration: underline;
 }
 
 .pc-connections {

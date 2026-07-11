@@ -1,0 +1,64 @@
+.bar {
+  position: fixed;
+  bottom: 1rem;
+  left: 1rem;
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem;
+  border-radius: 999px;
+  background: var(--surface-0);
+  border: 1px solid var(--surface-1);
+  color: var(--text);
+  cursor: url("/assets/cursor/pointer_0.png"), pointer;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.btn:hover {
+  border-color: var(--pink);
+  transform: translateY(2px);
+}
+
+.bar.open .toggle {
+  border-color: var(--pink);
+  transform: none;
+}
+
+.items {
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: var(--surface-0);
+  border: 1px solid var(--surface-1);
+  border-radius: 14px;
+  box-shadow: 0 10px 26px -16px rgba(0, 0, 0, 0.7);
+}
+
+.themeIcon {
+  width: 22px;
+  height: 22px;
+  display: block;
+}
+
+/* the classic oneko idle frame, scaled down from the 256x128 sprite sheet */
+.catIcon {
+  width: 22px;
+  height: 22px;
+  display: block;
+  background-image: url("/assets/oneko/classics/classic.png");
+  background-repeat: no-repeat;
+  background-size: 176px 88px;
+  background-position: -66px -66px;
+  image-rendering: pixelated;
+}

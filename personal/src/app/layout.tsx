@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import NavBridge from "./_components/NavBridge";
+import SettingsMenu from "@/components/chrome/SettingsMenu";
+import WebringDock from "@/components/chrome/WebringDock";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://c.stupid.cat"),
@@ -91,6 +93,10 @@ export default function RootLayout({
         {/* Routes core.js's nav clicks through Next's client router so the
             layout (and bg-music audio) never unloads between pages. */}
         <NavBridge />
+
+        {/* Chrome, now in React (theme owned here; cat + music bridge to core.js) */}
+        <SettingsMenu />
+        <WebringDock />
 
         {children}
 
