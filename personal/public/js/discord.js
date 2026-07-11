@@ -82,6 +82,8 @@
       '<span class="pc-user"></span>' +
       '<span class="pc-status-text"></span>' +
       '<span class="pc-pronouns" hidden></span>' +
+      '<span class="pc-timezone" hidden></span>' +
+      '<span class="pc-premium" hidden></span>' +
       '<span class="pc-platforms" aria-hidden="true"></span>' +
       '</span>' +
       '<span class="pc-meta" hidden></span>' +
@@ -113,6 +115,13 @@
     const bioEl = card.querySelector(".pc-bio");
     const connectionsEl = card.querySelector(".pc-connections");
     const pronounsEl = card.querySelector(".pc-pronouns");
+    const timezoneEl = card.querySelector(".pc-timezone");
+    const premiumEl = card.querySelector(".pc-premium");
+    // Timezone chip state: UTC offset (minutes) + IANA name, from the API's
+    // `timezone` block. Kept in the closure so the 1s ticker can re-render a
+    // live local clock (the API's local_time is only a fetch-time snapshot).
+    let tzOffsetMin = null;
+    let tzName = null;
 
     // ---- friend-card extras: name link + instant placeholder ----------------
     // Optional website link on the name (friends can have a personal site).
@@ -228,6 +237,12 @@
       return h ? `${h}h ${m}m` : `${m}m`;
     }
     function clamp(n, lo, hi) { return Math.min(Math.max(n, lo), hi); }
+    // ISO timestamp -> "Jul 2024" for premium/boost "since" tooltips.
+    function fmtSinceDate(iso) {
+      const d = new Date(iso);
+      if (isNaN(d.getTime())) return "";
+      return d.toLocaleDateString(undefined, { month: "short", year: "numeric" });
+    }
 
     // pages.gay is a static host with no server-side compute, so we can't run
     // our own proxy. wsrv.nl is a free, cookieless image CDN: it re-serves the
@@ -772,14 +787,26 @@
 
       card.classList.toggle("has-sections", sections.children.length > 0);
       updateTimes();
-      if (sections.querySelector("[data-start], [data-elapsed-start]")) startTicker();
+      if (tzOffsetMin != null || sections.querySelector("[data-start], [data-elapsed-start]")) startTicker();
       else stopTicker();
 
       card.hidden = false;
     }
 
+    // ---- live local clock (from the API's timezone offset) ------------------
+    // Re-derive the user's wall-clock time each tick by shifting "now" by their
+    // UTC offset and reading it in UTC — so the chip stays live between polls.
+    function updateClock() {
+      if (!timezoneEl || tzOffsetMin == null) return;
+      const local = new Date(Date.now() + tzOffsetMin * 60000);
+      const hh = String(local.getUTCHours()).padStart(2, "0");
+      const mm = String(local.getUTCMinutes()).padStart(2, "0");
+      timezoneEl.textContent = "🕓 " + hh + ":" + mm;
+    }
+
     // ---- time tickers (progress bar + elapsed labels) -----------------------
     function updateTimes() {
+      updateClock();
       const sp = sections.querySelector(".pc-spotify[data-start][data-end]");
       if (sp) {
         const start = +sp.dataset.start, end = +sp.dataset.end;
@@ -843,6 +870,16 @@
 
     function renderFromSelfHost(j) {
       const u = (j.data && j.data.user) || {};
+      // Seed timezone state BEFORE render() so its ticker gate keeps the live
+      // clock running. `timezone` = { timezone, local_time, utc_offset_minutes }.
+      const tz = j.data && j.data.timezone;
+      if (tz && typeof tz.utc_offset_minutes === "number") {
+        tzOffsetMin = tz.utc_offset_minutes;
+        tzName = tz.timezone || null;
+      } else {
+        tzOffsetMin = null;
+        tzName = null;
+      }
       render(mapSelfHostToPresence(j));
       // badges arrive pre-resolved straight from the Doughmination Restful API
       if (Array.isArray(j.data.badges) && j.data.badges.length) {
@@ -863,8 +900,45 @@
       renderBio(u.bio);
       renderConnections(j.data.connected_accounts);
       if (pronounsEl) {
-        if (u.pronouns) { pronounsEl.textContent = u.pronouns; pronounsEl.hidden = false; }
+        // Prefer Discord's own profile pronouns; fall back to PronounDB. (The
+        // API already applies this, but do it client-side too so the fallback
+        // still shows if only the top-level pronoundb field is populated.)
+        const pron = u.pronouns || (j.data && j.data.pronoundb) || "";
+        if (pron) { pronounsEl.textContent = pron; pronounsEl.hidden = false; }
         else pronounsEl.hidden = true;
+      }
+      if (timezoneEl) {
+        if (tzOffsetMin != null) {
+          updateClock();
+          // Full IANA zone + offset on hover; the chip itself stays compact.
+          const off = tzOffsetMin;
+          const sign = off >= 0 ? "+" : "-";
+          const oh = String(Math.floor(Math.abs(off) / 60)).padStart(2, "0");
+          const om = String(Math.abs(off) % 60).padStart(2, "0");
+          timezoneEl.title = (tzName ? tzName + " " : "") + "(UTC" + sign + oh + ":" + om + ")";
+          timezoneEl.hidden = false;
+        } else {
+          timezoneEl.hidden = true;
+        }
+      }
+      if (premiumEl) {
+        // Nitro tier + boosting, from the API's user.premium block.
+        const prem = u.premium;
+        const NITRO_LABEL = { nitro: "Nitro", classic: "Nitro Classic", basic: "Nitro Basic" };
+        let html = "";
+        if (prem) {
+          const label = NITRO_LABEL[prem.type];
+          if (label) {
+            const since = prem.since ? " · since " + fmtSinceDate(prem.since) : "";
+            html += '<span class="pc-nitro" title="' + esc(label + since) + '">' + esc(label) + "</span>";
+          }
+          if (prem.guild_since) {
+            html += '<span class="pc-boost" title="' + esc("Boosting since " + fmtSinceDate(prem.guild_since)) +
+              '" aria-label="Server booster">💎</span>';
+          }
+        }
+        if (html) { premiumEl.innerHTML = html; premiumEl.hidden = false; }
+        else premiumEl.hidden = true;
       }
       // wishlist: resolved Shop collectibles (null when the API couldn't load it).
       // Keep the panel live if it's already open when fresh data arrives.
