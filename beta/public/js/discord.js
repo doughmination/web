@@ -865,9 +865,16 @@
 
     // boot: poll the Doughmination Restful API (the only source now). ID-less
     // placeholder cards (e.g. dead alts) keep their seeded look — no fetch.
+    // When a shared batch manager is supplied (the friends grid), register our
+    // renderer with it instead of fetching/polling per-card: the manager pulls
+    // every card's data in ONE request (/v1/users?ids=...) and dispatches here.
     if (DISCORD_USER_ID) {
-      loadSelfHosted();
-      selfTimer = setInterval(pollSelfHost, SELF_POLL_MS);
+      if (opts.batch && typeof opts.batch.register === "function") {
+        opts.batch.register(DISCORD_USER_ID, renderFromSelfHost);
+      } else {
+        loadSelfHosted();
+        selfTimer = setInterval(pollSelfHost, SELF_POLL_MS);
+      }
     }
 
     document.addEventListener("visibilitychange", () => {
@@ -938,7 +945,8 @@
         { name: "furi", tier: "known", discordId: "781445370177126401", link: "https://furina.is-a.dev" },
         { name: "pokemon", tier: "known", discordId: "784443338627612673", link: "https://devmatei.com/" },
         { name: "animosity", tier: "known", discordId: "1491137614525370589", link: "https://0c6a.site/"},
-        { name: "winte", tier: "known", discordId: "1357429661834936510", link: "https://buddywinte.xyz/" }
+        { name: "winte", tier: "known", discordId: "1357429661834936510", link: "https://buddywinte.xyz/" },
+        { name: "interverti", tier: "known", discordId: "674329017339346955", link: "https://interverti.fr/"}
       ]
     },
     {
@@ -974,6 +982,38 @@
   if (typeof make !== "function") {
     console.error("friends.js: window.PresenceCard is missing — load /js/discord.js before /js/friends.js");
   }
+
+  // ---- batched presence -------------------------------------------------
+  // Instead of every friend card fetching /v1/users/:id on its own (N requests
+  // on load, then N every minute), one manager pulls them all in a single
+  // /v1/users?ids=a,b,c call and hands each card its slice. Cards opt in via
+  // opts.batch (see createPresenceCard's boot).
+  var BATCH_BASE = "https://restful.doughmination.uk/v1/users";
+  function createBatchPresence(base, pollMs) {
+    var renderers = new Map(); // id -> renderFromSelfHost(card)
+    var timer = null;
+    function register(id, fn) { renderers.set(String(id), fn); }
+    function refresh() {
+      var ids = Array.from(renderers.keys());
+      if (!ids.length) return Promise.resolve();
+      var url = base + "?ids=" + encodeURIComponent(ids.join(","));
+      return fetch(url, { cache: "no-store" })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (j) {
+          if (!j || !j.success || !j.data) return;
+          renderers.forEach(function (fn, id) {
+            var rec = j.data[id];
+            if (rec) fn({ success: true, data: rec }); // same shape as /v1/users/:id
+          });
+        })
+        .catch(function (err) { console.warn("[presence:batch] failed:", err); });
+    }
+    function start() {
+      if (!timer) timer = setInterval(function () { if (!document.hidden) refresh(); }, pollMs);
+    }
+    return { register: register, refresh: refresh, start: start };
+  }
+  var batch = createBatchPresence(BATCH_BASE, FRIEND_POLL_MS);
 
   // ---- render ---------------------------------------------------------
   FRIENDS.forEach(function (group) {
@@ -1012,6 +1052,7 @@
           userId: m.discordId || null, // null → static placeholder card (dead alts)
           mini: true,                  // smaller styling + keeps page accent local
           pollMs: FRIEND_POLL_MS,
+          batch: batch,                // seed + poll via one shared /v1/users?ids=… call
           tier: m.tier || null,
           link: m.link || null,
           fallbackName: m.name,        // shown instantly + kept if the API has no data
@@ -1029,6 +1070,10 @@
     section.appendChild(grid);
     root.appendChild(section);
   });
+
+  // All cards are registered now → one request seeds them all, then poll them
+  // together on a single interval.
+  batch.refresh().then(function () { batch.start(); });
 
   // ---- jump to anchor (sections are built after page load) ------------
   function scrollToHash() {

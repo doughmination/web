@@ -42,6 +42,8 @@ export default function DiscordPage() {
       <link rel="dns-prefetch" href="https://wsrv.nl" />
       <link rel="preconnect" href="https://cdn.discordapp.com" />
       <link rel="dns-prefetch" href="https://cdn.discordapp.com" />
+      {/* Fetch the presence script during hydration, not after it */}
+      <link rel="preload" href="/js/discord.js" as="script" />
 
       <main className="presence-stage">
         <div className="presence-intro">

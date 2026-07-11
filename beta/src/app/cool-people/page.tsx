@@ -45,6 +45,8 @@ export default function CoolPeoplePage() {
       <link rel="dns-prefetch" href="https://i.scdn.co" />
       <link rel="preconnect" href="https://media.discordapp.net" />
       <link rel="dns-prefetch" href="https://media.discordapp.net" />
+      {/* Fetch the presence script during hydration, not after it */}
+      <link rel="preload" href="/js/discord.js" as="script" />
 
       <main className="hub friends-wrap">
         <header className="hub-header">

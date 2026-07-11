@@ -1,4 +1,0 @@
-Contact: mailto:admin@doughmination.win
-Expires: 2030-01-01T00:00:00.000Z
-Preferred-Languages: en
-Canonical: https://c.stupid.cat/.well-known/security.txt
