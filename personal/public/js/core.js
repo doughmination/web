@@ -194,13 +194,24 @@ window.ctpBuildNav = buildNav;
   if (!ORDER.includes(current)) current = "mocha";
   apply(current); /* the <head> snippet already set this to avoid a flash */
 
-  /* ---- top-right corner icon button ---- */
+  /* ---- top-right settings menu: one button that click-expands into the
+   * theme / cat / music controls (tucked away like the Next.js dev button). ---- */
   const bar = document.createElement("div");
   bar.className = "beta-bar";
   bar.innerHTML = `
-    <button class="beta-btn" id="flavor-btn" type="button">
-      <img class="beta-icon" alt="">
-    </button>`;
+    <button class="beta-btn beta-menu-toggle" id="beta-menu-toggle" type="button"
+            aria-label="Settings" aria-haspopup="true" aria-expanded="false" title="Settings">
+      <svg class="beta-menu-ico" viewBox="0 0 24 24" width="22" height="22" fill="none"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+      </svg>
+    </button>
+    <div class="beta-menu-items" id="beta-menu-items" role="menu" hidden>
+      <button class="beta-btn" id="flavor-btn" type="button" role="menuitem" title="Theme">
+        <img class="beta-icon" alt="">
+      </button>
+    </div>`;
   /* Group the single-item widgets (discord + theme toggle) into one top
    * bar. On mobile they sit side by side, on desktop both stay
    * position:fixed, so this wrapper ends up zero-size and invisible. */
@@ -217,8 +228,28 @@ window.ctpBuildNav = buildNav;
   }
   topbar.appendChild(bar);
 
+  const menuToggle = bar.querySelector("#beta-menu-toggle");
+  const menuItems = bar.querySelector("#beta-menu-items");
   const btn = bar.querySelector("#flavor-btn");
-  const icon = bar.querySelector(".beta-icon");
+  const icon = btn.querySelector(".beta-icon");
+
+  /* ---- expand / collapse the menu ---- */
+  function setMenu(open) {
+    menuItems.hidden = !open;
+    bar.classList.toggle("open", open);
+    menuToggle.setAttribute("aria-expanded", String(open));
+  }
+  menuToggle.addEventListener("click", (e) => {
+    e.stopPropagation();
+    setMenu(menuItems.hidden);
+  });
+  /* Close on outside click / Escape. Clicks on the controls inside stay open. */
+  document.addEventListener("click", (e) => {
+    if (!bar.contains(e.target)) setMenu(false);
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") setMenu(false);
+  });
 
   function paintBtn() {
     const f = FLAVORS[current];
@@ -243,11 +274,83 @@ window.ctpBuildNav = buildNav;
   catBtn.title = "Cat collection";
   catBtn.setAttribute("aria-label", "Open cat collection");
   catBtn.innerHTML = `<span class="beta-cat-icon" aria-hidden="true"></span>`;
-  bar.appendChild(catBtn);
+  menuItems.appendChild(catBtn);
 
   catBtn.addEventListener("click", () => {
     if (typeof window.toggleCatPicker === "function") window.toggleCatPicker();
   });
+})();
+
+/* ===================== webrings.js (bottom-left dock) =======================
+ * A small dock of webring "tabs". Each tab expands its own panel; only one is
+ * open at a time. The lanyard.cafe keyring keeps its injected #lc-embed panel
+ * (toggled via html.wr-lanyard in keyring.css); stabring gets its own panel we
+ * build here (no logo image → knife emoji). */
+(function webrings() {
+  const RING = "https://ring.stabbed.me";
+  const host = location.hostname;
+  const root = document.documentElement;
+
+  const dock = document.createElement("div");
+  dock.className = "webring-dock";
+  dock.dataset.ctpPersist = ""; /* survives soft navigation */
+  dock.innerHTML = `
+    <button class="webring-tab" data-ring="lanyard" type="button"
+            aria-label="lanyard.cafe webring" aria-expanded="false" title="lanyard.cafe webring">
+      <img class="webring-ico" src="/assets/webrings/lanyard.png" alt="">
+    </button>
+    <button class="webring-tab" data-ring="stab" type="button"
+            aria-label="stabring webring" aria-expanded="false" title="stabring — ring.stabbed.me">
+      <span class="webring-ico webring-emoji" aria-hidden="true">🔪</span>
+    </button>`;
+
+  const stab = document.createElement("div");
+  stab.className = "webring-panel stabring";
+  stab.dataset.ctpPersist = "";
+  stab.hidden = true;
+  stab.innerHTML = `
+    <span class="webring-panel-title">🔪 stabring</span>
+    <div class="stabring-nav">
+      <a class="stabring-btn" data-nav="prev" href="${RING}/prev/from/${host}" rel="noopener">← prev</a>
+      <a class="stabring-btn" data-nav="home" href="${RING}" rel="noopener">home</a>
+      <a class="stabring-btn" data-nav="next" href="${RING}/next/from/${host}" rel="noopener">next →</a>
+    </div>`;
+
+  document.body.appendChild(dock);
+  document.body.appendChild(stab);
+
+  const tabs = Array.from(dock.querySelectorAll(".webring-tab"));
+
+  function close() {
+    root.classList.remove("wr-lanyard");
+    stab.hidden = true;
+    tabs.forEach((t) => { t.classList.remove("active"); t.setAttribute("aria-expanded", "false"); });
+  }
+  function open(which) {
+    const isOpen = which === "lanyard"
+      ? root.classList.contains("wr-lanyard")
+      : !stab.hidden;
+    close();
+    if (isOpen) return; // clicking the active tab closes it
+    if (which === "lanyard") root.classList.add("wr-lanyard");
+    else stab.hidden = false;
+    const tab = dock.querySelector('.webring-tab[data-ring="' + which + '"]');
+    if (tab) { tab.classList.add("active"); tab.setAttribute("aria-expanded", "true"); }
+  }
+
+  tabs.forEach((t) => t.addEventListener("click", (e) => {
+    e.stopPropagation();
+    open(t.dataset.ring);
+  }));
+
+  /* Close on outside click / Escape (but not when clicking inside a panel). */
+  document.addEventListener("click", (e) => {
+    if (dock.contains(e.target) || stab.contains(e.target)) return;
+    const lc = document.getElementById("lc-embed");
+    if (lc && lc.contains(e.target)) return;
+    close();
+  });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
 })();
 
 /* ===================== bg-music.js (click-to-enter gate) ======================= */
@@ -296,8 +399,8 @@ window.ctpBuildNav = buildNav;
   });
   audio.addEventListener("play", () => { ss.setItem(PLAYING_KEY, "1"); paintBtn(); });
   audio.addEventListener("pause", () => { ss.setItem(PLAYING_KEY, "0"); paintBtn(); });
-  const betaBar = document.querySelector(".beta-bar");
-  if (betaBar) betaBar.appendChild(btn);
+  const menuItems = document.querySelector(".beta-menu-items");
+  (menuItems || document.querySelector(".beta-bar")).appendChild(btn);
 
   function saveTime() {
     if (!isNaN(audio.currentTime)) ss.setItem(TIME_KEY, String(audio.currentTime));
