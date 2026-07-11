@@ -1,0 +1,65 @@
+/* ============================================================
+   bg-music.css — sitewide background audio: the "click to enter"
+   gate that starts it, and the play/pause button it leaves behind
+   in the topbar icon row for stopping/resuming afterward.
+   Shared across all pages.
+   ============================================================ */
+
+.bgm-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(17, 17, 27, 0.75);
+  backdrop-filter: blur(3px);
+  cursor: url('../assets/cursor/pointer_0.png'), pointer;
+  opacity: 1;
+  transition: opacity 0.25s ease;
+}
+
+.bgm-gate[hidden] {
+  display: none;
+}
+
+.bgm-gate.is-leaving {
+  opacity: 0;
+}
+
+.bgm-gate-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 1.5rem 2rem;
+  background: var(--base);
+  border: 1px solid var(--surface-1);
+  border-radius: 16px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55);
+  text-align: center;
+  pointer-events: none; /* click passes through to .bgm-gate */
+}
+
+.bgm-gate-note {
+  margin: 0;
+  color: var(--pink);
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.bgm-gate-hint {
+  margin: 0;
+  color: var(--subtext-0);
+  font-size: 0.75rem;
+}
+
+/* .beta-btn (theme-switcher.css) supplies the circular button chrome;
+   the icon itself matches .beta-icon/.beta-cat-icon's 22x22 box exactly. */
+.bgm-icon {
+  width: 22px;
+  height: 22px;
+  display: block;
+  color: var(--text);
+}

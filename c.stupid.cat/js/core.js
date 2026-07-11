@@ -174,6 +174,105 @@ buildNav();
   });
 })();
 
+/* ===================== bg-music.js (click-to-enter gate) ======================= */
+(function bgMusic() {
+  const ss = window.sessionStorage;
+  const CONSENT_KEY = "ctpBgmConsent";
+  const PLAYING_KEY = "ctpBgmPlaying";
+  const TIME_KEY = "ctpBgmTime";
+
+  const audio = document.createElement("audio");
+  audio.id = "bgm";
+  audio.src = "/assets/background.mp3";
+  audio.loop = true;
+  audio.preload = "auto";
+  audio.volume = 0.1; /* it's background music, not the main event */
+  audio.hidden = true;
+  document.body.appendChild(audio);
+
+  const savedTime = parseFloat(ss.getItem(TIME_KEY) || "0");
+  if (savedTime > 0) {
+    audio.addEventListener("loadedmetadata", () => {
+      try { audio.currentTime = savedTime; } catch (e) { /* not seekable yet */ }
+    }, { once: true });
+  }
+
+  /* ---- play/pause toggle, grouped with the theme/cat buttons.
+   * The gate below is what starts things off; this is for stopping and
+   * resuming once you're already in. ---- */
+  const btn = document.createElement("button");
+  btn.className = "beta-btn bgm-btn";
+  btn.type = "button";
+  /* Same 22x22 box as .beta-icon/.beta-cat-icon — text glyphs (▶/⏸) don't
+   * fill that box consistently across fonts, so use flat SVG icons instead. */
+  const ICON_PLAY = '<svg class="bgm-icon" viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
+  const ICON_PAUSE = '<svg class="bgm-icon" viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
+  function paintBtn() {
+    btn.innerHTML = audio.paused ? ICON_PLAY : ICON_PAUSE;
+    btn.title = audio.paused ? "Play background music" : "Pause background music";
+    btn.setAttribute("aria-pressed", String(!audio.paused));
+  }
+  paintBtn();
+  btn.addEventListener("click", () => {
+    if (audio.paused) audio.play().catch(() => { /* file missing/blocked */ });
+    else audio.pause();
+  });
+  audio.addEventListener("play", () => { ss.setItem(PLAYING_KEY, "1"); paintBtn(); });
+  audio.addEventListener("pause", () => { ss.setItem(PLAYING_KEY, "0"); paintBtn(); });
+  const betaBar = document.querySelector(".beta-bar");
+  if (betaBar) betaBar.appendChild(btn);
+
+  function saveTime() {
+    if (!isNaN(audio.currentTime)) ss.setItem(TIME_KEY, String(audio.currentTime));
+  }
+  window.addEventListener("pagehide", saveTime);
+  setInterval(saveTime, 4000);
+
+  /* A reload (Cmd/Ctrl+R, hard or soft) counts as leaving and coming back —
+   * re-show the gate. Clicking a link to another page on the site doesn't. */
+  function isReload() {
+    const nav = performance.getEntriesByType("navigation")[0];
+    return nav ? nav.type === "reload" : performance.navigation?.type === 1;
+  }
+  if (isReload()) {
+    ss.removeItem(CONSENT_KEY);
+    ss.removeItem(PLAYING_KEY);
+  }
+
+  if (ss.getItem(CONSENT_KEY) === "1") {
+    /* Already entered earlier this session — resume without the gate.
+     * A fresh page load can still block autoplay even with prior consent;
+     * if so, the button just stays on ▶ until they click it. */
+    if (ss.getItem(PLAYING_KEY) === "1") {
+      audio.play().catch(() => { /* autoplay blocked — leave it paused */ });
+    }
+    return;
+  }
+
+  /* ---- first visit this session: click-to-enter gate ---- */
+  const gate = document.createElement("div");
+  gate.className = "bgm-gate";
+  gate.setAttribute("role", "button");
+  gate.tabIndex = 0;
+  gate.innerHTML = `
+    <div class="bgm-gate-panel">
+      <p class="bgm-gate-note">♪ click to enter ♪</p>
+      <p class="bgm-gate-hint">turns on background music</p>
+    </div>`;
+  document.body.appendChild(gate);
+
+  function enter() {
+    ss.setItem(CONSENT_KEY, "1");
+    audio.play().catch(() => { /* file missing/blocked */ });
+    gate.classList.add("is-leaving");
+    gate.addEventListener("transitionend", () => gate.remove(), { once: true });
+  }
+  gate.addEventListener("click", enter, { once: true });
+  gate.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); enter(); }
+  });
+})();
+
 /* ===================== cat.js (oneko.js) ======================= */
 /* oneko.js: https://github.com/adryd325/oneko.js */
 
