@@ -41,6 +41,10 @@ coverage/
 *.bak
 *.tmp
 
+tsconfig.tsbuildinfo
+next-env.d.ts
+.next/
+
 dough-data/
 mail-data/
 mailbox/data/
