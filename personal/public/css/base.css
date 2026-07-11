@@ -71,56 +71,56 @@ select,
 summary,
 .pc-name--link,
 #oneko {
-  cursor: url('../assets/cursor/pointer_0.png'), pointer;
+  cursor: url('/assets/cursor/pointer_0.png'), pointer;
 }
 
 /* text entry / editing */
 input:not([type="button"]):not([type="submit"]):not([type="checkbox"]):not([type="radio"]),
 textarea,
 [contenteditable="true"] {
-  cursor: url('../assets/cursor/text_0.png'), text;
+  cursor: url('/assets/cursor/text_0.png'), text;
 }
 
 /* loading */
 [aria-busy="true"],
 .is-loading {
-  cursor: url('../assets/cursor/wait_0.png'), wait;
+  cursor: url('/assets/cursor/wait_0.png'), wait;
 }
 
 /* busy but interactive */
 .is-progress {
-  cursor: url('../assets/cursor/progress_0.png'), progress;
+  cursor: url('/assets/cursor/progress_0.png'), progress;
 }
 
 /* help */
 [title]:not(a):not(button),
 .help {
-  cursor: url('../assets/cursor/help_0.png'), help;
+  cursor: url('/assets/cursor/help_0.png'), help;
 }
 
 /* disabled */
 :disabled,
 [disabled],
 [aria-disabled="true"] {
-  cursor: url('../assets/cursor/not-allowed_0.png'), not-allowed;
+  cursor: url('/assets/cursor/not-allowed_0.png'), not-allowed;
 }
 
 /* draggable */
 [draggable="true"] {
-  cursor: url('../assets/cursor/openhand_0.png'), grab;
+  cursor: url('/assets/cursor/openhand_0.png'), grab;
 }
 
 /* crosshair / zoom (if you use them) */
 .crosshair {
-  cursor: url('../assets/cursor/crosshair_0.png'), crosshair;
+  cursor: url('/assets/cursor/crosshair_0.png'), crosshair;
 }
 
 .zoom-in {
-  cursor: url('../assets/cursor/zoom-in_0.png'), zoom-in;
+  cursor: url('/assets/cursor/zoom-in_0.png'), zoom-in;
 }
 
 .zoom-out {
-  cursor: url('../assets/cursor/zoom-out_0.png'), zoom-out;
+  cursor: url('/assets/cursor/zoom-out_0.png'), zoom-out;
 }
 
 /* Estrogen watermark blended into the background */

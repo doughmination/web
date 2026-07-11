@@ -55,7 +55,7 @@
   height: 14px;
   opacity: 0.18;
   align-self: center;
-  cursor: url('../assets/cursor/default_0.png'), default;
+  cursor: url('/assets/cursor/default_0.png'), default;
   pointer-events: auto;
   /* parent .badges sets none — re-enable here */
   image-rendering: auto;
@@ -71,7 +71,7 @@
 
 #pokeball-secret.found {
   opacity: 1;
-  cursor: url('../assets/cursor/default_0.png'), default;
+  cursor: url('/assets/cursor/default_0.png'), default;
   filter: drop-shadow(0 0 4px var(--red));
 }
 

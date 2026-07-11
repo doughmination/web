@@ -206,7 +206,7 @@ body:has(.music-wrap) {
   font-family: inherit;
   font-size: 0.72rem;
   letter-spacing: 0.04em;
-  cursor: url('../assets/cursor/pointer_0.png'), pointer;
+  cursor: url('/assets/cursor/pointer_0.png'), pointer;
   border-radius: 999px;
   padding: 0.28rem 0.8rem 0.28rem 0.7rem;
   background: var(--surface-0);

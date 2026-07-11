@@ -780,7 +780,7 @@ a.pc-row:hover,
   align-self: flex-start;
   background: none;
   border: none;
-  cursor: url('../assets/cursor/pointer_0.png'), pointer;
+  cursor: url('/assets/cursor/pointer_0.png'), pointer;
   font-size: 0.95rem;
   line-height: 1;
   color: var(--subtext-0);

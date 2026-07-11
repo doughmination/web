@@ -9,9 +9,11 @@
    ============================================================ */
 .beta-bar {
   position: fixed;
-  top: 1rem;
-  right: 1rem;
-  z-index: 7;
+  bottom: 1rem;
+  left: 1rem;
+  top: auto;
+  right: auto;
+  z-index: 8;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -38,7 +40,7 @@
   border-radius: 999px;
   background: var(--surface-0);
   border: 1px solid var(--surface-1);
-  cursor: url('../assets/cursor/pointer_0.png'), pointer;
+  cursor: url('/assets/cursor/pointer_0.png'), pointer;
   transition: border-color 0.15s ease, transform 0.15s ease;
 }
 
@@ -68,8 +70,10 @@
 
 .beta-menu-items {
   position: absolute;
-  top: calc(100% + 0.5rem);
-  right: 0;
+  bottom: calc(100% + 0.5rem);
+  top: auto;
+  left: 0;
+  right: auto;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -153,7 +157,7 @@
   color: var(--subtext-0);
   font-size: 1.35rem;
   line-height: 1;
-  cursor: url('../assets/cursor/pointer_0.png'), pointer;
+  cursor: url('/assets/cursor/pointer_0.png'), pointer;
   padding: 0 0.25rem;
 }
 
@@ -197,7 +201,7 @@
   font-family: inherit;
   font-size: 0.74rem;
   text-align: center;
-  cursor: url('../assets/cursor/pointer_0.png'), pointer;
+  cursor: url('/assets/cursor/pointer_0.png'), pointer;
   transition: transform 0.15s ease, border-color 0.15s ease;
 }
 
@@ -212,7 +216,7 @@
 }
 
 .cat-option.locked {
-  cursor: url('../assets/cursor/default_0.png'), default;
+  cursor: url('/assets/cursor/default_0.png'), default;
   opacity: 0.75;
 }
 

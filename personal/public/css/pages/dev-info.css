@@ -405,7 +405,7 @@ summary.section-title {
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
-  cursor: url('../assets/cursor/pointer_0.png'), pointer;
+  cursor: url('/assets/cursor/pointer_0.png'), pointer;
   list-style: none;
   user-select: none;
   margin-bottom: 0;

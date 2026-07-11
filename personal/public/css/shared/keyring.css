@@ -26,19 +26,22 @@ html.wr-lanyard #lc-embed {
   margin-bottom: 0 !important;
 }
 
-/* the card */
+/* the card — matched to .webring-panel (stabring) so both look identical */
 #lc-embed>section>div {
   background: var(--surface-0) !important;
-  border: 1px solid rgba(var(--pink), 0.45) !important;
+  border: 1px solid var(--pink) !important;
   border-radius: 14px !important;
   box-shadow: 0 10px 26px -16px rgba(0, 0, 0, 0.7) !important;
+  padding: 0.6rem 0.7rem !important;
 }
 
-/* prev / random / next buttons */
+/* prev / random / next buttons — matched to .stabring-btn */
 #lc-embed a {
   background: var(--surface-1) !important;
   border-radius: 10px !important;
   font-weight: 600 !important;
+  font-size: 0.78rem !important;
+  padding: 0.3rem 0.6rem !important;
   transition: transform 0.12s ease, background 0.12s ease, color 0.12s ease !important;
 }
 
@@ -82,7 +85,7 @@ html.wr-lanyard #lc-embed {
    ============================================================ */
 .webring-dock {
   position: fixed;
-  left: 1rem;
+  left: 4rem; /* sits just after the settings button in the corner */
   bottom: 1rem;
   z-index: 8;
   display: flex;
@@ -99,7 +102,7 @@ html.wr-lanyard #lc-embed {
   border-radius: 12px;
   background: var(--surface-0);
   border: 1px solid var(--surface-1);
-  cursor: url('../assets/cursor/pointer_0.png'), pointer;
+  cursor: url('/assets/cursor/pointer_0.png'), pointer;
   transition: border-color 0.15s ease, transform 0.15s ease;
 }
 

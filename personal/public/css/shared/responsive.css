@@ -88,10 +88,17 @@
   /* FIX: the presence card injected by discord.js replaces #discord
      with .presence-card (position:fixed by default in api.css). Inside
      .topbar on mobile it must flow normally. */
-  .topbar .presence-card,
-  .topbar .beta-bar {
+  .topbar .presence-card {
     position: static;
     inset: auto;
+  }
+
+  /* Settings button stays pinned in the bottom-left corner (with the webring
+     dock) on mobile too, rather than flowing into the top bar. */
+  .topbar .beta-bar {
+    position: fixed;
+    inset: auto auto 1rem 1rem;
+    width: auto;
   }
 
   /* FIX: presence-card max-width so it doesn't overflow narrow screens */
