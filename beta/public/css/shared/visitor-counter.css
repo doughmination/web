@@ -1,0 +1,57 @@
+/* ============================================================
+   visitor-counter.css — #visitor-counter widget, top-right.
+   Shared across all pages.
+   ============================================================ */
+
+/* ============================================================
+   15. VISITOR COUNTER  (#visitor-counter)
+   Fixed to top-right, below .beta-bar (theme + cat buttons).
+   ============================================================ */
+#visitor-counter {
+  position: fixed;
+  top: 4rem;
+  /* clears the ~48px beta-bar + gap */
+  right: 1rem;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+#visitor-counter .vc-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+  color: var(--subtext-0);
+  font-family: 'Comic Code', ui-monospace, monospace;
+}
+
+/* Boot reveal: fade in with the rest of the chrome */
+#visitor-counter {
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+body.term-booting #visitor-counter {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+body.term-chrome-in #visitor-counter {
+  opacity: 1;
+  transform: none;
+}
+
+/* Mobile: static in topbar flow */
+@media (max-width: 640px) {
+  #visitor-counter {
+    position: static;
+    margin: 0 auto;
+  }
+
+  .topbar #visitor-counter {
+    order: 2;
+  }
+}
+
+

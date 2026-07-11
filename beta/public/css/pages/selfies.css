@@ -1,0 +1,254 @@
+/* ============================================================
+   selfies.css — the /selfies page grid + lightbox.
+   ============================================================ */
+
+/* ============================================================
+   14. Selfies page
+   ============================================================ */
+
+/* Let the gallery scroll (the default layout locks the viewport). Keyed on
+   the wrapper class so it scrolls even before selfies.js injects the grid —
+   mirrors the .friends-wrap rule used by the cool-people page. */
+html:has(.selfies-wrap),
+body:has(.selfies-wrap) {
+  height: auto;
+  min-height: 100dvh;
+  overflow-y: auto;
+}
+
+body:has(.selfies-wrap) {
+  align-items: flex-start;
+}
+
+body:has(.selfies-wrap) .hub {
+  max-width: 960px;
+}
+
+body:has(.selfies-wrap) .hub-header {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 2rem;
+}
+
+.selfie-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 0.9rem;
+  width: 100%;
+  margin-bottom: 1.5rem;
+  padding-bottom: 4.5rem;
+}
+
+.selfie-thumb {
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--surface-1);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--surface-0);
+  aspect-ratio: 1 / 1;
+  display: block;
+  transition: transform 0.15s ease, border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.selfie-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.selfie-thumb:hover,
+.selfie-thumb:focus-visible {
+  transform: translateY(-3px);
+  border-color: var(--pink);
+  box-shadow: 0 6px 20px rgba(var(--pink), 0.22);
+  outline: none;
+}
+
+.selfie-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--subtext-0);
+  font-style: italic;
+  padding: 3rem 1rem;
+}
+
+/* ---- Lightbox ---- */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: color-mix(in srgb, var(--crust) 86%, transparent);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+.lightbox[hidden] {
+  display: none;
+}
+
+.lightbox.is-open {
+  animation: lightbox-fade 0.18s ease;
+}
+
+@keyframes lightbox-fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.lightbox-img {
+  max-width: min(92vw, 1100px);
+  max-height: 86vh;
+  object-fit: contain;
+  border-radius: 12px;
+  border: 2px solid rgba(var(--pink), 0.55);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+.lightbox-close,
+.lightbox-nav {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--surface-1);
+  background: color-mix(in srgb, var(--surface-0) 85%, transparent);
+  color: var(--text);
+  border-radius: 999px;
+  line-height: 1;
+  transition: background 0.15s ease, border-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.lightbox-close:hover,
+.lightbox-nav:hover,
+.lightbox-close:focus-visible,
+.lightbox-nav:focus-visible {
+  background: var(--surface-1);
+  border-color: var(--pink);
+  outline: none;
+}
+
+.lightbox-close {
+  top: 1rem;
+  right: 1rem;
+  width: 2.6rem;
+  height: 2.6rem;
+  font-size: 1.8rem;
+}
+
+.lightbox-nav {
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3rem;
+  height: 3rem;
+  font-size: 2rem;
+}
+
+.lightbox-nav:hover {
+  transform: translateY(-50%) scale(1.06);
+}
+
+.lightbox-prev {
+  left: 1rem;
+}
+
+.lightbox-next {
+  right: 1rem;
+}
+
+.lightbox-nav[hidden] {
+  display: none;
+}
+
+/* Freeze the page behind the lightbox while it's open */
+body.lightbox-open {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .selfie-thumb,
+  .lightbox-close,
+  .lightbox-nav {
+    transition: none;
+  }
+
+  .lightbox.is-open {
+    animation: none;
+  }
+
+  .lightbox-nav:hover {
+    transform: translateY(-50%);
+  }
+}
+
+@media (max-width: 560px) {
+  .selfie-grid {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 0.6rem;
+  }
+
+  .lightbox-nav {
+    width: 2.6rem;
+    height: 2.6rem;
+    font-size: 1.6rem;
+  }
+}
+
+/* ---- Captions (thumbnails + lightbox) ---- */
+.selfie-item {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.selfie-caption {
+  text-align: center;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  color: var(--subtext-0);
+  overflow-wrap: anywhere;
+}
+
+.lightbox-figure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  max-width: min(92vw, 1100px);
+}
+
+/* leave room beneath the image for the caption line */
+.lightbox-img {
+  max-height: 80vh;
+}
+
+.lightbox-caption {
+  margin: 0;
+  text-align: center;
+  color: var(--text);
+  font-size: 0.95rem;
+  line-height: 1.4;
+  max-width: min(92vw, 1100px);
+  overflow-wrap: anywhere;
+}
+
+.lightbox-caption[hidden] {
+  display: none;
+}
+
+

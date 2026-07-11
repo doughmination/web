@@ -1,0 +1,612 @@
+/* ============================================================
+   music.css — the /music page: now-playing hero, lyrics panel, recently played, and top artists.
+   ============================================================ */
+
+/* =====================================================================
+ * MUSIC PAGE (/music) — merged in from music.css.
+ * Hero classes are .mdc-* to avoid colliding with the .dc-* discord
+ * widget already defined above. Other classes (.lyrics, .rc-*, .sec-*,
+ * .top-*, .ly-*, .music-*) are unique to this page.
+ * ===================================================================== */
+
+/* Let the music page scroll; the link hub stays locked (same pattern as
+   .dev-info above). Without this, html,body{overflow:hidden}
+   from the homepage layout traps the page. */
+html:has(.music-wrap),
+body:has(.music-wrap) {
+  height: auto;
+  min-height: 100dvh;
+  overflow-y: auto;
+}
+
+body:has(.music-wrap) {
+  align-items: flex-start;
+}
+
+.music-wrap {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 2.6rem 1.25rem 5rem;
+  font-family: 'Comic Code', ui-monospace, monospace;
+}
+
+.music-head {
+  margin: 0 0 1.6rem;
+}
+
+.music-head h1 {
+  font-size: clamp(1.7rem, 5vw, 2.4rem);
+  margin: 0 0 0.2rem;
+  color: var(--pink);
+  letter-spacing: -0.02em;
+  transition: color 0.5s ease;
+}
+
+.music-head p {
+  margin: 0;
+  color: var(--subtext-0);
+  font-size: 0.95rem;
+}
+
+/* ---- now playing hero -------------------------------------------------- */
+.mdc {
+  display: grid;
+  grid-template-columns: 132px 1fr;
+  gap: 1.1rem;
+  align-items: center;
+  background: var(--mantle);
+  border: 1px solid var(--surface-0);
+  border-radius: 18px;
+  padding: 1.1rem;
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+/* a soft wash of the album accent behind the hero */
+.mdc::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 140% at 0% 0%,
+      rgba(var(--pink), 0.18), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+}
+
+#music.is-live .mdc::before {
+  opacity: 1;
+}
+
+.mdc-art {
+  width: 132px;
+  height: 132px;
+  border-radius: 12px;
+  object-fit: cover;
+  background: var(--surface-0);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.mdc-art:not(.has-art) {
+  display: grid;
+}
+
+.mdc-art:not(.has-art)::after {
+  content: "♪";
+  color: var(--overlay-0);
+  font-size: 2.4rem;
+  display: grid;
+  place-items: center;
+  height: 100%;
+}
+
+.mdc-meta {
+  min-width: 0;
+  position: relative;
+}
+
+.mdc-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--subtext-0);
+  margin-bottom: 0.35rem;
+}
+
+#music.is-live .mdc-state {
+  color: var(--pink);
+}
+
+.mdc-title {
+  display: block;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 0.15rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mdc-title:hover {
+  color: var(--pink);
+}
+
+.mdc-artist {
+  display: block;
+  color: var(--subtext-1);
+  font-size: 0.95rem;
+}
+
+.mdc-album {
+  display: block;
+  color: var(--subtext-0);
+  font-size: 0.82rem;
+  margin-top: 0.1rem;
+}
+
+.mdc-progress {
+  margin-top: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.mdc-bar {
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--surface-0);
+  overflow: hidden;
+}
+
+.mdc-fill {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: var(--pink);
+  border-radius: 999px;
+  transition: width 0.4s linear;
+}
+
+.mdc-time {
+  font-size: 0.72rem;
+  color: var(--subtext-0);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- lyrics (the centrepiece) ------------------------------------------ */
+.sec-title {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--subtext-0);
+  margin: 2.4rem 0 0.7rem;
+  font-weight: 500;
+}
+
+.sec-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin: 2.4rem 0 0.7rem;
+}
+
+.sec-row .sec-title {
+  margin: 0;
+}
+
+.ly-lock {
+  font-family: inherit;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  cursor: url('../assets/cursor/pointer_0.png'), pointer;
+  border-radius: 999px;
+  padding: 0.28rem 0.8rem 0.28rem 0.7rem;
+  background: var(--surface-0);
+  color: var(--subtext-1);
+  border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+/* Spotify-style equalizer bars (replaces the old status dot) */
+.ly-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  width: 13px;
+  height: 11px;
+  flex-shrink: 0;
+}
+
+.ly-bars i {
+  flex: 1;
+  height: 100%;
+  border-radius: 1px;
+  background: currentColor;
+  transform-origin: bottom;
+  transform: scaleY(0.4);
+  opacity: 0.55;
+}
+
+.ly-lock.is-locked {
+  color: var(--pink);
+  border-color: rgba(var(--pink), 0.4);
+  background: rgba(var(--pink), 0.1);
+}
+
+.ly-lock.is-locked .ly-bars i {
+  opacity: 1;
+  animation: ly-eq 0.9s ease-in-out infinite;
+}
+
+.ly-lock.is-locked .ly-bars i:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.ly-lock.is-locked .ly-bars i:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.ly-lock.is-locked .ly-bars i:nth-child(4) {
+  animation-delay: 0.45s;
+}
+
+@keyframes ly-eq {
+
+  0%,
+  100% {
+    transform: scaleY(0.3);
+  }
+
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ly-lock.is-locked .ly-bars i {
+    animation: none;
+    transform: scaleY(0.65);
+  }
+}
+
+.ly-lock:not(.is-locked):hover {
+  color: var(--text);
+  border-color: var(--surface-1);
+}
+
+.lyrics {
+  position: relative;
+  /* anchor offsetTop for the follow scroll */
+  height: 340px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
+  border-radius: 16px;
+  background: var(--crust);
+  border: 1px solid var(--surface-0);
+  padding: 1.4rem 1.4rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface-1) transparent;
+  /* fade the top + bottom so lines drift in and out */
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 14%, #000 86%, transparent);
+  mask-image: linear-gradient(180deg, transparent, #000 14%, #000 86%, transparent);
+}
+
+.lyrics::-webkit-scrollbar {
+  width: 8px;
+}
+
+.lyrics::-webkit-scrollbar-thumb {
+  background: var(--surface-1);
+  border-radius: 999px;
+}
+
+.ly-line {
+  margin: 0;
+  padding: 0.32rem 0;
+  font-size: 1.18rem;
+  line-height: 1.4;
+  color: var(--overlay-0);
+  transition: color 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+}
+
+.is-synced .ly-line {
+  opacity: 0.55;
+}
+
+.is-synced .ly-line.is-active {
+  color: var(--pink);
+  opacity: 1;
+  font-weight: 700;
+  transform: translateX(2px);
+}
+
+.ly-static {
+  color: var(--subtext-1);
+  opacity: 1;
+  font-size: 1.05rem;
+}
+
+.ly-note {
+  color: var(--subtext-0);
+  font-size: 0.95rem;
+  text-align: center;
+  margin: 0;
+  padding-top: 1rem;
+}
+
+.lyrics.is-instrumental,
+.lyrics.is-empty,
+.lyrics.is-loading {
+  display: grid;
+  place-content: center;
+  height: 180px;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+.lyrics.is-instrumental .ly-note {
+  color: var(--pink);
+  font-size: 1.2rem;
+}
+
+/* ---- recently played --------------------------------------------------- */
+.recent {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.rc-item a {
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  gap: 0.7rem;
+  align-items: center;
+  text-decoration: none;
+  padding: 0.45rem 0.55rem;
+  border-radius: 12px;
+  transition: background 0.15s ease;
+}
+
+.rc-item a:hover {
+  background: var(--surface-0);
+}
+
+.rc-art {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: var(--surface-0);
+}
+
+.rc-art-blank {
+  display: grid;
+  place-items: center;
+  color: var(--overlay-0);
+  font-size: 1.1rem;
+}
+
+.rc-text {
+  min-width: 0;
+}
+
+.rc-name {
+  display: block;
+  color: var(--text);
+  font-size: 0.92rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rc-artist {
+  display: block;
+  color: var(--subtext-0);
+  font-size: 0.78rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rc-when,
+.rc-now {
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+
+.rc-when {
+  color: var(--subtext-0);
+}
+
+.rc-now {
+  color: var(--pink);
+  font-weight: 700;
+}
+
+.is-now {
+  background: rgba(var(--pink), 0.08);
+  border-radius: 12px;
+}
+
+.rc-note {
+  color: var(--subtext-0);
+  font-size: 0.86rem;
+  padding: 0.6rem 0.4rem;
+  line-height: 1.5;
+}
+
+.rc-note code {
+  background: var(--surface-0);
+  color: var(--text);
+  padding: 0.1rem 0.35rem;
+  border-radius: 6px;
+  font-size: 0.9em;
+}
+
+/* ---- top artists ------------------------------------------------------- */
+.top-chips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.top-chip a {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  background: var(--mantle);
+  border: 1px solid var(--surface-0);
+  border-radius: 999px;
+  padding: 0.35rem 0.8rem;
+  text-decoration: none;
+  transition: border-color 0.15s ease;
+}
+
+.top-chip a:hover {
+  border-color: var(--pink);
+}
+
+.top-rank {
+  color: var(--pink);
+  font-weight: 700;
+  font-size: 0.78rem;
+}
+
+.top-name {
+  color: var(--text);
+  font-size: 0.85rem;
+}
+
+.top-plays {
+  color: var(--subtext-0);
+  font-size: 0.72rem;
+}
+
+.music-back {
+  display: inline-block;
+  margin-top: 2.6rem;
+  font-size: 0.85rem;
+  color: var(--pink);
+}
+
+/* ---- responsive -------------------------------------------------------- */
+@media (max-width: 560px) {
+  .mdc {
+    grid-template-columns: 96px 1fr;
+    gap: 0.85rem;
+    padding: 0.9rem;
+  }
+
+  .mdc-art {
+    width: 96px;
+    height: 96px;
+  }
+
+  .mdc-title {
+    font-size: 1.1rem;
+  }
+
+  .lyrics {
+    height: 300px;
+  }
+
+  .ly-line {
+    font-size: 1.05rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mdc-fill {
+    transition: none;
+  }
+
+  .ly-line {
+    transition: color 0.15s ease;
+  }
+}
+
+/* ============================================================
+   16. Top artists — artist avatar in each chip (Deezer images)
+   ============================================================ */
+.top-chip a {
+  align-items: center;
+}
+
+.top-art {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-0);
+  color: var(--subtext-0);
+  font-size: 0.95rem;
+  overflow: hidden;
+}
+
+.top-text {
+  display: inline-flex;
+  flex-direction: column;
+  line-height: 1.2;
+  min-width: 0;
+}
+
+
+/* connection brand logos (replaces the old text type label) */
+.pc-conn-ic {
+  width: 14px;
+  height: 14px;
+  display: block;
+  flex: none;
+}
+
+.presence-card.is-mini .pc-conn-ic {
+  width: 13px;
+  height: 13px;
+}
+
+.friends-disclaimer {
+  margin: 2.5rem auto 0;
+  max-width: 60ch;
+  text-align: center;
+  font-size: .8rem;
+  line-height: 1.5;
+  opacity: .6;
+}
+
+.friends-disclaimer a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.obsessions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.obsession-embed {
+    width: 100%;
+    border: none;
+}

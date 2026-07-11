@@ -1,0 +1,43 @@
+/* ============================================================
+   main.css — import manifest for c.stupid.cat
+   The stylesheet itself now lives split across css/base.css,
+   css/shared/*.css, and css/pages/*.css — this file just pulls
+   it all together in the right order. See REORG-README.md for
+   the full breakdown of what moved where.
+   ============================================================ */
+
+/* fonts + theme variables (Catppuccin flavours) */
+@import url(/css/fonts.css);
+@import url(/css/themes/frappe.css);
+@import url(/css/themes/latte.css);
+@import url(/css/themes/mocha.css);
+@import url(/css/themes/macchiato.css);
+
+/* base */
+@import url(/css/base.css);
+
+/* shared chrome — used across most/all pages */
+@import url(/css/shared/layout.css);
+@import url(/css/shared/nav.css);
+@import url(/css/shared/badges.css);
+@import url(/css/shared/theme-switcher.css);
+@import url(/css/shared/bg-music.css);
+@import url(/css/shared/visitor-counter.css);
+@import url(/css/shared/keyring.css);
+@import url(/css/shared/presence-card.css);
+@import url(/css/shared/responsive.css);
+
+/* standalone / error pages */
+@import url(/css/404.css);
+@import url(/css/ascii.css);
+
+/* per-page styles */
+@import url(/css/pages/index.css);
+@import url(/css/pages/88x31.css);
+@import url(/css/pages/dev-info.css);
+@import url(/css/pages/projects.css);
+@import url(/css/pages/cool-people.css);
+@import url(/css/pages/music.css);
+@import url(/css/pages/selfies.css);
+@import url(/css/pages/guilds.css);
+@import url(/css/pages/blog.css)

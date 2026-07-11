@@ -2,6 +2,14 @@
 # Licensed under the ESAL-2.0 Licence.
 # See LICENCE.md in the project root for full licence information.
 services:
+  personal:
+    build:
+      context: ./beta
+      dockerfile: Dockerfile
+    container_name: personal
+    ports:
+      - "127.0.0.1:5002:5002"
+    restart: unless-stopped
 
   dough-back:
     build:

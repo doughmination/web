@@ -37,6 +37,64 @@ console.log(`
 ⣿⣿⣿⣿⡿⢿⣿⣿⣿⣿⡀⠘⣿⣄⢻⡘⡇⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⣸⣿⡀⠀⣷⡘⣿⠇⣼⣿⣿⣿⡿⢸⣿⣿⣿⣿⣿⣿⣿⣿`);
 /* mmmmmmmmmmmmmmmmm girls kissing,,,,, */
 
+/* ===================== soft-nav plumbing (tracked listeners/timers) =====================
+ * Soft navigation (bottom of this file) swaps page content without a full
+ * reload, so the <audio> background-music element and the rest of the
+ * persistent chrome never get torn down. Every OTHER page's own script
+ * (music.js, discord.js, etc.) still needs to stop its intervals/rAF
+ * loops/document+window listeners when we navigate away, or repeat visits
+ * would stack duplicates. Rather than editing every page script, wrap the
+ * handful of global APIs they use and record what happens while
+ * `ctpTracking` is on (i.e. from the first soft navigation onward) so it
+ * can all be torn down in one sweep before the next page's scripts run.
+ * Everything registered *before* the first soft nav (core.js's own
+ * persistent setup below) is never tracked, so it's never torn down. */
+let ctpTracking = false;
+const ctpDocListeners = [];
+const ctpWinListeners = [];
+const ctpIntervals = [];
+const ctpTimeouts = [];
+const ctpFrames = [];
+
+(function ctpPatchGlobals() {
+  function patchTarget(target, store) {
+    const add = target.addEventListener.bind(target);
+    target.addEventListener = function (type, listener, options) {
+      if (ctpTracking) store.push([type, listener, options]);
+      return add(type, listener, options);
+    };
+  }
+  patchTarget(document, ctpDocListeners);
+  patchTarget(window, ctpWinListeners);
+
+  const _setInterval = window.setInterval.bind(window);
+  const _setTimeout = window.setTimeout.bind(window);
+  const _rAF = window.requestAnimationFrame.bind(window);
+  window.setInterval = function (...args) {
+    const id = _setInterval(...args);
+    if (ctpTracking) ctpIntervals.push(id);
+    return id;
+  };
+  window.setTimeout = function (...args) {
+    const id = _setTimeout(...args);
+    if (ctpTracking) ctpTimeouts.push(id);
+    return id;
+  };
+  window.requestAnimationFrame = function (...args) {
+    const id = _rAF(...args);
+    if (ctpTracking) ctpFrames.push(id);
+    return id;
+  };
+})();
+
+function ctpClearPageState() {
+  while (ctpDocListeners.length) { const [t, l, o] = ctpDocListeners.pop(); document.removeEventListener(t, l, o); }
+  while (ctpWinListeners.length) { const [t, l, o] = ctpWinListeners.pop(); window.removeEventListener(t, l, o); }
+  while (ctpIntervals.length) clearInterval(ctpIntervals.pop());
+  while (ctpTimeouts.length) clearTimeout(ctpTimeouts.pop());
+  while (ctpFrames.length) cancelAnimationFrame(ctpFrames.pop());
+}
+
 function wireDataHref(el) {
   /* Cursor is handled in CSS ([data-href] + [role="link"]) so the custom PNG isn't overridden. */
   if (!el.hasAttribute("role")) el.setAttribute("role", "link");
@@ -45,7 +103,8 @@ function wireDataHref(el) {
   const go = () => {
     const url = el.dataset.href;
     if (!url) return;
-    location.href = url;
+    if (typeof window.ctpNavigate === "function") window.ctpNavigate(url);
+    else location.href = url;
   };
 
   el.addEventListener("click", go);
@@ -133,6 +192,7 @@ buildNav();
   if (!topbar) {
     topbar = document.createElement("div");
     topbar.className = "topbar";
+    topbar.dataset.ctpPersist = ""; /* survives soft navigation, see bottom of file */
     document.body.insertBefore(topbar, document.body.firstChild);
     const dc = document.getElementById("discord");
     /* Don't hijack the presence card when it's the centerpiece of the
@@ -183,6 +243,7 @@ buildNav();
 
   const audio = document.createElement("audio");
   audio.id = "bgm";
+  audio.dataset.ctpPersist = ""; /* survives soft navigation, see bottom of file */
   audio.src = "/assets/background.mp3";
   audio.loop = true;
   audio.preload = "auto";
@@ -252,6 +313,7 @@ buildNav();
   /* ---- first visit this session: click-to-enter gate ---- */
   const gate = document.createElement("div");
   gate.className = "bgm-gate";
+  gate.dataset.ctpPersist = ""; /* survives soft navigation, see bottom of file */
   gate.setAttribute("role", "button");
   gate.tabIndex = 0;
   gate.innerHTML = `
@@ -391,6 +453,7 @@ buildNav();
     }
 
     nekoEl.id = "oneko";
+    nekoEl.dataset.ctpPersist = ""; /* survives soft navigation, see bottom of file */
     nekoEl.ariaHidden = true;
     nekoEl.style.width = "32px";
     nekoEl.style.height = "32px";
@@ -631,6 +694,7 @@ const spriteFor = (c) => c.sprite || BASE_SPRITE;
   /* ---- picker overlay (no visible trigger, press C to find it) ---- */
   const overlay = document.createElement("div");
   overlay.className = "cat-picker";
+  overlay.dataset.ctpPersist = ""; /* survives soft navigation, see bottom of file */
   overlay.hidden = true;
   overlay.innerHTML = `
     <div class="cat-picker-panel" role="dialog" aria-label="Choose a cat">
@@ -738,6 +802,7 @@ const spriteFor = (c) => c.sprite || BASE_SPRITE;
     if (!toastEl) {
       toastEl = document.createElement("div");
       toastEl.className = "cat-toast";
+      toastEl.dataset.ctpPersist = ""; /* survives soft navigation, see bottom of file */
       document.body.appendChild(toastEl);
     }
     toastEl.textContent = msg;
@@ -853,4 +918,133 @@ const spriteFor = (c) => c.sprite || BASE_SPRITE;
       }
     }, 1000);
   }
+})();
+
+/* ===================== soft-nav.js (pjax-lite router) =======================
+ * Full page reloads kill the <audio> background music on every click
+ * between pages (Chrome stutters, Firefox just stops). This intercepts
+ * same-origin link clicks, fetches the target page, and swaps everything in
+ * <body> EXCEPT header.nav and the chrome tagged [data-ctp-persist] (the
+ * topbar, oneko, the cat picker/toast, the bgm <audio>/gate) — none of that
+ * ever unloads. Each swapped-in page's own <script> tags are re-executed
+ * fresh (core.js itself is skipped so the chrome above isn't rebuilt);
+ * ctpClearPageState() tears down the outgoing page's intervals/rAF
+ * loops/document+window listeners first so repeat visits don't stack them
+ * (see the tracking patch at the top of this file). */
+(function softNav() {
+  const PERSIST_SELECTOR = "header.nav, [data-ctp-persist]";
+  const crossOriginRan = new Set(); // 3rd-party widget scripts: run at most once/session
+  let navToken = 0;
+
+  function currentPath() {
+    return location.pathname + location.search + location.hash;
+  }
+
+  function runScript(oldScript) {
+    return new Promise((resolve) => {
+      const s = document.createElement("script");
+      Array.from(oldScript.attributes).forEach((a) => s.setAttribute(a.name, a.value));
+      s.async = false; // preserve source order across the dynamically-inserted batch
+      const src = oldScript.getAttribute("src");
+      if (src) {
+        const abs = new URL(src, location.href).href;
+        if (new URL(abs).origin !== location.origin) {
+          if (crossOriginRan.has(abs)) { resolve(); return; }
+          crossOriginRan.add(abs);
+        }
+        s.addEventListener("load", () => resolve(), { once: true });
+        s.addEventListener("error", () => resolve(), { once: true });
+        document.body.appendChild(s);
+      } else {
+        s.textContent = oldScript.textContent;
+        document.body.appendChild(s);
+        resolve(); // inline scripts run synchronously on append
+      }
+    });
+  }
+
+  async function loadIntoShell(path, isPopstate) {
+    const myToken = ++navToken;
+    let html;
+    try {
+      const res = await fetch(path, { headers: { "X-Requested-With": "ctp-soft-nav" } });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      html = await res.text();
+    } catch (e) {
+      location.href = path; // network error / 404 → fall back to a real navigation
+      return;
+    }
+    if (myToken !== navToken) return; // superseded by a newer click
+
+    const doc = new DOMParser().parseFromString(html, "text/html");
+
+    ctpClearPageState();
+
+    document.title = doc.title;
+    const newCanon = doc.querySelector('link[rel="canonical"]');
+    const curCanon = document.querySelector('link[rel="canonical"]');
+    if (newCanon && curCanon) curCanon.href = newCanon.href;
+
+    Array.from(document.body.children).forEach((el) => {
+      if (!el.matches(PERSIST_SELECTOR)) el.remove();
+    });
+
+    const headerNav = document.querySelector("header.nav");
+    const nodes = [];
+    const scripts = [];
+    Array.from(doc.body.children).forEach((el) => {
+      if (el.matches("header.nav")) return; // keep the live one
+      if (el.tagName === "SCRIPT") {
+        const src = el.getAttribute("src") || "";
+        if (/\/js\/core\.js(\?|$)/.test(src)) return; // never re-run core.js itself
+        scripts.push(el);
+        return;
+      }
+      nodes.push(document.importNode(el, true));
+    });
+    if (headerNav) headerNav.after(...nodes);
+    else document.body.prepend(...nodes);
+
+    buildNav(); // refresh nav-links + .selected for the new path
+    if (!isPopstate) window.scrollTo(0, 0);
+
+    ctpTracking = true;
+    for (const el of scripts) {
+      if (myToken !== navToken) return; // a newer nav started mid-injection
+      await runScript(el);
+    }
+  }
+
+  function shellNavigate(url) {
+    let dest;
+    try { dest = new URL(url, location.href); } catch (e) { location.href = url; return; }
+    if (dest.origin !== location.origin) { location.href = url; return; }
+    const path = dest.pathname + dest.search + dest.hash;
+    if (path === currentPath()) return;
+    history.pushState({ ctpShell: true }, "", path);
+    loadIntoShell(path, false);
+  }
+  window.ctpNavigate = shellNavigate;
+
+  window.addEventListener("popstate", () => {
+    loadIntoShell(currentPath(), true);
+  });
+
+  // Plain in-content <a href> links (blog posts, project links, etc.) that
+  // aren't wired through wireDataHref's [data-href] convention.
+  document.addEventListener("click", (e) => {
+    if (e.defaultPrevented || e.button !== 0) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    const a = e.target.closest("a[href]:not([data-href])");
+    if (!a) return;
+    if (a.target && a.target !== "_self") return;
+    if (a.hasAttribute("download")) return;
+    const href = a.getAttribute("href");
+    if (!href || href.charAt(0) === "#") return;
+    let dest;
+    try { dest = new URL(href, location.href); } catch (e2) { return; }
+    if (dest.origin !== location.origin || !/^https?:$/.test(dest.protocol)) return;
+    e.preventDefault();
+    shellNavigate(dest.pathname + dest.search + dest.hash);
+  });
 })();

@@ -1,0 +1,530 @@
+/* ============================================================
+   cool-people.css — the /cool-people page. Friend cards are
+   built from the shared .presence-card (see shared/presence-
+   card.css) — this file only adds the .is-mini sizing + tier
+   heart variants used here.
+   ============================================================ */
+
+/* ============================================================
+   13. Friends Page
+   ============================================================ */
+
+body:has(.friend-grid) .hub-header {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 2rem;
+}
+
+.friend-grid {
+  display: flex;
+  flex-wrap: wrap;
+  /* flex-wrap centres EVERY row, including a partial last row (a lone card
+     sits centred rather than stuck to the left as it did with CSS grid) */
+  justify-content: center;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  gap: 1.1rem;
+  width: 100%;
+}
+
+/* allow the cool-people page to scroll even before friends.js injects the
+   .friend-grid elements that the :has() rule keys on */
+html:has(.friends-wrap),
+body:has(.friends-wrap) {
+  height: auto;
+  min-height: 100dvh;
+  overflow-y: auto;
+}
+
+body:has(.friends-wrap) {
+  align-items: flex-start;
+}
+
+body:has(.friends-wrap) .hub {
+  max-width: 960px;
+}
+
+#friends-root {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding-bottom: 4.5rem;
+}
+
+/* ---- Lanyard friend cards ---- */
+.friend-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 210px;
+  border-radius: 14px;
+  background: var(--surface-0);
+  border: 1px solid var(--surface-1);
+  overflow: hidden;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.friend-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--pink);
+  box-shadow: 0 8px 22px -12px rgba(var(--pink), 0.5);
+}
+
+/* Nitro profile gradient — recolours the card body (mirrors the /discord card) */
+.friend-card.has-profile-grad {
+  background: linear-gradient(180deg, rgb(var(--fc-grad-1-rgb)) 0%, rgb(var(--fc-grad-2-rgb)) 100%);
+  border-color: rgba(var(--fc-grad-1-rgb), 0.6);
+}
+
+/* Hovered card lifts above its neighbours and lets its text un-truncate so
+   long names / usernames / custom statuses expand in full instead of being
+   chopped off with an ellipsis. The body becomes an absolutely-positioned
+   overlay, so the card grows DOWNWARD without resizing its grid slot —
+   neighbouring cards stay exactly where they are. */
+/* Expansion is gated on .is-hovering (added by JS) rather than :hover so the
+   card's flow height can be pinned BEFORE .fc-main is taken out of flow —
+   otherwise the card collapses, the page reflows, and hover ping-pongs
+   (the "vibrating page" bug). */
+.friend-card.is-hovering {
+  overflow: visible;
+  z-index: 5;
+}
+
+.friend-card.is-hovering .fc-main {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 54px;
+  /* sit directly under the banner strip */
+  background: inherit;
+  /* carry the card surface / Nitro gradient */
+  border-bottom-left-radius: 14px;
+  border-bottom-right-radius: 14px;
+  box-shadow: 0 10px 24px -14px rgba(17, 17, 27, 0.8);
+}
+
+.friend-card.is-hovering .fc-name,
+.friend-card.is-hovering .fc-user,
+.friend-card.is-hovering .fc-custom-text {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  overflow-wrap: anywhere;
+  /* break long unbroken usernames / handles */
+}
+
+/* banner strip — Nitro banner image / accent colour / default wash */
+.fc-banner {
+  height: 54px;
+  background:
+    linear-gradient(135deg, rgba(var(--pink), 0.45), rgba(var(--pink), 0.12));
+  background-size: cover;
+  background-position: center;
+  /* keep the banner corners rounded even on hover, when the card switches
+     to overflow:visible and no longer clips them to the card radius */
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
+}
+
+.friend-card.has-banner .fc-banner {
+  background-size: cover;
+  background-position: center;
+}
+
+.fc-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding: 0.6rem 0.85rem 0.85rem;
+}
+
+.fc-avatar {
+  position: relative;
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  margin-top: -30px;
+}
+
+.fc-pfp {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--surface-0);
+  background: var(--surface-0);
+  display: block;
+}
+
+/* avatar decoration / frame overlay (Discord cosmetic) */
+.fc-deco {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 76px;
+  height: 76px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.fc-deco[hidden] {
+  display: none;
+}
+
+/* status dot — colour driven by data-status on the card */
+.fc-status {
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  border: 3px solid var(--surface-0);
+  background: var(--blue);
+}
+
+.friend-card[data-status="online"] .fc-status {
+  background: var(--green);
+}
+
+.friend-card[data-status="idle"] .fc-status {
+  background: var(--yellow);
+}
+
+.friend-card[data-status="dnd"] .fc-status {
+  background: var(--red);
+}
+
+.friend-card[data-status="offline"] .fc-status {
+  background: var(--overlay-0);
+}
+
+.friend-card[data-status="unconnected"] .fc-status {
+  background: var(--blue);
+}
+
+.fc-id {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+  padding-top: 0.1rem;
+}
+
+.fc-name-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.15rem 0.3rem;
+  min-width: 0;
+}
+
+/* name claims the full first line (so a clan tag never truncates it); the
+   tag chip wraps onto its own line just beneath when there isn't room */
+.fc-name-row .fc-name {
+  flex: 1 1 100%;
+  min-width: 0;
+}
+
+/* Discord server (clan) tag chip */
+.fc-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  flex-shrink: 0;
+  padding: 0.05rem 0.3rem;
+  border-radius: 5px;
+  background: var(--surface-2);
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+
+.fc-tag[hidden] {
+  display: none;
+}
+
+.fc-tag-badge {
+  width: 12px;
+  height: 12px;
+  display: block;
+}
+
+.fc-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+a.fc-name:hover {
+  color: var(--pink);
+}
+
+/* Nitro display-name gradient (clipped to the text). Keep the tier heart in
+   ::before painted normally so it stays its solid colour. */
+.fc-name.is-gradient {
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.fc-name.is-gradient::before {
+  -webkit-text-fill-color: initial;
+  color: var(--text);
+}
+
+/* tier hearts (match the old friend-name prefixes) */
+.fc-name::before {
+  content: "🩵 ";
+}
+
+.fc-name.closer::before {
+  content: "💜 ";
+}
+
+.fc-name.known::before {
+  content: "💛 ";
+}
+
+.fc-name.wife::before {
+  content: "🖤 ";
+}
+
+.fc-name.close::before {
+  content: "🤍 ";
+}
+
+.fc-user {
+  font-size: 0.72rem;
+  color: var(--subtext-0);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fc-user:empty {
+  display: none;
+}
+
+/* custom status (Discord activity type 4) */
+.fc-custom {
+  position: relative;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  max-width: 100%;
+  font-size: 0.72rem;
+  color: var(--subtext-1);
+  margin-top: 0.45rem;
+  min-width: 0;
+  padding: 0.3rem 0.5rem;
+  background: var(--surface-1);
+  border-radius: 11px;
+  border-top-left-radius: 4px;
+}
+
+/* Discord-style thought-bubble tail: two little circles rising to the name */
+.fc-custom::before,
+.fc-custom::after {
+  content: "";
+  position: absolute;
+  background: var(--surface-1);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.fc-custom::before {
+  width: 7px;
+  height: 7px;
+  top: -4px;
+  left: 9px;
+}
+
+.fc-custom::after {
+  width: 4px;
+  height: 4px;
+  top: -8px;
+  left: 7px;
+}
+
+.fc-custom[hidden] {
+  display: none;
+}
+
+.fc-custom-emoji {
+  width: 14px;
+  height: 14px;
+  display: block;
+  flex: none;
+}
+
+.fc-custom-emoji-uni {
+  font-size: 0.8rem;
+  line-height: 1;
+  flex: none;
+}
+
+.fc-custom-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fc-badges {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.2rem;
+  margin-top: 0.1rem;
+}
+
+.fc-badges:empty {
+  display: none;
+}
+
+.fc-badge {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+.fc-badge-link {
+  display: inline-flex;
+  line-height: 0;
+}
+
+/* ---- Alts (active + dead) ---- */
+.fc-name.active-alt::before {
+  content: "🎭 ";
+}
+
+.fc-name.dead-alt::before {
+  content: "💀 ";
+}
+
+/* dead alts: banned accounts — greyed out, name struck through, no status */
+.friend-card.tier-dead-alt .fc-pfp {
+  filter: grayscale(1) brightness(0.6);
+}
+
+.friend-card.tier-dead-alt .fc-name {
+  color: var(--overlay-1);
+  text-decoration: line-through;
+}
+
+.friend-card.tier-dead-alt .fc-status {
+  display: none;
+}
+
+/* the "struck off" diagonal slash across the avatar */
+.friend-card.tier-dead-alt .fc-avatar::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 132%;
+  height: 4px;
+  background: var(--red);
+  border-radius: 2px;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  box-shadow: 0 0 0 2px var(--surface-0);
+  pointer-events: none;
+}
+
+/* ============================================================
+   15. Cool-people friend cards — mini presence cards
+   Each friend is a full presence card (built by discord.js's
+   PresenceCard factory) but smaller than the big /discord one.
+   The BASE .presence-card is already compact (≈280px); we just
+   un-fix it from the corner so the cards tile in .friend-grid,
+   and re-add the tier hearts / dead-alt treatment on pc-* markup.
+   ============================================================ */
+.presence-card.is-mini {
+  position: static;
+  top: auto;
+  left: auto;
+  right: auto;
+  bottom: auto;
+  z-index: auto;
+  margin: 0;
+  width: 300px;
+  /* clearly smaller than the 680px /discord card */
+  max-width: 100%;
+}
+
+/* keep things tidy at the small size */
+.presence-card.is-mini .pc-banner {
+  height: 84px;
+}
+
+.presence-card.is-mini .pc-bio {
+  max-height: 6.5em;
+  overflow-y: auto;
+}
+
+/* the friend name can open a personal site */
+.presence-card.is-mini .pc-name--link {
+  text-decoration: none;
+}
+
+.presence-card.is-mini .pc-name--link:hover {
+  text-decoration: underline;
+}
+
+/* ---- tier hearts (ported from the old .fc-name prefixes) ---- */
+.presence-card.is-mini .pc-name::before {
+  content: "🩵 ";
+}
+
+.presence-card.is-mini.tier-closer .pc-name::before {
+  content: "💜 ";
+}
+
+.presence-card.is-mini.tier-known .pc-name::before {
+  content: "💛 ";
+}
+
+.presence-card.is-mini.tier-wife .pc-name::before {
+  content: "🖤 ";
+}
+
+.presence-card.is-mini.tier-close .pc-name::before {
+  content: "🤍 ";
+}
+
+.presence-card.is-mini.tier-active-alt .pc-name::before {
+  content: "🎭 ";
+}
+
+.presence-card.is-mini.tier-dead-alt .pc-name::before {
+  content: "💀 ";
+}
+
+/* gradient names clip text to transparent — keep the heart visible */
+.presence-card.is-mini .pc-name.is-gradient::before {
+  -webkit-text-fill-color: initial;
+  color: var(--text);
+}
+
+/* ---- dead alts: greyed, struck through, no live status ---- */
+.presence-card.is-mini.tier-dead-alt .pc-av-img {
+  filter: grayscale(1) brightness(0.6);
+}
+
+.presence-card.is-mini.tier-dead-alt .pc-name {
+  color: var(--overlay-1);
+  text-decoration: line-through;
+}
+
+.presence-card.is-mini.tier-dead-alt .pc-status {
+  display: none;
+}
+
+

@@ -1,0 +1,154 @@
+/* ============================================================
+   projects.css — the /projects page card grid.
+   ============================================================ */
+
+/* ============================================================
+   11. Projects PAGE
+   ============================================================ */
+/* On the projects page the header sits closer to the sections */
+body:has(.project-grid) .hub-header {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 0.25rem;
+}
+
+/* FIX: project-grid and friend-grid pages need scrolling — was missing */
+html:has(.project-grid),
+html:has(.friend-grid) {
+  height: auto;
+  min-height: 100dvh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+body:has(.project-grid),
+body:has(.friend-grid) {
+  height: auto;
+  min-height: 100dvh;
+  align-items: flex-start;
+  overflow-x: hidden;
+  overflow-y: visible;
+}
+
+.section {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.section-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mauve);
+}
+
+.section-subtitle {
+  margin: -1.1rem 0 0;
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: lowercase;
+  color: var(--surface-2);
+}
+
+/* ---- Project cards (horizontal: avatar left, title + status + bio) ---- */
+.project-grid {
+  margin-bottom: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  width: 100%;
+  max-width: 640px;
+}
+
+.project-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  padding: 1rem;
+  border-radius: 16px;
+  background: var(--surface-0);
+  border: 1px solid var(--surface-1);
+  color: var(--text);
+  text-decoration: none;
+  transition: transform 0.15s ease, border-color 0.15s ease,
+    background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.project-card:hover,
+.project-card:focus-visible {
+  transform: translateY(-3px);
+  background: var(--surface-1);
+  border-color: var(--pink);
+  box-shadow: 0 6px 20px rgba(var(--pink), 0.22);
+}
+
+.project-card-img {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: 14px;
+  object-fit: cover;
+  border: 2px solid var(--yellow);
+  box-shadow: 0 4px 14px rgba(var(--pink), 0.22);
+}
+
+.project-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.project-card-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.project-card-title {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.project-card-status {
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  background: var(--crust);
+  border: 1px solid var(--green);
+  color: var(--green);
+  white-space: nowrap;
+}
+
+.project-card-status.closed {
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.project-card-bio {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--subtext-0);
+}
+
+/* Italic + dimmed until you replace it with a real description */
+.project-card-bio.is-placeholder {
+  font-style: italic;
+  opacity: 0.65;
+}
+
+
