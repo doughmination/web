@@ -448,17 +448,30 @@
   }
 
   // Last.fm stopped serving artist images — every artist returns the same
-  // placeholder star. Spotify has the photos, but its catalog API needs an
-  // OAuth token (and a client secret we can't ship in a static page). So we
-  // take the keyless route: MusicBrainz maps an artist name → their linked
-  // Spotify page, then Spotify's own oEmbed hands back that page's picture.
-  // No API key, no token, no third-party cookies. Resolves to a picture URL
-  // (or "" when there's no confident match). Results are cached in
-  // localStorage, so repeat visits are instant and we stay gentle on the APIs.
+  // placeholder star. TheAudioDB has a single-request lookup (no API key
+  // needed beyond the shared free test key) and is our first stop. When it
+  // has no match we fall back to the slower keyless route: MusicBrainz maps
+  // an artist name → their linked Spotify page, then Spotify's own oEmbed
+  // hands back that page's picture. Resolves to a picture URL (or "" when
+  // there's no confident match). Results are cached in localStorage, so
+  // repeat visits are instant and we stay gentle on the APIs.
+  const TADB_ROOT = "https://www.theaudiodb.com/api/v1/json/123";
   const MB_ROOT = "https://musicbrainz.org/ws/2";
   const ART_CACHE_PREFIX = "cstupidcat:artimg:";
   const ART_TTL_HIT = 30 * 864e5;   // remember a found photo for 30 days
   const ART_TTL_MISS = 3 * 864e5;   // retry a miss after 3 days
+
+  // name → artist photo via TheAudioDB's free search endpoint. One request,
+  // no rate-limit pacing needed (unlike MusicBrainz below).
+  async function tadbArtistImg(name) {
+    try {
+      const res = await fetch(TADB_ROOT + "/search.php?s=" + encodeURIComponent(name));
+      if (!res.ok) return "";
+      const data = await res.json();
+      const a = data && data.artists && data.artists[0];
+      return (a && a.strArtistThumb) || "";
+    } catch (e) { return ""; }
+  }
 
   // MusicBrainz asks anonymous clients for ~1 request/second, so funnel every
   // MB call through a one-at-a-time queue spaced ~1.1s apart.
@@ -527,14 +540,16 @@
     if (!name) return "";
     const cached = artCacheGet(name);
     if (cached !== undefined) return cached;     // fresh hit or fresh miss
-    let url = "";
-    try {
-      const mbid = await mbArtistId(name);
-      if (mbid) {
-        const sp = await mbSpotifyUrl(mbid);
-        if (sp) url = await spotifyOembedImg(sp);
-      }
-    } catch (e) { url = ""; }
+    let url = await tadbArtistImg(name);
+    if (!url) {
+      try {
+        const mbid = await mbArtistId(name);
+        if (mbid) {
+          const sp = await mbSpotifyUrl(mbid);
+          if (sp) url = await spotifyOembedImg(sp);
+        }
+      } catch (e) { url = ""; }
+    }
     artCacheSet(name, url);
     return url;
   }
