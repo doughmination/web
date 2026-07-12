@@ -58,7 +58,7 @@ const UserManager: React.FC = () => {
     }
 
     try {
-      const response = await fetch('/api/users', {
+      const response = await fetch('https://doughmination.uk/v2/plural/users', {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -79,7 +79,7 @@ const UserManager: React.FC = () => {
     if (!token) return;
 
     try {
-      const response = await fetch('/api/user_info', {
+      const response = await fetch('https://doughmination.uk/v2/plural/user_info', {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -112,7 +112,7 @@ const UserManager: React.FC = () => {
     setMessage(null);
 
     try {
-      const response = await fetch('/api/users', {
+      const response = await fetch('https://doughmination.uk/v2/plural/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -162,7 +162,7 @@ const UserManager: React.FC = () => {
     setMessage(null);
 
     try {
-      const response = await fetch(`/api/users/${userId}`, {
+      const response = await fetch(`https://doughmination.uk/v2/plural/users/${userId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });

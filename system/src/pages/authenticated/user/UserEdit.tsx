@@ -48,12 +48,6 @@ export default function UserEdit() {
     // If it's a relative URL, return as-is
     if (url.startsWith('/')) return url;
     
-    // Fix URLs with www
-    if (url.includes('www.doughmination.co.uk') && !url.includes('doughmination.co.uk')) {
-      return url.replace('https://www.doughmination.co.uk', 'https://doughmination.co.uk')
-                .replace('http://www.doughmination.co.uk', 'https://doughmination.co.uk');
-    }
-    
     return url;
   };
 
@@ -67,7 +61,7 @@ export default function UserEdit() {
       }
 
       console.log('Fetching user data...');
-      const response = await fetch('/api/user_info', {
+      const response = await fetch('https://doughmination.uk/v2/plural/user_info', {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -165,7 +159,7 @@ export default function UserEdit() {
       console.log('Updating profile...');
       
       // Update display name
-      const updateResponse = await fetch(`/api/users/${userData.id}`, {
+      const updateResponse = await fetch(`https://doughmination.uk/v2/plural/users/${userData.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -188,7 +182,7 @@ export default function UserEdit() {
         const formData = new FormData();
         formData.append('avatar', avatarFile);
 
-        const avatarResponse = await fetch(`/api/users/${userData.id}/avatar`, {
+        const avatarResponse = await fetch(`https://doughmination.uk/v2/plural/users/${userData.id}/avatar`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`
@@ -262,7 +256,7 @@ export default function UserEdit() {
 
     try {
       console.log('Changing password...');
-      const response = await fetch(`/api/users/${userData.id}`, {
+      const response = await fetch(`https://doughmination.uk/v2/plural/users/${userData.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

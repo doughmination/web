@@ -81,10 +81,10 @@ const Metrics: React.FC = () => {
 
     try {
       const [frontingRes, switchRes] = await Promise.all([
-        fetch('/api/metrics/fronting-time?days=30', {
+        fetch('https://doughmination.uk/v2/plural/metrics/fronting-time?days=30', {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        fetch('/api/metrics/switch-frequency?days=30', {
+        fetch('https://doughmination.uk/v2/plural/metrics/switch-frequency?days=30', {
           headers: { Authorization: `Bearer ${token}` }
         })
       ]);

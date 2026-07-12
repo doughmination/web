@@ -41,7 +41,7 @@ const MentalHealthManager: React.FC = () => {
 
   const fetchMentalState = async () => {
     try {
-      const res = await fetch('/api/mental-state');
+      const res = await fetch('https://doughmination.uk/v2/plural/mental-state');
       if (res.ok) {
         const data = await res.json();
         setMentalState(data);
@@ -71,7 +71,7 @@ const MentalHealthManager: React.FC = () => {
     setSaving(true);
 
     try {
-      const response = await fetch('/api/mental-state', {
+      const response = await fetch('https://doughmination.uk/v2/plural/mental-state', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -130,7 +130,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     setError("");
 
     try {
-      const res = await fetch("/api/login", {
+      const res = await fetch("https://doughmination.uk/v2/plural/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -159,7 +159,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
         
         // Fetch user info for welcome message
         try {
-          const userResponse = await fetch("/api/user_info", {
+          const userResponse = await fetch("https://doughmination.uk/v2/plural/user_info", {
             headers: {
               Authorization: `Bearer ${data.access_token}`
             }

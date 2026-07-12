@@ -67,7 +67,7 @@ export default function StatusManager() {
     }
 
     try {
-      const response = await fetch('/api/members', {
+      const response = await fetch('https://doughmination.uk/v2/plural/members', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
@@ -116,7 +116,7 @@ export default function StatusManager() {
     setMessage(null);
 
     try {
-      const response = await fetch(`/api/members/${selectedMember}/status`, {
+      const response = await fetch(`https://doughmination.uk/v2/plural/members/${selectedMember}/status`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -157,7 +157,7 @@ export default function StatusManager() {
     setMessage(null);
 
     try {
-      const response = await fetch(`/api/members/${selectedMember}/status`, {
+      const response = await fetch(`https://doughmination.uk/v2/plural/members/${selectedMember}/status`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });

@@ -62,7 +62,7 @@ export default function MemberDetails({ members = [], defaultAvatar }: MemberDet
         console.log('Fetching member data for:', member_id);
         
         // Fetch member basic info
-        const response = await fetch(`/api/member/${member_id}`);
+        const response = await fetch(`https://doughmination.uk/v2/plural/member/${member_id}`);
         if (!response.ok) {
           throw new Error('Member not found');
         }
@@ -71,7 +71,7 @@ export default function MemberDetails({ members = [], defaultAvatar }: MemberDet
         
         // Fetch member status separately
         try {
-          const statusResponse = await fetch(`/api/members/${member_id}/status`);
+          const statusResponse = await fetch(`https://doughmination.uk/v2/plural/members/${member_id}/status`);
           if (statusResponse.ok) {
             const statusData = await statusResponse.json();
             console.log('Status data received:', statusData);

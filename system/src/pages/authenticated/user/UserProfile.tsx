@@ -38,12 +38,6 @@ export default function UserProfile() {
     // If it's a relative URL, return as-is
     if (url.startsWith('/')) return url;
     
-    // Fix URLs with www
-    if (url.includes('www.doughmination.co.uk') && !url.includes('doughmination.co.uk')) {
-      return url.replace('https://www.doughmination.co.uk', 'https://doughmination.co.uk')
-                .replace('http://www.doughmination.co.uk', 'https://doughmination.co.uk');
-    }
-    
     return url;
   };
 
@@ -57,7 +51,7 @@ export default function UserProfile() {
       }
 
       console.log('Fetching user data...');
-      const response = await fetch('/api/user_info', {
+      const response = await fetch('https://doughmination.uk/v2/plural/user_info', {
         headers: {
           Authorization: `Bearer ${token}`
         }

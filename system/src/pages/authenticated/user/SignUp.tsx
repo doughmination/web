@@ -120,7 +120,7 @@ const SignUp: React.FC = () => {
     
     try {
       // Use GET request with query parameter
-      const response = await fetch(`/api/users/check-username?username=${encodeURIComponent(usernameToCheck.trim())}`);
+      const response = await fetch(`https://doughmination.uk/v2/plural/users/check-username?username=${encodeURIComponent(usernameToCheck.trim())}`);
 
       if (response.ok) {
         const data = await response.json();
@@ -203,7 +203,7 @@ const SignUp: React.FC = () => {
     setError("");
 
     try {
-      const res = await fetch("/api/signup", {
+      const res = await fetch("https://doughmination.uk/v2/plural/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

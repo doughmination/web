@@ -49,7 +49,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
       try {
         // Check user permissions from the API
-        const response = await fetch('/api/auth/is_admin', {
+        const response = await fetch('https://doughmination.uk/v2/plural/auth/is_admin', {
           headers: {
             Authorization: `Bearer ${token}`
           }

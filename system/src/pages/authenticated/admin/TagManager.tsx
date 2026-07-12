@@ -51,7 +51,7 @@ const TagManager: React.FC = () => {
     }
 
     try {
-      const response = await fetch('/api/members', {
+      const response = await fetch('https://doughmination.uk/v2/plural/members', {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -93,7 +93,7 @@ const TagManager: React.FC = () => {
     setMessage(null);
 
     try {
-      const response = await fetch(`/api/member-tags/${selectedMember}/add`, {
+      const response = await fetch(`https://doughmination.uk/v2/plural/member-tags/${selectedMember}/add`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -127,7 +127,7 @@ const TagManager: React.FC = () => {
     setMessage(null);
 
     try {
-      const response = await fetch(`/api/member-tags/${memberName}/${tag}`, {
+      const response = await fetch(`https://doughmination.uk/v2/plural/member-tags/${memberName}/${tag}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });

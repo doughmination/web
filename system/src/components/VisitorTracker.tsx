@@ -26,14 +26,14 @@ const VisitorTracker = () => {
     try {
       if (typeof navigator !== "undefined" && navigator.sendBeacon) {
         const blob = new Blob([body], { type: "application/json" });
-        const ok = navigator.sendBeacon("/api/helper", blob);
+        const ok = navigator.sendBeacon("https://doughmination.uk/v2/plural/helper", blob);
         if (ok) return;
       }
     } catch {
       // fall through to fetch
     }
 
-    fetch("/api/helper", {
+    fetch("https://doughmination.uk/v2/plural/helper", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body,

@@ -267,7 +267,7 @@ export default function Index() {
     }
 
     try {
-      const response = await fetch("/api/auth/is_admin", {
+      const response = await fetch("https://doughmination.uk/v2/plural/auth/is_admin", {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -279,7 +279,7 @@ export default function Index() {
         setIsAdmin(!!data.isAdmin);
 
         // Fetch user info
-        const userResponse = await fetch("/api/user_info", {
+        const userResponse = await fetch("https://doughmination.uk/v2/plural/user_info", {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -307,7 +307,7 @@ export default function Index() {
 
   const fetchMembers = async () => {
     try {
-      const response = await fetch("/api/members");
+      const response = await fetch("https://doughmination.uk/v2/plural/members");
       if (response.ok) {
         const data = await response.json();
 
@@ -334,7 +334,7 @@ export default function Index() {
 
   const fetchFronting = async () => {
     try {
-      const response = await fetch("/api/fronters");
+      const response = await fetch("https://doughmination.uk/v2/plural/fronters");
       if (response.ok) {
         const data = await response.json();
         setFronting(data);
@@ -346,7 +346,7 @@ export default function Index() {
 
   const fetchSystemInfo = async () => {
     try {
-      const response = await fetch("/api/system");
+      const response = await fetch("https://doughmination.uk/v2/plural/system");
       if (response.ok) {
         const data = await response.json();
         setSystemInfo(data);

@@ -46,8 +46,8 @@ const SwitchManager: React.FC = () => {
   const fetchData = async () => {
     try {
       const [membersRes, frontersRes] = await Promise.all([
-        fetch('/api/members'),
-        fetch('/api/fronters')
+        fetch('https://doughmination.uk/v2/plural/members'),
+        fetch('https://doughmination.uk/v2/plural/fronters')
       ]);
 
       if (membersRes.ok) {
@@ -106,7 +106,7 @@ const SwitchManager: React.FC = () => {
     setMessage(null);
 
     try {
-      const response = await fetch('/api/multi_switch', {
+      const response = await fetch('https://doughmination.uk/v2/plural/multi_switch', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

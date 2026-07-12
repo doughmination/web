@@ -38,7 +38,7 @@ const AdminDash: React.FC = () => {
     setMessage(null);
 
     try {
-      const response = await fetch('/api/admin/refresh', {
+      const response = await fetch('https://doughmination.uk/v2/plural/admin/refresh', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
