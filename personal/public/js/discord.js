@@ -1049,9 +1049,10 @@
       members: [
         { name: "furi", tier: "known", discordId: "781445370177126401", link: "https://furina.is-a.dev" },
         { name: "pokemon", tier: "known", discordId: "784443338627612673", link: "https://devmatei.com/" },
-        { name: "animosity", tier: "known", discordId: "1491137614525370589", link: "https://0c6a.site/"},
+        { name: "animosity", tier: "known", discordId: "1525864258900857054", link: "https://0c6a.site/"},
         { name: "winte", tier: "known", discordId: "1357429661834936510", link: "https://buddywinte.xyz/" },
-        { name: "interverti", tier: "known", discordId: "674329017339346955", link: "https://interverti.fr/"}
+        { name: "interverti", tier: "known", discordId: "674329017339346955", link: "https://interverti.fr/" },
+        { name: "schuh", tier: "known", discordId: "492707412504215552", link: "https://schuh.wtf/"}
       ]
     },
     {
