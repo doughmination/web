@@ -82,7 +82,7 @@ export default function Index() {
         }
 
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const wsUrl = `${protocol}//${window.location.host}/ws`;
+        const wsUrl = `https://doughmination.uk/v2/plural/ws`;
 
         console.log('🔌 Connecting to WebSocket:', wsUrl);
         ws = new WebSocket(wsUrl);
