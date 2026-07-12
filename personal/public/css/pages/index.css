@@ -557,11 +557,151 @@ body:has(.terminal) .hub .terminal {
   font-style: italic;
 }
 
+/* =====================================================================
+ * battery.js — "device batteries" box (sits below the fronting card)
+ * ===================================================================== */
+.battery-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  margin: 0.9rem auto 0;
+  padding: 0.85rem 1rem;
+  background: var(--mantle);
+  border: 1px solid var(--surface-1);
+  border-radius: 14px;
+  box-shadow: 0 18px 50px -22px rgba(0, 0, 0, 0.6);
+}
 
+.battery-card[hidden] {
+  display: none;
+}
+
+.bat-head {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.7rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--subtext-0);
+}
+
+/* Little battery glyph drawn with borders so it needs no asset. */
+.bat-icon {
+  position: relative;
+  width: 18px;
+  height: 10px;
+  border: 1.5px solid var(--subtext-0);
+  border-radius: 2px;
+}
+
+.bat-icon::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: -3px;
+  width: 2px;
+  height: 5px;
+  transform: translateY(-50%);
+  border-radius: 0 1px 1px 0;
+  background: var(--subtext-0);
+}
+
+.bat-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.bat-row {
+  --bat-accent: var(--green);
+  display: grid;
+  grid-template-columns: 4.5rem 1fr auto auto;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 12px;
+  background: var(--surface-0);
+  border: 1px solid var(--surface-1);
+  border-left: 3px solid var(--bat-accent);
+  color: var(--text);
+}
+
+.bat-row.bat-ok {
+  --bat-accent: var(--green);
+}
+
+.bat-row.bat-mid {
+  --bat-accent: var(--yellow);
+}
+
+.bat-row.bat-low {
+  --bat-accent: var(--red);
+}
+
+.bat-row.bat-unknown {
+  --bat-accent: var(--overlay-0);
+}
+
+.bat-name {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bat-track {
+  position: relative;
+  height: 10px;
+  min-width: 0;
+  border-radius: 999px;
+  background: var(--crust);
+  border: 1px solid var(--surface-1);
+  overflow: hidden;
+}
+
+.bat-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--bat-accent);
+  transition: width 0.5s ease;
+}
+
+.bat-pct {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--bat-accent);
+  min-width: 2.6rem;
+  text-align: right;
+}
+
+.bat-when {
+  font-size: 0.72rem;
+  color: var(--subtext-0);
+  white-space: nowrap;
+}
+
+.bat-empty {
+  font-size: 0.82rem;
+  color: var(--subtext-0);
+  font-style: italic;
+}
 
 @media (max-width: 640px) {
   .terminal {
     width: 94vw;
     height: clamp(300px, 65dvh, 70vh);
+  }
+
+  /* Drop the relative-time column so bars stay wide on narrow screens. */
+  .bat-row {
+    grid-template-columns: 4rem 1fr auto;
+  }
+
+  .bat-when {
+    display: none;
   }
 }
