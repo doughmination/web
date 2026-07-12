@@ -35,8 +35,8 @@ export default function BlogIndexPage() {
   return (
     <>
       {/* Warm up the API origins this page's JS fetches on load */}
-      <link rel="preconnect" href="https://doughmination.co.uk" crossOrigin="" />
-      <link rel="dns-prefetch" href="https://doughmination.co.uk" />
+      <link rel="preconnect" href="https://doughmination.uk" crossOrigin="" />
+      <link rel="dns-prefetch" href="https://doughmination.uk" />
       <link rel="preconnect" href="https://abacus.jasoncameron.dev" crossOrigin="" />
       <link rel="dns-prefetch" href="https://abacus.jasoncameron.dev" />
 

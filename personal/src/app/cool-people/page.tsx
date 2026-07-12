@@ -35,8 +35,8 @@ export default function CoolPeoplePage() {
   return (
     <>
       {/* Warm up the origins this page's JS fetches on load */}
-      <link rel="preconnect" href="https://restful.doughmination.uk" crossOrigin="" />
-      <link rel="dns-prefetch" href="https://restful.doughmination.uk" />
+      <link rel="preconnect" href="https://doughmination.uk" crossOrigin="" />
+      <link rel="dns-prefetch" href="https://doughmination.uk" />
       <link rel="preconnect" href="https://wsrv.nl" />
       <link rel="dns-prefetch" href="https://wsrv.nl" />
       <link rel="preconnect" href="https://cdn.discordapp.com" />
@@ -62,7 +62,7 @@ export default function CoolPeoplePage() {
         <p className="friends-disclaimer">
           Presence data is served by{" "}
           <a
-            href="https://restful.doughmination.uk"
+            href="https://doughmination.uk"
             target="_blank"
             rel="noopener"
           >

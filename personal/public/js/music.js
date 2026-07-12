@@ -316,7 +316,7 @@
   // site uses. It's request/response (not a socket), so we poll; the tick()
   // loop interpolates the progress bar + synced lyrics smoothly between polls
   // using Spotify's start/end timestamps, so playback still feels live.
-  const SELF_BASE = "https://restful.doughmination.uk/v1/users/";
+  const SELF_BASE = "https://doughmination.uk/v2/discord/users/";
   const PRESENCE_POLL_MS = 10000;
   let presenceTimer = null;
 

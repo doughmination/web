@@ -5,7 +5,7 @@
 // HTML usage:
 //   <div id="my-guilds"></div>
 //
-// API: GET https://restful.doughmination.uk/v1/guilds/:guildInvite
+// API: GET https://doughmination.uk/v2/discord/guilds/:guildInvite
 //   -> { success: true, data: {
 //        id, name, icon_url, banner_url, splash_url,
 //        description, member_count, online_count
@@ -38,7 +38,7 @@
     member: "Member",
   };
 
-  var GUILD_BASE = "https://restful.doughmination.uk/v1/guilds/";
+  var GUILD_BASE = "https://doughmination.uk/v2/discord/guilds/";
   var GUILD_POLL_MS = 60000; // member/online counts refresh cadence
 
   var root = document.getElementById("my-guilds");

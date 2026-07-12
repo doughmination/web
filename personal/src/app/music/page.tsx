@@ -46,8 +46,8 @@ export default function MusicPage() {
   return (
     <>
       {/* Warm up the origins this page's JS fetches on load */}
-      <link rel="preconnect" href="https://restful.doughmination.uk" crossOrigin="" />
-      <link rel="dns-prefetch" href="https://restful.doughmination.uk" />
+      <link rel="preconnect" href="https://doughmination.uk" crossOrigin="" />
+      <link rel="dns-prefetch" href="https://doughmination.uk" />
       <link rel="preconnect" href="https://i.scdn.co" />
       <link rel="dns-prefetch" href="https://i.scdn.co" />
       <link rel="preconnect" href="https://ws.audioscrobbler.com" crossOrigin="" />

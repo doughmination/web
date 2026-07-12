@@ -76,8 +76,8 @@ export default function RootLayout({
     <html lang="en" data-flavor="mocha">
       <head>
         {/* Warm up the API origins the client JS fetches on load */}
-        <link rel="preconnect" href="https://doughmination.co.uk" crossOrigin="" />
-        <link rel="dns-prefetch" href="https://doughmination.co.uk" />
+        <link rel="preconnect" href="https://doughmination.uk" crossOrigin="" />
+        <link rel="dns-prefetch" href="https://doughmination.uk" />
         <link rel="preconnect" href="https://abacus.jasoncameron.dev" crossOrigin="" />
         <link rel="dns-prefetch" href="https://abacus.jasoncameron.dev" />
         {/* Ported Catppuccin stylesheet manifest (lives in public/css) */}

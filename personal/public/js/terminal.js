@@ -97,15 +97,15 @@
     async system(args) {
       const who = (args[0] || "").toLowerCase();
       if (!who) {
-        window.open("https://doughmination.co.uk/", "_blank");
+        window.open("https://doughmination.uk/", "_blank");
         return { text: "Opening system site..." };
       }
       try {
         const response = await fetch(
-          `https://doughmination.co.uk/api/member/${encodeURIComponent(who)}`
+          `https://doughmination.uk/v2/plural/member/${encodeURIComponent(who)}`
         );
         if (response.status === 200) {
-          window.open(`https://doughmination.co.uk/${encodeURIComponent(who)}`, "_blank");
+          window.open(`https://doughmination.uk/${encodeURIComponent(who)}`, "_blank");
           return { text: `Opening ${who}'s profile...` };
         }
         if (response.status === 404) {

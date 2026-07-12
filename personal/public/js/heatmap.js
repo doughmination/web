@@ -126,7 +126,7 @@
 
   function render(target, options = {}) {
     const opts = Object.assign({
-      url: "https://contrib.doughmination.uk/",
+      url: "https://doughmination.uk/v2/contribapi",
       theme: "rainbow",
       months: true, weekdays: true, legend: true, count: true,
       fit: false, minCell: 8, maxCell: 13, gap: 3,
@@ -201,7 +201,14 @@
 
     return fetch(opts.url, { signal: controller.signal })
       .then(res => res.json())
-      .then(data => {
+      .then(payload => {
+        /* The mono API (/v2/contribapi) wraps the forge map in a standard
+         * envelope: { success, data:{ github, codeberg } }. The old contrib
+         * host returned that map raw. Accept either. */
+        const data =
+          payload && Object.prototype.hasOwnProperty.call(payload, "success")
+            ? (payload.data || {})
+            : payload;
         const weeks = buildHeatmapData(data);
         let total = 0, prevMonth = -1;
 

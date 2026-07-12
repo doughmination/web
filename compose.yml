@@ -11,33 +11,15 @@ services:
       - "127.0.0.1:5002:5002"
     restart: unless-stopped
 
-  dough-back:
-    build:
-      context: ./system/backend
-      dockerfile: Dockerfile
-    container_name: dough-back
-    ports:
-      - "127.0.0.1:5000:5000"
-    volumes:
-      - "./dough-data:/app/dough-data"
-      - "./.env:/app/.env:ro"
-      - "./.env.keys:/app/.env.keys:ro"
-    restart: unless-stopped
-
   dough-front:
     build:
-      context: ./system/frontend
+      context: ./system
       dockerfile: Dockerfile
-    container_name: dough-front
+    container_name: system
     environment:
       - NODE_ENV=production
     ports:
       - "127.0.0.1:5001:5001"
-    volumes:
-      - "./.env:/app/.env:ro"
-      - "./.env.keys:/app/.env.keys:ro"
-    depends_on:
-      - dough-back
 
   inbox:
     build:

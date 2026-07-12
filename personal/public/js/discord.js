@@ -830,7 +830,7 @@
 
     // ---- data source: Doughmination Restful API (sole source) ---------------
     // Returns presence + full profile (incl. theme_colors + display_name_styles)
-    const SELF_BASE = "https://restful.doughmination.uk/v1/users/";
+    const SELF_BASE = "https://doughmination.uk/v2/discord/users/";
     const SELF_POLL_MS = opts.pollMs || 20000;   // presence refresh cadence
     let selfTimer = null;
 
@@ -972,7 +972,7 @@
     // placeholder cards (e.g. dead alts) keep their seeded look — no fetch.
     // When a shared batch manager is supplied (the friends grid), register our
     // renderer with it instead of fetching/polling per-card: the manager pulls
-    // every card's data in ONE request (/v1/users?ids=...) and dispatches here.
+    // every card's data in ONE request (/v2/discord/users?ids=...) and dispatches here.
     if (DISCORD_USER_ID) {
       if (opts.batch && typeof opts.batch.register === "function") {
         opts.batch.register(DISCORD_USER_ID, renderFromSelfHost);
@@ -1089,11 +1089,11 @@
   }
 
   // ---- batched presence -------------------------------------------------
-  // Instead of every friend card fetching /v1/users/:id on its own (N requests
+  // Instead of every friend card fetching /v2/discord/users/:id on its own (N requests
   // on load, then N every minute), one manager pulls them all in a single
-  // /v1/users?ids=a,b,c call and hands each card its slice. Cards opt in via
+  // /v2/discord/users?ids=a,b,c call and hands each card its slice. Cards opt in via
   // opts.batch (see createPresenceCard's boot).
-  var BATCH_BASE = "https://restful.doughmination.uk/v1/users";
+  var BATCH_BASE = "https://doughmination.uk/v2/discord/users";
   function createBatchPresence(base, pollMs) {
     var renderers = new Map(); // id -> renderFromSelfHost(card)
     var timer = null;
@@ -1108,7 +1108,7 @@
           if (!j || !j.success || !j.data) return;
           renderers.forEach(function (fn, id) {
             var rec = j.data[id];
-            if (rec) fn({ success: true, data: rec }); // same shape as /v1/users/:id
+            if (rec) fn({ success: true, data: rec }); // same shape as /v2/discord/users/:id
           });
         })
         .catch(function (err) { console.warn("[presence:batch] failed:", err); });
@@ -1157,7 +1157,7 @@
           userId: m.discordId || null, // null → static placeholder card (dead alts)
           mini: true,                  // smaller styling + keeps page accent local
           pollMs: FRIEND_POLL_MS,
-          batch: batch,                // seed + poll via one shared /v1/users?ids=… call
+          batch: batch,                // seed + poll via one shared /v2/discord/users?ids=… call
           tier: m.tier || null,
           link: m.link || null,
           fallbackName: m.name,        // shown instantly + kept if the API has no data

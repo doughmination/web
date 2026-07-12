@@ -10,7 +10,7 @@
   const mount = document.getElementById("fronting");
   if (!mount) return;
 
-  const API = "https://doughmination.co.uk/api/fronters";
+  const API = "https://doughmination.uk/v2/plural/fronters";
   const POLL_MS = 30000;
 
   function esc(s) {
