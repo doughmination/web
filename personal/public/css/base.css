@@ -51,7 +51,7 @@ body {
   font-family: 'Comic Code', sans-serif;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: safe center;
   min-height: 100vh;
   min-height: 100dvh;
   margin: 0;
