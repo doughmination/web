@@ -355,15 +355,15 @@
   }
   function startPresence() {
     if (window.DM) {
-      // Live now-playing over the shared site socket — no polling. The handler
-      // gets { id, data }; pass its presence sub-object to onPresence. The tick()
-      // loop still interpolates the progress bar/lyrics between pushes.
+      // Live now-playing via DM (no polling). The socket presence is a flat
+      // object (listening_to_spotify / spotify live at the top level), so hand
+      // it straight to onPresence. tick() interpolates between pushes.
       window.DM.on("presence:" + DISCORD_ID, (v) => {
-        if (v && v.data) onPresence(v.data.presence || null);
+        if (v && v.data) onPresence(v.data);
       });
       return;
     }
-    // No realtime client: fall back to the original poll.
+    // No DM: fall back to the original poll.
     pollPresence();
     presenceTimer = setInterval(pollPresence, PRESENCE_POLL_MS);
     // refresh the moment the tab comes back into focus

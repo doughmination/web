@@ -143,10 +143,8 @@
       }
     }
 
-    // Guild counts aren't a socket feed and barely move, so fetch once through
-    // the shared client's cache (persists across pages + reloads) instead of
-    // polling every 60s. Counts can lag up to the cache TTL — an acceptable
-    // trade for a fraction of the requests.
+    // Fetch once through DM's cache (persists across pages + reloads) instead
+    // of polling. Counts can lag up to the cache TTL, which is fine here.
     if (window.DM) {
       window.DM.request("guild", { id: cfg.invite }, { maxAge: 300000, persist: true })
         .then(function (data) { if (data) render(data); })

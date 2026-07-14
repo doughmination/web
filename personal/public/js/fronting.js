@@ -1,9 +1,5 @@
-/* fronting.js
- *
- * Homepage "who's fronting" box. Subscribes to the shared realtime client
- * (window.DM, see realtime.js) for the current fronter(s) and renders a small
- * card. Switches arrive as live pushes over the site-wide socket; if that's
- * down, DM transparently falls back to polling /v2/plural/fronters (30s). */
+/* fronting.js — homepage "who's fronting" box.
+ * Subscribes via window.DM (core.js) and renders the current fronter(s). */
 (function fronting() {
   "use strict";
 
@@ -64,17 +60,14 @@
     card.hidden = false;
   }
 
-  /* Subscribe via the shared realtime client. The handler fires immediately
-   * with the current snapshot (if the socket already delivered one), then again
-   * on every fronter change. DM.on is page-scoped: it auto-unsubscribes on soft
-   * navigation, so nothing lingers after the homepage unmounts. */
+  /* Subscribe via DM: fires with the current value, then on every change.
+   * Page-scoped, so it auto-unsubscribes on navigation. */
   if (window.DM) {
     window.DM.on("fronters", function (data) {
       render((data && data.members) || []);
     });
   } else {
-    /* realtime.js somehow absent — degrade to a single direct fetch so the box
-     * still paints rather than staying hidden. */
+    /* No DM — one-shot fetch so the box still paints. */
     fetch("https://doughmination.uk/v2/plural/fronters", { headers: { Accept: "application/json" } })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (j) { if (j) render(j.members || []); })

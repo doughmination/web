@@ -23,10 +23,8 @@
 
   var API_BASE = "https://doughmination.uk/v2/minecraft/general/";
   var MC_HEADS = "https://mc-heads.net/";
-  // skinview3d ships as a self-contained UMD bundle (Three.js included). It's
-  // ~470KB, so it's copied into /js and lazy-loaded only when the 3D tab is
-  // first opened rather than on every page load. On load it exposes the
-  // `skinview3d` global.
+  // skinview3d UMD bundle (~470KB, Three.js included). Lazy-loaded only when the
+  // 3D tab first opens; exposes the `skinview3d` global.
   var SKINVIEW_SRC = "/js/skinview3d.bundle.js";
   var skinviewPromise = null;
   function loadSkinview() {
@@ -317,9 +315,8 @@
       var opt = capeOptions[capeIdx];
       if (!opt || !opt.url) { viewer.resetCape(); return; }
       var back = elytraOn ? "elytra" : "cape";
-      // WebGL can only sample a cross-origin-clean texture, so load the cape
-      // ourselves with CORS enabled and hand skinview3d the ready image. (The
-      // 2D Overview preview renders a tainted image fine; the 3D model can't.)
+      // WebGL needs a CORS-clean texture, so load the cape with crossOrigin and
+      // hand skinview3d the ready image. (The 2D preview tolerates a tainted one.)
       var img = new Image();
       img.crossOrigin = "anonymous";
       img.onload = function () {
@@ -591,11 +588,9 @@
     var bodyEl = card.querySelector(".mc-body");
     var capeEl = card.querySelector(".mc-cape");
 
-    // Minecraft profiles barely change, so fetch through the shared realtime
-    // client's cache: it persists across soft-navigation and (via sessionStorage)
-    // across reloads, so revisiting the page re-uses the data with zero requests
-    // instead of re-hitting the API 12 times every visit. Falls back to a direct
-    // one-shot fetch if realtime.js isn't present.
+    // Fetch through DM's cache: persists across pages + reloads, so revisits
+    // reuse the data instead of re-hitting the API 12 times. Falls back to a
+    // one-shot fetch if DM (core.js) isn't present.
     var profile = window.DM
       ? window.DM.request("minecraft", { uuid: uid }, { maxAge: 1800000, persist: true })
       : fetch(API_BASE + encodeURIComponent(uid), { cache: "no-store" })

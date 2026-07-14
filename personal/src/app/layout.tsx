@@ -104,14 +104,13 @@ export default function RootLayout({
         {children}
 
         {/* Persistent chrome: nav builder, theme switcher, oneko cat, bg music */}
+        {/* core.js also carries the shared realtime client (window.DM) — one
+            global script for all the persistent chrome + the site socket. */}
         <Script
           src="/js/core.js"
           strategy="afterInteractive"
           data-cat="/assets/oneko/classics/classic.png"
         />
-        {/* One shared realtime socket for every page (window.DM). Loads after
-            core.js so it can hook ctpClearPageState for page-scoped subs. */}
-        <Script src="/js/realtime.js" strategy="afterInteractive" />
         {/* lanyard.cafe keyring (webring) */}
         <Script
           src="https://lanyard.cafe/api/embed.js"

@@ -946,6 +946,10 @@
       if (card.classList.contains("show-wishlist")) renderWishlist();
     }
 
+    // The full profile (user, badges, connections, timezone, …) only comes from
+    // REST — the socket carries live presence only — so we keep the last full
+    // response and merge socket presence into it.
+    var lastSelfJ = null;
     function loadSelfHosted() {
       return fetch(SELF_BASE + DISCORD_USER_ID, { cache: "no-store" })
         .then(function (r) {
@@ -958,6 +962,7 @@
             console.warn("[presence]", DISCORD_USER_ID, "response failed shape check:", j);
             return false;
           }
+          lastSelfJ = j;
           renderFromSelfHost(j);
           return true;
         })
@@ -977,14 +982,17 @@
       if (opts.batch && typeof opts.batch.register === "function") {
         opts.batch.register(DISCORD_USER_ID, renderFromSelfHost);
       } else if (window.DM) {
-        // Live presence over the shared socket — no polling. The handler gets
-        // { id, data } where data matches the /v2/discord/users/:id `data`
-        // object; wrap it back into the { data } shape renderFromSelfHost wants.
+        // One REST call for the full profile (+ initial presence), then live
+        // socket presence merges into it. No polling. The socket presence is a
+        // flat object, which is exactly the shape data.presence holds.
+        loadSelfHosted();
         window.DM.on("presence:" + DISCORD_USER_ID, function (v) {
-          if (v && v.data && v.data.user) renderFromSelfHost({ data: v.data });
+          if (!v || !v.data || !lastSelfJ || !lastSelfJ.data) return;
+          lastSelfJ.data.presence = v.data;
+          renderFromSelfHost(lastSelfJ);
         });
       } else {
-        // No realtime client: fall back to a one-shot fetch + gentle poll.
+        // No DM: one-shot fetch + gentle poll.
         loadSelfHosted();
         selfTimer = setInterval(pollSelfHost, SELF_POLL_MS);
       }
@@ -1103,35 +1111,42 @@
   // /v2/discord/users?ids=a,b,c call and hands each card its slice. Cards opt in via
   // opts.batch (see createPresenceCard's boot).
   var BATCH_BASE = "https://doughmination.uk/v2/discord/users";
-  // When the shared realtime client is present, each friend rides the one site
-  // socket via DM.on("presence:<id>") — no batch request, no polling. Without
-  // it, we fall back to the original single batched fetch + poll.
+  // Profiles (avatar, name, badges) only come from REST, so one batched call
+  // seeds every card. Live presence then rides the site socket per id and merges
+  // into each card's cached profile — no polling. Without DM, fall back to the
+  // original batched poll.
   function createBatchPresence(base, pollMs) {
     var renderers = new Map(); // id -> renderFromSelfHost(card)
+    var last = new Map();      // id -> last full { success, data } (profile + presence)
     var timer = null;
     function register(id, fn) {
       id = String(id);
       renderers.set(id, fn);
       if (window.DM) {
+        // Merge the flat socket presence into the cached profile and re-render.
         window.DM.on("presence:" + id, function (v) {
-          if (v && v.data && v.data.user) fn({ data: v.data });
+          if (!v || !v.data) return;
+          var lj = last.get(id);
+          if (lj && lj.data) { lj.data.presence = v.data; fn(lj); }
         });
       }
     }
+    function dispatch(j) {
+      if (!j || !j.success || !j.data) return;
+      renderers.forEach(function (fn, id) {
+        var rec = j.data[id];
+        if (rec) { var lj = { success: true, data: rec }; last.set(id, lj); fn(lj); }
+      });
+    }
     function refresh() {
-      if (window.DM) return Promise.resolve(); // socket delivers presence
+      // Always fetch profiles once (even with DM); the socket handles live
+      // presence after this seed.
       var ids = Array.from(renderers.keys());
       if (!ids.length) return Promise.resolve();
       var url = base + "?ids=" + encodeURIComponent(ids.join(","));
       return fetch(url, { cache: "no-store" })
         .then(function (r) { return r.ok ? r.json() : null; })
-        .then(function (j) {
-          if (!j || !j.success || !j.data) return;
-          renderers.forEach(function (fn, id) {
-            var rec = j.data[id];
-            if (rec) fn({ success: true, data: rec }); // same shape as /v2/discord/users/:id
-          });
-        })
+        .then(dispatch)
         .catch(function (err) { console.warn("[presence:batch] failed:", err); });
     }
     function start() {

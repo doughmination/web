@@ -1,11 +1,6 @@
-/* devices.js
- *
- * Homepage "devices" box. Subscribes to the shared realtime client (window.DM,
- * see realtime.js) for device status and renders a small card: one row per
- * device with a battery fill bar, percentage, a charging indicator, a low-power
- * tag, the current wifi network and a relative "updated" timestamp. State
- * arrives as live pushes over the site-wide socket; if that's down, DM falls
- * back to polling /v2/devices (60s). */
+/* devices.js — homepage "devices" box.
+ * Subscribes via window.DM (core.js) and renders each device: battery bar,
+ * percentage, charging/low-power tags, wifi, and a relative "updated" time. */
 (function devices() {
   "use strict";
 
@@ -135,15 +130,12 @@
     card.hidden = false;
   }
 
-  /* Subscribe via the shared realtime client. The handler fires immediately
-   * with the current snapshot (if the socket already delivered one), then again
-   * on every device-state change. DM.on is page-scoped: it auto-unsubscribes on
-   * soft navigation, so nothing lingers after the homepage unmounts. */
+  /* Subscribe via DM: fires with the current value, then on every change.
+   * Page-scoped, so it auto-unsubscribes on navigation. */
   if (window.DM) {
     window.DM.on("devices", function (data) { render(data); });
   } else {
-    /* realtime.js somehow absent — degrade to a single direct fetch so the box
-     * still paints rather than staying hidden. */
+    /* No DM — one-shot fetch so the box still paints. */
     fetch("https://doughmination.uk/v2/devices", { headers: { Accept: "application/json" } })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (j) { if (j) render(j); })
