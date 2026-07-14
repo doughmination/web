@@ -27,8 +27,8 @@ export default function GuestbookPage() {
   return (
     <>
       {/* Warm up the origins this page's JS fetches on load */}
-      <link rel="preconnect" href="https://guestbook.doughmination.uk" crossOrigin="" />
-      <link rel="dns-prefetch" href="https://guestbook.doughmination.uk" />
+      <link rel="preconnect" href="https://doughmination.uk" crossOrigin="" />
+      <link rel="dns-prefetch" href="https://doughmination.uk" />
       <link rel="preconnect" href="https://challenges.cloudflare.com" />
       <link rel="dns-prefetch" href="https://challenges.cloudflare.com" />
 
@@ -112,7 +112,7 @@ export default function GuestbookPage() {
           {
             src: "/js/guestbook.js",
             attrs: {
-              "data-api": "https://guestbook.doughmination.uk",
+              "data-api": "https://doughmination.uk/v2/guestbook",
               "data-turnstile-key": "0x4AAAAAAB08ZhSxKn5rAD3d",
             },
           },

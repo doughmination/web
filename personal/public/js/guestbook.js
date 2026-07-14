@@ -136,7 +136,7 @@
       return;
     }
     try {
-      var res = await fetch(API + "/?limit=100", { method: "GET" });
+      var res = await fetch(API + "?limit=100", { method: "GET" });
       if (!res.ok) throw new Error("HTTP " + res.status);
       var data = await res.json();
       renderEntries(data.entries || []);
@@ -206,7 +206,7 @@
     setStatus("Signing…");
 
     try {
-      var res = await fetch(API + "/", {
+      var res = await fetch(API, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
