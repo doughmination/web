@@ -354,6 +354,16 @@
       .catch(() => { /* network blip — keep last state, retry next poll */ });
   }
   function startPresence() {
+    if (window.DM) {
+      // Live now-playing over the shared site socket — no polling. The handler
+      // gets { id, data }; pass its presence sub-object to onPresence. The tick()
+      // loop still interpolates the progress bar/lyrics between pushes.
+      window.DM.on("presence:" + DISCORD_ID, (v) => {
+        if (v && v.data) onPresence(v.data.presence || null);
+      });
+      return;
+    }
+    // No realtime client: fall back to the original poll.
     pollPresence();
     presenceTimer = setInterval(pollPresence, PRESENCE_POLL_MS);
     // refresh the moment the tab comes back into focus

@@ -1,18 +1,16 @@
 /* devices.js
  *
- * Homepage "devices" box. Polls the device status API for the latest known
- * state of each device and renders a small card, one row per device with a
- * battery fill bar, percentage, a charging indicator, a low-power tag, the
- * current wifi network and a relative "updated" timestamp.
- * Refreshes every 60s so state stays roughly current without a reload. */
+ * Homepage "devices" box. Subscribes to the shared realtime client (window.DM,
+ * see realtime.js) for device status and renders a small card: one row per
+ * device with a battery fill bar, percentage, a charging indicator, a low-power
+ * tag, the current wifi network and a relative "updated" timestamp. State
+ * arrives as live pushes over the site-wide socket; if that's down, DM falls
+ * back to polling /v2/devices (60s). */
 (function devices() {
   "use strict";
 
   const mount = document.getElementById("devices");
   if (!mount) return;
-
-  const API = "https://doughmination.uk/v2/devices";
-  const POLL_MS = 60000;
 
   function esc(s) {
     return String(s == null ? "" : s)
@@ -137,29 +135,18 @@
     card.hidden = false;
   }
 
-  let failed = false;
-  function load() {
-    fetch(API, { headers: { Accept: "application/json" } })
+  /* Subscribe via the shared realtime client. The handler fires immediately
+   * with the current snapshot (if the socket already delivered one), then again
+   * on every device-state change. DM.on is page-scoped: it auto-unsubscribes on
+   * soft navigation, so nothing lingers after the homepage unmounts. */
+  if (window.DM) {
+    window.DM.on("devices", function (data) { render(data); });
+  } else {
+    /* realtime.js somehow absent — degrade to a single direct fetch so the box
+     * still paints rather than staying hidden. */
+    fetch("https://doughmination.uk/v2/devices", { headers: { Accept: "application/json" } })
       .then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (j) {
-        if (!j) throw new Error("bad response");
-        render(j);
-        failed = false;
-      })
-      .catch(function () {
-        /* On the first failure, hide the box quietly. If it was already
-         * showing, leave the last known state up instead of flashing an
-         * error. */
-        if (!failed && card.hidden) card.hidden = true;
-        failed = true;
-      });
+      .then(function (j) { if (j) render(j); })
+      .catch(function () {});
   }
-
-  load();
-  const timer = setInterval(load, POLL_MS);
-  /* Refresh immediately when the tab becomes visible again. */
-  document.addEventListener("visibilitychange", function () {
-    if (!document.hidden) load();
-  });
-  window.addEventListener("beforeunload", function () { clearInterval(timer); });
 })();

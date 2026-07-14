@@ -109,6 +109,9 @@ export default function RootLayout({
           strategy="afterInteractive"
           data-cat="/assets/oneko/classics/classic.png"
         />
+        {/* One shared realtime socket for every page (window.DM). Loads after
+            core.js so it can hook ctpClearPageState for page-scoped subs. */}
+        <Script src="/js/realtime.js" strategy="afterInteractive" />
         {/* lanyard.cafe keyring (webring) */}
         <Script
           src="https://lanyard.cafe/api/embed.js"

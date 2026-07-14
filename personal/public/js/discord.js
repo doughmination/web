@@ -976,7 +976,15 @@
     if (DISCORD_USER_ID) {
       if (opts.batch && typeof opts.batch.register === "function") {
         opts.batch.register(DISCORD_USER_ID, renderFromSelfHost);
+      } else if (window.DM) {
+        // Live presence over the shared socket — no polling. The handler gets
+        // { id, data } where data matches the /v2/discord/users/:id `data`
+        // object; wrap it back into the { data } shape renderFromSelfHost wants.
+        window.DM.on("presence:" + DISCORD_USER_ID, function (v) {
+          if (v && v.data && v.data.user) renderFromSelfHost({ data: v.data });
+        });
       } else {
+        // No realtime client: fall back to a one-shot fetch + gentle poll.
         loadSelfHosted();
         selfTimer = setInterval(pollSelfHost, SELF_POLL_MS);
       }
@@ -1095,11 +1103,23 @@
   // /v2/discord/users?ids=a,b,c call and hands each card its slice. Cards opt in via
   // opts.batch (see createPresenceCard's boot).
   var BATCH_BASE = "https://doughmination.uk/v2/discord/users";
+  // When the shared realtime client is present, each friend rides the one site
+  // socket via DM.on("presence:<id>") — no batch request, no polling. Without
+  // it, we fall back to the original single batched fetch + poll.
   function createBatchPresence(base, pollMs) {
     var renderers = new Map(); // id -> renderFromSelfHost(card)
     var timer = null;
-    function register(id, fn) { renderers.set(String(id), fn); }
+    function register(id, fn) {
+      id = String(id);
+      renderers.set(id, fn);
+      if (window.DM) {
+        window.DM.on("presence:" + id, function (v) {
+          if (v && v.data && v.data.user) fn({ data: v.data });
+        });
+      }
+    }
     function refresh() {
+      if (window.DM) return Promise.resolve(); // socket delivers presence
       var ids = Array.from(renderers.keys());
       if (!ids.length) return Promise.resolve();
       var url = base + "?ids=" + encodeURIComponent(ids.join(","));
@@ -1115,6 +1135,7 @@
         .catch(function (err) { console.warn("[presence:batch] failed:", err); });
     }
     function start() {
+      if (window.DM) return;                   // no polling when the socket is in play
       if (!timer) timer = setInterval(function () { if (!document.hidden) refresh(); }, pollMs);
     }
     return { register: register, refresh: refresh, start: start };

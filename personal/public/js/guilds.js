@@ -39,7 +39,6 @@
   };
 
   var GUILD_BASE = "https://doughmination.uk/v2/discord/guilds/";
-  var GUILD_POLL_MS = 60000; // member/online counts refresh cadence
 
   var root = document.getElementById("my-guilds");
   if (!root) return;
@@ -144,25 +143,20 @@
       }
     }
 
-    function load() {
-      return fetch(GUILD_BASE + encodeURIComponent(cfg.invite), { cache: "no-store" })
+    // Guild counts aren't a socket feed and barely move, so fetch once through
+    // the shared client's cache (persists across pages + reloads) instead of
+    // polling every 60s. Counts can lag up to the cache TTL — an acceptable
+    // trade for a fraction of the requests.
+    if (window.DM) {
+      window.DM.request("guild", { id: cfg.invite }, { maxAge: 300000, persist: true })
+        .then(function (data) { if (data) render(data); })
+        .catch(function () {});
+    } else {
+      fetch(GUILD_BASE + encodeURIComponent(cfg.invite), { cache: "no-store" })
         .then(function (r) { return r.ok ? r.json().catch(function () { return null; }) : null; })
-        .then(function (j) {
-          if (!j || !j.success || !j.data) return false;
-          render(j.data);
-          return true;
-        })
-        .catch(function () { return false; });
+        .then(function (j) { if (j && j.success && j.data) render(j.data); })
+        .catch(function () {});
     }
-
-    load();
-    var timer = setInterval(function () {
-      if (!document.hidden) load();
-    }, GUILD_POLL_MS);
-
-    document.addEventListener("visibilitychange", function () {
-      if (!document.hidden) load();
-    });
 
     return card;
   }

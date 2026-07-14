@@ -1,17 +1,14 @@
 /* fronting.js
  *
- * Homepage "who's fronting" box. Polls the system's PluralKit-style API
- * for the current fronter(s) and renders a small card. Each member links
- * to their page on the system site. Refreshes every 30s so switches show
- * up without needing a reload. */
+ * Homepage "who's fronting" box. Subscribes to the shared realtime client
+ * (window.DM, see realtime.js) for the current fronter(s) and renders a small
+ * card. Switches arrive as live pushes over the site-wide socket; if that's
+ * down, DM transparently falls back to polling /v2/plural/fronters (30s). */
 (function fronting() {
   "use strict";
 
   const mount = document.getElementById("fronting");
   if (!mount) return;
-
-  const API = "https://doughmination.uk/v2/plural/fronters";
-  const POLL_MS = 30000;
 
   function esc(s) {
     return String(s == null ? "" : s)
@@ -67,29 +64,20 @@
     card.hidden = false;
   }
 
-  let failed = false;
-  function load() {
-    fetch(API, { headers: { Accept: "application/json" } })
+  /* Subscribe via the shared realtime client. The handler fires immediately
+   * with the current snapshot (if the socket already delivered one), then again
+   * on every fronter change. DM.on is page-scoped: it auto-unsubscribes on soft
+   * navigation, so nothing lingers after the homepage unmounts. */
+  if (window.DM) {
+    window.DM.on("fronters", function (data) {
+      render((data && data.members) || []);
+    });
+  } else {
+    /* realtime.js somehow absent — degrade to a single direct fetch so the box
+     * still paints rather than staying hidden. */
+    fetch("https://doughmination.uk/v2/plural/fronters", { headers: { Accept: "application/json" } })
       .then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (j) {
-        if (!j) throw new Error("bad response");
-        render(j.members || []);
-        failed = false;
-      })
-      .catch(function () {
-        /* On the first failure, hide the box quietly. If it was already
-         * showing, leave the last known fronters up instead of flashing
-         * an error. */
-        if (!failed && card.hidden) card.hidden = true;
-        failed = true;
-      });
+      .then(function (j) { if (j) render(j.members || []); })
+      .catch(function () {});
   }
-
-  load();
-  const timer = setInterval(load, POLL_MS);
-  /* Refresh immediately when the tab becomes visible again. */
-  document.addEventListener("visibilitychange", function () {
-    if (!document.hidden) load();
-  });
-  window.addEventListener("beforeunload", function () { clearInterval(timer); });
 })();
