@@ -73,7 +73,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-flavor="mocha">
+    // THEME_BOOT rewrites data-flavor from localStorage before hydration, so the
+    // <html> attrs intentionally differ from the server render when a non-default
+    // flavor is saved. suppressHydrationWarning marks that as expected.
+    <html lang="en" data-flavor="mocha" suppressHydrationWarning>
       <head>
         {/* Warm up the API origins the client JS fetches on load */}
         <link rel="preconnect" href="https://doughmination.uk" crossOrigin="" />

@@ -1,16 +1,17 @@
-/* battery.js
+/* devices.js
  *
- * Homepage "device batteries" box. Polls the system's battery API for the
- * latest known level of each device and renders a small card, one row per
- * device with a fill bar, percentage and a relative "updated" timestamp.
- * Refreshes every 60s so levels stay roughly current without a reload. */
-(function battery() {
+ * Homepage "devices" box. Polls the device status API for the latest known
+ * state of each device and renders a small card, one row per device with a
+ * battery fill bar, percentage, a charging indicator, a low-power tag, the
+ * current wifi network and a relative "updated" timestamp.
+ * Refreshes every 60s so state stays roughly current without a reload. */
+(function devices() {
   "use strict";
 
-  const mount = document.getElementById("battery");
+  const mount = document.getElementById("devices");
   if (!mount) return;
 
-  const API = "https://doughmination.uk/v2/battery";
+  const API = "https://doughmination.uk/v2/devices";
   const POLL_MS = 60000;
 
   function esc(s) {
@@ -26,10 +27,10 @@
 
   /* Colour band: red when low, yellow when middling, green when healthy. */
   function levelClass(lvl) {
-    if (lvl == null) return "bat-unknown";
-    if (lvl <= 20) return "bat-low";
-    if (lvl <= 50) return "bat-mid";
-    return "bat-ok";
+    if (lvl == null) return "dev-unknown";
+    if (lvl <= 20) return "dev-low";
+    if (lvl <= 50) return "dev-mid";
+    return "dev-ok";
   }
 
   /* Friendly device labels; falls back to a capitalised device id. */
@@ -57,33 +58,52 @@
 
   /* ---- build the shell ---- */
   const card = document.createElement("section");
-  card.id = "battery";
-  card.className = "battery-card";
+  card.id = "devices";
+  card.className = "devices-card";
   card.hidden = true;
-  card.setAttribute("aria-label", "Device battery levels");
+  card.setAttribute("aria-label", "Device status");
   card.innerHTML =
-    '<div class="bat-head">' +
-    '<span class="bat-icon" aria-hidden="true"></span>' +
-    '<span class="bat-label">Device batteries</span>' +
+    '<div class="dev-head">' +
+    '<span class="dev-icon" aria-hidden="true"></span>' +
+    '<span class="dev-label">Devices</span>' +
     '</div>' +
-    '<div class="bat-rows"></div>';
+    '<div class="dev-rows"></div>';
   mount.replaceWith(card);
 
-  const rowsEl = card.querySelector(".bat-rows");
+  const rowsEl = card.querySelector(".dev-rows");
 
   function rowHtml(d) {
     const lvl = clampLevel(d.level);
     const cls = levelClass(lvl);
+    const charging = d.charging === true;
     const pct = lvl == null ? "—" : lvl + "%";
     const width = lvl == null ? 0 : lvl;
     const when = relTime(d.updated_at);
-    return '<div class="bat-row ' + cls + '">' +
-      '<span class="bat-name">' + esc(deviceName(d.device)) + '</span>' +
-      '<span class="bat-track" role="img" aria-label="' + esc(pct) + '">' +
-      '<span class="bat-fill" style="width: ' + width + '%"></span>' +
+
+    /* Small meta chips shown under the bar. */
+    const meta = [];
+    if (charging) {
+      meta.push('<span class="dev-tag dev-charging" title="Charging">⚡ Charging</span>');
+    }
+    if (d.lowPowerMode === true) {
+      meta.push('<span class="dev-tag dev-lowpower" title="Low Power Mode">🔋 Low Power</span>');
+    }
+    if (d.wifi) {
+      meta.push('<span class="dev-tag dev-wifi" title="Wi-Fi network">📶 ' + esc(d.wifi) + '</span>');
+    }
+    if (when) {
+      meta.push('<span class="dev-when">' + esc(when) + '</span>');
+    }
+
+    return '<div class="dev-row ' + cls + (charging ? ' is-charging' : '') + '">' +
+      '<div class="dev-main">' +
+      '<span class="dev-name">' + esc(deviceName(d.device)) + '</span>' +
+      '<span class="dev-track" role="img" aria-label="' + esc(pct) + (charging ? ", charging" : "") + '">' +
+      '<span class="dev-fill" style="width: ' + width + '%"></span>' +
       '</span>' +
-      '<span class="bat-pct">' + esc(pct) + '</span>' +
-      (when ? '<span class="bat-when">' + esc(when) + '</span>' : '') +
+      '<span class="dev-pct">' + (charging ? '<span class="dev-bolt" aria-hidden="true">⚡</span>' : '') + esc(pct) + '</span>' +
+      '</div>' +
+      (meta.length ? '<div class="dev-meta">' + meta.join("") + '</div>' : '') +
       '</div>';
   }
 
@@ -92,11 +112,18 @@
     const list = data && typeof data === "object"
       ? Object.keys(data).map(function (k) {
           const v = data[k] || {};
-          return { device: v.device || k, level: v.level, updated_at: v.updated_at };
+          return {
+            device: v.device || k,
+            level: v.level,
+            updated_at: v.updated_at,
+            charging: v.charging,
+            lowPowerMode: v.lowPowerMode,
+            wifi: v.wifi,
+          };
         })
       : [];
     if (!list.length) {
-      rowsEl.innerHTML = '<span class="bat-empty">no devices reporting</span>';
+      rowsEl.innerHTML = '<span class="dev-empty">no devices reporting</span>';
       card.hidden = false;
       return;
     }
@@ -121,7 +148,7 @@
       })
       .catch(function () {
         /* On the first failure, hide the box quietly. If it was already
-         * showing, leave the last known levels up instead of flashing an
+         * showing, leave the last known state up instead of flashing an
          * error. */
         if (!failed && card.hidden) card.hidden = true;
         failed = true;

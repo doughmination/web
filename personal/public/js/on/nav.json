@@ -10,5 +10,6 @@
   { "label": "Guestbook", "href": "/guestbook" },
   { "label": "ASCII", "href": "/ascii" },
   { "label": "Selfies", "href": "/selfies" },
-  { "label" : "Blog", "href": "/blog"}
+  { "label" : "Blog", "href": "/blog"},
+  { "label": "Minecraft", "href": "/minecraft"}
 ]

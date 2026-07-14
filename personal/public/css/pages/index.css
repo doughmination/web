@@ -558,9 +558,9 @@ body:has(.terminal) .hub .terminal {
 }
 
 /* =====================================================================
- * battery.js — "device batteries" box (sits below the fronting card)
+ * devices.js — "devices" box (sits below the fronting card)
  * ===================================================================== */
-.battery-card {
+.devices-card {
   position: relative;
   z-index: 1;
   width: 100%;
@@ -572,11 +572,11 @@ body:has(.terminal) .hub .terminal {
   box-shadow: 0 18px 50px -22px rgba(0, 0, 0, 0.6);
 }
 
-.battery-card[hidden] {
+.devices-card[hidden] {
   display: none;
 }
 
-.bat-head {
+.dev-head {
   display: flex;
   align-items: center;
   gap: 0.45rem;
@@ -589,7 +589,7 @@ body:has(.terminal) .hub .terminal {
 }
 
 /* Little battery glyph drawn with borders so it needs no asset. */
-.bat-icon {
+.dev-icon {
   position: relative;
   width: 18px;
   height: 10px;
@@ -597,7 +597,7 @@ body:has(.terminal) .hub .terminal {
   border-radius: 2px;
 }
 
-.bat-icon::after {
+.dev-icon::after {
   content: "";
   position: absolute;
   top: 50%;
@@ -609,50 +609,56 @@ body:has(.terminal) .hub .terminal {
   background: var(--subtext-0);
 }
 
-.bat-rows {
+.dev-rows {
   display: flex;
   flex-direction: column;
   gap: 0.55rem;
 }
 
-.bat-row {
-  --bat-accent: var(--green);
-  display: grid;
-  grid-template-columns: 4.5rem 1fr auto auto;
-  align-items: center;
-  gap: 0.6rem;
+.dev-row {
+  --dev-accent: var(--green);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
   padding: 0.45rem 0.6rem;
   border-radius: 12px;
   background: var(--surface-0);
   border: 1px solid var(--surface-1);
-  border-left: 3px solid var(--bat-accent);
+  border-left: 3px solid var(--dev-accent);
   color: var(--text);
 }
 
-.bat-row.bat-ok {
-  --bat-accent: var(--green);
+.dev-main {
+  display: grid;
+  grid-template-columns: 4.5rem 1fr auto;
+  align-items: center;
+  gap: 0.6rem;
 }
 
-.bat-row.bat-mid {
-  --bat-accent: var(--yellow);
+.dev-row.dev-ok {
+  --dev-accent: var(--green);
 }
 
-.bat-row.bat-low {
-  --bat-accent: var(--red);
+.dev-row.dev-mid {
+  --dev-accent: var(--yellow);
 }
 
-.bat-row.bat-unknown {
-  --bat-accent: var(--overlay-0);
+.dev-row.dev-low {
+  --dev-accent: var(--red);
 }
 
-.bat-name {
+.dev-row.dev-unknown {
+  --dev-accent: var(--overlay-0);
+}
+
+.dev-name {
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.bat-track {
+.dev-track {
   position: relative;
   height: 10px;
   min-width: 0;
@@ -662,29 +668,81 @@ body:has(.terminal) .hub .terminal {
   overflow: hidden;
 }
 
-.bat-fill {
+.dev-fill {
   display: block;
   height: 100%;
   border-radius: 999px;
-  background: var(--bat-accent);
+  background: var(--dev-accent);
   transition: width 0.5s ease;
 }
 
-.bat-pct {
-  font-variant-numeric: tabular-nums;
-  font-weight: 600;
-  color: var(--bat-accent);
-  min-width: 2.6rem;
-  text-align: right;
+/* Gentle pulse on the fill while a device is charging. */
+.dev-row.is-charging .dev-fill {
+  animation: dev-pulse 1.8s ease-in-out infinite;
 }
 
-.bat-when {
+@keyframes dev-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+.dev-pct {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--dev-accent);
+  min-width: 2.6rem;
+  justify-content: flex-end;
+}
+
+.dev-bolt {
+  color: var(--yellow);
+}
+
+/* Meta line: charging / low-power / wifi chips plus the timestamp. */
+.dev-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  padding-left: 0.1rem;
+}
+
+.dev-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  background: var(--surface-1);
+  border: 1px solid var(--surface-2, var(--surface-1));
+  color: var(--subtext-1);
+  white-space: nowrap;
+  max-width: 12rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dev-tag.dev-charging {
+  color: var(--green);
+}
+
+.dev-tag.dev-lowpower {
+  color: var(--yellow);
+}
+
+.dev-when {
+  margin-left: auto;
   font-size: 0.72rem;
   color: var(--subtext-0);
   white-space: nowrap;
 }
 
-.bat-empty {
+.dev-empty {
   font-size: 0.82rem;
   color: var(--subtext-0);
   font-style: italic;
@@ -696,12 +754,8 @@ body:has(.terminal) .hub .terminal {
     height: clamp(300px, 65dvh, 70vh);
   }
 
-  /* Drop the relative-time column so bars stay wide on narrow screens. */
-  .bat-row {
-    grid-template-columns: 4rem 1fr auto;
-  }
-
-  .bat-when {
-    display: none;
+  /* Tighten the name column so bars stay wide on narrow screens. */
+  .dev-main {
+    grid-template-columns: 3.5rem 1fr auto;
   }
 }

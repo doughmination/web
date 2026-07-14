@@ -16,7 +16,7 @@ export default function Home() {
         </header>
         <div className="terminal" id="terminal"></div>
         <div id="fronting"></div>
-        <div id="battery"></div>
+        <div id="devices"></div>
       </main>
 
       <div id="visitor-counter" role="status" aria-label="Visitor count"></div>
@@ -26,7 +26,7 @@ export default function Home() {
         scripts={[
           "/js/terminal.js",
           "/js/fronting.js",
-          "/js/battery.js",
+          "/js/devices.js",
           {
             src: "/js/visitor-counter.js",
             attrs: {
