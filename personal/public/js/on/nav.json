@@ -11,5 +11,6 @@
   { "label": "ASCII", "href": "/ascii" },
   { "label": "Selfies", "href": "/selfies" },
   { "label" : "Blog", "href": "/blog"},
-  { "label": "Minecraft", "href": "/minecraft"}
+  { "label": "Minecraft", "href": "/minecraft"},
+  { "label": "Genshin", "href": "/genshin"}
 ]

@@ -1,0 +1,143 @@
+/* ============================================================
+   genshin.css — the /genshin 3D render gallery.
+   One card per character; each renders a .glb via <model-viewer>
+   (see src/components/chrome/Model3D.tsx). Themed to Catppuccin.
+   ============================================================ */
+
+.genshin-stage {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+}
+
+.genshin-intro {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.genshin-intro h1 {
+  color: var(--pink);
+  margin-bottom: 0.25rem;
+}
+
+.genshin-intro p {
+  color: var(--subtext, var(--text));
+  opacity: 0.85;
+  max-width: 44ch;
+  margin: 0 auto;
+}
+
+.genshin-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+/* Desktop-only: no mobile version. Below the breakpoint we hide the grid
+   entirely (so the heavy model-viewer instances never even load) and show a
+   short notice instead. */
+.genshin-desktop-only {
+  display: none;
+}
+
+@media (max-width: 820px) {
+  .genshin-grid {
+    display: none;
+  }
+
+  .genshin-desktop-only {
+    display: block;
+    text-align: center;
+    color: var(--subtext, var(--text));
+    background: var(--mantle);
+    border: 1px solid var(--crust);
+    border-radius: 1rem;
+    padding: 2rem 1.5rem;
+    max-width: 40ch;
+    margin: 1rem auto 0;
+    line-height: 1.5;
+  }
+}
+
+.genshin-card {
+  background: var(--mantle);
+  border: 1px solid var(--surface0, var(--crust));
+  border-radius: 1rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.genshin-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+}
+
+/* The 3D viewport. model-viewer fills it; poster shows while loading.
+   Taller ratio = more room for the (portrait) character models. */
+.genshin-viewer {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 5;
+  min-height: 420px;
+  background:
+    radial-gradient(circle at 50% 30%, var(--surface0, #313244), var(--crust));
+}
+
+/* Owned / Want badge, top-right corner of each viewer. */
+.genshin-tag {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  z-index: 2;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--crust);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+
+.genshin-tag.owned {
+  background: var(--green);
+}
+
+.genshin-tag.want {
+  background: var(--yellow);
+}
+
+.genshin-meta {
+  padding: 1rem 1.1rem 1.2rem;
+  border-top: 1px solid var(--crust);
+}
+
+.genshin-meta h2 {
+  margin: 0 0 0.15rem;
+  color: var(--mauve);
+  font-size: 1.15rem;
+}
+
+.genshin-meta .element {
+  font-size: 0.85rem;
+  color: var(--peach);
+  margin: 0 0 0.5rem;
+}
+
+.genshin-meta .credit {
+  font-size: 0.72rem;
+  opacity: 0.6;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.genshin-hint {
+  text-align: center;
+  font-size: 0.8rem;
+  opacity: 0.6;
+  margin-top: 1.75rem;
+}

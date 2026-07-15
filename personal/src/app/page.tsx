@@ -1,4 +1,5 @@
 import PageScripts from "./_components/PageScripts";
+import Model3D from "@/components/chrome/Model3D";
 
 export default function Home() {
   return (
@@ -14,7 +15,26 @@ export default function Home() {
           <h1>Clove Twilight</h1>
           <h2 className="pronouns">(fae/faer)</h2>
         </header>
-        <div className="terminal" id="terminal"></div>
+        {/* 3D filigree frame (terminal.glb) as the border; the live terminal
+            content is overlaid in the screen area by terminal.js below. */}
+        <div className="terminal-3d">
+          <Model3D
+            src="/models/terminal.glb"
+            alt="Ornate terminal frame"
+            autoRotate={false}
+            interactive={false}
+            loading="eager"
+            cameraOrbit="0deg 90deg 50%"
+            className="terminal-frame"
+            style={{
+              position: "absolute",
+              inset: 0,
+              minHeight: 0,
+              pointerEvents: "none",
+            }}
+          />
+          <div className="terminal" id="terminal"></div>
+        </div>
         <div id="fronting"></div>
         <div id="devices"></div>
       </main>

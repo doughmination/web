@@ -128,13 +128,44 @@
 }
 
 body:has(.terminal) .hub {
-  max-width: min(92vw, 600px);
+  max-width: min(94vw, 780px);
   width: 100%;
 }
 
-body:has(.terminal) .hub .terminal {
+/* ---- 3D terminal frame (terminal.glb) ---- */
+.terminal-3d {
+  position: relative;
   width: 100%;
-  margin: 0 auto;
+  /* match the model's proportions so the frame isn't distorted */
+  aspect-ratio: 9.86 / 5.74;
+  /* negative top margin lifts the frame up the page */
+  margin: -1.5rem auto 0;
+}
+
+.terminal-3d .terminal-frame {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+/* The interactive terminal now lives inside the frame's screen void, so it
+   drops the old card chrome (border/background/shadow) and is inset to sit
+   within the filigree. Insets are tuned to the model's screen area. */
+.hub .terminal-3d .terminal {
+  position: absolute;
+  top: calc(24% + 13px);
+  left: 15%;
+  right: 9%;
+  bottom: calc(8% - 13px);
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0.35rem 0.55rem;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  z-index: 1;
 }
 
 /* ---- boot log ---- */
