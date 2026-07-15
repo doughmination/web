@@ -36,8 +36,7 @@ export const metadata: Metadata = {
 type Character = {
   name: string;
   model: string;
-  /** "owned" = render I own, "want" = one I don't yet. Omit for no badge. */
-  tier?: "owned" | "want";
+  tier: "owned" | "want";
 };
 
 const TIER_LABEL: Record<NonNullable<Character["tier"]>, string> = {
@@ -60,6 +59,8 @@ const CHARACTERS: Character[] = [
   { name: "Sucrose", model: "/models/sucrose.glb", tier: "owned" },
   { name: "Kaeya", model: "/models/kaeya.glb", tier: "owned" },
   { name: "Diona", model: "/models/diona.glb", tier: "owned" },
+  { name: "Noelle", model: "/models/noelle.glb", tier: "owned" },
+  { name: "Fischl", model: "/models/fischl.glb", tier: "owned"}
 ];
 
 export default function GenshinPage() {

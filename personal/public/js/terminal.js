@@ -91,7 +91,7 @@
     },
     ls() { return COMMANDS.help(); },
     code() {
-      window.open("https://codeberg.org/clove/web/src/branch/main/c.stupid.cat", "_blank");
+      window.open("https://codeberg.org/clove/web/src/branch/main/personal", "_blank");
       return { text: "Opening site source code..." }
     },
     async system(args) {

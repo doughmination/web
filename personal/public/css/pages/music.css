@@ -580,9 +580,24 @@ body:has(.music-wrap) {
   flex: none;
 }
 
+/* Bootstrap Icons variant: it's a glyph <i>, so size via font-size + colour */
+i.pc-conn-ic {
+  width: auto;
+  height: auto;
+  font-size: 14px;
+  line-height: 1;
+  color: currentColor;
+}
+
 .presence-card.is-mini .pc-conn-ic {
   width: 13px;
   height: 13px;
+}
+
+.presence-card.is-mini i.pc-conn-ic {
+  width: auto;
+  height: auto;
+  font-size: 13px;
 }
 
 .friends-disclaimer {

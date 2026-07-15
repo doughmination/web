@@ -256,7 +256,7 @@ window.ctpBuildNav = buildNav;
   gate.tabIndex = 0;
   gate.innerHTML = `
     <div class="bgm-gate-panel">
-      <p class="bgm-gate-note">♪ click to enter ♪</p>
+      <p class="bgm-gate-note"><i class="bi bi-music-note-beamed" aria-hidden="true"></i> click to enter <i class="bi bi-music-note-beamed" aria-hidden="true"></i></p>
       <p class="bgm-gate-hint">turns on background music</p>
     </div>`;
   document.body.appendChild(gate);
@@ -296,6 +296,11 @@ window.ctpBuildNav = buildNav;
   let idleTime = 0;
   let idleAnimation = null;
   let idleAnimationFrame = 0;
+
+  /* People can hide the cat from the Settings menu; persisted in localStorage
+     as "onekoHidden". When hidden we keep the element in the DOM (so the toggle
+     can bring it right back) but set display:none and skip the animation. */
+  let onekoHidden = false;
 
   const nekoSpeed = 10;
   const spriteSets = {
@@ -406,6 +411,20 @@ window.ctpBuildNav = buildNav;
 
     document.body.appendChild(nekoEl);
 
+    /* Hide/show wiring. ctpSetCatHidden(bool) is what the Settings toggle calls;
+       ctpIsCatHidden() lets the UI read the current state. */
+    onekoHidden = window.localStorage.getItem("onekoHidden") === "1";
+    nekoEl.style.display = onekoHidden ? "none" : "";
+    window.ctpIsCatHidden = function () {
+      return window.localStorage.getItem("onekoHidden") === "1";
+    };
+    window.ctpSetCatHidden = function (hidden) {
+      onekoHidden = !!hidden;
+      window.localStorage.setItem("onekoHidden", onekoHidden ? "1" : "0");
+      nekoEl.style.display = onekoHidden ? "none" : "";
+      window.dispatchEvent(new Event("ctpcathiddenchange"));
+    };
+
     document.addEventListener("mousemove", function (event) {
       mousePosX = event.clientX;
       mousePosY = event.clientY;
@@ -435,6 +454,11 @@ window.ctpBuildNav = buildNav;
   function onAnimationFrame(timestamp) {
     /* Stop running if the neko element is removed from the DOM. */
     if (!nekoEl.isConnected) {
+      return;
+    }
+    /* Cat hidden: keep the loop alive (so it can be re-shown) but do no work. */
+    if (onekoHidden) {
+      (window.__ctpRawRAF || window.requestAnimationFrame)(onAnimationFrame);
       return;
     }
     if (!lastFrameTimestamp) {
@@ -559,31 +583,16 @@ const BASE_SPRITE = "/assets/oneko/classics/classic.png";
 
 let CAT_MODES = [];
 
-/* Order the category sections appear in within the menu. */
-const CATEGORY_ORDER = ["Classics", "Pride", "Cats", "Romance", "Gaming", "Pokémon", "Other Animals", "Things", "Rare"];
-
-/* Click-count goals (total clicks on the cat). */
-const CLICK_GOALS = { filter: 13, romance: 69, weed: 420 };
-const SPRITE = BASE_SPRITE; /* base sprite used for filter modes + previews */
 const IDLE_POS = "-97px -97px"; /* idle frame, inset 1px to avoid neighbour-frame bleed */
 const spriteFor = (c) => c.sprite || BASE_SPRITE;
 
 (async function catModes() {
   try {
-    /* index.json lists which per-folder configs to load, one per oneko folder. */
-    const index = await fetch("/js/on/oneko/index.json").then((r) => {
-      if (!r.ok) throw new Error(`index.json (${r.status})`);
+    /* Single flat list of cats — no categories. */
+    CAT_MODES = await fetch("/js/on/cats.json").then((r) => {
+      if (!r.ok) throw new Error(`cats.json (${r.status})`);
       return r.json();
     });
-    /* Load every /js/on/oneko/<folder>.json and merge them into one list. */
-    const lists = await Promise.all(
-      index.map((name) =>
-        fetch(`/js/on/oneko/${name}.json`)
-          .then((r) => (r.ok ? r.json() : []))
-          .catch(() => [])
-      )
-    );
-    CAT_MODES = lists.flat();
   } catch (err) {
     console.error("Could not load cat data:", err);
     return;
@@ -595,33 +604,7 @@ const spriteFor = (c) => c.sprite || BASE_SPRITE;
   /* Cursor is handled in CSS (#oneko) so the custom pointer PNG isn't overridden. */
 
   const ls = window.localStorage;
-  let clicks = parseInt(ls.getItem("onekoClicks") || "0", 10);
   let mode = parseInt(ls.getItem("onekoMode") || "0", 10);
-
-  /* Permanently-earned methods (konami, gold, pokemon, plus any click goal hit). */
-  let unlocks;
-  try { unlocks = new Set(JSON.parse(ls.getItem("onekoUnlocks") || "[]")); }
-  catch (e) { unlocks = new Set(); }
-  const saveUnlocks = () => ls.setItem("onekoUnlocks", JSON.stringify([...unlocks]));
-
-  /* Returns true if a method was newly unlocked, false if already had it. */
-  function unlockMethod(key) {
-    if (unlocks.has(key)) return false;
-    unlocks.add(key);
-    saveUnlocks();
-    if (overlay && !overlay.hidden) renderGrid();
-    return true;
-  }
-
-  const methodOf = (c) => c.unlockMethod || "gay";
-  const isUnlocked = (i) => {
-    const key = methodOf(CAT_MODES[i]);
-    if (key === "gay") return true;
-    if (key in CLICK_GOALS) return clicks >= CLICK_GOALS[key] || unlocks.has(key);
-    return unlocks.has(key); /* konami / gold / pokemon */
-  };
-  const unlockedIndices = () =>
-    CAT_MODES.map((_, i) => i).filter(isUnlocked);
 
   const apply = (i) => {
     const c = CAT_MODES[i];
@@ -641,56 +624,30 @@ const spriteFor = (c) => c.sprite || BASE_SPRITE;
         <button class="cat-picker-close" type="button" aria-label="Close">&times;</button>
       </div>
       <div class="cat-grid"></div>
-      <p class="cat-hint">Some cats are still hidden&hellip; &middot; press C to toggle</p>
+      <p class="cat-hint">Pick your cat &middot; press C to toggle</p>
     </div>`;
   document.body.appendChild(overlay);
   const grid = overlay.querySelector(".cat-grid");
 
   function makeOption(i) {
     const c = CAT_MODES[i];
-    const unlocked = isUnlocked(i);
-    const opt = document.createElement(unlocked ? "button" : "div");
-    opt.className =
-      "cat-option" + (unlocked ? "" : " locked") + (i === mode ? " current" : "");
-    if (unlocked) opt.type = "button";
-    const previewFilter = unlocked ? (c.filter || "none") : "brightness(0) opacity(0.3)";
+    const opt = document.createElement("button");
+    opt.type = "button";
+    opt.className = "cat-option" + (i === mode ? " current" : "");
     opt.innerHTML = `
-      <span class="cat-preview" style="background-image:url('${spriteFor(c)}');background-position:${IDLE_POS};filter:${previewFilter}"></span>
-      <span class="cat-name">${unlocked ? c.name : "???"}</span>`;
-    if (unlocked) opt.addEventListener("click", () => selectMode(i));
+      <span class="cat-preview" style="background-image:url('${spriteFor(c)}');background-position:${IDLE_POS};filter:${c.filter || "none"}"></span>
+      <span class="cat-name">${c.name}</span>`;
+    opt.addEventListener("click", () => selectMode(i));
     return opt;
   }
 
   function renderGrid() {
     grid.innerHTML = "";
-
-    /* Bucket cat indices by category. */
-    const byCat = {};
-    CAT_MODES.forEach((c, i) => {
-      const cat = c.category || "Classics";
-      (byCat[cat] = byCat[cat] || []).push(i);
-    });
-
-    /* Known categories first, in order, then any stragglers. */
-    const order = CATEGORY_ORDER.filter((c) => byCat[c])
-      .concat(Object.keys(byCat).filter((c) => !CATEGORY_ORDER.includes(c)));
-
-    order.forEach((cat) => {
-      const section = document.createElement("div");
-      section.className = "cat-section";
-
-      const title = document.createElement("h4");
-      title.className = "cat-section-title";
-      title.textContent = cat;
-      section.appendChild(title);
-
-      const items = document.createElement("div");
-      items.className = "cat-section-items";
-      byCat[cat].forEach((i) => items.appendChild(makeOption(i)));
-      section.appendChild(items);
-
-      grid.appendChild(section);
-    });
+    /* One flat grid — every cat shown together, no category sections. */
+    const items = document.createElement("div");
+    items.className = "cat-section-items";
+    CAT_MODES.forEach((_, i) => items.appendChild(makeOption(i)));
+    grid.appendChild(items);
   }
 
   function selectMode(i) {
@@ -726,30 +683,8 @@ const spriteFor = (c) => c.sprite || BASE_SPRITE;
       !e.ctrlKey && !e.metaKey && !e.altKey && !typing
     ) {
       togglePicker();
-    } else if ((e.key === "x" || e.key === "X") &&
-      !e.ctrlKey && !e.metaKey && !e.altKey && !typing) {
-      if (unlockMethod("gaming")) {
-        toast("✨ Gaming sprites unlocked!");
-      }
     }
   });
-
-  /* ---- toast ---- */
-  let toastEl, toastTimer;
-  function toast(msg) {
-    if (!toastEl) {
-      toastEl = document.createElement("div");
-      toastEl.className = "cat-toast";
-      toastEl.dataset.ctpPersist = ""; /* survives soft navigation, see bottom of file */
-      document.body.appendChild(toastEl);
-    }
-    toastEl.textContent = msg;
-    toastEl.classList.remove("show");
-    void toastEl.offsetWidth;
-    toastEl.classList.add("show");
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toastEl.classList.remove("show"), 1700);
-  }
 
   /* ---- squeak / boop sound on click ---- */
   const boop = new Audio("/assets/oneko/boop.mp3");
@@ -762,100 +697,15 @@ const spriteFor = (c) => c.sprite || BASE_SPRITE;
   }
 
   /* ---- init + cat click ---- */
-  if (!isUnlocked(mode)) mode = 0; /* fall back to Classic if current is locked */
+  if (mode < 0 || mode >= CAT_MODES.length) mode = 0; /* fall back to Classic */
   apply(mode);
 
-  /* Clicking the cat no longer changes its look, it only counts toward
-   * the click-based unlocks (13 / 69 / 420). Pick a cat from the menu
-   * instead. */
+  /* Clicking the cat just squeaks — no unlocks. Pick a cat from the menu. */
   oneko.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
     playBoop();
-    clicks += 1;
-    ls.setItem("onekoClicks", String(clicks));
-
-    /* Did this click hit a click-count goal exactly? (13 / 69 / 420) */
-    for (const key in CLICK_GOALS) {
-      if (clicks === CLICK_GOALS[key]) {
-        unlocks.add(key);
-        saveUnlocks();
-        const idx = CAT_MODES.findIndex((c) => methodOf(c) === key);
-        const name = idx >= 0 ? CAT_MODES[idx].name : key;
-        toast(`✨ Unlocked: ${name}! Open the cat menu 🐱`);
-        if (!overlay.hidden) renderGrid();
-      }
-    }
   });
-
-  /* ---- Konami code, press Enter to confirm ---- */
-  const KONAMI = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown",
-    "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
-  let kProg = 0, kArmed = false;
-  document.addEventListener("keydown", (e) => {
-    const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || "");
-    if (typing || e.ctrlKey || e.metaKey || e.altKey) return;
-
-    if (kArmed && e.key === "Enter") {
-      kArmed = false;
-      if (unlockMethod("konami")) toast("✨ Konami cats unlocked!");
-      return;
-    }
-
-    const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
-    if (key === KONAMI[kProg]) {
-      kProg += 1;
-      if (kProg === KONAMI.length) {
-        kProg = 0;
-        kArmed = true;
-        toast("Konami code… press Enter ↵");
-      }
-    } else {
-      kProg = key === KONAMI[0] ? 1 : 0; /* allow a fresh start on ↑ */
-    }
-  });
-
-  /* ---- Gold: opened the site while Discord status is Idle ---- */
-  const dc = document.getElementById("discord");
-  if (dc) {
-    const checkIdle = () => {
-      if (dc.dataset.status === "idle" && unlockMethod("gold")) {
-        toast("✨ Gold Cat unlocked!");
-      }
-    };
-    checkIdle();
-    new MutationObserver(checkIdle)
-      .observe(dc, { attributes: true, attributeFilter: ["data-status"] });
-  }
-
-  /* ---- Pokémon: find and click the hidden pokéball ---- */
-  const poke = document.getElementById("pokeball-secret");
-  if (poke) {
-    poke.addEventListener("click", (e) => {
-      e.preventDefault();
-      poke.classList.add("found");
-      if (unlockMethod("pokemon")) toast("✨ Pokémon cats unlocked!");
-    });
-  }
-
-  /* ---- Timer: keep the page open for a while ----
-   * Counts only while the tab is visible, and resets each visit, but
-   * once the goal is reached the unlock is saved for good. */
-  const TIMER_GOAL_MS = 5 * 60 * 1000; /* 5 minutes */
-  if (!unlocks.has("timer")) {
-    let elapsed = 0;
-    let last = Date.now();
-    const timer = setInterval(() => {
-      if (document.hidden) { last = Date.now(); return; }
-      const now = Date.now();
-      elapsed += now - last;
-      last = now;
-      if (elapsed >= TIMER_GOAL_MS) {
-        clearInterval(timer);
-        if (unlockMethod("timer")) toast("✨ Patience pays off, timer cats unlocked!");
-      }
-    }, 1000);
-  }
 })();
 
 /* ===================== soft-nav.js (pjax-lite router) =======================

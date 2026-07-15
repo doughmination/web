@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { Gear, PlayFill, PauseFill } from "react-bootstrap-icons";
+import { Gear, PlayFill, PauseFill, EyeFill, EyeSlashFill } from "react-bootstrap-icons";
 import styles from "./SettingsMenu.module.css";
 
 /**
@@ -32,6 +32,8 @@ const LABEL: Record<Flavor, string> = {
 declare global {
   interface Window {
     toggleCatPicker?: () => void;
+    ctpSetCatHidden?: (hidden: boolean) => void;
+    ctpIsCatHidden?: () => boolean;
     ctpBgm?: {
       toggle: () => void;
       isPaused: () => boolean;
@@ -41,6 +43,21 @@ declare global {
 }
 
 const FLAVOR_EVENT = "ctpflavorchange";
+const CAT_HIDDEN_EVENT = "ctpcathiddenchange";
+
+// Cat visibility is external state (localStorage "onekoHidden"), owned by
+// core.js and mirrored here via useSyncExternalStore.
+function subscribeCatHidden(cb: () => void) {
+  window.addEventListener(CAT_HIDDEN_EVENT, cb);
+  window.addEventListener("storage", cb);
+  return () => {
+    window.removeEventListener(CAT_HIDDEN_EVENT, cb);
+    window.removeEventListener("storage", cb);
+  };
+}
+function getCatHiddenSnapshot(): boolean {
+  return window.localStorage.getItem("onekoHidden") === "1";
+}
 
 // The active flavor is external state (localStorage), read via useSyncExternalStore
 // so there's no setState-in-effect and SSR stays consistent.
@@ -68,6 +85,14 @@ export default function SettingsMenu() {
   const barRef = useRef<HTMLDivElement>(null);
 
   const flavor = useSyncExternalStore(subscribeFlavor, getFlavorSnapshot, () => "mocha" as Flavor);
+  const catHidden = useSyncExternalStore(subscribeCatHidden, getCatHiddenSnapshot, () => false);
+
+  const toggleCat = useCallback(() => {
+    const next = !getCatHiddenSnapshot();
+    if (window.ctpSetCatHidden) window.ctpSetCatHidden(next);
+    else window.localStorage.setItem("onekoHidden", next ? "1" : "0");
+    window.dispatchEvent(new Event(CAT_HIDDEN_EVENT)); // re-read via the store
+  }, []);
 
   // Keep <meta theme-color> in sync (data-flavor is already set pre-paint).
   useEffect(() => {
@@ -148,6 +173,17 @@ export default function SettingsMenu() {
             onClick={() => window.toggleCatPicker?.()}
           >
             <span className={styles.catIcon} aria-hidden="true" />
+          </button>
+
+          <button
+            type="button"
+            className={styles.btn}
+            aria-pressed={catHidden}
+            title={catHidden ? "Show cat" : "Hide cat"}
+            aria-label={catHidden ? "Show cat" : "Hide cat"}
+            onClick={toggleCat}
+          >
+            {catHidden ? <EyeSlashFill size={22} /> : <EyeFill size={22} />}
           </button>
 
           <button

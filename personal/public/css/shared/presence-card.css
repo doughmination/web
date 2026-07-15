@@ -657,15 +657,10 @@ a.pc-row:hover,
 }
 
 .pc-plat {
-  width: 12px;
-  height: 12px;
   display: inline-flex;
-}
-
-.pc-plat svg {
-  width: 12px;
-  height: 12px;
-  display: block;
+  align-items: center;
+  font-size: 12px;
+  line-height: 1;
 }
 
 /* KV meta line (location, etc.) */

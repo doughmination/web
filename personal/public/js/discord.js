@@ -89,7 +89,7 @@
       '<span class="pc-meta" hidden></span>' +
       '<span class="pc-badges" aria-hidden="true"></span>' +
       '</span>' +
-      '<button class="pc-star" type="button" aria-label="show wishlist" title="wishlist">★</button>' +
+      '<button class="pc-star" type="button" aria-label="show wishlist" title="wishlist"><i class="bi bi-star-fill" aria-hidden="true"></i></button>' +
       '</div>' +
       '<div class="pc-bio" hidden></div>' +
       '<div class="pc-connections" hidden></div>' +
@@ -202,7 +202,7 @@
             "</span>";
         }).join("");
       } else {
-        body = '<p class="pc-wl-empty">nothing on the wishlist yet ✨</p>';
+        body = '<p class="pc-wl-empty">nothing on the wishlist yet <i class="bi bi-stars" aria-hidden="true"></i></p>';
       }
       wishlistEl.innerHTML = '<div class="pc-wishlist-title">Wishlist</div>' + body;
     }
@@ -283,15 +283,20 @@
       return proxyImg(`https://cdn.discordapp.com/guild-tag-badges/${pg.identity_guild_id}/${pg.badge}.png?size=24`);
     }
     const PLATFORM_ICONS = {
-      desktop: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="1.5"/><path d="M8 21h8M12 17v4"/></svg>',
-      mobile: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/></svg>',
-      web: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 2.5 15 0 18M12 3c-2.5 2.5-2.5 15 0 18"/></svg>'
+      desktop: { bi: "laptop", label: "Desktop" },
+      mobile: { bi: "phone", label: "Mobile" },
+      web: { bi: "globe", label: "Web" }
     };
+    function platIcon(key) {
+      const p = PLATFORM_ICONS[key];
+      return '<i class="pc-plat bi bi-' + p.bi + '" title="' + p.label +
+        '" role="img" aria-label="' + p.label + '"></i>';
+    }
     function platformIcons(d) {
       let html = "";
-      if (d.active_on_discord_desktop) html += '<span class="pc-plat" title="Desktop">' + PLATFORM_ICONS.desktop + "</span>";
-      if (d.active_on_discord_mobile) html += '<span class="pc-plat" title="Mobile">' + PLATFORM_ICONS.mobile + "</span>";
-      if (d.active_on_discord_web || d.active_on_discord_embedded) html += '<span class="pc-plat" title="Web">' + PLATFORM_ICONS.web + "</span>";
+      if (d.active_on_discord_desktop) html += platIcon("desktop");
+      if (d.active_on_discord_mobile) html += platIcon("mobile");
+      if (d.active_on_discord_web || d.active_on_discord_embedded) html += platIcon("web");
       return html;
     }
     const BADGE_FLAGS = [
@@ -445,52 +450,69 @@
       domain: function (n) { return "https://" + n; },
       bluesky: function (n) { return "https://bsky.app/profile/" + n; }
     };
-    // connection type -> brand SVG in /assets/socials (anything unmapped uses
-    // the generic globe "site.svg")
+    // connection type -> icon. Each entry is either:
+    //   { bi: "github" }              -> Bootstrap Icons glyph (bi-github)
+    //   { img: "/assets/socials/x.svg" } -> a custom image file
+    // Brands without a Bootstrap icon (ebay, bungie, crunchyroll, battlenet,
+    // epic, riot, league, roblox) keep a local SVG; everything else is a
+    // Bootstrap glyph, so those image assets can be dropped. Unmapped types
+    // fall back to the globe glyph.
     const CONNECTION_ICON = {
-      "amazon-music": "amazon",
-      facebook: "facebook",
-      ebay: "ebay",
-      tiktok: "tiktok",
-      bungie: "bungie", //
-      playstation: "playstation",
-      paypal: "paypal",
-      instagram: "instagram",
-      xbox: "xbox",
-      crunchyroll: "crunchyroll",
-      battlenet: "battlenet",
-      github: "github",
-      epicgames: "epic",
-      riotgames: "riot",
-      leagueoflegends: "league",
-      steam: "steam",
-      roblox: "roblox",
-      twitter: "twitter",
-      bluesky: "bluesky",
-      mastodon: "mastodon",
-      twitch: "twitch",
-      youtube: "youtube",
-      reddit: "reddit",
-      spotify: "spotify",
-      discord: "discord",
-      linkedin: "linkedin",
-      domain: "site"
+      "amazon-music": { bi: "amazon" },
+      facebook: { bi: "facebook" },
+      ebay: { img: "/assets/socials/ebay.svg" },
+      tiktok: { bi: "tiktok" },
+      bungie: { img: "/assets/socials/bungie.svg" },
+      playstation: { bi: "playstation" },
+      paypal: { bi: "paypal" },
+      instagram: { bi: "instagram" },
+      xbox: { bi: "xbox" },
+      crunchyroll: { img: "/assets/socials/crunchyroll.svg" },
+      battlenet: { img: "/assets/socials/battlenet.svg" },
+      github: { bi: "github" },
+      epicgames: { img: "/assets/socials/epic.svg" },
+      riotgames: { img: "/assets/socials/riot.svg" },
+      leagueoflegends: { img: "/assets/socials/league.svg" },
+      steam: { bi: "steam" },
+      roblox: { img: "/assets/socials/roblox.svg" },
+      twitter: { bi: "twitter-x" },
+      bluesky: { bi: "bluesky" },
+      mastodon: { bi: "mastodon" },
+      twitch: { bi: "twitch" },
+      youtube: { bi: "youtube" },
+      reddit: { bi: "reddit" },
+      spotify: { bi: "spotify" },
+      discord: { bi: "discord" },
+      linkedin: { bi: "linkedin" },
+      domain: { bi: "globe" }
     };
     function connIcon(type) {
-      const file = CONNECTION_ICON[String(type || "").toLowerCase()] || "site";
-      return '<img class="pc-conn-ic" src="/assets/socials/' + file + '.svg" alt="' +
-        esc(type) + '" title="' + esc(type) + '" loading="lazy" onerror="this.remove()">';
+      const def = CONNECTION_ICON[String(type || "").toLowerCase()] || { bi: "globe" };
+      if (def.img) {
+        return '<img class="pc-conn-ic" src="' + esc(def.img) + '" alt="' +
+          esc(type) + '" title="' + esc(type) + '" loading="lazy" onerror="this.remove()">';
+      }
+      return '<i class="pc-conn-ic bi bi-' + esc(def.bi) + '" title="' +
+        esc(type) + '" role="img" aria-label="' + esc(type) + '"></i>';
+    }
+    // Placeholder names sometimes arrive as the literal strings "null"/
+    // "undefined" (the backend can't emit a real null yet) — treat those as no
+    // name so the connection is hidden rather than shown as "null".
+    function isRealName(v) {
+      if (v == null) return false;
+      const n = String(v).trim().toLowerCase();
+      return n !== "" && n !== "null" && n !== "undefined";
     }
     function renderConnections(accounts) {
       if (!connectionsEl) return;
-      const list = (accounts || []).filter(function (a) { return a && a.name; });
+      const list = (accounts || []).filter(function (a) { return a && isRealName(a.name); });
       if (!list.length) { connectionsEl.hidden = true; return; }
       connectionsEl.innerHTML = list.map(function (a) {
         const maker = CONNECTION_URLS[a.type];
         const url = maker ? maker(a.name, a.id) : null;
         const inner = connIcon(a.type) +
           '<span class="pc-conn-name">' + esc(a.name) + "</span>" +
-          (a.verified ? '<span class="pc-conn-check" title="Verified">✓</span>' : "");
+          (a.verified ? '<span class="pc-conn-check" title="Verified"><i class="bi bi-patch-check-fill" aria-hidden="true"></i></span>' : "");
         return url
           ? '<a class="pc-conn" href="' + esc(url) + '" target="_blank" rel="noopener">' + inner + "</a>"
           : '<span class="pc-conn">' + inner + "</span>";
@@ -756,7 +778,7 @@
 
       const loc = d.kv && d.kv.location;
       if (loc) {
-        metaEl.innerHTML = '<span class="pc-pin" aria-hidden="true">📍</span>' + esc(loc);
+        metaEl.innerHTML = '<span class="pc-pin" aria-hidden="true"><i class="bi bi-geo-alt-fill"></i></span>' + esc(loc);
         metaEl.hidden = false;
       } else {
         metaEl.hidden = true;
@@ -801,7 +823,7 @@
       const local = new Date(Date.now() + tzOffsetMin * 60000);
       const hh = String(local.getUTCHours()).padStart(2, "0");
       const mm = String(local.getUTCMinutes()).padStart(2, "0");
-      timezoneEl.textContent = "🕓 " + hh + ":" + mm;
+      timezoneEl.innerHTML = '<i class="bi bi-clock" aria-hidden="true"></i> ' + hh + ":" + mm;
     }
 
     // ---- time tickers (progress bar + elapsed labels) -----------------------
@@ -934,7 +956,7 @@
           }
           if (prem.guild_since) {
             html += '<span class="pc-boost" title="' + esc("Boosting since " + fmtSinceDate(prem.guild_since)) +
-              '" aria-label="Server booster">💎</span>';
+              '" aria-label="Server booster"><i class="bi bi-gem" aria-hidden="true"></i></span>';
           }
         }
         if (html) { premiumEl.innerHTML = html; premiumEl.hidden = false; }

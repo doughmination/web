@@ -18,6 +18,12 @@
     return Number.isFinite(v) ? Math.max(0, Math.min(100, v)) : null;
   }
 
+  /* Connected accessory (watch / airpods) flags may arrive as booleans or as
+     the strings "true"/"false" (backend quirk), so accept both. */
+  function isConnected(v) {
+    return v === true || v === 1 || String(v).trim().toLowerCase() === "true";
+  }
+
   /* Colour band: red when low, yellow when middling, green when healthy. */
   function levelClass(lvl) {
     if (lvl == null) return "dev-unknown";
@@ -76,13 +82,19 @@
     /* Small meta chips shown under the bar. */
     const meta = [];
     if (charging) {
-      meta.push('<span class="dev-tag dev-charging" title="Charging">⚡ Charging</span>');
+      meta.push('<span class="dev-tag dev-charging" title="Charging"><i class="bi bi-lightning-charge-fill" aria-hidden="true"></i> Charging</span>');
     }
     if (d.lowPowerMode === true) {
-      meta.push('<span class="dev-tag dev-lowpower" title="Low Power Mode">🔋 Low Power</span>');
+      meta.push('<span class="dev-tag dev-lowpower" title="Low Power Mode"><i class="bi bi-battery-half" aria-hidden="true"></i> Low Power</span>');
     }
     if (d.wifi) {
-      meta.push('<span class="dev-tag dev-wifi" title="Wi-Fi network">📶 ' + esc(d.wifi) + '</span>');
+      meta.push('<span class="dev-tag dev-wifi" title="Wi-Fi network"><i class="bi bi-wifi" aria-hidden="true"></i> ' + esc(d.wifi) + '</span>');
+    }
+    if (isConnected(d.watch)) {
+      meta.push('<span class="dev-tag dev-watch" title="Apple Watch connected"><i class="bi bi-smartwatch" aria-hidden="true"></i> Watch</span>');
+    }
+    if (isConnected(d.airpods)) {
+      meta.push('<span class="dev-tag dev-airpods" title="AirPods connected"><i class="bi bi-earbuds" aria-hidden="true"></i> AirPods</span>');
     }
     if (when) {
       meta.push('<span class="dev-when">' + esc(when) + '</span>');
@@ -94,7 +106,7 @@
       '<span class="dev-track" role="img" aria-label="' + esc(pct) + (charging ? ", charging" : "") + '">' +
       '<span class="dev-fill" style="width: ' + width + '%"></span>' +
       '</span>' +
-      '<span class="dev-pct">' + (charging ? '<span class="dev-bolt" aria-hidden="true">⚡</span>' : '') + esc(pct) + '</span>' +
+      '<span class="dev-pct">' + (charging ? '<i class="bi bi-lightning-charge-fill dev-bolt" aria-hidden="true"></i>' : '') + esc(pct) + '</span>' +
       '</div>' +
       (meta.length ? '<div class="dev-meta">' + meta.join("") + '</div>' : '') +
       '</div>';
@@ -112,7 +124,13 @@
             charging: v.charging,
             lowPowerMode: v.lowPowerMode,
             wifi: v.wifi,
+            watch: v.watch,
+            airpods: v.airpods,
           };
+        }).filter(function (d) {
+          /* Drop devices whose name came through as the string "null"/"undefined". */
+          const n = String(d.device == null ? "" : d.device).trim().toLowerCase();
+          return n !== "" && n !== "null" && n !== "undefined";
         })
       : [];
     if (!list.length) {

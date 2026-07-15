@@ -42,7 +42,6 @@ type Button = {
 const BUTTONS: Button[] = [
   // coding / web
   { href: "https://doughmination.uk", img: "doughmination.png", alt: "Doughmination", eager: true },
-  { href: "https://git.gay/doughmination", img: "gitgay.png", alt: "Git Gay" },
   { href: "https://code.visualstudio.com", img: "vscbutton.png", alt: "Made with Visual Studio Code" },
   { img: "htmldream.png", alt: "I dream in HTML" },
   { href: "https://validator.w3.org/", img: "valid-html5.png", alt: "Valid HTML5" },

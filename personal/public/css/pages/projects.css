@@ -70,8 +70,8 @@ body:has(.friend-grid) {
 
 .project-card {
   display: flex;
-  align-items: flex-start;
-  gap: 0.9rem;
+  flex-direction: column;
+  gap: 0.7rem;
   padding: 1rem;
   border-radius: 16px;
   background: var(--surface-0);
@@ -83,11 +83,44 @@ body:has(.friend-grid) {
 }
 
 .project-card:hover,
-.project-card:focus-visible {
+.project-card:has(:focus-visible) {
   transform: translateY(-3px);
   background: var(--surface-1);
   border-color: var(--pink);
   box-shadow: 0 6px 20px rgba(var(--pink), 0.22);
+}
+
+/* The repo link fills the card body (avatar + title/status + bio) */
+.project-card-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Separate call-to-action link to the live/deployed version */
+.project-card-live {
+  align-self: flex-end;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.32rem 0.8rem;
+  border-radius: 999px;
+  background: var(--sky);
+  border: 1px solid var(--sky);
+  color: var(--crust);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+
+.project-card-live:hover,
+.project-card-live:focus-visible {
+  filter: brightness(1.12);
+  transform: translateY(-1px);
 }
 
 .project-card-img {

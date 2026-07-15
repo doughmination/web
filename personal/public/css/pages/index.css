@@ -766,6 +766,14 @@ body:has(.terminal) .hub {
   color: var(--yellow);
 }
 
+.dev-tag.dev-watch {
+  color: var(--sky);
+}
+
+.dev-tag.dev-airpods {
+  color: var(--lavender);
+}
+
 .dev-when {
   margin-left: auto;
   font-size: 0.72rem;

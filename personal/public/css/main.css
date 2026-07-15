@@ -8,6 +8,8 @@
 
 /* fonts + theme variables (Catppuccin flavours) */
 @import url(/css/fonts.css);
+/* Bootstrap Icons (brand/logo glyphs, used for social connections etc.) */
+@import url(/css/bootstrap-icons.css);
 @import url(/css/themes/frappe.css);
 @import url(/css/themes/latte.css);
 @import url(/css/themes/mocha.css);

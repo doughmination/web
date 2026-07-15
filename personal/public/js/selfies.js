@@ -46,11 +46,18 @@
     return { src, alt, caption };
   }
 
-  function showMessage(text) {
+  function showMessage(text, icon) {
     root.innerHTML = "";
     const p = document.createElement("p");
     p.className = "selfie-empty";
     p.textContent = text;
+    /* Optional trailing Bootstrap Icon; text stays textContent (escaped). */
+    if (icon) {
+      const ic = document.createElement("i");
+      ic.className = "bi bi-" + icon;
+      ic.setAttribute("aria-hidden", "true");
+      p.append(" ", ic);
+    }
     root.appendChild(p);
   }
 
@@ -190,7 +197,7 @@
       if (!Array.isArray(data)) throw new Error("manifest is not an array");
       items = data.map(normalize).filter(Boolean);
       if (!items.length) {
-        showMessage("No selfies yet, check back soon! 📸");
+        showMessage("No selfies yet, check back soon!", "camera-fill");
         return;
       }
       buildGrid(items);

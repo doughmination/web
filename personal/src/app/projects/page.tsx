@@ -38,7 +38,7 @@ type Project = {
   status: string;
   closed?: boolean;
   bio: string;
-  placeholder?: boolean;
+  live?: string;
 };
 
 const GIRLS_NETWORK: Project[] = [
@@ -71,60 +71,69 @@ const GIRLS_NETWORK: Project[] = [
 
 const PERSONAL: Project[] = [
   {
-    href: "https://git.gay/doughmination/shortcuts-bot",
+    href: "https://codeberg.org/clove/web/src/branch/main/mailbox",
+    img: "/assets/favicon/avatar.png",
+    alt: "Doughmination Mail",
+    title: "Doughmination Mail",
+    status: "Open Source",
+    bio: "My personal inbox, themed on Catppuchin Mocha, pink accent",
+    live: "https://doughmination.tech",
+  },
+  {
+    href: "https://codeberg.org/clove/api",
+    img: "/assets/favicon/avatar.png",
+    alt: "API",
+    title: "Doughmination API",
+    status: "Open Source",
+    bio: "My personal API, which I dont mind people hooking into",
+    live: "https://doughmination.uk",
+  },
+  {
+    href: "https://codeberg.org/clove/shortcuts-bot",
     img: "/assets/favicon/favicon.png",
     alt: "Shortcuts Bot",
     title: "Shortcuts Bot",
     status: "Open Source",
-    bio: "Add a short description for Shortcuts Bot here.",
-    placeholder: true,
-  },
-  {
-    href: "https://git.gay/doughmination/ModUpdateChecker",
-    img: "/assets/projects/modupdatechecker.png",
-    alt: "Mod Update Checker",
-    title: "Mod Update Checker",
-    status: "Open Source",
-    bio: "Add a short description for Mod Update Checker here.",
-    placeholder: true,
-  },
-  {
-    href: "https://git.gay/doughmination/Uzi-DOORman",
-    img: "/assets/projects/uzi-doorman.png",
-    alt: "Uzi Doorman",
-    title: "Uzi Doorman",
-    status: "Open Source",
-    bio: "Add a short description for Uzi Doorman here.",
-    placeholder: true,
-  },
-  {
-    href: "https://git.gay/doughmination/widget-script",
-    img: "/assets/favicon/avatar.png",
-    alt: "Widget-v2 Script",
-    title: "Widget-v2 Script",
-    status: "Open Source",
-    bio: "Add a short description for Widget-v2 Script here.",
-    placeholder: true,
+    bio: "My personal Discord bot I use for utilies",
   },
 ];
 
 function ProjectCard({ p }: { p: Project }) {
   return (
-    <a className="project-card" href={p.href}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img className="project-card-img" src={p.img} alt={p.alt} />
-      <div className="project-card-body">
-        <div className="project-card-head">
-          <span className="project-card-title">{p.title}</span>
-          <span className={`project-card-status${p.closed ? " closed" : ""}`}>
-            {p.status}
-          </span>
+    <div className="project-card">
+      {/* Main body links to the repo; the Live button is a separate link
+          (anchors can't be nested inside another anchor). */}
+      <a
+        className="project-card-main"
+        href={p.href}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img className="project-card-img" src={p.img} alt={p.alt} />
+        <div className="project-card-body">
+          <div className="project-card-head">
+            <span className="project-card-title">{p.title}</span>
+            <span className={`project-card-status${p.closed ? " closed" : ""}`}>
+              {p.status}
+            </span>
+          </div>
+          <p className={`project-card-bio`}>
+            {p.bio}
+          </p>
         </div>
-        <p className={`project-card-bio${p.placeholder ? " is-placeholder" : ""}`}>
-          {p.bio}
-        </p>
-      </div>
-    </a>
+      </a>
+      {p.live && (
+        <a
+          className="project-card-live"
+          href={p.live}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          View Live ↗
+        </a>
+      )}
+    </div>
   );
 }
 
@@ -146,19 +155,19 @@ export default function ProjectsPage() {
       <br />
       <br />
 
-      <section className="section" id="girls-network">
-        <h2 className="section-title">Girls Network</h2>
+      <section className="section" id="personal-projects">
+        <h2 className="section-title">Personal Projects</h2>
         <div className="project-grid">
-          {GIRLS_NETWORK.map((p) => (
+          {PERSONAL.map((p) => (
             <ProjectCard key={p.href} p={p} />
           ))}
         </div>
       </section>
 
-      <section className="section" id="personal-projects">
-        <h2 className="section-title">Personal Projects</h2>
+      <section className="section" id="girls-network">
+        <h2 className="section-title">Girls Network</h2>
         <div className="project-grid">
-          {PERSONAL.map((p) => (
+          {GIRLS_NETWORK.map((p) => (
             <ProjectCard key={p.href} p={p} />
           ))}
         </div>

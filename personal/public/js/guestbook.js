@@ -114,9 +114,16 @@
   /* ---- rendering ---- */
   var entriesEl, formEl, statusEl, submitEl, counterEl, msgEl;
 
-  function setStatus(text, kind) {
+  function setStatus(text, kind, icon) {
     if (!statusEl) return;
     statusEl.textContent = text || "";
+    /* Optional leading Bootstrap Icon; text stays textContent (escaped). */
+    if (icon) {
+      var ic = document.createElement("i");
+      ic.className = "bi bi-" + icon;
+      ic.setAttribute("aria-hidden", "true");
+      statusEl.prepend(ic, " ");
+    }
     statusEl.className = "gb-status" + (kind ? " gb-" + kind : "");
   }
 
@@ -216,7 +223,7 @@
         setStatus(data.error || "Something went wrong. Try again.", "err");
         return;
       }
-      setStatus("Thanks for signing! 💕", "ok");
+      setStatus("Thanks for signing!", "ok", "heart-fill");
       formEl.reset();
       if (counterEl) counterEl.textContent = "0 / 500";
       try {

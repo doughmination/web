@@ -152,7 +152,7 @@
     if (!data) { lyricsEmpty("No track playing."); return; }
     if (data.instrumental) {
       lyricsBox.className = "lyrics is-instrumental";
-      lyricsBox.innerHTML = '<p class="ly-note">♪ instrumental ♪</p>';
+      lyricsBox.innerHTML = '<p class="ly-note"><i class="bi bi-music-note-beamed" aria-hidden="true"></i> instrumental <i class="bi bi-music-note-beamed" aria-hidden="true"></i></p>';
       return;
     }
     if (synced) {
@@ -445,7 +445,7 @@
         return '<li class="rc-item' + (now ? " is-now" : "") + '">' +
           '<a href="' + esc(t.url || "#") + '" target="_blank" rel="noopener">' +
           (art ? '<img class="rc-art" src="' + esc(art) + '" alt="" loading="lazy">'
-            : '<span class="rc-art rc-art-blank" aria-hidden="true">♪</span>') +
+            : '<span class="rc-art rc-art-blank" aria-hidden="true"><i class="bi bi-music-note-beamed"></i></span>') +
           '<span class="rc-text">' +
           '<span class="rc-name">' + esc(t.name) + "</span>" +
           '<span class="rc-artist">' + esc(artist) + "</span>" +
@@ -575,7 +575,7 @@
         '<ol class="top-chips">' + arr.map((a, i) =>
           '<li class="top-chip"><a href="' + esc(a.url) + '" target="_blank" rel="noopener">' +
           '<span class="top-rank">' + (i + 1) + "</span>" +
-          '<span class="top-art top-art-blank" aria-hidden="true">♪</span>' +
+          '<span class="top-art top-art-blank" aria-hidden="true"><i class="bi bi-music-note-beamed"></i></span>' +
           '<span class="top-text">' +
           '<span class="top-name">' + esc(a.name) + "</span>" +
           '<span class="top-plays">' + esc(a.playcount) + " plays</span>" +

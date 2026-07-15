@@ -216,7 +216,7 @@
   overlay.hidden = true;
   overlay.innerHTML =
     '<div class="mc-dialog">' +
-      '<button class="mc-close" type="button" aria-label="Close">✕</button>' +
+      '<button class="mc-close" type="button" aria-label="Close"><i class="bi bi-x-lg" aria-hidden="true"></i></button>' +
       '<div class="mc-d-head">' +
         '<img class="mc-skull" alt="head" referrerpolicy="no-referrer">' +
         '<div class="mc-d-title">' +
@@ -238,7 +238,7 @@
           '</div>' +
           '<div class="mc-tex"></div>' +
           '<div class="mc-rows"></div>' +
-          '<a class="mc-namemc" target="_blank" rel="noopener noreferrer">View on NameMC ↗</a>' +
+          '<a class="mc-namemc" target="_blank" rel="noopener noreferrer">View on NameMC <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i></a>' +
         '</div>' +
         // --- 3D model ---
         '<div class="mc-panel" data-panel="model">' +
@@ -253,7 +253,7 @@
         // --- Hypixel ---
         '<div class="mc-panel" data-panel="hypixel">' +
           '<div class="mc-section-t">Hypixel Stats</div>' +
-          '<div class="mc-soon">Coming soon ✨</div>' +
+          '<div class="mc-soon">Coming soon <i class="bi bi-stars" aria-hidden="true"></i></div>' +
         '</div>' +
       '</div>' +
     '</div>';
@@ -284,7 +284,7 @@
     if (!currentState) return;
     dlg.hero.src = renderUrl(baseRender(currentState, "player"), 360, !showHat);
     dlg.skull.src = renderUrl(baseRender(currentState, "head"), 104, !showHat);
-    dlg.hat.textContent = showHat ? "🎩 Hide hat layer" : "🎩 Show hat layer";
+    dlg.hat.innerHTML = '<i class="bi bi-layers" aria-hidden="true"></i> ' + (showHat ? "Hide hat layer" : "Show hat layer");
   }
   dlg.hat.addEventListener("click", function () { showHat = !showHat; updateRenders(); });
 
@@ -365,7 +365,7 @@
       var el = document.createElement("button");
       el.type = "button";
       el.className = "mc-pill mc-elytra";
-      el.textContent = "🪽 Elytra";
+      el.innerHTML = '<i class="bi bi-feather" aria-hidden="true"></i> Elytra';
       el.addEventListener("click", function () {
         elytraOn = !elytraOn;
         el.classList.toggle("is-active", elytraOn);
@@ -575,7 +575,7 @@
       '<span class="mc-role" style="background:' + accent + '">' + esc(meta.label) + "</span>" +
       '<img class="mc-body" alt="" referrerpolicy="no-referrer" src="' + esc(renderUrl(baseRender(state, "body"), 300, false)) + '">' +
       '<span class="mc-name">' + esc(cfg.uid) + "</span>" +
-      '<span class="mc-cape" hidden>🧣 has a cape</span>';
+      '<span class="mc-cape" hidden><i class="bi bi-award" aria-hidden="true"></i> has a cape</span>';
 
     card.addEventListener("click", function (e) {
       e.preventDefault();
