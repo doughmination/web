@@ -64,22 +64,27 @@
   const bodyEl = card.querySelector(".loc-body");
 
   /* location may be a plain place-name string ("Broxburn,Scotland,UK") or a map
-     URL ("https://maps.apple.com/?q=Broxburn"). Return { url, label } for both. */
+     URL ("https://maps.apple.com/?q=Broxburn"). Returns { url, label, query }:
+     url = source link (Apple Maps) if any, label = display name, query = the
+     best thing to centre the embedded map on (lat,lon if present, else name). */
   function parseLocation(v) {
     const raw = realText(v);
     if (!raw) return null;
     if (/^https?:\/\//i.test(raw)) {
-      let label = "";
+      let label = "", query = "";
       try {
         const u = new URL(raw);
-        const q = u.searchParams.get("q") || u.searchParams.get("address") ||
-          u.searchParams.get("ll") || "";
-        label = fmtLocation(decodeURIComponent(q.replace(/\+/g, " ")));
+        const ll = u.searchParams.get("ll") || u.searchParams.get("sll") || "";
+        const q = u.searchParams.get("q") || u.searchParams.get("address") || "";
+        label = fmtLocation(decodeURIComponent((q || "").replace(/\+/g, " ")));
+        if (!label && ll) label = ll;
         if (!label) label = u.hostname.replace(/^www\./, "");
-      } catch (e) { label = "View on map"; }
-      return { url: raw, label: label || "View on map" };
+        query = ll || label;
+      } catch (e) { label = "View on map"; query = ""; }
+      return { url: raw, label: label || "View on map", query: query };
     }
-    return { url: null, label: fmtLocation(raw) };
+    const label = fmtLocation(raw);
+    return { url: null, label: label, query: label };
   }
 
   function render(data) {
@@ -89,14 +94,29 @@
     if (!loc || !loc.label) { card.hidden = true; return; }
 
     const when = ip ? relTime(ip.updated_at) : "";
-    const place = loc.url
-      ? '<a class="loc-place loc-link" href="' + esc(loc.url) +
+
+    /* Embedded map — keyless Google Maps embed; accepts a place name or lat,lon. */
+    const map = loc.query
+      ? '<iframe class="loc-map" title="Map showing ' + esc(loc.label) + '" ' +
+        'loading="lazy" referrerpolicy="no-referrer-when-downgrade" ' +
+        'src="https://www.google.com/maps?q=' + encodeURIComponent(loc.query) +
+        '&z=12&output=embed"></iframe>'
+      : "";
+
+    /* Caption under the map: place name links out to the full map — the source
+       URL if one was given (e.g. Apple Maps), else a Google Maps search. */
+    const linkUrl = loc.url ||
+      (loc.query ? "https://www.google.com/maps?q=" + encodeURIComponent(loc.query) : "");
+    const place = linkUrl
+      ? '<a class="loc-place loc-link" href="' + esc(linkUrl) +
         '" target="_blank" rel="noopener noreferrer">' + esc(loc.label) +
         ' <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i></a>'
       : '<span class="loc-place">' + esc(loc.label) + '</span>';
 
-    bodyEl.innerHTML = place +
-      (when ? '<span class="loc-when">' + esc(when) + '</span>' : '');
+    bodyEl.innerHTML = map +
+      '<div class="loc-cap">' + place +
+      (when ? '<span class="loc-when">' + esc(when) + '</span>' : '') +
+      '</div>';
     card.hidden = false;
   }
 
