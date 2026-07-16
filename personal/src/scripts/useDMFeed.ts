@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-/* The realtime client core.js exposes on window. `on` returns an unsubscribe;
+/* The realtime client core.ts exposes on window. `on` returns an unsubscribe;
    `request` is a cached on-demand REST lookup (guilds, members, etc.). */
 type DMClient = {
   on: (topic: string, cb: (v: unknown) => void) => (() => void) | void;
@@ -20,10 +20,10 @@ declare global {
 }
 
 /**
- * Subscribe a component to one of core.js's DM topics ("devices", "fronters", …).
+ * Subscribe a component to one of core.ts's DM topics ("devices", "fronters", …).
  *
  * Mirrors the old vanilla scripts: subscribe to the live socket feed when DM is
- * ready (retrying briefly if core.js hasn't loaded yet), and fall back to a
+ * ready (retrying briefly if core.ts hasn't loaded yet), and fall back to a
  * one-shot REST fetch if nothing has arrived — so the widget still paints in
  * local dev where the socket may not push immediately. `pick` maps the raw DM/
  * REST payload to the shape the component wants (return null to ignore).
@@ -64,7 +64,7 @@ export function useDMFeed<T>(
         // Belt-and-suspenders: direct fetch if the socket hasn't delivered.
         timer = setTimeout(() => { if (!painted) directFetch(); }, 2500);
       } else if (tries++ < 50) {
-        timer = setTimeout(attach, 100); // core.js not ready yet — retry
+        timer = setTimeout(attach, 100); // core.ts not ready yet — retry
       } else {
         directFetch();
       }

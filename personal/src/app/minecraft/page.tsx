@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import PageScripts from "../_components/PageScripts";
+import MinecraftAccounts from "@/scripts/MinecraftAccounts";
 
 export const metadata: Metadata = {
   title: "Clove Twilight",
@@ -76,18 +76,8 @@ export default function MinecraftPage() {
           <p>All my Minecraft accounts, live via Doughmination Restful.</p>
         </div>
 
-        <div id="my-minecraft"></div>
+        <MinecraftAccounts accounts={MC_UUIDS} />
       </main>
-
-      {/* Hand the account list (source of truth above) to the vanilla renderer,
-          then load it — the inline entry runs first so window.__MC_ACCOUNTS__
-          exists before minecraft.js reads it. */}
-      <PageScripts
-        scripts={[
-          { inline: `window.__MC_ACCOUNTS__ = ${JSON.stringify(MC_UUIDS)};` },
-          "/js/minecraft.js",
-        ]}
-      />
     </>
   );
 }

@@ -8,8 +8,8 @@ import styles from "./SettingsMenu.module.css";
  * The bottom-left settings button (theme / cat / music), click-to-expand.
  *
  * Theme switching is owned here in React. The cat-collection modal and the
- * background-music <audio> still live in core.js; this component drives them
- * through the small window hooks core.js exposes (window.toggleCatPicker,
+ * background-music <audio> still live in core.ts; this component drives them
+ * through the small window hooks core.ts exposes (window.toggleCatPicker,
  * window.ctpBgm).
  */
 
@@ -46,7 +46,7 @@ const FLAVOR_EVENT = "ctpflavorchange";
 const CAT_HIDDEN_EVENT = "ctpcathiddenchange";
 
 // Cat visibility is external state (localStorage "onekoHidden"), owned by
-// core.js and mirrored here via useSyncExternalStore.
+// core.ts and mirrored here via useSyncExternalStore.
 function subscribeCatHidden(cb: () => void) {
   window.addEventListener(CAT_HIDDEN_EVENT, cb);
   window.addEventListener("storage", cb);
@@ -107,7 +107,7 @@ export default function SettingsMenu() {
     window.dispatchEvent(new Event(FLAVOR_EVENT)); // re-read via the store
   }, []);
 
-  // Reflect the bg-music play state (core.js owns the <audio>).
+  // Reflect the bg-music play state (core.ts owns the <audio>).
   useEffect(() => {
     let unsub: (() => void) | undefined;
     let tries = 0;

@@ -68,21 +68,9 @@
 
 
 
-/* ---- boot reveal of side chrome (set by terminal.js on the homepage,
-   but targets these shared .nav / .badges elements) ---- */
+/* Side chrome fades on theme/flavor transitions. (The old terminal boot-reveal
+   that toggled these via body.term-* classes was removed with the terminal.) */
 .nav,
 .badges {
   transition: opacity 0.6s ease, transform 0.6s ease;
-}
-
-body.term-booting .nav,
-body.term-booting .badges {
-  opacity: 0;
-  transform: translateY(8px);
-}
-
-body.term-chrome-in .nav,
-body.term-chrome-in .badges {
-  opacity: 1;
-  transform: none;
 }

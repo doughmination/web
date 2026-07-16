@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import PageScripts from "../_components/PageScripts";
+import FriendsGrid from "@/scripts/FriendsGrid";
 
 export const metadata: Metadata = {
   title: "Clove Twilight",
@@ -45,8 +45,6 @@ export default function CoolPeoplePage() {
       <link rel="dns-prefetch" href="https://i.scdn.co" />
       <link rel="preconnect" href="https://media.discordapp.net" />
       <link rel="dns-prefetch" href="https://media.discordapp.net" />
-      {/* Fetch the presence script during hydration, not after it */}
-      <link rel="preload" href="/js/discord.js" as="script" />
 
       <main className="hub friends-wrap">
         <header className="hub-header">
@@ -57,7 +55,7 @@ export default function CoolPeoplePage() {
           </p>
         </header>
 
-        <div id="friends-discord"></div>
+        <FriendsGrid />
 
         <p className="friends-disclaimer">
           Presence data is served by{" "}
@@ -72,8 +70,6 @@ export default function CoolPeoplePage() {
         </p>
       </main>
 
-      {/* Presence card factory + friends grid auto-mount on #friends-discord */}
-      <PageScripts scripts={["/js/discord.js"]} />
     </>
   );
 }

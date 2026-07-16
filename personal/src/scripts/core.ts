@@ -1,3 +1,11 @@
+/* eslint-disable */
+// @ts-nocheck
+/* core.ts — the global site shell, ported verbatim from core.js: the realtime
+ * DM client (window.DM) that every widget subscribes to, the nav builder, theme
+ * boot, the bg-music gate, and the oneko cat + picker. It is fundamentally an
+ * imperative init script, so it is kept as-is and run once (client-only) from
+ * SiteChrome on mount. @ts-nocheck/eslint-disable: faithful legacy port. */
+export function initCore(catSrc: string = "/assets/oneko/classics/classic.png") {
 /* Ari was here uwu
  * Professional boob lover
  * girls kissing,,, */
@@ -367,18 +375,8 @@ window.ctpBuildNav = buildNav;
   };
 
   function init() {
-    let nekoFile = "./oneko.gif"
-    const curScript = document.currentScript
-    if (curScript && curScript.dataset.cat) {
-      nekoFile = curScript.dataset.cat
-    }
-    if (curScript && curScript.dataset.persistPosition) {
-      if (curScript.dataset.persistPosition === "") {
-        persistPosition = true;
-      } else {
-        persistPosition = JSON.parse(curScript.dataset.persistPosition.toLowerCase());
-      }
-    }
+    // Was read from the <script data-cat> tag; now passed into initCore().
+    let nekoFile = catSrc || "/assets/oneko/classics/classic.png";
 
     if (persistPosition) {
       let storedNeko = JSON.parse(window.localStorage.getItem("oneko"));
@@ -1163,3 +1161,4 @@ const spriteFor = (c) => c.sprite || BASE_SPRITE;
 
   connect();
 })();
+}

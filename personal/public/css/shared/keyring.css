@@ -17,7 +17,7 @@
   display: none !important;    /* collapsed by default — the dock's lanyard tab toggles it */
 }
 
-/* Shown only while the lanyard webring tab is active (see webrings() in core.js). */
+/* Shown only while the lanyard webring tab is active (see webrings() in core.ts). */
 html.wr-lanyard #lc-embed {
   display: block !important;
 }

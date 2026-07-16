@@ -3,6 +3,7 @@ import Script from "next/script";
 import NavBridge from "./_components/NavBridge";
 import SettingsMenu from "@/components/chrome/SettingsMenu";
 import WebringDock from "@/components/chrome/WebringDock";
+import SiteChrome from "@/components/chrome/SiteChrome";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://c.stupid.cat"),
@@ -88,29 +89,25 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT }} />
       </head>
       <body>
-        {/* Persistent nav shell — core.js populates .nav-links from nav.json */}
+        {/* Persistent nav shell — core.ts populates .nav-links from nav.json */}
         <header className="nav">
           <nav className="nav-links"></nav>
         </header>
 
-        {/* Routes core.js's nav clicks through Next's client router so the
+        {/* Routes core.ts's nav clicks through Next's client router so the
             layout (and bg-music audio) never unloads between pages. */}
         <NavBridge />
 
-        {/* Chrome, now in React (theme owned here; cat + music bridge to core.js) */}
+        {/* Chrome, now in React (theme owned here; cat + music bridge to core.ts) */}
         <SettingsMenu />
         <WebringDock />
 
         {children}
 
-        {/* Persistent chrome: nav builder, theme switcher, oneko cat, bg music */}
-        {/* core.js also carries the shared realtime client (window.DM) — one
-            global script for all the persistent chrome + the site socket. */}
-        <Script
-          src="/js/core.js"
-          strategy="afterInteractive"
-          data-cat="/assets/oneko/classics/classic.png"
-        />
+        {/* Persistent chrome, ported into the bundle: nav builder, oneko cat, bg
+            music, and the shared realtime client (window.DM) that every widget
+            subscribes to. Runs once, client-only, via SiteChrome. */}
+        <SiteChrome catSrc="/assets/oneko/classics/classic.png" />
         {/* lanyard.cafe keyring (webring) */}
         <Script
           src="https://lanyard.cafe/api/embed.js"

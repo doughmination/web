@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import PageScripts from "../_components/PageScripts";
+import OwnerDiscordCard from "@/scripts/OwnerDiscordCard";
 
 export const metadata: Metadata = {
   title: "Clove Twilight",
@@ -42,8 +42,6 @@ export default function DiscordPage() {
       <link rel="dns-prefetch" href="https://wsrv.nl" />
       <link rel="preconnect" href="https://cdn.discordapp.com" />
       <link rel="dns-prefetch" href="https://cdn.discordapp.com" />
-      {/* Fetch the presence script during hydration, not after it */}
-      <link rel="preload" href="/js/discord.js" as="script" />
 
       <main className="presence-stage">
         <div className="presence-intro">
@@ -51,11 +49,8 @@ export default function DiscordPage() {
           <p>What fae is up to, live via Doughmination Restful.</p>
         </div>
 
-        <div id="my-discord"></div>
+        <OwnerDiscordCard />
       </main>
-
-      {/* Presence card factory + auto-mount on #my-discord */}
-      <PageScripts scripts={["/js/discord.js"]} />
     </>
   );
 }
