@@ -13,7 +13,6 @@ export const metadata: Metadata = {
     "Furina",
     "Hu Tao",
     "Lumine",
-    "Paimon",
   ],
   alternates: { canonical: "https://c.stupid.cat/genshin" },
   openGraph: {
@@ -49,6 +48,7 @@ const TIER_LABEL: Record<NonNullable<Character["tier"]>, string> = {
 const CHARACTERS: Character[] = [
   { name: "Furina", model: "/models/furina.glb", tier: "want" },
   { name: "Hu Tao", model: "/models/hutao.glb", tier: "want" },
+  { name: "Sandrone", model: "/models/sandrone.glb", tier: "want" },
   { name: "Lumine", model: "/models/lumine.glb", tier: "owned" },
   { name: "Aino", model: "/models/aino.glb", tier: "owned" },
   { name: "Yumemizuki Mizuki", model: "/models/yumemizuki.glb", tier: "owned" },

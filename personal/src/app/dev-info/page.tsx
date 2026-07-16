@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
-import PageScripts from "../_components/PageScripts";
+import DevInfo from "@/scripts/DevInfo";
 
 export const metadata: Metadata = {
   title: "Clove Twilight",
@@ -118,7 +118,6 @@ export default function DevInfoPage() {
           <h1>Clove Twilight</h1>
           <h2 className="pronouns">(fae/faer)</h2>
           <p className="tagline">Dev Info</p>
-          <p className="waka-meta" id="waka-meta" hidden></p>
         </header>
 
         <details className="waka-section tech-stack" id="tech-stack">
@@ -257,58 +256,8 @@ export default function DevInfoPage() {
           />
         </details>
 
-        <div id="contrib"></div>
-
-        <div id="waka-content" hidden>
-          <div className="waka-section waka-total" id="waka-total">
-            <div className="waka-total-num" id="waka-total-val">
-              —
-            </div>
-            <div className="waka-total-sub" id="waka-total-sub">
-              total coding time
-            </div>
-            <div className="waka-week" id="waka-week"></div>
-          </div>
-
-          <details className="waka-section" id="waka-section-languages" hidden>
-            <summary className="section-title">Languages</summary>
-            <div className="waka-bars" id="waka-languages"></div>
-          </details>
-
-          <details className="waka-section" id="waka-section-categories" hidden>
-            <summary className="section-title">Categories</summary>
-            <div className="waka-bars" id="waka-categories"></div>
-          </details>
-
-          <div className="waka-grid2">
-            <details className="waka-section" id="waka-section-editors" hidden>
-              <summary className="section-title">Editors</summary>
-              <div className="waka-bars" id="waka-editors"></div>
-            </details>
-
-            <details className="waka-section" id="waka-section-os" hidden>
-              <summary className="section-title">Operating Systems</summary>
-              <div className="waka-bars" id="waka-os"></div>
-            </details>
-          </div>
-
-          <p className="waka-credit">
-            Tracked automatically with{" "}
-            <a href="https://wakatime.com" target="_blank" rel="noopener">
-              wakatime
-            </a>
-            .
-          </p>
-        </div>
+        <DevInfo />
       </main>
-
-      <PageScripts
-        scripts={[
-          "/js/dev-info.js",
-          "/js/heatmap.js",
-          { inline: 'ContribHeatmap.render("#contrib", { theme: "trans" });' },
-        ]}
-      />
     </>
   );
 }

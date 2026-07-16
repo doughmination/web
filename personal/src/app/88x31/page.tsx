@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import PageScripts from "../_components/PageScripts";
 
 export const metadata: Metadata = {
   title: "Clove Twilight",
@@ -130,10 +129,6 @@ export default function ButtonsPage() {
           </main>
         </div>
       </div>
-
-      {/* Faithful to the original, which loaded terminal.js here (no #terminal
-          mount on this page, so it simply no-ops). */}
-      <PageScripts scripts={["/js/terminal.js"]} />
     </>
   );
 }

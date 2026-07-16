@@ -1,0 +1,143 @@
+"use client";
+
+import { useDMFeed } from "./useDMFeed";
+import { realText, relTime } from "./util";
+
+type DeviceRaw = {
+  device?: string;
+  level?: number | string;
+  updated_at?: string;
+  charging?: boolean;
+  lowPowerMode?: boolean;
+  wifi?: string | null;
+  watch?: unknown;
+  airpods?: unknown;
+};
+type DeviceMap = Record<string, DeviceRaw>;
+
+const NAMES: Record<string, string> = {
+  iphone: "iPhone",
+  macbook: "MacBook",
+  ipad: "iPad",
+  pc: "PC",
+};
+
+function deviceName(id: string): string {
+  if (NAMES[id]) return NAMES[id];
+  const s = String(id || "device");
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+function clampLevel(n: unknown): number | null {
+  const v = Math.round(Number(n));
+  return Number.isFinite(v) ? Math.max(0, Math.min(100, v)) : null;
+}
+function levelClass(lvl: number | null): string {
+  if (lvl == null) return "dev-unknown";
+  if (lvl <= 20) return "dev-low";
+  if (lvl <= 50) return "dev-mid";
+  return "dev-ok";
+}
+/* Accessory flags may arrive as booleans or the strings "true"/"false". */
+function isConnected(v: unknown): boolean {
+  return v === true || v === 1 || String(v).trim().toLowerCase() === "true";
+}
+
+function DeviceRow({ d }: { d: DeviceRaw & { device: string } }) {
+  const lvl = clampLevel(d.level);
+  const cls = levelClass(lvl);
+  const charging = d.charging === true;
+  const pct = lvl == null ? "—" : `${lvl}%`;
+  const width = lvl == null ? 0 : lvl;
+  const when = relTime(d.updated_at);
+  const wifiName = realText(d.wifi);
+  const watch = isConnected(d.watch);
+  const airpods = isConnected(d.airpods);
+  const hasMeta = charging || d.lowPowerMode === true || wifiName || watch || airpods || when;
+
+  return (
+    <div className={`dev-row ${cls}${charging ? " is-charging" : ""}`}>
+      <div className="dev-main">
+        <span className="dev-name">{deviceName(d.device)}</span>
+        <span className="dev-track" role="img" aria-label={pct + (charging ? ", charging" : "")}>
+          <span className="dev-fill" style={{ width: `${width}%` }} />
+        </span>
+        <span className="dev-pct">
+          {charging ? <i className="bi bi-lightning-charge-fill dev-bolt" aria-hidden="true" /> : null}
+          {pct}
+        </span>
+      </div>
+      {hasMeta ? (
+        <div className="dev-meta">
+          {charging ? (
+            <span className="dev-tag dev-charging" title="Charging">
+              <i className="bi bi-lightning-charge-fill" aria-hidden="true" /> Charging
+            </span>
+          ) : null}
+          {d.lowPowerMode === true ? (
+            <span className="dev-tag dev-lowpower" title="Low Power Mode">
+              <i className="bi bi-battery-half" aria-hidden="true" /> Low Power
+            </span>
+          ) : null}
+          {wifiName ? (
+            <span className="dev-tag dev-wifi" title="Wi-Fi network">
+              <i className="bi bi-wifi" aria-hidden="true" /> {wifiName}
+            </span>
+          ) : null}
+          {watch ? (
+            <span className="dev-tag dev-watch" title="Apple Watch connected">
+              <i className="bi bi-smartwatch" aria-hidden="true" /> Watch
+            </span>
+          ) : null}
+          {airpods ? (
+            <span className="dev-tag dev-airpods" title="AirPods connected">
+              <i className="bi bi-earbuds" aria-hidden="true" /> AirPods
+            </span>
+          ) : null}
+          {when ? <span className="dev-when">{when}</span> : null}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+export default function Devices() {
+  const data = useDMFeed<DeviceMap>(
+    "devices",
+    "https://doughmination.uk/v2/devices",
+    (raw) => (raw && typeof raw === "object" ? (raw as DeviceMap) : null),
+  );
+
+  if (!data) return null;
+
+  const list = Object.keys(data)
+    .map((k) => {
+      const v = data[k] || {};
+      return { ...v, device: v.device || k };
+    })
+    .filter((d) => realText(d.device) !== "");
+
+  list.sort((a, b) => {
+    const la = clampLevel(a.level);
+    const lb = clampLevel(b.level);
+    return (
+      (lb == null ? -1 : lb) - (la == null ? -1 : la) ||
+      String(a.device).localeCompare(String(b.device))
+    );
+  });
+
+  return (
+    <section className="devices-card" aria-label="Device status">
+      <div className="dev-head">
+        <span className="dev-icon" aria-hidden="true" />
+        <span className="dev-label">Devices</span>
+      </div>
+      <div className="dev-rows">
+        {list.length === 0 ? (
+          <span className="dev-empty">no devices reporting</span>
+        ) : (
+          list.map((d) => <DeviceRow key={d.device} d={d} />)
+        )}
+      </div>
+    </section>
+  );
+}

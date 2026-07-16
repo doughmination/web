@@ -31,7 +31,6 @@
 
 /* standalone / error pages */
 @import url(/css/404.css);
-@import url(/css/ascii.css);
 
 /* per-page styles */
 @import url(/css/pages/index.css);
@@ -44,3 +43,4 @@
 @import url(/css/pages/guilds.css);
 @import url(/css/pages/blog.css);
 @import url(/css/pages/genshin.css);
+@import url(/css/pages/guestbook.css);

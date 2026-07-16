@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import PageScripts from "../_components/PageScripts";
+import ServersGuilds from "@/scripts/ServersGuilds";
 
 export const metadata: Metadata = {
   title: "Servers | Clove Twilight",
@@ -47,10 +47,8 @@ export default function ServersPage() {
           <p>Discord servers I&apos;m part of, live via Doughmination Restful.</p>
         </div>
 
-        <div id="my-guilds" className="guild-grid"></div>
+        <ServersGuilds />
       </main>
-
-      <PageScripts scripts={["/js/guilds.js"]} />
     </>
   );
 }

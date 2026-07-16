@@ -27,6 +27,30 @@
   font-family: 'Comic Code', ui-monospace, monospace;
 }
 
+/* Digit strip (was injected by visitor-counter.js). */
+.vc-root {
+  font-family: 'Comic Code', ui-monospace, monospace;
+}
+
+.vc-digits {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 50px;
+}
+
+.vc-digits img {
+  display: block;
+  image-rendering: pixelated;
+  width: 22.5px;
+  height: 50px;
+}
+
+.vc-error {
+  font-size: 0.7rem;
+  color: var(--subtext-0);
+}
+
 /* Boot reveal: fade in with the rest of the chrome */
 #visitor-counter {
   transition: opacity 0.6s ease, transform 0.6s ease;

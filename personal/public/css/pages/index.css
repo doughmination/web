@@ -101,370 +101,60 @@
 
 
 /* ============================================================
-   14. TERMINAL HOMEPAGE  (+ 88x31 button wall)
+   14. HOMEPAGE ABOUT
    ============================================================ */
-.terminal {
+/* Give the homepage hub a touch more room for the About card + status cards. */
+body:has(.about) .hub {
+  max-width: min(94vw, 560px);
+  width: 100%;
+}
+
+/* ---- About section (replaces the old terminal) ---- */
+.about {
   position: relative;
   z-index: 1;
-  width: min(92vw, 600px);
-  /* locked height — the box must not resize between boot and ready, or as
-     command output is appended (the inner .t-output scrolls instead) */
-  height: min(62vh, 460px);
   display: flex;
   flex-direction: column;
-  padding: 1rem 1.15rem 1.15rem;
+  align-items: center;
+  gap: 1.1rem;
+  padding: 1.4rem 1.3rem;
   background: var(--mantle);
   border: 1px solid var(--surface-1);
-  border-radius: 14px;
-  box-shadow: 0 18px 50px -20px rgba(0, 0, 0, 0.7);
-  font-family: 'Comic Code', ui-monospace, 'JetBrains Mono', Menlo, monospace;
-  font-size: 0.86rem;
-  line-height: 1.5;
-  color: var(--text);
-  overflow: hidden;
-  /* lets .t-banner size itself off the terminal's width (cqw), not the
-     viewport, so the ascii always fits regardless of the loaded font */
-  container-type: inline-size;
+  border-radius: 16px;
+  box-shadow: 0 18px 50px -22px rgba(0, 0, 0, 0.6);
 }
 
-body:has(.terminal) .hub {
-  max-width: min(94vw, 780px);
-  width: 100%;
-}
-
-/* ---- 3D terminal frame (terminal.glb) ---- */
-.terminal-3d {
-  position: relative;
-  width: 100%;
-  /* match the model's proportions so the frame isn't distorted */
-  aspect-ratio: 9.86 / 5.74;
-  /* negative top margin lifts the frame up the page */
-  margin: -1.5rem auto 0;
-}
-
-.terminal-3d .terminal-frame {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-}
-
-/* The interactive terminal now lives inside the frame's screen void, so it
-   drops the old card chrome (border/background/shadow) and is inset to sit
-   within the filigree. Insets are tuned to the model's screen area. */
-.hub .terminal-3d .terminal {
-  position: absolute;
-  top: calc(24% + 13px);
-  left: 15%;
-  right: 9%;
-  bottom: calc(8% - 13px);
-  width: auto;
-  height: auto;
+.about-bio {
   margin: 0;
-  padding: 0.35rem 0.55rem;
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
-  z-index: 1;
+  text-align: center;
+  line-height: 1.6;
+  color: var(--subtext-1, var(--text));
+  max-width: 42ch;
 }
 
-/* ---- boot log ---- */
-.t-boot {
-  margin: 0;
-  white-space: pre-wrap;
-  word-break: break-word;
-  font-size: 0.78rem;
-  color: var(--subtext-0);
-  max-height: 72vh;
-  overflow: hidden;
-}
-
-.t-boot[hidden] {
-  display: none;
-}
-
-.b-line {
-  display: block;
-}
-
-.b-time {
-  color: var(--overlay-0);
-}
-
-.b-info {
-  color: var(--blue);
-  font-weight: 700;
-}
-
-.b-ok {
-  color: var(--green);
-  font-weight: 700;
-}
-
-/* ---- main terminal ---- */
-.t-main {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  /* fill the fixed-height terminal so .t-output scrolls */
-  min-height: 0;
-}
-
-.t-main[hidden] {
-  display: none;
-}
-
-.t-banner {
-  margin: 0 0 0.5rem;
-  color: var(--pink);
-  /* scale to the terminal's width (1cqw = 1% of it) so the 42-char banner
-     always fits; capped so it never gets oversized on a wide terminal */
-  font-size: min(0.78rem, 1.9cqw);
-  line-height: 1.04;
-  white-space: pre;
-  overflow: hidden;
-  text-shadow: 0 0 14px rgba(var(--pink), 0.35);
-}
-
-.t-greet {
-  margin-bottom: 0.7rem;
-  color: var(--subtext-1);
-}
-
-.t-greet b {
-  color: var(--pink);
-}
-
-.t-dim {
-  color: var(--subtext-0);
-}
-
-.t-accent {
-  color: var(--pink);
-}
-
-.t-inputline {
-  display: flex;
+.about-source {
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding-bottom: 0.55rem;
-  border-bottom: 1px solid var(--surface-0);
-}
-
-.t-prompt {
-  color: var(--green);
-  white-space: nowrap;
-  font-weight: 700;
-}
-
-.t-path {
-  color: var(--blue);
-  font-weight: 700;
-}
-
-.t-input {
-  flex: 1;
-  min-width: 0;
-  background: transparent;
-  border: none;
-  outline: none;
-  color: var(--text);
-  font: inherit;
-  caret-color: var(--pink);
-}
-
-.t-output {
-  margin-top: 0.6rem;
-  min-height: 0;
-  flex: 1;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-}
-
-.t-echo {
-  color: var(--subtext-0);
-}
-
-.t-result {
-  white-space: pre-wrap;
-  word-break: break-word;
-  margin-top: 0.15rem;
-}
-
-.t-entry.is-error .t-result {
-  color: var(--red);
-}
-
-/* hyfetch trans-flag block */
-.hf-c1 {
-  color: #5bcefa;
-}
-
-.hf-c2 {
-  color: #f5a9b8;
-}
-
-.hf-c3 {
-  color: #ffffff;
-}
-
-.hf-pad {
-  color: transparent;
-}
-
-
-
-/* ---- terminal: socials list (svg icon + clickable link) ---- */
-.t-socials-hint {
-  margin-bottom: 0.4rem;
-}
-
-.t-socials {
-  display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
-}
-
-.t-social {
-  display: grid;
-  grid-template-columns: 18px 6.5rem 6rem 1fr;
-  align-items: center;
-  gap: 0.55rem;
-  padding: 0.22rem 0.4rem;
-  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--crust);
+  background: var(--teal);
+  border: 1px solid var(--teal);
   text-decoration: none;
-  color: var(--text);
-  border: 1px solid transparent;
+  transition: filter 0.15s ease, transform 0.15s ease;
 }
 
-.t-social:hover {
-  background: var(--surface-0);
-  border-color: rgba(var(--pink), 0.4);
+.about-source:hover,
+.about-source:focus-visible {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
 }
 
-.t-social-ic {
-  width: 16px;
-  height: 16px;
-  object-fit: contain;
-}
-
-.t-social-key {
-  color: var(--pink);
-}
-
-.t-social-label {
-  color: var(--text);
-}
-
-.t-social-sub {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* the "Opening …" confirmation line */
-.t-social-open {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  grid-template-columns: none;
-  padding: 0;
-  border: none;
-}
-
-.t-social-open:hover {
-  background: transparent;
-}
-
-
-/* ---- terminal: ls-style socials list + social card ---- */
-.t-ls {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
-  gap: 0.1rem 1.2rem;
-}
-
-.t-ls-item {
-  color: var(--pink);
-}
-
-.t-ls-foot {
-  margin-top: 0.6rem;
-}
-
-.t-ls-foot b {
-  color: var(--text);
-}
-
-.t-social-card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-.t-sc-head {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-}
-
-.t-sc-head .t-social-ic {
-  width: 18px;
-  height: 18px;
-}
-
-.t-sc-url {
-  color: var(--blue);
-  text-decoration: none;
-  word-break: break-all;
-}
-
-.t-sc-url:hover {
-  text-decoration: underline;
-}
-
-.t-sc-ask {
-  margin-top: 0.2rem;
-}
-
-.t-sc-ask b {
-  color: var(--text);
-}
-
-.t-social-open {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  color: var(--text);
-  text-decoration: none;
-}
-
-.t-social-open .t-social-ic {
-  width: 16px;
-  height: 16px;
-}
-
-
-/* ---- hyfetch: arch logo + info, side by side ---- */
-.hf {
-  display: flex;
-  gap: 1.1rem;
-  align-items: flex-start;
-  flex-wrap: wrap;
-}
-
-.hf-logo {
-  margin: 0;
-  white-space: pre;
-  line-height: 1.02;
-  font-size: 0.62rem;
-}
-
-.hf-info {
-  margin: 0;
-  white-space: pre;
+.about-source .bi {
+  font-size: 1.05rem;
 }
 
 /* =====================================================================

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import PageScripts from "../_components/PageScripts";
+import Guestbook from "@/scripts/Guestbook";
 
 export const metadata: Metadata = {
   title: "Clove Twilight",
@@ -38,86 +38,11 @@ export default function GuestbookPage() {
           <p className="tagline">Leave a little note before you go &lt;3</p>
         </header>
 
-        {/* Sign form */}
-        <form id="gb-form" className="gb-form" autoComplete="off" noValidate>
-          <div className="gb-field">
-            <label htmlFor="gb-name">Name</label>
-            <input
-              type="text"
-              id="gb-name"
-              name="name"
-              maxLength={40}
-              required
-              placeholder="what should I call you?"
-            />
-          </div>
-          <div className="gb-field">
-            <label htmlFor="gb-website">
-              Website <span className="gb-optional">(optional)</span>
-            </label>
-            <input
-              type="url"
-              id="gb-website"
-              name="website"
-              maxLength={200}
-              placeholder="https://your-cool-site.com"
-            />
-          </div>
-          <div className="gb-field">
-            <label htmlFor="gb-message">Message</label>
-            <textarea
-              id="gb-message"
-              name="message"
-              maxLength={500}
-              rows={3}
-              required
-              placeholder="say hi!"
-            ></textarea>
-            <span className="gb-counter" id="gb-counter">
-              0 / 500
-            </span>
-          </div>
-
-          {/* Honeypot: hidden from humans, bots tend to fill it. */}
-          <div className="gb-hp" aria-hidden="true">
-            <label htmlFor="gb-url2">Leave this empty</label>
-            <input
-              type="text"
-              id="gb-url2"
-              name="url2"
-              tabIndex={-1}
-              autoComplete="off"
-            />
-          </div>
-
-          {/* Turnstile widget renders here when a site key is configured. */}
-          <div id="gb-turnstile" className="gb-turnstile"></div>
-
-          <div className="gb-actions">
-            <button type="submit" id="gb-submit">
-              Sign guestbook
-            </button>
-            <span className="gb-status" id="gb-status" role="status"></span>
-          </div>
-        </form>
-
-        {/* Entries rendered by js/guestbook.js */}
-        <div id="gb-entries" className="gb-entries" aria-live="polite">
-          <p className="gb-empty">Loading messages…</p>
-        </div>
+        <Guestbook
+          api="https://doughmination.uk/v2/guestbook"
+          turnstileKey="0x4AAAAAAB08ZhSxKn5rAD3d"
+        />
       </div>
-
-      <PageScripts
-        scripts={[
-          {
-            src: "/js/guestbook.js",
-            attrs: {
-              "data-api": "https://doughmination.uk/v2/guestbook",
-              "data-turnstile-key": "0x4AAAAAAB08ZhSxKn5rAD3d",
-            },
-          },
-        ]}
-      />
     </>
   );
 }

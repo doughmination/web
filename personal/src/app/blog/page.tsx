@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import PageScripts from "../_components/PageScripts";
+import BlogCards from "@/scripts/BlogCards";
 
 export const metadata: Metadata = {
   title: "Clove Twilight",
@@ -52,11 +52,9 @@ export default function BlogIndexPage() {
           <h2 className="pronouns">Random Yapping and Stuff</h2>
         </header>
 
-        {/* Cards rendered by blogs.js from /js/on/posts.json */}
-        <div id="blog-cards"></div>
+        {/* Cards fetched from /js/on/posts.json client-side. */}
+        <BlogCards />
       </main>
-
-      <PageScripts scripts={["/js/blogs.js"]} />
     </>
   );
 }

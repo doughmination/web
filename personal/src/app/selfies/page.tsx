@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import PageScripts from "../_components/PageScripts";
+import SelfiesGallery from "@/scripts/SelfiesGallery";
 
 export const metadata: Metadata = {
   title: "Clove Twilight",
@@ -40,15 +40,9 @@ export default function SelfiesPage() {
           </p>
         </header>
 
-        {/* Thumbnails rendered by selfies.js from /assets/selfies/selfies.json */}
-        <div
-          id="selfies-root"
-          className="selfie-grid"
-          aria-label="Selfies gallery"
-        ></div>
+        {/* Grid + lightbox rendered client-side from selfies.json. */}
+        <SelfiesGallery />
       </div>
-
-      <PageScripts scripts={["/js/selfies.js"]} />
     </>
   );
 }

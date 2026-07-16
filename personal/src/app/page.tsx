@@ -1,5 +1,7 @@
-import PageScripts from "./_components/PageScripts";
-import Model3D from "@/components/chrome/Model3D";
+import Fronting from "@/scripts/Fronting";
+import Devices from "@/scripts/Devices";
+import Location from "@/scripts/Location";
+import VisitorCounter from "@/scripts/VisitorCounter";
 
 export default function Home() {
   return (
@@ -15,51 +17,30 @@ export default function Home() {
           <h1>Clove Twilight</h1>
           <h2 className="pronouns">(fae/faer)</h2>
         </header>
-        {/* 3D filigree frame (terminal.glb) as the border; the live terminal
-            content is overlaid in the screen area by terminal.js below. */}
-        <div className="terminal-3d">
-          <Model3D
-            src="/models/terminal.glb"
-            alt="Ornate terminal frame"
-            autoRotate={false}
-            interactive={false}
-            loading="eager"
-            cameraOrbit="0deg 90deg 50%"
-            className="terminal-frame"
-            style={{
-              position: "absolute",
-              inset: 0,
-              minHeight: 0,
-              pointerEvents: "none",
-            }}
-          />
-          <div className="terminal" id="terminal"></div>
-        </div>
-        <div id="fronting"></div>
-        <div id="devices"></div>
-        <div id="location"></div>
+        <section className="about">
+          <p className="about-bio">
+            Transfem developer from Southampton, UK. I make projects,
+            personal-site nonsense, and run a small corner of the internet under
+            the trade mark &ldquo;doughmination system&rdquo;. Big on Linux,
+            Catppuccin, and cats.
+          </p>
+          <a
+            className="about-source"
+            href="https://codeberg.org/clove/web/src/branch/main/personal"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <i className="bi bi-git" aria-hidden="true"></i>
+            View source on Codeberg
+          </a>
+        </section>
+
+        <Fronting />
+        <Devices />
+        <Location />
       </main>
 
-      <div id="visitor-counter" role="status" aria-label="Visitor count"></div>
-
-      {/* Home-page widgets (vanilla scripts ported from the original site) */}
-      <PageScripts
-        scripts={[
-          "/js/terminal.js",
-          "/js/fronting.js",
-          "/js/devices.js",
-          "/js/location.js",
-          {
-            src: "/js/visitor-counter.js",
-            attrs: {
-              "data-target": "#visitor-counter",
-              "data-namespace": "clove-is-a-dev",
-              "data-key": "hits",
-              "data-label": "visitors",
-            },
-          },
-        ]}
-      />
+      <VisitorCounter namespace="clove-is-a-dev" hitKey="hits" label="visitors" />
     </>
   );
 }
