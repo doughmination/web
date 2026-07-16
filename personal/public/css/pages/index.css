@@ -619,6 +619,58 @@ body:has(.terminal) .hub {
   color: var(--subtext-0);
 }
 
+/* ---- Location card (iPhone location from the devices feed) ---- */
+.location-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  margin: 0.9rem auto 0;
+  padding: 0.85rem 1rem;
+  background: var(--mantle);
+  border: 1px solid var(--surface-1);
+  border-radius: 14px;
+  box-shadow: 0 18px 50px -22px rgba(0, 0, 0, 0.6);
+}
+
+.location-card[hidden] {
+  display: none;
+}
+
+.loc-head {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--subtext-0);
+}
+
+.loc-head .bi {
+  color: var(--pink);
+  font-size: 0.85rem;
+}
+
+.loc-body {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.loc-place {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.loc-when {
+  margin-left: auto;
+  font-size: 0.72rem;
+  color: var(--subtext-0);
+}
+
 /* Little battery glyph drawn with borders so it needs no asset. */
 .dev-icon {
   position: relative;

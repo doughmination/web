@@ -37,6 +37,7 @@ export default function Home() {
         </div>
         <div id="fronting"></div>
         <div id="devices"></div>
+        <div id="location"></div>
       </main>
 
       <div id="visitor-counter" role="status" aria-label="Visitor count"></div>
@@ -47,6 +48,7 @@ export default function Home() {
           "/js/terminal.js",
           "/js/fronting.js",
           "/js/devices.js",
+          "/js/location.js",
           {
             src: "/js/visitor-counter.js",
             attrs: {
