@@ -24,6 +24,15 @@
     return v === true || v === 1 || String(v).trim().toLowerCase() === "true";
   }
 
+  /* Normalise a display string: real null/undefined AND the literal strings
+     "null"/"undefined" (or blank) all collapse to "" so they render as absent. */
+  function realText(v) {
+    if (v == null) return "";
+    const s = String(v).trim();
+    const l = s.toLowerCase();
+    return (l === "" || l === "null" || l === "undefined") ? "" : s;
+  }
+
   /* Colour band: red when low, yellow when middling, green when healthy. */
   function levelClass(lvl) {
     if (lvl == null) return "dev-unknown";
@@ -87,8 +96,9 @@
     if (d.lowPowerMode === true) {
       meta.push('<span class="dev-tag dev-lowpower" title="Low Power Mode"><i class="bi bi-battery-half" aria-hidden="true"></i> Low Power</span>');
     }
-    if (d.wifi) {
-      meta.push('<span class="dev-tag dev-wifi" title="Wi-Fi network"><i class="bi bi-wifi" aria-hidden="true"></i> ' + esc(d.wifi) + '</span>');
+    const wifiName = realText(d.wifi);
+    if (wifiName) {
+      meta.push('<span class="dev-tag dev-wifi" title="Wi-Fi network"><i class="bi bi-wifi" aria-hidden="true"></i> ' + esc(wifiName) + '</span>');
     }
     if (isConnected(d.watch)) {
       meta.push('<span class="dev-tag dev-watch" title="Apple Watch connected"><i class="bi bi-smartwatch" aria-hidden="true"></i> Watch</span>');
