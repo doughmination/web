@@ -1,8 +1,9 @@
 /* location.js — homepage "location" card.
  * The devices feed (window.DM "devices") carries the iPhone's current location
- * as a comma-joined string, e.g. "Broxburn,Scotland,United Kingdom". Only the
- * iPhone reports it. This card shows it (nicely spaced) with a relative
- * "updated" time, and hides itself when there's no location. */
+ * (iPhone entry only). It may be a plain place-name string
+ * ("Broxburn,Scotland,United Kingdom") or a map URL
+ * ("https://maps.apple.com/?q=Broxburn"); a URL becomes a clickable link with
+ * the place name pulled from its query. Hides itself when there's no location. */
 (function locationCard() {
   "use strict";
 
@@ -62,16 +63,39 @@
 
   const bodyEl = card.querySelector(".loc-body");
 
+  /* location may be a plain place-name string ("Broxburn,Scotland,UK") or a map
+     URL ("https://maps.apple.com/?q=Broxburn"). Return { url, label } for both. */
+  function parseLocation(v) {
+    const raw = realText(v);
+    if (!raw) return null;
+    if (/^https?:\/\//i.test(raw)) {
+      let label = "";
+      try {
+        const u = new URL(raw);
+        const q = u.searchParams.get("q") || u.searchParams.get("address") ||
+          u.searchParams.get("ll") || "";
+        label = fmtLocation(decodeURIComponent(q.replace(/\+/g, " ")));
+        if (!label) label = u.hostname.replace(/^www\./, "");
+      } catch (e) { label = "View on map"; }
+      return { url: raw, label: label || "View on map" };
+    }
+    return { url: null, label: fmtLocation(raw) };
+  }
+
   function render(data) {
     /* Location lives on the iPhone entry only. */
     const ip = data && typeof data === "object" ? data.iphone : null;
-    const raw = ip ? realText(ip.location) : "";
-    const place = raw ? fmtLocation(raw) : "";
-    if (!place) { card.hidden = true; return; }
+    const loc = parseLocation(ip && ip.location);
+    if (!loc || !loc.label) { card.hidden = true; return; }
 
     const when = ip ? relTime(ip.updated_at) : "";
-    bodyEl.innerHTML =
-      '<span class="loc-place">' + esc(place) + '</span>' +
+    const place = loc.url
+      ? '<a class="loc-place loc-link" href="' + esc(loc.url) +
+        '" target="_blank" rel="noopener noreferrer">' + esc(loc.label) +
+        ' <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i></a>'
+      : '<span class="loc-place">' + esc(loc.label) + '</span>';
+
+    bodyEl.innerHTML = place +
       (when ? '<span class="loc-when">' + esc(when) + '</span>' : '');
     card.hidden = false;
   }

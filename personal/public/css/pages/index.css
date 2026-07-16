@@ -665,6 +665,25 @@ body:has(.terminal) .hub {
   color: var(--text);
 }
 
+.loc-link {
+  color: var(--sky);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  transition: color 0.15s ease;
+}
+
+.loc-link:hover,
+.loc-link:focus-visible {
+  color: var(--pink);
+  text-decoration: underline;
+}
+
+.loc-link .bi {
+  font-size: 0.75rem;
+}
+
 .loc-when {
   margin-left: auto;
   font-size: 0.72rem;
