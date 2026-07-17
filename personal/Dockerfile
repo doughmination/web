@@ -35,7 +35,7 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
-RUN bun i -g @dotenvx/dotenvx
+USER bun
 
 EXPOSE 5002
-CMD ["dotenvx", "run", "--", "bun", "server.js"]
+CMD ["bun", "server.js"]
