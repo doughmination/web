@@ -41,4 +41,4 @@ RUN bun install -g @dotenvx/dotenvx
 USER bun
 
 EXPOSE 5002
-CMD ["dotenvx", "run", "--", "bun", "server.js"]
+CMD ["bunx", "dotenvx", "run", "--", "bun", "server.js"]
