@@ -10,9 +10,6 @@ services:
     ports:
       - "127.0.0.1:5002:5002"
     restart: unless-stopped
-    volumes:
-      - "./.env:/app/.env:ro"
-      - "./.env.keys:/app/.env.keys:ro"
 
   dough-front:
     build:
