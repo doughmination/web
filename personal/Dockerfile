@@ -35,8 +35,10 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
+RUN bun install -g @dotenvx/dotenvx
+
 # Run as the non-root user that ships with the bun image.
 USER bun
 
 EXPOSE 5002
-CMD ["bun", "server.js"]
+CMD ["dotenvx", "run", "--", "bun", "server.js"]

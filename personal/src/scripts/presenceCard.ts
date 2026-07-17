@@ -15,12 +15,6 @@ interface SelfJson {
   success?: boolean;
   data?: Dict;
 }
-export interface BatchManager {
-  register(id: string, fn: (j: SelfJson) => void): void;
-  refresh(): Promise<unknown>;
-  start(): void;
-  destroy(): void;
-}
 export interface PresenceOpts {
   userId?: string | null;
   mount: HTMLElement;
@@ -31,7 +25,6 @@ export interface PresenceOpts {
   fallbackName?: string;
   fallbackUser?: string | null;
   fallbackImg?: string | null;
-  batch?: BatchManager;
 }
 
 const g = (o: unknown, k: string): unknown =>
@@ -1069,9 +1062,7 @@ export function createPresenceCard(opts: PresenceOpts): HTMLElement | null {
   }
 
   if (DISCORD_USER_ID) {
-    if (opts.batch && typeof opts.batch.register === "function") {
-      opts.batch.register(DISCORD_USER_ID, renderFromSelfHost);
-    } else if (window.DM) {
+    if (window.DM) {
       loadSelfHosted();
       const off = window.DM.on("presence:" + DISCORD_USER_ID, (v: unknown) => {
         const data = g(v, "data") as Dict | undefined;
@@ -1099,61 +1090,6 @@ export function createPresenceCard(opts: PresenceOpts): HTMLElement | null {
     document.removeEventListener("visibilitychange", onVis);
   };
   return card;
-}
-
-// ---- batched presence manager (friends grid) ------------------------------
-export function createBatchPresence(base: string, pollMs: number): BatchManager {
-  const renderers = new Map<string, (j: SelfJson) => void>();
-  const last = new Map<string, SelfJson>();
-  let timer: ReturnType<typeof setInterval> | null = null;
-  const offs: (() => void)[] = [];
-
-  function register(id: string, fn: (j: SelfJson) => void) {
-    id = String(id);
-    renderers.set(id, fn);
-    if (window.DM) {
-      const off = window.DM.on("presence:" + id, (v: unknown) => {
-        const data = g(v, "data") as Dict | undefined;
-        if (!data) return;
-        const lj = last.get(id);
-        if (lj && lj.data) {
-          lj.data.presence = data;
-          fn(lj);
-        }
-      });
-      if (typeof off === "function") offs.push(off);
-    }
-  }
-  function dispatch(j: SelfJson | null) {
-    if (!j || !j.success || !j.data) return;
-    renderers.forEach((fn, id) => {
-      const rec = (j.data as Dict)[id] as Dict | undefined;
-      if (rec) {
-        const lj: SelfJson = { success: true, data: rec };
-        last.set(id, lj);
-        fn(lj);
-      }
-    });
-  }
-  function refresh(): Promise<unknown> {
-    const ids = Array.from(renderers.keys());
-    if (!ids.length) return Promise.resolve();
-    const url = base + "?ids=" + encodeURIComponent(ids.join(","));
-    return fetch(url, { cache: "no-store" })
-      .then((r) => (r.ok ? r.json() : null))
-      .then(dispatch)
-      .catch(() => {});
-  }
-  function start() {
-    if (window.DM) return;
-    if (!timer) timer = setInterval(() => { if (!document.hidden) refresh(); }, pollMs);
-  }
-  const mgr = { register, refresh, start } as BatchManager & { destroy(): void };
-  mgr.destroy = () => {
-    if (timer) clearInterval(timer);
-    offs.forEach((o) => o());
-  };
-  return mgr;
 }
 
 export function destroyCard(el: HTMLElement | null) {

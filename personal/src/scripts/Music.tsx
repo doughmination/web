@@ -9,8 +9,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 // ---- config ---------------------------------------------------------------
 const DISCORD_ID = "1464890289922641993";
-const LFM_USER = "Real_AlexTLM";
-const LFM_KEY = "768e8bd0d366f4d6c7874740ca6610ad";
+const LFM_USER = process.env.NEXT_PUBLIC_LASTFM_USER ?? "";
+const LFM_KEY = process.env.NEXT_PUBLIC_LASTFM_API_KEY ?? "";
 const LFM_OK = !!(LFM_USER && LFM_KEY);
 const LFM = "https://ws.audioscrobbler.com/2.0/";
 const LFM_PLACEHOLDER = "2a96cbd8b46e442fc41c2b86b821562f";
@@ -178,7 +178,7 @@ async function lfm(method: string, extra?: Record<string, string>) {
 }
 
 // ---- artist images (TheAudioDB -> MusicBrainz -> Spotify oEmbed) ----------
-const TADB_ROOT = "https://www.theaudiodb.com/api/v1/json/123";
+const TADB_ROOT = `https://www.theaudiodb.com/api/v1/json/${process.env.NEXT_PUBLIC_THEAUDIODB_KEY ?? "2"}`;
 const MB_ROOT = "https://musicbrainz.org/ws/2";
 const ART_CACHE_PREFIX = "cstupidcat:artimg:";
 const ART_TTL_HIT = 30 * 864e5;

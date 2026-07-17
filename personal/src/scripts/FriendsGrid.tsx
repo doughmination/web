@@ -1,17 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import {
-  createPresenceCard,
-  createBatchPresence,
-  destroyCard,
-  type BatchManager,
-} from "./presenceCard";
+import { useEffect, useRef } from "react";
+import { createPresenceCard, destroyCard } from "./presenceCard";
 
 /* /cool-people — the friends/alts grid. React renders the section/heading/grid
    structure; each member slot is a full-but-mini presence card built by the
-   shared factory. One batched manager seeds every card in a single request and
-   rides the site socket for live presence (see presenceCard.ts). */
+   shared factory. Each card fetches its own /discord/users/:id (then rides the
+   site socket for live presence) — the batched ?ids= call was dropped because
+   it double-requested and choked the API. */
 
 type Member = {
   name: string;
@@ -24,7 +20,6 @@ type Member = {
 type Group = { title: string; subtitle?: string; members: Member[] };
 
 const FRIEND_POLL_MS = 60000;
-const BATCH_BASE = "https://doughmination.uk/v2/discord/users";
 
 const FRIENDS: Group[] = [
   {
@@ -85,19 +80,20 @@ function slugify(str: string) {
     .replace(/^-+|-+$/g, "");
 }
 
-function FriendSlot({ m, batch }: { m: Member; batch: BatchManager }) {
+function FriendSlot({ m }: { m: Member }) {
   const wrapRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     const wrap = wrapRef.current;
     if (!wrap) return;
     const inner = document.createElement("div");
     wrap.appendChild(inner);
+    // No `batch` → each card loads its own /discord/users/:id, then rides the
+    // socket (or polls at pollMs when there's no socket).
     const card = createPresenceCard({
       mount: inner,
       userId: m.discordId || null,
       mini: true,
       pollMs: FRIEND_POLL_MS,
-      batch,
       tier: m.tier || null,
       link: m.link || null,
       fallbackName: m.name,
@@ -108,19 +104,12 @@ function FriendSlot({ m, batch }: { m: Member; batch: BatchManager }) {
       destroyCard(card);
       card?.remove();
     };
-  }, [m, batch]);
+  }, [m]);
   return <div ref={wrapRef} style={{ display: "contents" }} />;
 }
 
 export default function FriendsGrid() {
-  // Stable per-mount singleton; createBatchPresence touches no window at
-  // creation, so the lazy initializer is SSR-safe.
-  const [batch] = useState<BatchManager>(() => createBatchPresence(BATCH_BASE, FRIEND_POLL_MS));
-
-  // Slots register during their own mount effects (children run before parent),
-  // so by here every id is known — one request seeds them all, then poll/socket.
   useEffect(() => {
-    batch.refresh().then(() => batch.start());
     const jump = () => {
       const id = (location.hash || "").slice(1);
       const target = id && document.getElementById(id);
@@ -128,11 +117,8 @@ export default function FriendsGrid() {
     };
     jump();
     window.addEventListener("hashchange", jump);
-    return () => {
-      window.removeEventListener("hashchange", jump);
-      batch.destroy();
-    };
-  }, [batch]);
+    return () => window.removeEventListener("hashchange", jump);
+  }, []);
 
   return (
     <>
@@ -147,7 +133,7 @@ export default function FriendsGrid() {
           {group.subtitle ? <p className="section-subtitle">{group.subtitle}</p> : null}
           <div className="friend-grid">
             {group.members.map((m, i) => (
-              <FriendSlot key={(m.discordId || m.name) + i} m={m} batch={batch} />
+              <FriendSlot key={(m.discordId || m.name) + i} m={m} />
             ))}
           </div>
         </section>

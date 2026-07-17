@@ -40,7 +40,7 @@ export default function GuestbookPage() {
 
         <Guestbook
           api="https://doughmination.uk/v2/guestbook"
-          turnstileKey="0x4AAAAAAB08ZhSxKn5rAD3d"
+          turnstileKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
         />
       </div>
     </>
