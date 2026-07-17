@@ -32,6 +32,12 @@ export const metadata: Metadata = {
   },
 };
 
+// Read the Last.fm/AudioDB creds from the (dotenvx-decrypted) runtime env on
+// each request and pass them to the client component, so they're never inlined
+// into the build. force-dynamic stops Next prerendering this at build time,
+// which would otherwise freeze whatever env was present then.
+export const dynamic = "force-dynamic";
+
 export default function MusicPage() {
   return (
     <>
@@ -45,7 +51,11 @@ export default function MusicPage() {
       <link rel="preconnect" href="https://lyrics.lanyard.cafe" crossOrigin="" />
       <link rel="dns-prefetch" href="https://lyrics.lanyard.cafe" />
 
-      <Music />
+      <Music
+        lastfmUser={process.env.LASTFM_USER}
+        lastfmKey={process.env.LASTFM_API_KEY}
+        audiodbKey={process.env.THEAUDIODB_KEY}
+      />
     </>
   );
 }

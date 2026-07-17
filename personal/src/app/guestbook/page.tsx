@@ -23,6 +23,10 @@ export const metadata: Metadata = {
   },
 };
 
+// Turnstile site key read from runtime env (dotenvx-decrypted) per request and
+// passed to the client widget, so it's never inlined into the build.
+export const dynamic = "force-dynamic";
+
 export default function GuestbookPage() {
   return (
     <>
@@ -40,7 +44,7 @@ export default function GuestbookPage() {
 
         <Guestbook
           api="https://doughmination.uk/v2/guestbook"
-          turnstileKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+          turnstileKey={process.env.TURNSTILE_SITE_KEY}
         />
       </div>
     </>

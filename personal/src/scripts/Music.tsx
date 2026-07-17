@@ -9,9 +9,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 // ---- config ---------------------------------------------------------------
 const DISCORD_ID = "1464890289922641993";
-const LFM_USER = process.env.NEXT_PUBLIC_LASTFM_USER ?? "";
-const LFM_KEY = process.env.NEXT_PUBLIC_LASTFM_API_KEY ?? "";
-const LFM_OK = !!(LFM_USER && LFM_KEY);
 const LFM = "https://ws.audioscrobbler.com/2.0/";
 const LFM_PLACEHOLDER = "2a96cbd8b46e442fc41c2b86b821562f";
 const SELF_BASE = "https://doughmination.uk/v2/discord/users/";
@@ -164,11 +161,11 @@ function timeAgo(uts: number | string): string {
   if (diff < 86400) return `${Math.floor(diff / 3600)} hr ago`;
   return `${Math.floor(diff / 86400)} day${diff < 172800 ? "" : "s"} ago`;
 }
-async function lfm(method: string, extra?: Record<string, string>) {
+async function lfm(user: string, key: string, method: string, extra?: Record<string, string>) {
   const qs = new URLSearchParams({
     method,
-    user: LFM_USER,
-    api_key: LFM_KEY,
+    user,
+    api_key: key,
     format: "json",
     ...(extra || {}),
   }).toString();
@@ -178,16 +175,15 @@ async function lfm(method: string, extra?: Record<string, string>) {
 }
 
 // ---- artist images (TheAudioDB -> MusicBrainz -> Spotify oEmbed) ----------
-const TADB_ROOT = `https://www.theaudiodb.com/api/v1/json/${process.env.NEXT_PUBLIC_THEAUDIODB_KEY ?? "2"}`;
 const MB_ROOT = "https://musicbrainz.org/ws/2";
 const ART_CACHE_PREFIX = "cstupidcat:artimg:";
 const ART_TTL_HIT = 30 * 864e5;
 const ART_TTL_MISS = 3 * 864e5;
 let mbChain: Promise<unknown> = Promise.resolve();
 
-async function tadbArtistImg(name: string): Promise<string> {
+async function tadbArtistImg(root: string, name: string): Promise<string> {
   try {
-    const res = await fetch(`${TADB_ROOT}/search.php?s=${encodeURIComponent(name)}`);
+    const res = await fetch(`${root}/search.php?s=${encodeURIComponent(name)}`);
     if (!res.ok) return "";
     const data = await res.json();
     const a = data?.artists?.[0];
@@ -255,11 +251,11 @@ async function spotifyOembedImg(spotifyUrl: string): Promise<string> {
     return "";
   }
 }
-async function artistImg(name: string): Promise<string> {
+async function artistImg(root: string, name: string): Promise<string> {
   if (!name) return "";
   const cached = artCacheGet(name);
   if (cached !== undefined) return cached;
-  let url = await tadbArtistImg(name);
+  let url = await tadbArtistImg(root, name);
   if (!url) {
     try {
       const mbid = await mbArtistId(name);
@@ -276,7 +272,18 @@ async function artistImg(name: string): Promise<string> {
 }
 
 // ===========================================================================
-export default function Music() {
+type MusicProps = {
+  /* Injected at request time by the /music server page (dotenvx-decrypted env),
+     so the Last.fm/AudioDB creds are never baked into the client bundle. */
+  lastfmUser?: string;
+  lastfmKey?: string;
+  audiodbKey?: string;
+};
+
+export default function Music({ lastfmUser = "", lastfmKey = "", audiodbKey = "" }: MusicProps) {
+  const lfmOk = !!(lastfmUser && lastfmKey);
+  const tadbRoot = `https://www.theaudiodb.com/api/v1/json/${audiodbKey || "2"}`;
+
   const [track, setTrack] = useState<Track | null>(null);
   const [ly, setLy] = useState<LyricsView>({ kind: "note", msg: "Waiting for a track…" });
   const [locked, setLocked] = useState(true);
@@ -357,9 +364,9 @@ export default function Music() {
 
   // ---- idle fallback: last scrobble as the headline ----
   const showIdle = useCallback(async () => {
-    if (!LFM_OK) return;
+    if (!lfmOk) return;
     try {
-      const data = await lfm("user.getrecenttracks", { limit: "1" });
+      const data = await lfm(lastfmUser, lastfmKey, "user.getrecenttracks", { limit: "1" });
       if (trackRef.current?.live) return;
       const t = data?.recenttracks?.track;
       const last = Array.isArray(t) ? t[0] : t;
@@ -377,7 +384,7 @@ export default function Music() {
     } catch {
       /* leave hero idle */
     }
-  }, [applyTrack]);
+  }, [applyTrack, lfmOk, lastfmUser, lastfmKey]);
 
   const onPresence = useCallback(
     (d: { listening_to_spotify?: boolean; spotify?: Record<string, unknown> } | null) => {
@@ -417,12 +424,12 @@ export default function Music() {
 
   // ---- recent + top ----
   const loadRecent = useCallback(async () => {
-    if (!LFM_OK) {
+    if (!lfmOk) {
       setRecent({ note: "Add your Last.fm username + key to show recent plays." });
       return;
     }
     try {
-      const data = await lfm("user.getrecenttracks", { limit: "12" });
+      const data = await lfm(lastfmUser, lastfmKey, "user.getrecenttracks", { limit: "12" });
       const arr = data?.recenttracks?.track || [];
       const list = Array.isArray(arr) ? arr : [arr];
       if (!list.length) {
@@ -445,12 +452,12 @@ export default function Music() {
     } catch {
       setRecent({ note: "Couldn’t reach Last.fm just now." });
     }
-  }, []);
+  }, [lfmOk, lastfmUser, lastfmKey]);
 
   const loadTop = useCallback(async () => {
-    if (!LFM_OK) return;
+    if (!lfmOk) return;
     try {
-      const data = await lfm("user.gettopartists", { period: "7day", limit: "8" });
+      const data = await lfm(lastfmUser, lastfmKey, "user.gettopartists", { period: "7day", limit: "8" });
       const arr = data?.topartists?.artist || [];
       if (!arr.length) return;
       const list: TopArtist[] = arr.map((a: { name: string; url: string; playcount: string }) => ({
@@ -460,14 +467,14 @@ export default function Music() {
       }));
       setTop(list);
       list.forEach((a) => {
-        artistImg(a.name).then((url) => {
+        artistImg(tadbRoot, a.name).then((url) => {
           if (url) setTopImg((m) => ({ ...m, [a.name]: url }));
         });
       });
     } catch {
       /* leave top hidden */
     }
-  }, []);
+  }, [lfmOk, lastfmUser, lastfmKey, tadbRoot]);
 
   // ---- effects ----
   useEffect(() => {
@@ -523,11 +530,11 @@ export default function Music() {
       await loadRecent();
       await loadTop();
     })();
-    const t = LFM_OK ? setInterval(loadRecent, 45000) : undefined;
+    const t = lfmOk ? setInterval(loadRecent, 45000) : undefined;
     return () => {
       if (t) clearInterval(t);
     };
-  }, [showIdle, loadRecent, loadTop]);
+  }, [showIdle, loadRecent, loadTop, lfmOk]);
 
   // per-frame ticker: progress bar + active synced line + follow-scroll
   useEffect(() => {
