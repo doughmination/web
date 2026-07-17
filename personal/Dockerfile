@@ -35,10 +35,12 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
-RUN bun install -g @dotenvx/dotenvx
-
-# Run as the non-root user that ships with the bun image.
+# Run as the non-root user that ships with the bun image, and install dotenvx
+# into THAT user's global bin so it's owned by, and on PATH for, `bun`.
+# (Installing before `USER bun` puts it in /root/.bun/bin, which bun can't reach.)
 USER bun
+RUN bun i -g @dotenvx/dotenvx
+ENV PATH="/home/bun/.bun/bin:${PATH}"
 
 EXPOSE 5002
-CMD ["bunx", "dotenvx", "run", "--", "bun", "server.js"]
+CMD ["dotenvx", "run", "--", "bun", "server.js"]
