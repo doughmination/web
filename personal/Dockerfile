@@ -36,9 +36,11 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
 # Run as the non-root user that ships with the bun image, and install dotenvx
-# into THAT user's global bin so it's owned by, and on PATH for, `bun`.
-# (Installing before `USER bun` puts it in /root/.bun/bin, which bun can't reach.)
+# into a bun-writable global dir. The image's default global bin is a root-owned
+# system path, so a `USER bun` install fails with EACCES — point BUN_INSTALL at
+# the bun user's own home instead, and put its bin on PATH so the CMD resolves.
 USER bun
+ENV BUN_INSTALL=/home/bun/.bun
 RUN bun i -g @dotenvx/dotenvx
 ENV PATH="/home/bun/.bun/bin:${PATH}"
 
