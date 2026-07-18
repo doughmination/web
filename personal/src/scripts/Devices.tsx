@@ -107,9 +107,9 @@ export default function Devices() {
     (raw) => (raw && typeof raw === "object" ? (raw as DeviceMap) : null),
   );
 
-  if (!data) return null;
-
-  const list = Object.keys(data)
+  // Render the shell while the feed is in flight — see the note in Fronting.tsx.
+  const loading = !data;
+  const list = !data ? [] : Object.keys(data)
     .map((k) => {
       const v = data[k] || {};
       return { ...v, device: v.device || k };
@@ -126,13 +126,15 @@ export default function Devices() {
   });
 
   return (
-    <section className="devices-card" aria-label="Device status">
+    <section className="devices-card" aria-label="Device status" aria-busy={loading}>
       <div className="dev-head">
         <span className="dev-icon" aria-hidden="true" />
         <span className="dev-label">Devices</span>
       </div>
-      <div className="dev-rows">
-        {list.length === 0 ? (
+      <div className={loading ? "dev-rows is-loading" : "dev-rows"}>
+        {loading ? (
+          <span className="dev-empty">loading data…</span>
+        ) : list.length === 0 ? (
           <span className="dev-empty">no devices reporting</span>
         ) : (
           list.map((d) => <DeviceRow key={d.device} d={d} />)

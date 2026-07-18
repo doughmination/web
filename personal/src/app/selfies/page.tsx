@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import SelfiesGallery from "@/scripts/SelfiesGallery";
+import SelfiesGallery from "@scripts/SelfiesGallery";
 
 export const metadata: Metadata = {
   title: "Clove Twilight",

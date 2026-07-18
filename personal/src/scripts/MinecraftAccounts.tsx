@@ -33,55 +33,20 @@ type ProfileData = {
 type AcctState = { uid: string; cfg: Cfg; data: ProfileData };
 type Cape = { url: string; name: string | null };
 
-// ---- skinview3d (UMD global, lazy-loaded) ---------------------------------
-interface SkinViewerInstance {
-  controls: { enableZoom: boolean };
-  autoRotateSpeed: number;
-  autoRotate: boolean;
-  animation: unknown;
-  loadSkin(url: string, opts?: { model?: string }): Promise<void>;
-  loadCape(img: HTMLImageElement, opts?: { backEquipment?: string }): Promise<void> | void;
-  resetCape(): void;
-  dispose(): void;
-}
-interface Skinview3d {
-  SkinViewer: new (opts: {
-    canvas: HTMLCanvasElement;
-    width: number;
-    height: number;
-  }) => SkinViewerInstance;
-  IdleAnimation: new () => unknown;
-  WalkingAnimation: new () => unknown;
-  RunningAnimation: new () => unknown;
-}
-declare global {
-  interface Window {
-    skinview3d?: Skinview3d;
-  }
-}
+// ---- skinview3d (npm package, code-split) ---------------------------------
+// Loaded via dynamic import() so the WebGL viewer stays out of the main bundle
+// and only downloads when someone opens the 3D tab. Types come from the package.
+type Skinview3d = typeof import("skinview3d");
+type SkinViewerInstance = InstanceType<Skinview3d["SkinViewer"]>;
+
 let skinviewPromise: Promise<Skinview3d> | null = null;
 function loadSkinview(): Promise<Skinview3d> {
-  if (window.skinview3d) return Promise.resolve(window.skinview3d);
-  if (skinviewPromise) return skinviewPromise;
-  skinviewPromise = new Promise((resolve, reject) => {
-    const s = document.createElement("script");
-    s.src = "/js/skinview3d.bundle.js";
-    s.async = true;
-    s.addEventListener(
-      "load",
-      () => (window.skinview3d ? resolve(window.skinview3d) : reject(new Error("missing global"))),
-      { once: true },
-    );
-    s.addEventListener(
-      "error",
-      () => {
-        skinviewPromise = null;
-        reject(new Error("failed to load"));
-      },
-      { once: true },
-    );
-    document.head.appendChild(s);
-  });
+  if (!skinviewPromise) {
+    skinviewPromise = import("skinview3d").catch((err) => {
+      skinviewPromise = null; // let a later attempt retry
+      throw err;
+    });
+  }
   return skinviewPromise;
 }
 
@@ -252,8 +217,7 @@ function Skin3D({ data }: { data: ProfileData }) {
     img.onload = () => {
       if (cancelled || !viewerRef.current) return;
       try {
-        const p = viewerRef.current.loadCape(img, { backEquipment: back });
-        if (p && (p as Promise<void>).catch) (p as Promise<void>).catch(() => {});
+        viewerRef.current.loadCape(img, { backEquipment: back });
       } catch {
         /* rejected source */
       }

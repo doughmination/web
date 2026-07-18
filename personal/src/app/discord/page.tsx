@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import OwnerDiscordCard from "@/scripts/OwnerDiscordCard";
+import OwnerDiscordCard from "@scripts/OwnerDiscordCard";
 
 export const metadata: Metadata = {
   title: "Clove Twilight",

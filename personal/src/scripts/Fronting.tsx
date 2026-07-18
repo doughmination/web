@@ -24,17 +24,22 @@ export default function Fronting() {
     (raw) => (raw && typeof raw === "object" ? (raw as Fronters) : null),
   );
 
-  if (!data) return null; // nothing delivered yet (was `hidden`)
-  const members = Array.isArray(data.members) ? data.members : [];
+  // The card shell renders immediately, even before the feed delivers. Returning
+  // null here instead would collapse the card to zero height and shove every
+  // element below it down once data lands — that was ~half the homepage CLS.
+  const loading = !data;
+  const members = data && Array.isArray(data.members) ? data.members : [];
 
   return (
-    <section className="fronting-card" aria-label="Currently fronting">
+    <section className="fronting-card" aria-label="Currently fronting" aria-busy={loading}>
       <div className="fr-head">
         <span className="fr-dot" aria-hidden="true" />
         <span className="fr-label">Currently fronting</span>
       </div>
-      <div className="fr-members">
-        {members.length === 0 ? (
+      <div className={loading ? "fr-members is-loading" : "fr-members"}>
+        {loading ? (
+          <span className="fr-empty">loading data…</span>
+        ) : members.length === 0 ? (
           <span className="fr-empty">no one is currently fronting</span>
         ) : (
           members.map((m, i) => {

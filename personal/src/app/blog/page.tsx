@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import BlogCards from "@/scripts/BlogCards";
+import BlogCards from "@scripts/BlogCards";
 
 export const metadata: Metadata = {
   title: "Clove Twilight",
@@ -52,7 +52,7 @@ export default function BlogIndexPage() {
           <h2 className="pronouns">Random Yapping and Stuff</h2>
         </header>
 
-        {/* Cards fetched from /js/on/posts.json client-side. */}
+        {/* Cards fetched from /posts.json client-side. */}
         <BlogCards />
       </main>
     </>

@@ -1,7 +1,7 @@
-import Fronting from "@/scripts/Fronting";
-import Devices from "@/scripts/Devices";
-import Location from "@/scripts/Location";
-import VisitorCounter from "@/scripts/VisitorCounter";
+import Fronting from "@scripts/Fronting";
+import Devices from "@scripts/Devices";
+import Location from "@scripts/Location";
+import VisitorCounter from "@scripts/VisitorCounter";
 
 export default function Home() {
   return (

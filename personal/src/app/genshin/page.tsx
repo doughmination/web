@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Model3D from "@/components/chrome/Model3D";
+import Model3D from "@components/chrome/Model3D";
 
 export const metadata: Metadata = {
   title: "Genshin — Clove Twilight",

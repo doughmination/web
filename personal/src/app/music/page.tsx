@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Music from "@/scripts/Music";
+import Music from "@scripts/Music";
 
 export const metadata: Metadata = {
   title: "Clove Twilight",

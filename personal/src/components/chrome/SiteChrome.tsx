@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { initCore } from "@/scripts/core";
+import { initCore } from "@scripts/core";
 
 /* Boots the global site shell (core.ts) once, client-only: the realtime DM
    client, nav builder, theme boot, bg-music gate, and the oneko cat + picker.

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import FriendsGrid from "@/scripts/FriendsGrid";
+import FriendsGrid from "@scripts/FriendsGrid";
 
 export const metadata: Metadata = {
   title: "Clove Twilight",

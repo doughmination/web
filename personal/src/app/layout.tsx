@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import NavBridge from "./_components/NavBridge";
-import SettingsMenu from "@/components/chrome/SettingsMenu";
-import WebringDock from "@/components/chrome/WebringDock";
-import SiteChrome from "@/components/chrome/SiteChrome";
+import SettingsMenu from "@components/chrome/SettingsMenu";
+import WebringDock from "@components/chrome/WebringDock";
+import SiteChrome from "@components/chrome/SiteChrome";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://c.stupid.cat"),

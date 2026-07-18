@@ -223,6 +223,49 @@ body:has(.about) .hub {
   gap: 0.6rem;
 }
 
+/* ---- Loading placeholders (CLS) ----------------------------------------
+   Fronting and Devices used to render nothing until their API replied, so the
+   cards popped in from zero height and shoved the page down — the bulk of the
+   homepage's 0.131 CLS. The shells now render immediately and these min-heights
+   hold the body open at roughly its settled size, so filling in barely moves.
+   .fr-members: one .fr-member row = 38px avatar + 0.5rem*2 padding + 2px border.
+   Tune --dev-rows-reserve to however many devices you normally have online. */
+.fr-members.is-loading {
+  min-height: 56px;
+  align-items: center;
+}
+
+.dev-rows.is-loading {
+  --dev-rows-reserve: 2;
+  /* per row: ~28px content + 0.45rem*2 padding + 2px border, + 0.55rem gaps */
+  min-height: calc(
+    var(--dev-rows-reserve) * 44px + (var(--dev-rows-reserve) - 1) * 0.55rem
+  );
+}
+
+.fr-members.is-loading .fr-empty,
+.dev-rows.is-loading .dev-empty {
+  opacity: 0.65;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .fr-members.is-loading .fr-empty,
+  .dev-rows.is-loading .dev-empty {
+    animation: ctp-pulse 1.6s ease-in-out infinite;
+  }
+}
+
+@keyframes ctp-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+
+  50% {
+    opacity: 0.75;
+  }
+}
+
 .fr-member {
   --fr-accent: var(--pink);
   display: flex;

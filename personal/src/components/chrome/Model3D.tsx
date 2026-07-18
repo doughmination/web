@@ -10,32 +10,37 @@ import type { CSSProperties } from "react";
  * image is shown only while the model streams in (and as the fallback if WebGL
  * is unavailable), so from the visitor's side an image simply "becomes" 3D.
  *
- * <model-viewer> is a custom element, so it's registered once via a lazily
- * injected module script (cached across mounts on window). This mirrors the
- * skinview3d lazy-load already used on the Minecraft page — no bundler wiring,
- * loads only on routes that actually use a model.
+ * <model-viewer> is a custom element, registered once per page load via a
+ * dynamic import() of the npm package. Importing for side effects is what
+ * defines the element; the promise is cached across mounts so remounting a
+ * model doesn't re-run the import. Code-split, so it only downloads on routes
+ * that actually render a model.
  *
  * Usage:
  *   <Model3D src="/models/poc-knot.glb" poster="/assets/x.png" alt="…" />
  */
 
-// Vendored locally (public/js) so the site stays self-hosted — no CDN dependency.
-const MV_SRC = "/js/model-viewer.min.js";
+let mvPromise: Promise<void> | null = null;
 
 // Register the <model-viewer> element once per page load.
 function loadModelViewer(): Promise<void> {
-  const w = window as unknown as { __mvPromise?: Promise<void> };
-  if (customElements.get("model-viewer")) return Promise.resolve();
-  if (w.__mvPromise) return w.__mvPromise;
-  w.__mvPromise = new Promise<void>((resolve) => {
-    const s = document.createElement("script");
-    s.type = "module";
-    s.src = MV_SRC;
-    s.addEventListener("load", () => resolve(), { once: true });
-    s.addEventListener("error", () => resolve(), { once: true });
-    document.head.appendChild(s);
-  });
-  return w.__mvPromise;
+  if (typeof window !== "undefined" && customElements.get("model-viewer")) {
+    return Promise.resolve();
+  }
+  if (!mvPromise) {
+    // Deliberately the pre-bundled dist build, NOT the package root. The root
+    // resolves to lib/model-viewer.js, which imports three as a bare specifier
+    // and would pick up the hoisted three@0.156 that skinview3d pins — while
+    // model-viewer 4.x peer-requires three@^0.183. This dist build has its own
+    // three compiled in, so the two viewers can't fight over a shared version.
+    mvPromise = import("@google/model-viewer/dist/model-viewer.min.js")
+      .then(() => undefined)
+      .catch(() => {
+        // Swallow: the <poster> image stays visible as the fallback.
+        mvPromise = null;
+      });
+  }
+  return mvPromise;
 }
 
 type Model3DProps = {

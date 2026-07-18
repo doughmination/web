@@ -146,7 +146,7 @@ async function buildNav() {
 
   let items;
   try {
-    items = await fetch("/js/on/nav.json").then((r) => {
+    items = await fetch("/nav.json").then((r) => {
       if (!r.ok) throw new Error(`nav.json (${r.status})`);
       return r.json();
     });
@@ -587,7 +587,7 @@ const spriteFor = (c) => c.sprite || BASE_SPRITE;
 (async function catModes() {
   try {
     /* Single flat list of cats — no categories. */
-    CAT_MODES = await fetch("/js/on/cats.json").then((r) => {
+    CAT_MODES = await fetch("/cats.json").then((r) => {
       if (!r.ok) throw new Error(`cats.json (${r.status})`);
       return r.json();
     });

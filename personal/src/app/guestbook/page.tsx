@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Guestbook from "@/scripts/Guestbook";
+import Guestbook from "@scripts/Guestbook";
 
 export const metadata: Metadata = {
   title: "Clove Twilight",

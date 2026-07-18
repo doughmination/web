@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
-import DevInfo from "@/scripts/DevInfo";
+import DevInfo from "@scripts/DevInfo";
 
 export const metadata: Metadata = {
   title: "Clove Twilight",
@@ -246,14 +246,6 @@ export default function DevInfoPage() {
               </a>
             </HardwareRow>
           </dl>
-          {/* hidden pokéball: find & click it to unlock the Pokémon cats */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            id="pokeball-secret"
-            src="/assets/misc/pokeball.svg"
-            alt=""
-            aria-hidden="true"
-          />
         </details>
 
         <DevInfo />

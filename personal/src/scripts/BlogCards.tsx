@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-/* Ported from blogs.js — fetches /js/on/posts.json and renders blog cards.
+/* Ported from blogs.js — fetches /posts.json and renders blog cards.
    The date shown is parsed from the slug (DDMMYYYY-name), so there's no
    separate date field to keep in sync. */
 
@@ -48,7 +48,7 @@ export default function BlogCards() {
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/js/on/posts.json", { cache: "no-cache" })
+    fetch("/posts.json", { cache: "no-cache" })
       .then((r) => {
         if (!r.ok) throw new Error(`posts.json ${r.status}`);
         return r.json();

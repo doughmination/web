@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import MinecraftAccounts from "@/scripts/MinecraftAccounts";
+import MinecraftAccounts from "@scripts/MinecraftAccounts";
 
 export const metadata: Metadata = {
   title: "Clove Twilight",

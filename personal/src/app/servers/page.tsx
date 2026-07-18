@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import ServersGuilds from "@/scripts/ServersGuilds";
+import ServersGuilds from "@scripts/ServersGuilds";
 
 export const metadata: Metadata = {
   title: "Servers | Clove Twilight",
