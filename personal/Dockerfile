@@ -16,11 +16,23 @@ COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
 
 # ---- Build ----
-FROM base AS builder
+# Node, not Bun, and deliberately so. Vanilla Extract's webpack loader calls
+# setAdapter() on @vanilla-extract/css before evaluating each .css.ts file. That
+# package ships separate ESM and CJS builds of its ./adapter subpath; Bun
+# resolves the ESM condition where the loader took CJS, so the adapter is set on
+# one module instance and read from another — the build then dies with
+# "Cannot destructure property 'setAdapter' from null or undefined".
+#
+# The oven/bun image has no Node binary, so `bun run build` had no choice but to
+# execute next under Bun. Building on a Node image avoids the dual-package
+# hazard entirely. Dependencies are still installed by Bun (bun.lock stays the
+# source of truth) — Node reads that node_modules tree fine.
+FROM node:22-slim AS builder
+WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN bun run build
+RUN npm run build
 
 # ---- Runtime ----
 FROM base AS runner
