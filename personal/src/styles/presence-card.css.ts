@@ -37,8 +37,8 @@ globalStyle(".presence-card", {
   zIndex: 6,
   width: "max-content",
   maxWidth: 280,
-  background: vars.surface0,
-  border: `1px solid ${vars.surface1}`,
+  background: vars.surface,
+  border: `1px solid ${vars.surfaceHi}`,
   borderRadius: 16,
   boxShadow: "0 8px 26px -12px rgba(17, 17, 27, 0.7)",
   overflow: "hidden",
@@ -76,7 +76,7 @@ globalStyle(".pc-av-img", {
   display: "block",
   // Solid fill behind the avatar: many PFPs are partly transparent, and Discord
   // shows a solid backdrop rather than letting the banner through.
-  background: vars.crust,
+  background: vars.bgDeep,
 });
 
 /** Avatar decoration / frame overlay (a Discord cosmetic). */
@@ -99,8 +99,8 @@ globalStyle(".pc-status", {
   width: 12,
   height: 12,
   borderRadius: "50%",
-  border: `2.5px solid ${vars.surface0}`,
-  background: vars.overlay0,
+  border: `2.5px solid ${vars.surface}`,
+  background: vars.textFaint,
 });
 
 /**
@@ -112,11 +112,11 @@ globalStyle(".pc-status", {
  * matches the .pc-stream-thumb ring and the .pc-stream dot further down.
  */
 const STATUS_COLOURS = {
-  online: { dot: vars.green, text: vars.green },
-  idle: { dot: vars.yellow, text: vars.yellow },
-  dnd: { dot: vars.red, text: vars.red },
-  offline: { dot: vars.overlay0, text: vars.overlay1 },
-  streaming: { dot: vars.mauve, text: vars.mauve },
+  online: { dot: vars.success, text: vars.success },
+  idle: { dot: vars.warning, text: vars.warning },
+  dnd: { dot: vars.danger, text: vars.danger },
+  offline: { dot: vars.textFaint, text: vars.textDim },
+  streaming: { dot: vars.accentAlt, text: vars.accentAlt },
 } as const;
 
 for (const [status, { dot, text }] of Object.entries(STATUS_COLOURS)) {
@@ -136,14 +136,14 @@ globalStyle(".pc-id", {
 globalStyle(".pc-name", {
   fontSize: "0.92rem",
   fontWeight: 700,
-  color: vars.pink,
+  color: vars.accent,
   ...ELLIPSIS,
   transition: "color 0.5s ease",
 });
 
 globalStyle(".pc-user", {
   fontSize: "0.7rem",
-  color: vars.subtext0,
+  color: vars.textMuted,
   whiteSpace: "nowrap",
 });
 
@@ -155,7 +155,7 @@ globalStyle(".pc-status-text", {
   fontSize: "0.7rem",
   fontWeight: 600,
   whiteSpace: "nowrap",
-  color: vars.overlay1,
+  color: vars.textDim,
 });
 
 globalStyle(".pc-status-text:empty", { display: "none" });
@@ -168,7 +168,7 @@ globalStyle(".pc-status-text::before", {
   borderRadius: "50%",
   marginRight: "0.3rem",
   verticalAlign: "baseline",
-  background: vars.overlay0,
+  background: vars.textFaint,
 });
 
 /* ---- expandable sections -------------------------------------------------- */
@@ -190,7 +190,7 @@ globalStyle(".pc-row", {
   gap: "0.55rem",
   padding: "0.4rem 0.5rem",
   borderRadius: 10,
-  background: vars.mantle,
+  background: vars.bgRaised,
   // transparent so the hover border doesn't shift layout
   border: "1px solid transparent",
   color: vars.text,
@@ -214,7 +214,7 @@ globalStyle(".pc-row-kind", {
   fontSize: "0.6rem",
   textTransform: "uppercase",
   letterSpacing: "0.05em",
-  color: vars.subtext0,
+  color: vars.textMuted,
 });
 
 globalStyle(".pc-row-title", {
@@ -226,7 +226,7 @@ globalStyle(".pc-row-title", {
 
 globalStyle(".pc-row-sub", {
   fontSize: "0.7rem",
-  color: vars.subtext0,
+  color: vars.textMuted,
   ...ELLIPSIS,
   maxWidth: 200,
 });
@@ -235,7 +235,7 @@ globalStyle(".pc-row-title:empty, .pc-row-sub:empty", { display: "none" });
 
 globalStyle(".pc-row-elapsed", {
   fontSize: "0.62rem",
-  color: vars.subtext0,
+  color: vars.textMuted,
   marginTop: "0.1rem",
 });
 
@@ -262,7 +262,7 @@ globalStyle(".pc-stream-thumb", {
   borderRadius: 7,
   objectFit: "cover",
   flexShrink: 0,
-  border: `1.5px solid ${vars.mauve}`,
+  border: `1.5px solid ${vars.accentAlt}`,
 });
 
 globalStyle(".pc-row-ic.pc-dot", {
@@ -271,20 +271,20 @@ globalStyle(".pc-row-ic.pc-dot", {
   borderRadius: "50%",
   flexShrink: 0,
   margin: "0 0.5rem",
-  background: vars.pink,
+  background: vars.accent,
 });
 
 /** Activity kind recolours (and reshapes) the dot. */
-globalStyle(".pc-dev .pc-row-ic.pc-dot", { background: vars.blue, borderRadius: 2 });
-globalStyle(".pc-game .pc-row-ic.pc-dot", { background: vars.green });
-globalStyle(".pc-stream .pc-row-ic.pc-dot", { background: vars.mauve });
+globalStyle(".pc-dev .pc-row-ic.pc-dot", { background: vars.info, borderRadius: 2 });
+globalStyle(".pc-game .pc-row-ic.pc-dot", { background: vars.success });
+globalStyle(".pc-stream .pc-row-ic.pc-dot", { background: vars.accentAlt });
 
 /* ---- custom status -------------------------------------------------------- */
 
 globalStyle(".pc-custom", {
   position: "relative",
   alignSelf: "flex-start",
-  background: vars.surface1,
+  background: vars.surfaceHi,
   border: "none",
   padding: "0.5rem 0.7rem",
   gap: "0.4rem",
@@ -299,7 +299,7 @@ globalStyle(".pc-custom", {
 globalStyle(".pc-custom::before, .pc-custom::after", {
   content: '""',
   position: "absolute",
-  background: vars.surface1,
+  background: vars.surfaceHi,
   borderRadius: "50%",
   pointerEvents: "none",
 });
@@ -319,7 +319,7 @@ globalStyle(".pc-emoji", {
 
 globalStyle(".pc-custom-text", {
   fontSize: "0.74rem",
-  color: vars.subtext0,
+  color: vars.textMuted,
   maxWidth: 230,
   whiteSpace: "normal",
   overflowWrap: "anywhere",
@@ -328,7 +328,7 @@ globalStyle(".pc-custom-text", {
 
 /* ---- Spotify progress ----------------------------------------------------- */
 
-globalStyle(".pc-spotify .pc-row-title", { color: vars.green });
+globalStyle(".pc-spotify .pc-row-title", { color: vars.success });
 
 globalStyle(".pc-progress", {
   display: "flex",
@@ -341,7 +341,7 @@ globalStyle(".pc-progress", {
 globalStyle(".pc-bar", {
   height: 4,
   borderRadius: 999,
-  background: vars.surface1,
+  background: vars.surfaceHi,
   overflow: "hidden",
 });
 
@@ -357,7 +357,7 @@ globalStyle(".pc-times", {
   display: "flex",
   justifyContent: "space-between",
   fontSize: "0.58rem",
-  color: vars.subtext0,
+  color: vars.textMuted,
   fontVariantNumeric: "tabular-nums",
 });
 
@@ -394,7 +394,7 @@ globalStyle(".pc-tag", {
   flexShrink: 0,
   padding: "0.05rem 0.35rem",
   borderRadius: 6,
-  background: vars.surface2,
+  background: vars.surfaceHigher,
   fontSize: "0.58rem",
   fontWeight: 700,
   letterSpacing: "0.03em",
@@ -416,7 +416,7 @@ globalStyle(".pc-platforms", {
   display: "inline-flex",
   alignItems: "center",
   gap: "0.2rem",
-  color: vars.subtext0,
+  color: vars.textMuted,
 });
 
 globalStyle(".pc-plat", {
@@ -433,7 +433,7 @@ globalStyle(".pc-meta", {
   gap: "0.25rem",
   marginTop: "0.1rem",
   fontSize: "0.66rem",
-  color: vars.subtext0,
+  color: vars.textMuted,
 });
 
 globalStyle(".pc-meta[hidden]", { display: "none" });
@@ -474,7 +474,7 @@ globalStyle(".pc-ic-badge", {
   height: 16,
   borderRadius: "50%",
   // ring in the row's own background so the badge reads as separate
-  border: `2px solid ${vars.mantle}`,
+  border: `2px solid ${vars.bgRaised}`,
   objectFit: "cover",
 });
 
@@ -489,7 +489,7 @@ globalStyle(".pc-btn", {
   fontSize: "0.66rem",
   padding: "0.22rem 0.55rem",
   borderRadius: 6,
-  background: vars.surface1,
+  background: vars.surfaceHi,
   color: vars.text,
   textDecoration: "none",
   border: "1px solid transparent",
@@ -498,7 +498,7 @@ globalStyle(".pc-btn", {
 
 globalStyle(".pc-btn:hover", {
   borderColor: "rgb(var(--dc-accent))",
-  background: vars.surface2,
+  background: vars.surfaceHigher,
 });
 
 /* ---- profile badges ------------------------------------------------------- */
@@ -527,21 +527,21 @@ globalStyle(".pc-star", {
   cursor: 'url("/assets/cursor/pointer_0.png"), pointer',
   fontSize: "0.95rem",
   lineHeight: 1,
-  color: vars.subtext0,
+  color: vars.textMuted,
   padding: "0.1rem 0.15rem",
   transition: "color 0.15s ease, transform 0.15s ease",
 });
 
-globalStyle(".pc-star:hover", { color: vars.pink, transform: "scale(1.12)" });
+globalStyle(".pc-star:hover", { color: vars.accent, transform: "scale(1.12)" });
 
 /** `on` is toggled by presenceCard.ts when the panel is open. */
-globalStyle(".pc-star.on", { color: vars.yellow });
+globalStyle(".pc-star.on", { color: vars.warning });
 
 globalStyle(".pc-wishlist", { display: "none" });
 
 globalStyle(".presence-card.show-wishlist .pc-wishlist", {
   display: "block",
-  borderTop: `1px solid ${vars.surface1}`,
+  borderTop: `1px solid ${vars.surfaceHi}`,
   margin: "0 0.6rem",
   padding: "0.6rem 0 0.7rem",
 });
@@ -550,7 +550,7 @@ globalStyle(".pc-wishlist-title", {
   fontSize: "0.62rem",
   textTransform: "uppercase",
   letterSpacing: "0.05em",
-  color: vars.subtext0,
+  color: vars.textMuted,
   marginBottom: "0.45rem",
 });
 
@@ -564,7 +564,7 @@ globalStyle(".pc-wl-item", {
   color: vars.text,
 });
 
-globalStyle("a.pc-wl-item:hover", { background: vars.mantle });
+globalStyle("a.pc-wl-item:hover", { background: vars.bgRaised });
 
 globalStyle(".pc-wl-ic", {
   width: 22,
@@ -586,14 +586,14 @@ globalStyle(".pc-wl-type", {
   fontSize: "0.6rem",
   textTransform: "uppercase",
   letterSpacing: "0.04em",
-  color: vars.subtext0,
+  color: vars.textMuted,
 });
 
 globalStyle(".pc-wl-price", {
   marginLeft: "auto",
   paddingLeft: "0.5rem",
   fontSize: "0.72rem",
-  color: vars.subtext1,
+  color: vars.textSoft,
   whiteSpace: "nowrap",
 });
 
@@ -602,7 +602,7 @@ globalStyle(".pc-wl-item.is-owned", { opacity: 0.5 });
 
 globalStyle(".pc-wl-empty", {
   fontSize: "0.78rem",
-  color: vars.subtext0,
+  color: vars.textMuted,
   margin: 0,
 });
 
@@ -639,7 +639,7 @@ globalStyle(".presence-card.has-banner-color::before", {
   content: '""',
   display: "block",
   height: 64,
-  background: "var(--pc-banner-color, var(--surface-1))",
+  background: "var(--pc-banner-color, var(--surface-hi))",
 });
 
 /** With a banner present, lift the avatar up over it. */
@@ -656,7 +656,7 @@ globalStyle(
 
 globalStyle(
   ".presence-card.has-banner .pc-av-img, .presence-card.has-banner-color .pc-av-img",
-  { width: 56, height: 56, border: `3px solid ${vars.surface0}` },
+  { width: 56, height: 56, border: `3px solid ${vars.surface}` },
 );
 
 globalStyle(
@@ -670,10 +670,10 @@ globalStyle(".pc-bio", {
   margin: "0 0.7rem 0.5rem",
   padding: "0.5rem 0.6rem",
   borderRadius: 10,
-  background: vars.mantle,
+  background: vars.bgRaised,
   fontSize: "0.74rem",
   lineHeight: 1.25,
-  color: vars.subtext1,
+  color: vars.textSoft,
   // preserves the line breaks Discord bios use
   whiteSpace: "pre-wrap",
   overflowWrap: "anywhere",
@@ -693,7 +693,7 @@ globalStyle(".pc-bio-emoji", {
 
 /** Linkified URLs in the bio. */
 globalStyle(".pc-bio-link", {
-  color: vars.blue,
+  color: vars.info,
   textDecoration: "none",
   overflowWrap: "anywhere",
 });
@@ -717,7 +717,7 @@ globalStyle(".pc-conn", {
   gap: "0.3rem",
   padding: "0.2rem 0.5rem",
   borderRadius: 999,
-  background: vars.surface1,
+  background: vars.surfaceHi,
   border: "1px solid transparent",
   color: vars.text,
   fontSize: "0.66rem",
@@ -726,11 +726,11 @@ globalStyle(".pc-conn", {
 });
 
 globalStyle("a.pc-conn:hover", {
-  borderColor: vars.pink,
-  background: vars.surface2,
+  borderColor: vars.accent,
+  background: vars.surfaceHigher,
 });
 
-globalStyle(".pc-conn-check", { color: vars.green, fontWeight: 700 });
+globalStyle(".pc-conn-check", { color: vars.success, fontWeight: 700 });
 
 /** Connection brand logos. Moved here from pages/music.css, which renders no
     presence card — see the note in music.css.ts. */
@@ -756,10 +756,10 @@ globalStyle("i.pc-conn-ic", {
 const CHIP = {
   padding: "0.05rem 0.4rem",
   borderRadius: 6,
-  background: vars.surface2,
+  background: vars.surfaceHigher,
   fontSize: "0.6rem",
   fontWeight: 600,
-  color: vars.subtext1,
+  color: vars.textSoft,
   whiteSpace: "nowrap",
 } as const;
 
@@ -788,10 +788,10 @@ globalStyle(".pc-premium[hidden]", { display: "none" });
 globalStyle(".pc-nitro", {
   padding: "0.05rem 0.4rem",
   borderRadius: 6,
-  background: `color-mix(in srgb, #b57edc 22%, ${vars.surface2})`,
+  background: `color-mix(in srgb, #b57edc 22%, ${vars.surfaceHigher})`,
   fontSize: "0.6rem",
   fontWeight: 600,
-  color: `color-mix(in srgb, #c084fc 70%, ${vars.subtext1})`,
+  color: `color-mix(in srgb, #c084fc 70%, ${vars.textSoft})`,
   whiteSpace: "nowrap",
   cursor: "default",
 });
@@ -830,12 +830,12 @@ globalStyle(".presence-intro", {
   "@media": { "(max-width: 480px)": { maxWidth: "100%" } },
 });
 
-globalStyle(".presence-intro h1", { margin: 0, fontSize: "1.8rem", color: vars.pink });
+globalStyle(".presence-intro h1", { margin: 0, fontSize: "1.8rem", color: vars.accent });
 
 globalStyle(".presence-intro p", {
   margin: "0.3rem 0 0",
   fontSize: "0.9rem",
-  color: vars.subtext0,
+  color: vars.textMuted,
 });
 
 /* ---- /discord page: the big "fills the page" card -------------------------
@@ -910,8 +910,8 @@ globalStyle(STAGE_AV_IMG, {
   height: 120,
   // Solid dark plate + ring, so the banner sits clearly BEHIND the avatar —
   // the PFP itself is partly transparent.
-  background: vars.crust,
-  border: `6px solid ${vars.crust}`,
+  background: vars.bgDeep,
+  border: `6px solid ${vars.bgDeep}`,
   "@media": { "(max-width: 480px)": { width: 92, height: 92 } },
 });
 

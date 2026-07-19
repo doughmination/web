@@ -20,8 +20,8 @@ const STATUS_CARD = {
   width: "100%",
   margin: "0.9rem auto 0",
   padding: "0.85rem 1rem",
-  background: vars.mantle,
-  border: `1px solid ${vars.surface1}`,
+  background: vars.bgRaised,
+  border: `1px solid ${vars.surfaceHi}`,
   borderRadius: 14,
   boxShadow: "0 18px 50px -22px rgba(0, 0, 0, 0.6)",
 } as const;
@@ -35,7 +35,7 @@ const CARD_HEAD = {
   fontWeight: 600,
   letterSpacing: "0.06em",
   textTransform: "uppercase",
-  color: vars.subtext0,
+  color: vars.textMuted,
 } as const;
 
 /* ---- About ---------------------------------------------------------------- */
@@ -54,8 +54,8 @@ globalStyle(".about", {
   alignItems: "center",
   gap: "1.1rem",
   padding: "1.4rem 1.3rem",
-  background: vars.mantle,
-  border: `1px solid ${vars.surface1}`,
+  background: vars.bgRaised,
+  border: `1px solid ${vars.surfaceHi}`,
   borderRadius: 16,
   boxShadow: "0 18px 50px -22px rgba(0, 0, 0, 0.6)",
 });
@@ -64,7 +64,7 @@ globalStyle(".about-bio", {
   margin: 0,
   textAlign: "center",
   lineHeight: 1.6,
-  color: vars.subtext1,
+  color: vars.textSoft,
   maxWidth: "42ch",
 });
 
@@ -76,7 +76,7 @@ globalStyle(".about-source", {
   borderRadius: 999,
   fontWeight: 600,
   fontSize: "0.9rem",
-  color: vars.crust,
+  color: vars.bgDeep,
   background: vars.teal,
   border: `1px solid ${vars.teal}`,
   textDecoration: "none",
@@ -107,7 +107,7 @@ globalStyle(".fr-dot", {
   width: 8,
   height: 8,
   borderRadius: "50%",
-  background: vars.green,
+  background: vars.success,
   boxShadow: "0 0 0 0 rgba(166, 227, 161, 0.55)",
   animation: "fr-pulse 2.4s ease-out infinite",
   "@media": {
@@ -122,7 +122,7 @@ globalStyle(".fr-members", {
 });
 
 globalStyle(".fr-member", {
-  vars: { "--fr-accent": vars.pink },
+  vars: { "--fr-accent": vars.accent },
   display: "flex",
   alignItems: "center",
   gap: "0.6rem",
@@ -130,8 +130,8 @@ globalStyle(".fr-member", {
   minWidth: 0,
   padding: "0.5rem 0.75rem 0.5rem 0.5rem",
   borderRadius: 12,
-  background: vars.surface0,
-  border: `1px solid ${vars.surface1}`,
+  background: vars.surface,
+  border: `1px solid ${vars.surfaceHi}`,
   borderLeft: "3px solid var(--fr-accent)",
   color: vars.text,
 });
@@ -143,7 +143,7 @@ globalStyle(".fr-av", {
   objectFit: "cover",
   flex: "0 0 auto",
   border: "2px solid var(--fr-accent)",
-  background: vars.crust,
+  background: vars.bgDeep,
 });
 
 globalStyle(".fr-av--empty", { display: "inline-block" });
@@ -163,11 +163,11 @@ globalStyle(".fr-name", {
   textOverflow: "ellipsis",
 });
 
-globalStyle(".fr-pronouns", { fontSize: "0.74rem", color: vars.subtext0 });
+globalStyle(".fr-pronouns", { fontSize: "0.74rem", color: vars.textMuted });
 
 globalStyle(".fr-empty", {
   fontSize: "0.82rem",
-  color: vars.subtext0,
+  color: vars.textMuted,
   fontStyle: "italic",
 });
 
@@ -220,7 +220,7 @@ globalStyle(".dev-icon", {
   position: "relative",
   width: 18,
   height: 10,
-  border: `1.5px solid ${vars.subtext0}`,
+  border: `1.5px solid ${vars.textMuted}`,
   borderRadius: 2,
 });
 
@@ -234,7 +234,7 @@ globalStyle(".dev-icon::after", {
   height: 5,
   transform: "translateY(-50%)",
   borderRadius: "0 1px 1px 0",
-  background: vars.subtext0,
+  background: vars.textMuted,
 });
 
 globalStyle(".dev-rows", {
@@ -244,23 +244,23 @@ globalStyle(".dev-rows", {
 });
 
 globalStyle(".dev-row", {
-  vars: { "--dev-accent": vars.green },
+  vars: { "--dev-accent": vars.success },
   display: "flex",
   flexDirection: "column",
   gap: "0.4rem",
   padding: "0.45rem 0.6rem",
   borderRadius: 12,
-  background: vars.surface0,
-  border: `1px solid ${vars.surface1}`,
+  background: vars.surface,
+  border: `1px solid ${vars.surfaceHi}`,
   borderLeft: "3px solid var(--dev-accent)",
   color: vars.text,
 });
 
 /** Battery level recolours the accent, which the bar and percentage inherit. */
-globalStyle(".dev-row.dev-ok", { vars: { "--dev-accent": vars.green } });
-globalStyle(".dev-row.dev-mid", { vars: { "--dev-accent": vars.yellow } });
-globalStyle(".dev-row.dev-low", { vars: { "--dev-accent": vars.red } });
-globalStyle(".dev-row.dev-unknown", { vars: { "--dev-accent": vars.overlay0 } });
+globalStyle(".dev-row.dev-ok", { vars: { "--dev-accent": vars.success } });
+globalStyle(".dev-row.dev-mid", { vars: { "--dev-accent": vars.warning } });
+globalStyle(".dev-row.dev-low", { vars: { "--dev-accent": vars.danger } });
+globalStyle(".dev-row.dev-unknown", { vars: { "--dev-accent": vars.textFaint } });
 
 globalStyle(".dev-main", {
   display: "grid",
@@ -285,8 +285,8 @@ globalStyle(".dev-track", {
   height: 10,
   minWidth: 0,
   borderRadius: 999,
-  background: vars.crust,
-  border: `1px solid ${vars.surface1}`,
+  background: vars.bgDeep,
+  border: `1px solid ${vars.surfaceHi}`,
   overflow: "hidden",
 });
 
@@ -319,7 +319,7 @@ globalStyle(".dev-pct", {
   justifyContent: "flex-end",
 });
 
-globalStyle(".dev-bolt", { color: vars.yellow });
+globalStyle(".dev-bolt", { color: vars.warning });
 
 /** Meta line: charging / low-power / wifi chips plus the timestamp. */
 globalStyle(".dev-meta", {
@@ -338,30 +338,30 @@ globalStyle(".dev-tag", {
   borderRadius: 999,
   fontSize: "0.68rem",
   fontWeight: 600,
-  background: vars.surface1,
-  border: `1px solid ${vars.surface2}`,
-  color: vars.subtext1,
+  background: vars.surfaceHi,
+  border: `1px solid ${vars.surfaceHigher}`,
+  color: vars.textSoft,
   whiteSpace: "nowrap",
   maxWidth: "12rem",
   overflow: "hidden",
   textOverflow: "ellipsis",
 });
 
-globalStyle(".dev-tag.dev-charging", { color: vars.green });
-globalStyle(".dev-tag.dev-lowpower", { color: vars.yellow });
+globalStyle(".dev-tag.dev-charging", { color: vars.success });
+globalStyle(".dev-tag.dev-lowpower", { color: vars.warning });
 globalStyle(".dev-tag.dev-watch", { color: vars.sky });
 globalStyle(".dev-tag.dev-airpods", { color: vars.lavender });
 
 globalStyle(".dev-when", {
   marginLeft: "auto",
   fontSize: "0.72rem",
-  color: vars.subtext0,
+  color: vars.textMuted,
   whiteSpace: "nowrap",
 });
 
 globalStyle(".dev-empty", {
   fontSize: "0.82rem",
-  color: vars.subtext0,
+  color: vars.textMuted,
   fontStyle: "italic",
 });
 
@@ -372,7 +372,7 @@ globalStyle(".location-card[hidden]", { display: "none" });
 
 globalStyle(".loc-head", { ...CARD_HEAD, marginBottom: "0.55rem" });
 
-globalStyle(".loc-head .bi", { color: vars.pink, fontSize: "0.85rem" });
+globalStyle(".loc-head .bi", { color: vars.accent, fontSize: "0.85rem" });
 
 globalStyle(".loc-body", {
   display: "flex",
@@ -386,7 +386,7 @@ globalStyle(".loc-map", {
   border: 0,
   borderRadius: 10,
   display: "block",
-  background: vars.surface0,
+  background: vars.surface,
 });
 
 globalStyle(".loc-cap", {
@@ -408,7 +408,7 @@ globalStyle(".loc-link", {
 });
 
 globalStyle(".loc-link:hover, .loc-link:focus-visible", {
-  color: vars.pink,
+  color: vars.accent,
   textDecoration: "underline",
 });
 
@@ -417,5 +417,5 @@ globalStyle(".loc-link .bi", { fontSize: "0.75rem" });
 globalStyle(".loc-when", {
   marginLeft: "auto",
   fontSize: "0.72rem",
-  color: vars.subtext0,
+  color: vars.textMuted,
 });

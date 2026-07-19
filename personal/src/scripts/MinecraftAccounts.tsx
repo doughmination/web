@@ -13,12 +13,18 @@ const MC_HEADS = "https://mc-heads.net/";
 const CAPE_W = 60;
 const CAPE_H = 96;
 
+/**
+ * Per-account identity colours. `accent` is a CSS custom-property name — it goes
+ * straight into `var(--${accent})` below, so these must match the token names in
+ * styles/themes.css.ts exactly. A typo here fails silently (the var just doesn't
+ * resolve), which is why they're listed against the contract rather than guessed.
+ */
 const ROLE_META: Record<string, { label: string; accent: string }> = {
-  main: { label: "Main", accent: "saphire" },
+  main: { label: "Main", accent: "sapphire" },
   furina: { label: "Furina", accent: "sky" },
-  rose: { label: "Rose", accent: "pink" },
+  rose: { label: "Rose", accent: "accent" },
   luna: { label: "Luna", accent: "teal" },
-  uzi: { label: "Uzi", accent: "mauve" },
+  uzi: { label: "Uzi", accent: "accent-alt" },
   alt: { label: "Alt", accent: "maroon" },
 };
 

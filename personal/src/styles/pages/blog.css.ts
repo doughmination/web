@@ -37,8 +37,8 @@ globalStyle(".blog-card", {
   flexDirection: "column",
   textDecoration: "none",
   color: vars.text,
-  background: vars.mantle,
-  border: `1px solid ${vars.surface0}`,
+  background: vars.bgRaised,
+  border: `1px solid ${vars.surface}`,
   borderRadius: 14,
   overflow: "hidden",
   transition:
@@ -47,12 +47,12 @@ globalStyle(".blog-card", {
 
 globalStyle(".blog-card:hover, .blog-card:focus-visible", {
   transform: "translateY(-3px)",
-  borderColor: vars.pink,
+  borderColor: vars.accent,
   boxShadow: "0 8px 24px rgba(0, 0, 0, 0.25)",
 });
 
 globalStyle(".blog-card:focus-visible", {
-  outline: `2px solid ${vars.pink}`,
+  outline: `2px solid ${vars.accent}`,
   outlineOffset: 2,
 });
 
@@ -60,7 +60,7 @@ globalStyle(".blog-card-thumb", {
   width: "100%",
   aspectRatio: "16 / 9",
   overflow: "hidden",
-  background: vars.crust,
+  background: vars.bgDeep,
 });
 
 globalStyle(".blog-card-thumb img", {
@@ -82,7 +82,7 @@ globalStyle(".blog-card-date", {
   fontWeight: 600,
   letterSpacing: "0.02em",
   textTransform: "uppercase",
-  color: vars.subtext0,
+  color: vars.textMuted,
 });
 
 globalStyle(".blog-card-title", {
@@ -97,7 +97,7 @@ globalStyle(".blog-card-excerpt", {
   margin: 0,
   fontSize: "0.92rem",
   lineHeight: 1.45,
-  color: vars.subtext0,
+  color: vars.textMuted,
   display: "-webkit-box",
   WebkitLineClamp: 3,
   WebkitBoxOrient: "vertical",
@@ -108,7 +108,7 @@ globalStyle(".blog-empty", {
   gridColumn: "1 / -1",
   textAlign: "center",
   padding: "2rem 1rem",
-  color: vars.subtext0,
+  color: vars.textMuted,
   fontSize: "0.95rem",
 });
 
@@ -134,12 +134,12 @@ globalStyle(".blog-header h1", {
   margin: 0,
   fontSize: "2rem",
   fontWeight: 700,
-  color: vars.pink,
+  color: vars.accent,
 });
 
 globalStyle(".blog-header .blog-meta", {
   marginTop: "0.35rem",
-  color: vars.subtext0,
+  color: vars.textMuted,
   fontSize: "0.85rem",
   letterSpacing: "0.02em",
 });
@@ -165,9 +165,9 @@ globalStyle(".blog-contents img", {
 });
 
 globalStyle(".blog-contents h2, .blog-contents h3", {
-  color: vars.pink,
+  color: vars.accent,
   margin: "1.6rem 0 0.6rem",
 });
 
-globalStyle(".blog-contents a", { color: vars.blue });
+globalStyle(".blog-contents a", { color: vars.info });
 globalStyle(".blog-contents a:hover", { textDecoration: "underline" });

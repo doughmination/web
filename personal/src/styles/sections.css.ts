@@ -7,7 +7,7 @@
  *
  * globalStyle (not style) keeps the literal class names, because this markup is
  * written by hand across several components rather than owned by one of them.
- * Colours come from the typed theme contract, so `vars.mauve` is checked at
+ * Colours come from the typed theme contract, so `vars.accentAlt` is checked at
  * compile time where `var(--mauve)` was just a string.
  */
 import { globalStyle } from "@vanilla-extract/css";
@@ -29,7 +29,7 @@ globalStyle(".section-title", {
   fontWeight: 500,
   letterSpacing: "0.08em",
   textTransform: "uppercase",
-  color: vars.mauve,
+  color: vars.accentAlt,
 });
 
 globalStyle(".section-subtitle", {
@@ -38,5 +38,5 @@ globalStyle(".section-subtitle", {
   fontWeight: 500,
   letterSpacing: "0.08em",
   textTransform: "lowercase",
-  color: vars.surface2,
+  color: vars.surfaceHigher,
 });

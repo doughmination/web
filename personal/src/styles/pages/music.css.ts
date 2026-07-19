@@ -47,14 +47,14 @@ globalStyle(".music-head", { margin: "0 0 1.6rem" });
 globalStyle(".music-head h1", {
   fontSize: "clamp(1.7rem, 5vw, 2.4rem)",
   margin: "0 0 0.2rem",
-  color: vars.pink,
+  color: vars.accent,
   letterSpacing: "-0.02em",
   transition: "color 0.5s ease",
 });
 
 globalStyle(".music-head p", {
   margin: 0,
-  color: vars.subtext0,
+  color: vars.textMuted,
   fontSize: "0.95rem",
 });
 
@@ -65,8 +65,8 @@ globalStyle(".mdc", {
   gridTemplateColumns: "132px 1fr",
   gap: "1.1rem",
   alignItems: "center",
-  background: vars.mantle,
-  border: `1px solid ${vars.surface0}`,
+  background: vars.bgRaised,
+  border: `1px solid ${vars.surface}`,
   borderRadius: 18,
   padding: "1.1rem",
   position: "relative",
@@ -86,7 +86,7 @@ globalStyle(".mdc::before", {
   content: '""',
   position: "absolute",
   inset: 0,
-  background: `radial-gradient(120% 140% at 0% 0%, ${vars.pink}, transparent 60%)`,
+  background: `radial-gradient(120% 140% at 0% 0%, ${vars.accent}, transparent 60%)`,
   opacity: 0,
   transition: "opacity 0.6s ease",
   pointerEvents: "none",
@@ -99,7 +99,7 @@ globalStyle(".mdc-art", {
   height: 132,
   borderRadius: 12,
   objectFit: "cover",
-  background: vars.surface0,
+  background: vars.surface,
   boxShadow: "0 8px 24px rgba(0, 0, 0, 0.35)",
   "@media": {
     "(max-width: 560px)": { width: 96, height: 96 },
@@ -111,7 +111,7 @@ globalStyle(".mdc-art:not(.has-art)", { display: "grid" });
 
 globalStyle(".mdc-art:not(.has-art)::after", {
   content: '"♪"',
-  color: vars.overlay0,
+  color: vars.textFaint,
   fontSize: "2.4rem",
   display: "grid",
   placeItems: "center",
@@ -127,11 +127,11 @@ globalStyle(".mdc-state", {
   fontSize: "0.7rem",
   textTransform: "uppercase",
   letterSpacing: "0.08em",
-  color: vars.subtext0,
+  color: vars.textMuted,
   marginBottom: "0.35rem",
 });
 
-globalStyle("#music.is-live .mdc-state", { color: vars.pink });
+globalStyle("#music.is-live .mdc-state", { color: vars.accent });
 
 globalStyle(".mdc-title", {
   display: "block",
@@ -144,17 +144,17 @@ globalStyle(".mdc-title", {
   "@media": { "(max-width: 560px)": { fontSize: "1.1rem" } },
 });
 
-globalStyle(".mdc-title:hover", { color: vars.pink });
+globalStyle(".mdc-title:hover", { color: vars.accent });
 
 globalStyle(".mdc-artist", {
   display: "block",
-  color: vars.subtext1,
+  color: vars.textSoft,
   fontSize: "0.95rem",
 });
 
 globalStyle(".mdc-album", {
   display: "block",
-  color: vars.subtext0,
+  color: vars.textMuted,
   fontSize: "0.82rem",
   marginTop: "0.1rem",
 });
@@ -170,7 +170,7 @@ globalStyle(".mdc-bar", {
   flex: 1,
   height: 6,
   borderRadius: 999,
-  background: vars.surface0,
+  background: vars.surface,
   overflow: "hidden",
 });
 
@@ -178,7 +178,7 @@ globalStyle(".mdc-fill", {
   display: "block",
   height: "100%",
   width: "0%",
-  background: vars.pink,
+  background: vars.accent,
   borderRadius: 999,
   transition: "width 0.4s linear",
   "@media": { "(prefers-reduced-motion: reduce)": { transition: "none" } },
@@ -186,7 +186,7 @@ globalStyle(".mdc-fill", {
 
 globalStyle(".mdc-time", {
   fontSize: "0.72rem",
-  color: vars.subtext0,
+  color: vars.textMuted,
   fontVariantNumeric: "tabular-nums",
 });
 
@@ -196,7 +196,7 @@ globalStyle(".sec-title", {
   fontSize: "0.78rem",
   textTransform: "uppercase",
   letterSpacing: "0.07em",
-  color: vars.subtext0,
+  color: vars.textMuted,
   margin: "2.4rem 0 0.7rem",
   fontWeight: 500,
 });
@@ -220,8 +220,8 @@ globalStyle(".ly-lock", {
   cursor: 'url("/assets/cursor/pointer_0.png"), pointer',
   borderRadius: 999,
   padding: "0.28rem 0.8rem 0.28rem 0.7rem",
-  background: vars.surface0,
-  color: vars.subtext1,
+  background: vars.surface,
+  color: vars.textSoft,
   border: "1px solid transparent",
   display: "inline-flex",
   alignItems: "center",
@@ -236,14 +236,14 @@ globalStyle(".ly-lock", {
  * convention for pink fills (see .nav-link.selected).
  */
 globalStyle(".ly-lock.is-locked", {
-  color: vars.crust,
-  borderColor: vars.pink,
-  background: vars.pink,
+  color: vars.bgDeep,
+  borderColor: vars.accent,
+  background: vars.accent,
 });
 
 globalStyle(".ly-lock:not(.is-locked):hover", {
   color: vars.text,
-  borderColor: vars.surface1,
+  borderColor: vars.surfaceHi,
 });
 
 /** Spotify-style equaliser bars. */
@@ -295,11 +295,11 @@ globalStyle(".lyrics", {
   scrollBehavior: "smooth",
   overscrollBehavior: "contain",
   borderRadius: 16,
-  background: vars.crust,
-  border: `1px solid ${vars.surface0}`,
+  background: vars.bgDeep,
+  border: `1px solid ${vars.surface}`,
   padding: "1.4rem",
   scrollbarWidth: "thin",
-  scrollbarColor: `${vars.surface1} transparent`,
+  scrollbarColor: `${vars.surfaceHi} transparent`,
   // fade top + bottom so lines drift in and out
   WebkitMaskImage:
     "linear-gradient(180deg, transparent, #000 14%, #000 86%, transparent)",
@@ -311,7 +311,7 @@ globalStyle(".lyrics", {
 globalStyle(".lyrics::-webkit-scrollbar", { width: 8 });
 
 globalStyle(".lyrics::-webkit-scrollbar-thumb", {
-  background: vars.surface1,
+  background: vars.surfaceHi,
   borderRadius: 999,
 });
 
@@ -329,7 +329,7 @@ globalStyle(".ly-line", {
   padding: "0.32rem 0",
   fontSize: "1.18rem",
   lineHeight: 1.4,
-  color: vars.overlay0,
+  color: vars.textFaint,
   transition: "color 0.3s ease, opacity 0.3s ease, transform 0.3s ease",
   "@media": {
     "(max-width: 560px)": { fontSize: "1.05rem" },
@@ -341,20 +341,20 @@ globalStyle(".ly-line", {
 globalStyle(".is-synced .ly-line", { opacity: 0.55 });
 
 globalStyle(".is-synced .ly-line.is-active", {
-  color: vars.pink,
+  color: vars.accent,
   opacity: 1,
   fontWeight: 700,
   transform: "translateX(2px)",
 });
 
 globalStyle(".ly-static", {
-  color: vars.subtext1,
+  color: vars.textSoft,
   opacity: 1,
   fontSize: "1.05rem",
 });
 
 globalStyle(".ly-note", {
-  color: vars.subtext0,
+  color: vars.textMuted,
   fontSize: "0.95rem",
   textAlign: "center",
   margin: 0,
@@ -362,7 +362,7 @@ globalStyle(".ly-note", {
 });
 
 globalStyle(".lyrics.is-instrumental .ly-note", {
-  color: vars.pink,
+  color: vars.accent,
   fontSize: "1.2rem",
 });
 
@@ -387,20 +387,20 @@ globalStyle(".rc-item a", {
   transition: "background 0.15s ease",
 });
 
-globalStyle(".rc-item a:hover", { background: vars.surface0 });
+globalStyle(".rc-item a:hover", { background: vars.surface });
 
 globalStyle(".rc-art", {
   width: 44,
   height: 44,
   borderRadius: 8,
   objectFit: "cover",
-  background: vars.surface0,
+  background: vars.surface,
 });
 
 globalStyle(".rc-art-blank", {
   display: "grid",
   placeItems: "center",
-  color: vars.overlay0,
+  color: vars.textFaint,
   fontSize: "1.1rem",
 });
 
@@ -415,27 +415,27 @@ globalStyle(".rc-name", {
 
 globalStyle(".rc-artist", {
   display: "block",
-  color: vars.subtext0,
+  color: vars.textMuted,
   fontSize: "0.78rem",
   ...ELLIPSIS,
 });
 
 globalStyle(".rc-when, .rc-now", { fontSize: "0.72rem", whiteSpace: "nowrap" });
-globalStyle(".rc-when", { color: vars.subtext0 });
-globalStyle(".rc-now", { color: vars.pink, fontWeight: 700 });
+globalStyle(".rc-when", { color: vars.textMuted });
+globalStyle(".rc-now", { color: vars.accent, fontWeight: 700 });
 
 /** Highlights the track that's playing right now. */
-globalStyle(".is-now", { background: vars.pink, borderRadius: 12 });
+globalStyle(".is-now", { background: vars.accent, borderRadius: 12 });
 
 globalStyle(".rc-note", {
-  color: vars.subtext0,
+  color: vars.textMuted,
   fontSize: "0.86rem",
   padding: "0.6rem 0.4rem",
   lineHeight: 1.5,
 });
 
 globalStyle(".rc-note code", {
-  background: vars.surface0,
+  background: vars.surface,
   color: vars.text,
   padding: "0.1rem 0.35rem",
   borderRadius: 6,
@@ -458,15 +458,15 @@ globalStyle(".top-chip a", {
   // `center` not `baseline` — the later of two declarations in the source won.
   alignItems: "center",
   gap: "0.45rem",
-  background: vars.mantle,
-  border: `1px solid ${vars.surface0}`,
+  background: vars.bgRaised,
+  border: `1px solid ${vars.surface}`,
   borderRadius: 999,
   padding: "0.35rem 0.8rem",
   textDecoration: "none",
   transition: "border-color 0.15s ease",
 });
 
-globalStyle(".top-chip a:hover", { borderColor: vars.pink });
+globalStyle(".top-chip a:hover", { borderColor: vars.accent });
 
 globalStyle(".top-art", {
   width: 34,
@@ -477,8 +477,8 @@ globalStyle(".top-art", {
   display: "inline-flex",
   alignItems: "center",
   justifyContent: "center",
-  background: vars.surface0,
-  color: vars.subtext0,
+  background: vars.surface,
+  color: vars.textMuted,
   fontSize: "0.95rem",
   overflow: "hidden",
 });
@@ -491,13 +491,13 @@ globalStyle(".top-text", {
 });
 
 globalStyle(".top-rank", {
-  color: vars.pink,
+  color: vars.accent,
   fontWeight: 700,
   fontSize: "0.78rem",
 });
 
 globalStyle(".top-name", { color: vars.text, fontSize: "0.85rem" });
-globalStyle(".top-plays", { color: vars.subtext0, fontSize: "0.72rem" });
+globalStyle(".top-plays", { color: vars.textMuted, fontSize: "0.72rem" });
 
 /* ---- obsessions ----------------------------------------------------------- */
 

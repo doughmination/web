@@ -88,7 +88,7 @@ globalStyle(".tech-icon::after", {
   transform: "translateX(-50%) translateY(4px)",
   padding: "0.25rem 0.5rem",
   borderRadius: 6,
-  background: vars.crust,
+  background: vars.bgDeep,
   border: "1px solid currentColor",
   color: vars.text,
   fontSize: "0.72rem",
@@ -105,28 +105,18 @@ globalStyle(".tech-icon:hover::after", {
   transform: "translateX(-50%) translateY(0)",
 });
 
-/** Accent classes — each pulls from the active flavour's palette. */
-const ACCENTS = {
-  rosewater: vars.rosewater,
-  pink: vars.pink,
-  mauve: vars.mauve,
-  red: vars.red,
-  maroon: vars.maroon,
-  peach: vars.peach,
-  yellow: vars.yellow,
-  green: vars.green,
-  teal: vars.teal,
-  sky: vars.sky,
-  // NB: class is .sapphire but the token is --saphire (original typo, kept so
-  // existing markup keeps working).
-  sapphire: vars.saphire,
-  blue: vars.blue,
-  lavender: vars.lavender,
-} as const;
-
-for (const [name, colour] of Object.entries(ACCENTS)) {
-  globalStyle(`.tech-icon.${name}`, { color: colour });
-}
+/**
+ * Tech icons are a single colour now, so no per-icon accent classes.
+ *
+ * The mask in ::before paints with currentColor, so setting it here colours
+ * every icon — and the hover drop-shadow, which also uses currentColor, follows
+ * along for free.
+ *
+ * dev-info/page.tsx still passes a colour name into `className={`tech-icon
+ * ${color}`}`. Those extra classes now match nothing and are harmless; strip
+ * them from the data whenever you next touch that file.
+ */
+globalStyle(".tech-icon", { color: vars.text });
 
 /** Inside the collapsible card, drop the standalone block's bottom padding. */
 globalStyle(".tech-stack .dev-info", {
@@ -151,12 +141,12 @@ globalStyle(".waka-meta", {
   margin: "0.5rem 0 0",
   fontSize: "0.72rem",
   letterSpacing: "0.03em",
-  color: vars.subtext0,
+  color: vars.textMuted,
 });
 
 globalStyle(".waka-section", {
-  background: vars.surface0,
-  border: `1px solid ${vars.surface1}`,
+  background: vars.surface,
+  border: `1px solid ${vars.surfaceHi}`,
   borderRadius: 16,
   padding: "0.85rem 1.25rem 0.95rem",
   marginBottom: "0.7rem",
@@ -175,7 +165,7 @@ globalStyle(".waka-total", { textAlign: "center" });
 globalStyle(".waka-total-num", {
   fontSize: "2.1rem",
   fontWeight: 700,
-  color: vars.pink,
+  color: vars.accent,
   lineHeight: 1.1,
 });
 
@@ -183,7 +173,7 @@ globalStyle(".waka-total-sub", {
   fontSize: "0.78rem",
   textTransform: "uppercase",
   letterSpacing: "0.05em",
-  color: vars.subtext0,
+  color: vars.textMuted,
   marginBottom: "1.1rem",
 });
 
@@ -210,7 +200,7 @@ globalStyle(".waka-day-track", {
   maxWidth: 34,
   display: "flex",
   alignItems: "flex-end",
-  background: vars.surface1,
+  background: vars.surfaceHi,
   borderRadius: 7,
   overflow: "hidden",
 });
@@ -218,12 +208,12 @@ globalStyle(".waka-day-track", {
 globalStyle(".waka-day-fill", {
   width: "100%",
   minHeight: 3,
-  background: vars.pink,
+  background: vars.accent,
   borderRadius: "7px 7px 0 0",
   transition: "height 0.5s ease",
 });
 
-globalStyle(".waka-day-label", { fontSize: "0.66rem", color: vars.subtext0 });
+globalStyle(".waka-day-label", { fontSize: "0.66rem", color: vars.textMuted });
 
 /* ranked horizontal bars (languages / projects / editors / os) */
 
@@ -251,7 +241,7 @@ globalStyle(".waka-bar-name", {
 
 globalStyle(".waka-bar-track", {
   height: 9,
-  background: vars.surface1,
+  background: vars.surfaceHi,
   borderRadius: 999,
   overflow: "hidden",
 });
@@ -260,14 +250,14 @@ globalStyle(".waka-bar-fill", {
   display: "block",
   height: "100%",
   width: 0,
-  background: vars.pink,
+  background: vars.accent,
   borderRadius: 999,
   transition: "width 0.6s ease",
 });
 
 globalStyle(".waka-bar-val", {
   fontSize: "0.74rem",
-  color: vars.subtext0,
+  color: vars.textMuted,
   whiteSpace: "nowrap",
   fontVariantNumeric: "tabular-nums",
 });
@@ -290,7 +280,7 @@ globalStyle(".waka-grid2 .waka-section", {
 
 globalStyle(".waka-empty", {
   fontSize: "0.85rem",
-  color: vars.subtext0,
+  color: vars.textMuted,
   lineHeight: 1.5,
   margin: 0,
 });
@@ -298,12 +288,12 @@ globalStyle(".waka-empty", {
 globalStyle(".waka-credit", {
   textAlign: "center",
   fontSize: "0.72rem",
-  color: vars.subtext0,
+  color: vars.textMuted,
   margin: "1.4rem 0 0",
 });
 
 globalStyle(".waka-empty a, .waka-credit a", {
-  color: vars.pink,
+  color: vars.accent,
   textDecoration: "none",
 });
 
@@ -337,10 +327,10 @@ globalStyle("summary.section-title", {
 globalStyle("summary.section-title::-webkit-details-marker", { display: "none" });
 globalStyle("summary.section-title::marker", { content: '""' });
 
-globalStyle("summary.section-title:hover", { color: vars.pink });
+globalStyle("summary.section-title:hover", { color: vars.accent });
 
 globalStyle("summary.section-title:focus-visible", {
-  outline: `2px solid ${vars.pink}`,
+  outline: `2px solid ${vars.accent}`,
   outlineOffset: 3,
   borderRadius: 6,
 });
@@ -373,7 +363,7 @@ globalStyle(".hw-item", { textDecoration: "none", color: vars.text });
 globalStyle(".hw-intro", {
   margin: "0 0 0.9rem",
   fontSize: "0.8rem",
-  color: vars.subtext0,
+  color: vars.textMuted,
 });
 
 globalStyle(".hw-list", {
@@ -395,7 +385,7 @@ globalStyle(".hw-row dt", {
   fontSize: "0.72rem",
   textTransform: "uppercase",
   letterSpacing: "0.05em",
-  color: vars.subtext0,
+  color: vars.textMuted,
 });
 
 globalStyle(".hw-row dd", { margin: 0, fontSize: "0.88rem", color: vars.text });

@@ -27,16 +27,13 @@ export type Theme = {
 };
 
 export const THEMES: Theme[] = [
-  { id: "mocha", label: "Mocha", dot: "#f5c2e7", icon: "/assets/theme/mocha.png" },
-  { id: "macchiato", label: "Macchiato", dot: "#f5bde6", icon: "/assets/theme/macchiato.png" },
-  { id: "frappe", label: "Frappé", dot: "#f4b8e4", icon: "/assets/theme/frappe.png" },
-  { id: "latte", label: "Latte", dot: "#ea76cb", icon: "/assets/theme/latte.png" },
   { id: "cherry", label: "Cherry", dot: "#f4b8e4", icon: "/assets/theme/cherry.png" },
   { id: "toxic", label: "Toxic", dot: "#7fff3f", icon: "/assets/theme/toxic.png" },
+  { id: "lemon", label: "Lemon", dot: "#ffe14d", icon: "/assets/theme/lemon.png" },
 ];
 
 /** The flavor applied when nothing is stored, or when the stored value is junk. */
-export const DEFAULT_THEME = "mocha";
+export const DEFAULT_THEME = "cherry";
 
 export const THEME_IDS: string[] = THEMES.map((t) => t.id);
 

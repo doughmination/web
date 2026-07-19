@@ -15,21 +15,21 @@
   height: 38px;
   padding: 0;
   border-radius: 12px;
-  background: var(--surface-0);
-  border: 1px solid var(--surface-1);
+  background: var(--surface);
+  border: 1px solid var(--surface-hi);
   color: var(--text);
   cursor: url("/assets/cursor/pointer_0.png"), pointer;
   transition: border-color 0.15s ease, transform 0.15s ease;
 }
 
 .tab:hover {
-  border-color: var(--pink);
+  border-color: var(--accent);
   transform: translateY(-2px);
 }
 
 .active {
-  border-color: var(--pink);
-  box-shadow: inset 0 0 0 1px var(--pink);
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
 }
 
 .ico {
@@ -49,8 +49,8 @@
   left: 1rem;
   bottom: 4.5rem;
   z-index: 7;
-  background: var(--surface-0);
-  border: 1px solid var(--pink);
+  background: var(--surface);
+  border: 1px solid var(--accent);
   border-radius: 14px;
   box-shadow: 0 10px 26px -16px rgba(0, 0, 0, 0.7);
   padding: 0.6rem 0.7rem;
@@ -61,7 +61,7 @@
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.03em;
-  color: var(--pink);
+  color: var(--accent);
   margin-bottom: 0.45rem;
 }
 
@@ -77,8 +77,8 @@
   gap: 0.25rem;
   padding: 0.3rem 0.6rem;
   border-radius: 10px;
-  background: var(--surface-1);
-  color: var(--pink);
+  background: var(--surface-hi);
+  color: var(--accent);
   font-weight: 600;
   font-size: 0.78rem;
   text-decoration: none;
@@ -91,6 +91,6 @@
 }
 
 .stabringBtn:hover {
-  background: var(--surface-2);
+  background: var(--surface-higher);
   transform: translateY(-2px);
 }

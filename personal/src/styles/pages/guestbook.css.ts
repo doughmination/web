@@ -18,8 +18,8 @@ globalStyle(".gb-form", {
   display: "flex",
   flexDirection: "column",
   gap: "0.85rem",
-  background: vars.surface0,
-  border: `1px solid ${vars.surface1}`,
+  background: vars.surface,
+  border: `1px solid ${vars.surfaceHi}`,
   borderRadius: 14,
   padding: "1.1rem 1.2rem",
   marginBottom: "2rem",
@@ -35,20 +35,20 @@ globalStyle(".gb-field", {
 
 globalStyle(".gb-field label", {
   fontSize: "0.8rem",
-  color: vars.subtext0,
+  color: vars.textMuted,
   letterSpacing: "0.03em",
 });
 
 globalStyle(".gb-optional", {
-  color: vars.overlay0,
+  color: vars.textFaint,
 });
 
 globalStyle(".gb-form input, .gb-form textarea", {
   fontFamily: "inherit",
   fontSize: "0.95rem",
   color: vars.text,
-  background: vars.mantle,
-  border: `1px solid ${vars.surface1}`,
+  background: vars.bgRaised,
+  border: `1px solid ${vars.surfaceHi}`,
   borderRadius: 9,
   padding: "0.55rem 0.7rem",
   width: "100%",
@@ -58,14 +58,14 @@ globalStyle(".gb-form input, .gb-form textarea", {
 
 globalStyle(".gb-form input:focus, .gb-form textarea:focus", {
   outline: "none",
-  borderColor: vars.pink,
-  boxShadow: `inset 0 0 0 1px ${vars.pink}`,
+  borderColor: vars.accent,
+  boxShadow: `inset 0 0 0 1px ${vars.accent}`,
 });
 
 globalStyle(".gb-counter", {
   alignSelf: "flex-end",
   fontSize: "0.7rem",
-  color: vars.overlay0,
+  color: vars.textFaint,
 });
 
 /** Collapses the Turnstile slot until the widget actually renders into it. */
@@ -83,8 +83,8 @@ globalStyle(".gb-actions", {
 globalStyle(".gb-form button", {
   fontFamily: "inherit",
   fontSize: "0.9rem",
-  color: vars.crust,
-  background: vars.pink,
+  color: vars.bgDeep,
+  background: vars.accent,
   border: "none",
   borderRadius: 9,
   padding: "0.55rem 1.1rem",
@@ -102,11 +102,11 @@ globalStyle(".gb-form button:disabled", {
 
 globalStyle(".gb-status", {
   fontSize: "0.82rem",
-  color: vars.subtext0,
+  color: vars.textMuted,
 });
 
-globalStyle(".gb-status.gb-err", { color: vars.red });
-globalStyle(".gb-status.gb-ok", { color: vars.green });
+globalStyle(".gb-status.gb-err", { color: vars.danger });
+globalStyle(".gb-status.gb-ok", { color: vars.success });
 
 /** Honeypot: visually hidden but still in the DOM for bots to fill in. */
 globalStyle(".gb-hp", {
@@ -127,21 +127,21 @@ globalStyle(".gb-entries", {
 });
 
 globalStyle(".gb-empty", {
-  color: vars.subtext0,
+  color: vars.textMuted,
   textAlign: "center",
   fontSize: "0.9rem",
 });
 
 globalStyle(".gb-entry", {
-  background: vars.surface0,
-  border: `1px solid ${vars.surface1}`,
+  background: vars.surface,
+  border: `1px solid ${vars.surfaceHi}`,
   borderRadius: 12,
   padding: "0.85rem 1rem",
   transition: "border-color 0.15s ease, transform 0.15s ease",
 });
 
 globalStyle(".gb-entry:hover", {
-  borderColor: vars.pink,
+  borderColor: vars.accent,
   transform: "translateY(-2px)",
 });
 
@@ -155,23 +155,23 @@ globalStyle(".gb-entry-head", {
 
 globalStyle(".gb-entry-name", {
   fontWeight: 700,
-  color: vars.pink,
+  color: vars.accent,
 });
 
 globalStyle(".gb-entry-name a", {
   color: "inherit",
   textDecoration: "none",
-  borderBottom: `1px dotted ${vars.overlay1}`,
+  borderBottom: `1px dotted ${vars.textDim}`,
 });
 
 globalStyle(".gb-entry-name a:hover", {
-  borderBottomColor: vars.pink,
+  borderBottomColor: vars.accent,
 });
 
 /** margin-left: auto pushes the timestamp to the far right of the head row. */
 globalStyle(".gb-entry-time", {
   fontSize: "0.72rem",
-  color: vars.overlay0,
+  color: vars.textFaint,
   marginLeft: "auto",
 });
 

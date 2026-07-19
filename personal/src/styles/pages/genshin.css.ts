@@ -9,7 +9,7 @@
  * `color: var(--subtext, var(--text))`. There is no --subtext token (the
  * contract has --subtext-0 and --subtext-1), so it has always resolved to
  * --text. Mapping to vars.text keeps the current appearance exactly; switch to
- * vars.subtext0 if you want the dimmer secondary colour that was clearly
+ * vars.textMuted if you want the dimmer secondary colour that was clearly
  * intended.
  */
 import { globalStyle } from "@vanilla-extract/css";
@@ -27,7 +27,7 @@ globalStyle(".genshin-intro", {
 });
 
 globalStyle(".genshin-intro h1", {
-  color: vars.pink,
+  color: vars.accent,
   marginBottom: "0.25rem",
 });
 
@@ -59,8 +59,8 @@ globalStyle(".genshin-desktop-only", {
       display: "block",
       textAlign: "center",
       color: vars.text,
-      background: vars.mantle,
-      border: `1px solid ${vars.crust}`,
+      background: vars.bgRaised,
+      border: `1px solid ${vars.bgDeep}`,
       borderRadius: "1rem",
       padding: "2rem 1.5rem",
       maxWidth: "40ch",
@@ -71,8 +71,8 @@ globalStyle(".genshin-desktop-only", {
 });
 
 globalStyle(".genshin-card", {
-  background: vars.mantle,
-  border: `1px solid ${vars.surface0}`,
+  background: vars.bgRaised,
+  border: `1px solid ${vars.surface}`,
   borderRadius: "1rem",
   overflow: "hidden",
   display: "flex",
@@ -95,7 +95,7 @@ globalStyle(".genshin-viewer", {
   width: "100%",
   aspectRatio: "3 / 5",
   minHeight: 420,
-  background: `radial-gradient(circle at 50% 30%, ${vars.surface0}, ${vars.crust})`,
+  background: `radial-gradient(circle at 50% 30%, ${vars.surface}, ${vars.bgDeep})`,
 });
 
 /** Owned / Want badge, top-right corner of each viewer. */
@@ -110,22 +110,22 @@ globalStyle(".genshin-tag", {
   fontWeight: 700,
   letterSpacing: "0.02em",
   textTransform: "uppercase",
-  color: vars.crust,
+  color: vars.bgDeep,
   boxShadow: "0 2px 6px rgba(0, 0, 0, 0.3)",
   pointerEvents: "none",
 });
 
-globalStyle(".genshin-tag.owned", { background: vars.green });
-globalStyle(".genshin-tag.want", { background: vars.yellow });
+globalStyle(".genshin-tag.owned", { background: vars.success });
+globalStyle(".genshin-tag.want", { background: vars.warning });
 
 globalStyle(".genshin-meta", {
   padding: "1rem 1.1rem 1.2rem",
-  borderTop: `1px solid ${vars.crust}`,
+  borderTop: `1px solid ${vars.bgDeep}`,
 });
 
 globalStyle(".genshin-meta h2", {
   margin: "0 0 0.15rem",
-  color: vars.mauve,
+  color: vars.accentAlt,
   fontSize: "1.15rem",
 });
 

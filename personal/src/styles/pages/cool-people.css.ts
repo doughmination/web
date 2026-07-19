@@ -137,7 +137,7 @@ globalStyle(".presence-card.is-mini.tier-dead-alt .pc-av-img", {
 });
 
 globalStyle(".presence-card.is-mini.tier-dead-alt .pc-name", {
-  color: vars.overlay1,
+  color: vars.textDim,
   textDecoration: "line-through",
 });
 

@@ -84,7 +84,7 @@ export default function SettingsMenu() {
   const [paused, setPaused] = useState(true);
   const barRef = useRef<HTMLDivElement>(null);
 
-  const flavor = useSyncExternalStore(subscribeFlavor, getFlavorSnapshot, () => "mocha" as Flavor);
+  const flavor = useSyncExternalStore(subscribeFlavor, getFlavorSnapshot, () => "cherry" as Flavor);
   const catHidden = useSyncExternalStore(subscribeCatHidden, getCatHiddenSnapshot, () => false);
 
   const toggleCat = useCallback(() => {

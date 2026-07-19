@@ -39,9 +39,9 @@ globalStyle(".nav-link", {
   alignItems: "center",
   padding: "0.3rem 0.7rem",
   borderRadius: 999,
-  background: vars.surface0,
-  border: `1px solid ${vars.surface1}`,
-  color: vars.subtext1,
+  background: vars.surface,
+  border: `1px solid ${vars.surfaceHi}`,
+  color: vars.textSoft,
   fontSize: "0.8rem",
   textDecoration: "none",
   transition:
@@ -49,15 +49,15 @@ globalStyle(".nav-link", {
 });
 
 globalStyle(".nav-link:hover", {
-  borderColor: vars.pink,
+  borderColor: vars.accent,
   color: vars.text,
   transform: "translateX(2px)",
 });
 
 globalStyle(".nav-link.selected", {
-  background: vars.pink,
-  borderColor: vars.pink,
-  color: vars.crust,
+  background: vars.accent,
+  borderColor: vars.accent,
+  color: vars.bgDeep,
   fontWeight: 700,
   // Indented to make room for the pointer triangle below.
   marginLeft: 14,
@@ -71,5 +71,5 @@ globalStyle(".nav-link.selected::before", {
   top: "50%",
   transform: "translateY(-50%)",
   border: "6px solid transparent",
-  borderLeftColor: vars.pink,
+  borderLeftColor: vars.accent,
 });

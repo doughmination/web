@@ -37,8 +37,8 @@ globalStyle("#lc-embed > section", {
 
 /** The card — matched to .webring-panel (stabring) so both look identical. */
 globalStyle("#lc-embed > section > div", {
-  background: `${vars.surface0} !important`,
-  border: `1px solid ${vars.pink} !important`,
+  background: `${vars.surface} !important`,
+  border: `1px solid ${vars.accent} !important`,
   borderRadius: "14px !important",
   boxShadow: `${PANEL_SHADOW} !important`,
   padding: "0.6rem 0.7rem !important",
@@ -46,7 +46,7 @@ globalStyle("#lc-embed > section > div", {
 
 /** prev / random / next buttons — matched to .stabring-btn. */
 globalStyle("#lc-embed a", {
-  background: `${vars.surface1} !important`,
+  background: `${vars.surfaceHi} !important`,
   borderRadius: "10px !important",
   fontWeight: "600 !important",
   fontSize: "0.78rem !important",
@@ -56,7 +56,7 @@ globalStyle("#lc-embed a", {
 });
 
 globalStyle("#lc-embed a:nth-child(1), #lc-embed a:nth-child(3)", {
-  color: `${vars.pink} !important`,
+  color: `${vars.accent} !important`,
 });
 
 globalStyle("#lc-embed a:nth-child(2)", {
@@ -64,17 +64,17 @@ globalStyle("#lc-embed a:nth-child(2)", {
 });
 
 globalStyle("#lc-embed a:hover", {
-  background: `${vars.surface2} !important`,
+  background: `${vars.surfaceHigher} !important`,
   transform: "translateY(-2px) !important",
 });
 
 /** The "you are at <url>" line. */
 globalStyle("#lc-embed p", {
-  color: `${vars.subtext0} !important`,
+  color: `${vars.textMuted} !important`,
 });
 
 globalStyle("#lc-embed p span", {
-  color: `${vars.pink} !important`,
+  color: `${vars.accent} !important`,
 });
 
 /**

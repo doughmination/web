@@ -56,12 +56,12 @@ globalStyle(".button-wall a", {
 globalStyle(".button-wall img", {
   width: 132,
   height: 46,
-  border: `1px solid ${vars.surface1}`,
+  border: `1px solid ${vars.surfaceHi}`,
   borderRadius: 2,
   transition: "transform 0.12s ease, border-color 0.12s ease",
 });
 
 globalStyle(".button-wall a:hover img, .button-wall img:hover", {
   transform: "translateY(-2px)",
-  borderColor: vars.pink,
+  borderColor: vars.accent,
 });

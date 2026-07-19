@@ -54,8 +54,8 @@ globalStyle(".project-card", {
   gap: "0.7rem",
   padding: "1rem",
   borderRadius: 16,
-  background: vars.surface0,
-  border: `1px solid ${vars.surface1}`,
+  background: vars.surface,
+  border: `1px solid ${vars.surfaceHi}`,
   color: vars.text,
   textDecoration: "none",
   transition:
@@ -64,9 +64,9 @@ globalStyle(".project-card", {
 
 globalStyle(".project-card:hover, .project-card:has(:focus-visible)", {
   transform: "translateY(-3px)",
-  background: vars.surface1,
-  borderColor: vars.pink,
-  boxShadow: `0 6px 20px ${vars.pink}`,
+  background: vars.surfaceHi,
+  borderColor: vars.accent,
+  boxShadow: `0 6px 20px ${vars.accent}`,
 });
 
 /** The repo link fills the card body (avatar + title/status + bio). */
@@ -90,7 +90,7 @@ globalStyle(".project-card-live", {
   borderRadius: 999,
   background: vars.sky,
   border: `1px solid ${vars.sky}`,
-  color: vars.crust,
+  color: vars.bgDeep,
   textDecoration: "none",
   whiteSpace: "nowrap",
   transition: "filter 0.15s ease, transform 0.15s ease",
@@ -107,8 +107,8 @@ globalStyle(".project-card-img", {
   flexShrink: 0,
   borderRadius: 14,
   objectFit: "cover",
-  border: `2px solid ${vars.yellow}`,
-  boxShadow: `0 4px 14px ${vars.pink}`,
+  border: `2px solid ${vars.warning}`,
+  boxShadow: `0 4px 14px ${vars.accent}`,
 });
 
 globalStyle(".project-card-body", {
@@ -138,22 +138,22 @@ globalStyle(".project-card-status", {
   textTransform: "uppercase",
   padding: "0.15rem 0.55rem",
   borderRadius: 999,
-  background: vars.crust,
-  border: `1px solid ${vars.green}`,
-  color: vars.green,
+  background: vars.bgDeep,
+  border: `1px solid ${vars.success}`,
+  color: vars.success,
   whiteSpace: "nowrap",
 });
 
 globalStyle(".project-card-status.closed", {
-  borderColor: vars.red,
-  color: vars.red,
+  borderColor: vars.danger,
+  color: vars.danger,
 });
 
 globalStyle(".project-card-bio", {
   margin: 0,
   fontSize: "0.85rem",
   lineHeight: 1.45,
-  color: vars.subtext0,
+  color: vars.textMuted,
 });
 
 /** Italic + dimmed until a real description replaces it. */

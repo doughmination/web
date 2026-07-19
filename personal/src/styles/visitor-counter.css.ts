@@ -41,7 +41,7 @@ globalStyle("#visitor-counter .vc-label", {
   fontSize: "0.65rem",
   letterSpacing: "0.06em",
   textTransform: "lowercase",
-  color: vars.subtext0,
+  color: vars.textMuted,
   fontFamily: MONO,
 });
 
@@ -68,5 +68,5 @@ globalStyle(".vc-digits img", {
 
 globalStyle(".vc-error", {
   fontSize: "0.7rem",
-  color: vars.subtext0,
+  color: vars.textMuted,
 });

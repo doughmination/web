@@ -23,10 +23,7 @@ globalStyle(".pfp", {
   height: 96,
   borderRadius: "50%",
   objectFit: "cover",
-  border: `3px solid ${vars.yellow}`,
-  // NOTE: this glow is hardcoded Mocha pink, so it does NOT follow the theme —
-  // it stays the same in Latte, Toxic, etc. Ported faithfully; swap for
-  // color-mix(in srgb, ${vars.pink} 25%, transparent) to make it theme-aware.
+  border: `3px solid ${vars.warning}`,
   boxShadow: "0 4px 18px rgba(245, 194, 231, 0.25)",
   marginBottom: "0.75rem",
 });
@@ -40,13 +37,13 @@ globalStyle(".hub-header h1", {
   margin: 0,
   fontSize: "2rem",
   fontWeight: 700,
-  color: vars.pink,
+  color: vars.accent,
   transition: "color 0.6s ease",
 });
 
 globalStyle(".tagline", {
   margin: "0.35rem 0 0",
-  color: vars.subtext0,
+  color: vars.textMuted,
   fontSize: "0.95rem",
   letterSpacing: "0.04em",
   textTransform: "uppercase",
@@ -54,7 +51,7 @@ globalStyle(".tagline", {
 
 globalStyle(".pronouns", {
   margin: "0.35rem 0 0",
-  color: vars.mauve,
+  color: vars.accentAlt,
   fontSize: "0.95rem",
   letterSpacing: "0.04em",
   textTransform: "lowercase",

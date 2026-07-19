@@ -40,8 +40,8 @@ globalStyle(".cat-picker-panel", {
   width: "min(94vw, 430px)",
   maxHeight: "82vh",
   overflowY: "auto",
-  background: vars.base,
-  border: `1px solid ${vars.surface1}`,
+  background: vars.bg,
+  border: `1px solid ${vars.surfaceHi}`,
   borderRadius: 16,
   padding: "1rem",
   boxShadow: "0 16px 48px rgba(0, 0, 0, 0.55)",
@@ -53,13 +53,13 @@ globalStyle(".cat-picker-head", {
   justifyContent: "space-between",
   marginBottom: "0.85rem",
   fontWeight: 700,
-  color: vars.pink,
+  color: vars.accent,
 });
 
 globalStyle(".cat-picker-close", {
   background: "none",
   border: "none",
-  color: vars.subtext0,
+  color: vars.textMuted,
   fontSize: "1.35rem",
   lineHeight: 1,
   cursor: POINTER,
@@ -89,8 +89,8 @@ globalStyle(".cat-option", {
   gap: "0.3rem",
   padding: "0.75rem 0.4rem 0.6rem",
   borderRadius: 12,
-  background: vars.surface0,
-  border: `1px solid ${vars.surface1}`,
+  background: vars.surface,
+  border: `1px solid ${vars.surfaceHi}`,
   color: vars.text,
   fontFamily: "inherit",
   fontSize: "0.74rem",
@@ -103,12 +103,12 @@ globalStyle(".cat-option", {
 // the guard was dead weight.
 globalStyle(".cat-option:hover", {
   transform: "translateY(-2px)",
-  borderColor: vars.pink,
+  borderColor: vars.accent,
 });
 
 globalStyle(".cat-option.current", {
-  borderColor: vars.pink,
-  boxShadow: `inset 0 0 0 1px ${vars.pink}`,
+  borderColor: vars.accent,
+  boxShadow: `inset 0 0 0 1px ${vars.accent}`,
 });
 
 /**
@@ -133,6 +133,6 @@ globalStyle(".cat-name", {
 globalStyle(".cat-hint", {
   margin: "0.85rem 0 0",
   fontSize: "0.68rem",
-  color: vars.subtext0,
+  color: vars.textMuted,
   textAlign: "center",
 });

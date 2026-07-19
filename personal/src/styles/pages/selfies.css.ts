@@ -62,10 +62,10 @@ globalStyle(".selfie-item", {
 globalStyle(".selfie-thumb", {
   margin: 0,
   padding: 0,
-  border: `1px solid ${vars.surface1}`,
+  border: `1px solid ${vars.surfaceHi}`,
   borderRadius: 14,
   overflow: "hidden",
-  background: vars.surface0,
+  background: vars.surface,
   aspectRatio: "1 / 1",
   display: "block",
   transition: "transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease",
@@ -83,8 +83,8 @@ globalStyle(".selfie-thumb img", {
 
 globalStyle(".selfie-thumb:hover, .selfie-thumb:focus-visible", {
   transform: "translateY(-3px)",
-  borderColor: vars.pink,
-  boxShadow: `0 6px 20px ${vars.pink}`,
+  borderColor: vars.accent,
+  boxShadow: `0 6px 20px ${vars.accent}`,
   outline: "none",
 });
 
@@ -92,14 +92,14 @@ globalStyle(".selfie-caption", {
   textAlign: "center",
   fontSize: "0.8rem",
   lineHeight: 1.35,
-  color: vars.subtext0,
+  color: vars.textMuted,
   overflowWrap: "anywhere",
 });
 
 globalStyle(".selfie-empty", {
   gridColumn: "1 / -1",
   textAlign: "center",
-  color: vars.subtext0,
+  color: vars.textMuted,
   fontStyle: "italic",
   padding: "3rem 1rem",
 });
@@ -119,7 +119,7 @@ globalStyle(".lightbox", {
   alignItems: "center",
   justifyContent: "center",
   padding: "1.5rem",
-  background: `color-mix(in srgb, ${vars.crust} 86%, transparent)`,
+  background: `color-mix(in srgb, ${vars.bgDeep} 86%, transparent)`,
   WebkitBackdropFilter: "blur(6px)",
   backdropFilter: "blur(6px)",
 });
@@ -148,7 +148,7 @@ globalStyle(".lightbox-img", {
   maxHeight: "80vh",
   objectFit: "contain",
   borderRadius: 12,
-  border: `2px solid ${vars.pink}`,
+  border: `2px solid ${vars.accent}`,
   boxShadow: "0 12px 40px rgba(0, 0, 0, 0.5)",
 });
 
@@ -169,8 +169,8 @@ globalStyle(".lightbox-close, .lightbox-nav", {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  border: `1px solid ${vars.surface1}`,
-  background: `color-mix(in srgb, ${vars.surface0} 85%, transparent)`,
+  border: `1px solid ${vars.surfaceHi}`,
+  background: `color-mix(in srgb, ${vars.surface} 85%, transparent)`,
   color: vars.text,
   borderRadius: 999,
   lineHeight: 1,
@@ -183,8 +183,8 @@ globalStyle(".lightbox-close, .lightbox-nav", {
 globalStyle(
   ".lightbox-close:hover, .lightbox-nav:hover, .lightbox-close:focus-visible, .lightbox-nav:focus-visible",
   {
-    background: vars.surface1,
-    borderColor: vars.pink,
+    background: vars.surfaceHi,
+    borderColor: vars.accent,
     outline: "none",
   },
 );

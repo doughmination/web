@@ -18,7 +18,7 @@ import { vars } from "./themes.css";
 const cursor = (file: string, fallback: string, hotspot = "") =>
   `url('/assets/cursor/${file}.png')${hotspot ? " " + hotspot : ""}, ${fallback}`;
 
-const PAGE_BG = `linear-gradient(135deg, ${vars.base} 0%, ${vars.mantle} 60%, ${vars.crust} 100%)`;
+const PAGE_BG = `linear-gradient(135deg, ${vars.bg} 0%, ${vars.bgRaised} 60%, ${vars.bgDeep} 100%)`;
 
 /* ---- reset ---------------------------------------------------------------- */
 

@@ -40,8 +40,8 @@ globalStyle(".bgm-gate-panel", {
   alignItems: "center",
   gap: "0.6rem",
   padding: "1.5rem 2rem",
-  background: vars.base,
-  border: `1px solid ${vars.surface1}`,
+  background: vars.bg,
+  border: `1px solid ${vars.surfaceHi}`,
   borderRadius: 16,
   boxShadow: "0 16px 48px rgba(0, 0, 0, 0.55)",
   textAlign: "center",
@@ -50,14 +50,14 @@ globalStyle(".bgm-gate-panel", {
 
 globalStyle(".bgm-gate-note", {
   margin: 0,
-  color: vars.pink,
+  color: vars.accent,
   fontWeight: 700,
   fontSize: "1rem",
 });
 
 globalStyle(".bgm-gate-hint", {
   margin: 0,
-  color: vars.subtext0,
+  color: vars.textMuted,
   fontSize: "0.75rem",
 });
 

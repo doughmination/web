@@ -1,21 +1,3 @@
-/**
- * guilds.css.ts — the /servers guild card grid.
- *
- * Ported from public/css/pages/guilds.css, with one class of bug fixed.
- *
- * BROKEN TOKENS: the source referenced `var(--surface, #1e1e2e)` and
- * `var(--border, rgba(255,255,255,.08))`. Neither token exists — the contract
- * defines --surface-0/1/2, not --surface — so every one of those fell through to
- * its hardcoded Mocha fallback and the cards never re-themed. Same failure mode
- * as the var(--surface0) bug on /minecraft.
- *
- * The fallback #1e1e2e is Mocha's --base, so mapping to vars.base preserves the
- * current Mocha appearance exactly while making the cards theme-aware.
- *
- * The --role-* fallbacks are left as literals on purpose: those are Discord's
- * brand colours for owner/admin/mod/member and shouldn't shift with the site
- * theme.
- */
 import { globalStyle } from "@vanilla-extract/css";
 import { vars } from "../themes.css";
 
@@ -42,7 +24,7 @@ globalStyle(".guild-card", {
   position: "relative",
   borderRadius: 12,
   overflow: "hidden",
-  background: vars.base,
+  background: vars.bg,
   textDecoration: "none",
   color: "inherit",
   border: `1px solid ${CARD_BORDER}`,
@@ -74,8 +56,8 @@ globalStyle(".gc-icon", {
   width: 56,
   height: 56,
   borderRadius: "50%",
-  border: `3px solid ${vars.base}`,
-  background: vars.base,
+  border: `3px solid ${vars.bg}`,
+  background: vars.bg,
   objectFit: "cover",
   marginTop: -28,
   flexShrink: 0,
@@ -85,9 +67,9 @@ globalStyle(".gc-icon-fallback", {
   width: 56,
   height: 56,
   borderRadius: "50%",
-  border: `3px solid ${vars.base}`,
-  background: vars.pink,
-  color: vars.base,
+  border: `3px solid ${vars.bg}`,
+  background: vars.accent,
+  color: vars.bg,
   marginTop: -28,
   flexShrink: 0,
   display: "flex",
@@ -112,7 +94,7 @@ globalStyle(".guild-card.gc-banner-fallback::before", {
   display: "block",
   width: "100%",
   height: 80, // matches .gc-banner's height so layout doesn't shift
-  background: vars.pink,
+  background: vars.accent,
 });
 
 globalStyle(".gc-id", {
