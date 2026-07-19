@@ -83,14 +83,23 @@ textarea,
 }
 
 /* loading */
-[aria-busy="true"],
+/* No url() here on purpose: the cursor pack under /assets/cursor never shipped
+   wait_0.png or progress_0.png, so pointing at them just 404s on every match.
+   The native keywords below are the intended look anyway. If those two frames
+   ever get exported, add the url() back in front of the keyword.
+
+   Opt-in via .is-loading only — deliberately NOT [aria-busy="true"]. aria-busy
+   is the right accessibility signal for any widget awaiting data (the homepage
+   cards set it), but a `wait` cursor claims the whole page is blocked, which
+   isn't true for one card refreshing. Use .is-loading for genuinely blocking
+   work; use aria-busy freely without inheriting the cursor. */
 .is-loading {
-  cursor: url('/assets/cursor/wait_0.png'), wait;
+  cursor: wait;
 }
 
 /* busy but interactive */
 .is-progress {
-  cursor: url('/assets/cursor/progress_0.png'), progress;
+  cursor: progress;
 }
 
 /* help */

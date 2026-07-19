@@ -34,6 +34,7 @@ export const metadata: Metadata = {
 export default function BlogIndexPage() {
   return (
     <>
+      <link rel="stylesheet" href="/css/pages/blog.css" precedence="page" />
       {/* Warm up the API origins this page's JS fetches on load */}
       <link rel="preconnect" href="https://doughmination.uk" crossOrigin="" />
       <link rel="dns-prefetch" href="https://doughmination.uk" />

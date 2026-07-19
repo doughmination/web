@@ -1,3 +1,4 @@
+import { Git } from "react-bootstrap-icons";
 import Fronting from "@scripts/Fronting";
 import Devices from "@scripts/Devices";
 import Location from "@scripts/Location";
@@ -6,6 +7,7 @@ import VisitorCounter from "@scripts/VisitorCounter";
 export default function Home() {
   return (
     <>
+      <link rel="stylesheet" href="/css/pages/index.css" precedence="page" />
       <main className="hub">
         <header className="hub-header">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -30,7 +32,7 @@ export default function Home() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <i className="bi bi-git" aria-hidden="true"></i>
+            <Git aria-hidden="true" />
             View source on Codeberg
           </a>
         </section>

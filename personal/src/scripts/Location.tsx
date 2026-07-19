@@ -2,6 +2,7 @@
 
 import { useDMFeed } from "./useDMFeed";
 import { realText, relTime } from "./util";
+import { BoxArrowUpRight, GeoAltFill } from "react-bootstrap-icons";
 
 type DeviceMap = Record<string, { location?: string | null; updated_at?: string }>;
 
@@ -57,7 +58,7 @@ export default function Location() {
   return (
     <section className="location-card" aria-label="Current location">
       <div className="loc-head">
-        <i className="bi bi-geo-alt-fill" aria-hidden="true" />
+        <GeoAltFill aria-hidden="true" />
         <span className="loc-label">Location</span>
       </div>
       <div className="loc-body">
@@ -78,7 +79,7 @@ export default function Location() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              {loc.label} <i className="bi bi-box-arrow-up-right" aria-hidden="true" />
+              {loc.label} <BoxArrowUpRight aria-hidden="true" />
             </a>
           ) : (
             <span className="loc-place">{loc.label}</span>

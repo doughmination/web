@@ -1,0 +1,21 @@
+/* ============================================================
+   scroll-wrap.css — lets tall pages scroll.
+
+   The base layout pins body to the viewport; pages with long content opt out
+   by rendering a .friends-wrap / .selfies-wrap container. These rules used to
+   live in pages/cool-people.css, but /guestbook renders .friends-wrap too and
+   would have lost the ability to scroll once page CSS stopped loading
+   everywhere. Shared because it is genuinely cross-page.
+   ============================================================ */
+html:has(.friends-wrap),
+body:has(.friends-wrap),
+html:has(.selfies-wrap),
+body:has(.selfies-wrap) {
+  height: auto;
+  min-height: 100dvh;
+  overflow-y: auto;
+}
+
+body:has(.friends-wrap) {
+  align-items: flex-start;
+}

@@ -25,6 +25,7 @@ export const metadata: Metadata = {
 export default function WelcomePost() {
   return (
     <main className="blog-contents">
+      <link rel="stylesheet" href="/css/pages/blog.css" precedence="page" />
       <header className="blog-header">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img

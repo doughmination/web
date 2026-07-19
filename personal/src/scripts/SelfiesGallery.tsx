@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { CameraFill } from "react-bootstrap-icons";
 
 /* Ported from selfies.js — grid + lightbox from /assets/selfies/selfies.json.
    Manifest is an array of filename strings or { src, alt, caption } objects. */
@@ -125,7 +126,7 @@ export default function SelfiesGallery() {
     return (
       <div className="selfie-grid" aria-label="Selfies gallery">
         <p className="selfie-empty">
-          No selfies yet, check back soon! <i className="bi bi-camera-fill" aria-hidden="true" />
+          No selfies yet, check back soon! <CameraFill aria-hidden="true" />
         </p>
       </div>
     );

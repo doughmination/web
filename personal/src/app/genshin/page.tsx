@@ -66,6 +66,7 @@ const CHARACTERS: Character[] = [
 export default function GenshinPage() {
   return (
     <main className="genshin-stage">
+      <link rel="stylesheet" href="/css/pages/genshin.css" precedence="page" />
       <div className="genshin-intro">
         <h1>Genshin</h1>
         <p>

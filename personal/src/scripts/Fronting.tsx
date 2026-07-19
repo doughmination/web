@@ -36,7 +36,7 @@ export default function Fronting() {
         <span className="fr-dot" aria-hidden="true" />
         <span className="fr-label">Currently fronting</span>
       </div>
-      <div className={loading ? "fr-members is-loading" : "fr-members"}>
+      <div className={loading ? "fr-members is-fetching" : "fr-members"}>
         {loading ? (
           <span className="fr-empty">loading data…</span>
         ) : members.length === 0 ? (

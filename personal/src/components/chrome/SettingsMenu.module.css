@@ -26,6 +26,13 @@
   transform: translateY(2px);
 }
 
+/* An open menu outranks the webring dock, which shares z-index 8 and renders
+   later in layout.tsx — so without this it paints over the flyout regardless
+   of where the flyout sits. */
+.bar.open {
+  z-index: 9;
+}
+
 .bar.open .toggle {
   border-color: var(--pink);
   transform: none;
@@ -49,6 +56,88 @@
   width: 22px;
   height: 22px;
   display: block;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* ---- Theme picker ------------------------------------------------------
+   Flies out to the right of the whole bar so it never covers the other buttons.
+   Anchored to .bar (position: fixed), NOT to .items — .items is a narrow flex
+   column, and positioning against it left the grid with no width to resolve
+   against. The minmax() floor is load-bearing for the same reason: minmax(0,1fr)
+   lets both tracks collapse to zero. Past ~8 themes max-height scrolls it
+   rather than letting it run off-screen. */
+.themePicker {
+  position: absolute;
+  left: calc(100% + 0.5rem);
+  /* Lifted clear of the webring dock, which is also fixed to bottom: 1rem and
+     starts at left: 4rem — directly under this flyout. --dock-clearance is its
+     38px tab height plus breathing room; keep them in step if the dock resizes. */
+  --dock-clearance: calc(38px + 0.75rem);
+  bottom: var(--dock-clearance);
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(7.5rem, 1fr));
+  gap: 0.35rem;
+  padding: 0.5rem;
+  width: max-content;
+  max-width: min(19rem, calc(100vw - 5rem));
+  max-height: 60vh;
+  overflow-y: auto;
+  background: var(--surface-0);
+  border: 1px solid var(--surface-1);
+  border-radius: 14px;
+  box-shadow: 0 10px 26px -16px rgba(0, 0, 0, 0.7);
+}
+
+.themeOption {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.35rem 0.6rem 0.35rem 0.35rem;
+  border-radius: 999px;
+  background: var(--mantle);
+  border: 1px solid var(--surface-1);
+  color: var(--subtext-1);
+  font-size: 0.75rem;
+  white-space: nowrap;
+  cursor: url("/assets/cursor/pointer_0.png"), pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.themeOption:hover {
+  border-color: var(--pink);
+  color: var(--text);
+}
+
+.themeActive {
+  border-color: var(--pink);
+  background: var(--surface-1);
+  color: var(--text);
+}
+
+.themeSwatch {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  display: block;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--surface-2);
+}
+
+.themeName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Narrow screens: one column, still flying out to the right. Opening upward
+   instead would land it on top of .items, which occupies that exact space. */
+@media (max-width: 480px) {
+  .themePicker {
+    grid-template-columns: minmax(7.5rem, 1fr);
+  }
 }
 
 /* the classic oneko idle frame, scaled down from the 256x128 sprite sheet */

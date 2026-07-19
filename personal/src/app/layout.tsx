@@ -4,6 +4,7 @@ import NavBridge from "./_components/NavBridge";
 import SettingsMenu from "@components/chrome/SettingsMenu";
 import WebringDock from "@components/chrome/WebringDock";
 import SiteChrome from "@components/chrome/SiteChrome";
+import { DEFAULT_THEME, themeBootScript } from "@lib/themes";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://c.stupid.cat"),
@@ -66,7 +67,7 @@ export const viewport: Viewport = {
 };
 
 // Pre-paint theme boot: set data-flavor before first paint to avoid a flash.
-const THEME_BOOT = `try { var f = localStorage.getItem('ctpFlavor'); document.documentElement.setAttribute('data-flavor', ['mocha', 'macchiato', 'frappe', 'latte'].indexOf(f) >= 0 ? f : 'mocha'); } catch (e) { document.documentElement.setAttribute('data-flavor', 'mocha'); }`;
+// Generated from the theme registry so the valid-flavor list can't drift.
 
 export default function RootLayout({
   children,
@@ -77,16 +78,26 @@ export default function RootLayout({
     // THEME_BOOT rewrites data-flavor from localStorage before hydration, so the
     // <html> attrs intentionally differ from the server render when a non-default
     // flavor is saved. suppressHydrationWarning marks that as expected.
-    <html lang="en" data-flavor="mocha" suppressHydrationWarning>
+    <html lang="en" data-flavor={DEFAULT_THEME} suppressHydrationWarning>
       <head>
         {/* Warm up the API origins the client JS fetches on load */}
         <link rel="preconnect" href="https://doughmination.uk" crossOrigin="" />
         <link rel="dns-prefetch" href="https://doughmination.uk" />
         <link rel="preconnect" href="https://abacus.jasoncameron.dev" crossOrigin="" />
         <link rel="dns-prefetch" href="https://abacus.jasoncameron.dev" />
-        {/* Ported Catppuccin stylesheet manifest (lives in public/css) */}
-        <link rel="stylesheet" href="/css/main.css" />
-        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT }} />
+        {/* The webfonts sit three hops deep — HTML → main.css → fonts.css →
+            here — so without this the DNS/TCP/TLS handshake can't even begin
+            until two stylesheets have downloaded and parsed. */}
+        <link rel="preconnect" href="https://fonts.doughmination.co.uk" crossOrigin="" />
+        <link rel="dns-prefetch" href="https://fonts.doughmination.co.uk" />
+        {/* Ported Catppuccin stylesheet manifest (lives in public/css).
+            precedence="global" is load-bearing: React 19 hoists precedence-managed
+            stylesheets above plain <link> tags, so without it the per-route sheets
+            would cascade BEFORE this one and global styles would win. Declaring it
+            here — in the layout, which renders before any page — establishes
+            "global" as the first precedence tier, ahead of "page". */}
+        <link rel="stylesheet" href="/css/main.css" precedence="global" />
+        <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
       </head>
       <body>
         {/* Persistent nav shell — core.ts populates .nav-links from nav.json */}

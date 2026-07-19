@@ -2,6 +2,7 @@
 
 import { useDMFeed } from "./useDMFeed";
 import { realText, relTime } from "./util";
+import { BatteryHalf, Earbuds, LightningChargeFill, Smartwatch, Wifi } from "react-bootstrap-icons";
 
 type DeviceRaw = {
   device?: string;
@@ -62,7 +63,7 @@ function DeviceRow({ d }: { d: DeviceRaw & { device: string } }) {
           <span className="dev-fill" style={{ width: `${width}%` }} />
         </span>
         <span className="dev-pct">
-          {charging ? <i className="bi bi-lightning-charge-fill dev-bolt" aria-hidden="true" /> : null}
+          {charging ? <LightningChargeFill className="dev-bolt" aria-hidden="true" /> : null}
           {pct}
         </span>
       </div>
@@ -70,27 +71,27 @@ function DeviceRow({ d }: { d: DeviceRaw & { device: string } }) {
         <div className="dev-meta">
           {charging ? (
             <span className="dev-tag dev-charging" title="Charging">
-              <i className="bi bi-lightning-charge-fill" aria-hidden="true" /> Charging
+              <LightningChargeFill aria-hidden="true" /> Charging
             </span>
           ) : null}
           {d.lowPowerMode === true ? (
             <span className="dev-tag dev-lowpower" title="Low Power Mode">
-              <i className="bi bi-battery-half" aria-hidden="true" /> Low Power
+              <BatteryHalf aria-hidden="true" /> Low Power
             </span>
           ) : null}
           {wifiName ? (
             <span className="dev-tag dev-wifi" title="Wi-Fi network">
-              <i className="bi bi-wifi" aria-hidden="true" /> {wifiName}
+              <Wifi aria-hidden="true" /> {wifiName}
             </span>
           ) : null}
           {watch ? (
             <span className="dev-tag dev-watch" title="Apple Watch connected">
-              <i className="bi bi-smartwatch" aria-hidden="true" /> Watch
+              <Smartwatch aria-hidden="true" /> Watch
             </span>
           ) : null}
           {airpods ? (
             <span className="dev-tag dev-airpods" title="AirPods connected">
-              <i className="bi bi-earbuds" aria-hidden="true" /> AirPods
+              <Earbuds aria-hidden="true" /> AirPods
             </span>
           ) : null}
           {when ? <span className="dev-when">{when}</span> : null}
@@ -131,7 +132,7 @@ export default function Devices() {
         <span className="dev-icon" aria-hidden="true" />
         <span className="dev-label">Devices</span>
       </div>
-      <div className={loading ? "dev-rows is-loading" : "dev-rows"}>
+      <div className={loading ? "dev-rows is-fetching" : "dev-rows"}>
         {loading ? (
           <span className="dev-empty">loading data…</span>
         ) : list.length === 0 ? (

@@ -527,4 +527,17 @@ a.fc-name:hover {
   display: none;
 }
 
+/* Moved from pages/music.css, which never renders it — /cool-people does. */
+.friends-disclaimer {
+  margin: 2.5rem auto 0;
+  max-width: 60ch;
+  text-align: center;
+  font-size: .8rem;
+  line-height: 1.5;
+  opacity: .6;
+}
 
+.friends-disclaimer a {
+  color: inherit;
+  text-decoration: underline;
+}

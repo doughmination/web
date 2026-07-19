@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Award, BoxArrowUpRight, Feather, Layers, Stars, XLg } from "react-bootstrap-icons";
 
 /* Ported from minecraft.js — account cards + a detail modal (Overview / 3D
    Model / Hypixel). The 3D tab uses the lazy-loaded skinview3d WebGL viewer,
@@ -290,7 +291,7 @@ function Skin3D({ data }: { data: ProfileData }) {
                   })
                 }
               >
-                <i className="bi bi-feather" aria-hidden="true" /> Elytra
+                <Feather aria-hidden="true" /> Elytra
               </button>
             </>
           ) : null}
@@ -377,7 +378,7 @@ function AccountModal({
     >
       <div className="mc-dialog">
         <button ref={closeRef} className="mc-close" type="button" aria-label="Close" onClick={requestClose}>
-          <i className="bi bi-x-lg" aria-hidden="true" />
+          <XLg aria-hidden="true" />
         </button>
 
         <div className="mc-d-head">
@@ -412,7 +413,7 @@ function AccountModal({
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img className="mc-hero" alt="" referrerPolicy="no-referrer" src={heroSrc} />
               <button className="mc-hat" type="button" onClick={() => setShowHat((v) => !v)}>
-                <i className="bi bi-layers" aria-hidden="true" /> {showHat ? "Hide hat layer" : "Show hat layer"}
+                <Layers aria-hidden="true" /> {showHat ? "Hide hat layer" : "Show hat layer"}
               </button>
             </div>
             <div className="mc-tex" hidden={!data.skin_url && capes.length === 0}>
@@ -455,7 +456,7 @@ function AccountModal({
               rel="noopener noreferrer"
               href={`https://namemc.com/profile/${encodeURIComponent(uid)}`}
             >
-              View on NameMC <i className="bi bi-box-arrow-up-right" aria-hidden="true" />
+              View on NameMC <BoxArrowUpRight aria-hidden="true" />
             </a>
           </div>
 
@@ -466,7 +467,7 @@ function AccountModal({
           <div className={`mc-panel${tab === "hypixel" ? " is-active" : ""}`}>
             <div className="mc-section-t">Hypixel Stats</div>
             <div className="mc-soon">
-              Coming soon <i className="bi bi-stars" aria-hidden="true" />
+              Coming soon <Stars aria-hidden="true" />
             </div>
           </div>
         </div>
@@ -500,7 +501,7 @@ function AccountCard({ cfg, data, onOpen }: { cfg: Cfg; data: ProfileData; onOpe
       <img className="mc-body" alt="" referrerPolicy="no-referrer" src={bodySrc} />
       <span className="mc-name">{data.name || cfg.uid}</span>
       <span className="mc-cape" hidden={capes.length === 0}>
-        <i className="bi bi-award" aria-hidden="true" /> {capes.length}{" "}
+        <Award aria-hidden="true" /> {capes.length}{" "}
         {capes.length === 1 ? "cape" : "capes"}
       </span>
     </a>

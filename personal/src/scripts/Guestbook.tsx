@@ -1,12 +1,16 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { HeartFill, type Icon } from "react-bootstrap-icons";
 
 /* Ported from guestbook.js — the sign form (with honeypot + optional Cloudflare
    Turnstile) and the list of entries. */
 
 type Entry = { name: string; website?: string; message: string; ts: number };
-type Status = { text: string; kind?: "err" | "ok"; icon?: string };
+/* `icon` holds the component itself rather than an icon name. The name-based
+   version built a class string at runtime, so a typo failed silently as a blank
+   glyph and nothing could statically verify it; this way the compiler does. */
+type Status = { text: string; kind?: "err" | "ok"; icon?: Icon };
 
 declare global {
   interface Window {
@@ -125,7 +129,7 @@ export default function Guestbook({ api, turnstileKey }: Props) {
         setStatus({ text: data.error || "Something went wrong. Try again.", kind: "err" });
         return;
       }
-      setStatus({ text: "Thanks for signing!", kind: "ok", icon: "heart-fill" });
+      setStatus({ text: "Thanks for signing!", kind: "ok", icon: HeartFill });
       setName("");
       setWebsite("");
       setMessage("");
@@ -202,11 +206,7 @@ export default function Guestbook({ api, turnstileKey }: Props) {
             Sign guestbook
           </button>
           <span className={`gb-status${status?.kind ? ` gb-${status.kind}` : ""}`} role="status">
-            {status?.icon ? (
-              <>
-                <i className={`bi bi-${status.icon}`} aria-hidden="true" />{" "}
-              </>
-            ) : null}
+            {status?.icon ? <status.icon aria-hidden="true" /> : null}{" "}
             {status?.text}
           </span>
         </div>

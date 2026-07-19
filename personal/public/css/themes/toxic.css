@@ -1,0 +1,36 @@
+html[data-flavor="toxic"] {
+  color-scheme: dark;
+
+  /* accents */
+  --rosewater: #d4ffb3;
+  --flamingo: #b8ff8a;
+  --pink: #7fff3f;
+  /* live accent default = theme green */
+  --mauve: #a3e635;
+  --red: #ff3b3b;
+  --maroon: #b91c1c;
+  --peach: #ffb347;
+  --yellow: #d4ff2a;
+  --green: #39ff14;
+  --teal: #2ee6a8;
+  --sky: #6bffb8;
+  --saphire: #3ecf8e;
+  --blue: #4ade80;
+  --lavender: #8fffb0;
+
+  /* text */
+  --text: #e4ffd9;
+  --subtext-1: #c8e8b8;
+  --subtext-0: #aecf9c;
+  --overlay-2: #94b682;
+  --overlay-1: #7a9c69;
+  --overlay-0: #618350;
+
+  /* surfaces + backgrounds */
+  --surface-2: #2e4022;
+  --surface-1: #223018;
+  --surface-0: #17210f;
+  --base: #0e150a;
+  --mantle: #0a0f07;
+  --crust: #060a04;
+}

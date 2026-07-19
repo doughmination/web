@@ -8,12 +8,18 @@
 
 /* fonts + theme variables (Catppuccin flavours) */
 @import url(/css/fonts.css);
-/* Bootstrap Icons (brand/logo glyphs, used for social connections etc.) */
-@import url(/css/bootstrap-icons.css);
+/* Bootstrap Icons are no longer a webfont — the ~15 glyphs this site actually
+   uses are imported as components from react-bootstrap-icons, so they ship as
+   inline SVG in the bundle. The old icon CSS + woff2 were 216 KB of
+   render-blocking weight to draw those glyphs and have been deleted. */
+/* Keep this list in step with THEMES in src/lib/themes.ts — a theme registered
+   there but not imported here will show in the picker and apply no colors. */
 @import url(/css/themes/frappe.css);
 @import url(/css/themes/latte.css);
 @import url(/css/themes/mocha.css);
 @import url(/css/themes/macchiato.css);
+@import url(/css/themes/cherry.css);
+@import url(/css/themes/toxic.css);
 
 /* base */
 @import url(/css/base.css);
@@ -26,22 +32,19 @@
 @import url(/css/shared/bg-music.css);
 @import url(/css/shared/visitor-counter.css);
 @import url(/css/shared/keyring.css);
-@import url(/css/shared/presence-card.css);
+@import url(/css/shared/sections.css);
+@import url(/css/shared/scroll-wrap.css);
 @import url(/css/shared/responsive.css);
 
 /* standalone / error pages */
 @import url(/css/404.css);
 
-/* per-page styles */
-@import url(/css/pages/index.css);
-@import url(/css/pages/88x31.css);
-@import url(/css/pages/dev-info.css);
-@import url(/css/pages/projects.css);
-@import url(/css/pages/cool-people.css);
-@import url(/css/pages/music.css);
-@import url(/css/pages/selfies.css);
-@import url(/css/pages/guilds.css);
-@import url(/css/pages/blog.css);
-@import url(/css/pages/genshin.css);
-@import url(/css/pages/guestbook.css);
-@import url(/css/pages/minecraft.css);
+/* Per-page styles are NOT imported here any more — each route pulls its own
+   via <link precedence="page"> in its page.tsx, so a visitor to /music no
+   longer downloads the Minecraft, Genshin and guestbook stylesheets.
+   presence-card.css is likewise loaded only by the routes that render a card.
+
+   Ordering: this file is declared precedence="global" in layout.tsx, which
+   renders before any page, so global always cascades first and page CSS keeps
+   its ability to override. Don't re-add page imports here — that would ship
+   them to every route again. */

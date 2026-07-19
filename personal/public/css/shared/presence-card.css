@@ -1311,3 +1311,16 @@ body:has(.presence-stage) {
     font-size: 1.25rem;
   }
 }
+/* Mini-card connection icons. These lived in pages/music.css, which never
+   renders a presence card — /cool-people does (FriendsGrid), so splitting the
+   page CSS per route would have dropped them. Filed with the card they style. */
+.presence-card.is-mini .pc-conn-ic {
+  width: 13px;
+  height: 13px;
+}
+
+.presence-card.is-mini i.pc-conn-ic {
+  width: auto;
+  height: auto;
+  font-size: 13px;
+}

@@ -35,6 +35,7 @@ export const metadata: Metadata = {
 export default function MusicPage() {
   return (
     <>
+      <link rel="stylesheet" href="/css/pages/music.css" precedence="page" />
       {/* Warm up the origins this page's JS fetches on load */}
       <link rel="preconnect" href="https://doughmination.uk" crossOrigin="" />
       <link rel="dns-prefetch" href="https://doughmination.uk" />

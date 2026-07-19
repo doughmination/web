@@ -589,30 +589,6 @@ i.pc-conn-ic {
   color: currentColor;
 }
 
-.presence-card.is-mini .pc-conn-ic {
-  width: 13px;
-  height: 13px;
-}
-
-.presence-card.is-mini i.pc-conn-ic {
-  width: auto;
-  height: auto;
-  font-size: 13px;
-}
-
-.friends-disclaimer {
-  margin: 2.5rem auto 0;
-  max-width: 60ch;
-  text-align: center;
-  font-size: .8rem;
-  line-height: 1.5;
-  opacity: .6;
-}
-
-.friends-disclaimer a {
-  color: inherit;
-  text-decoration: underline;
-}
 
 .obsessions {
     display: grid;

@@ -103,6 +103,7 @@ function ButtonImg({ b }: { b: Button }) {
 export default function ButtonsPage() {
   return (
     <>
+      <link rel="stylesheet" href="/css/pages/88x31.css" precedence="page" />
       <div className="hub">
         <header className="hub-header">
           <h1>88x31 Buttons</h1>

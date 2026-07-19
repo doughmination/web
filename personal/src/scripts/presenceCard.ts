@@ -194,7 +194,7 @@ export function createPresenceCard(opts: PresenceOpts): HTMLElement | null {
   }
   if (starBtn) {
     starBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
+      e.stopPropagation(); 
       const open = card.classList.toggle("show-wishlist");
       starBtn.classList.toggle("on", open);
       starBtn.setAttribute("aria-expanded", open ? "true" : "false");

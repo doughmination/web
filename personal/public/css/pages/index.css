@@ -230,12 +230,12 @@ body:has(.about) .hub {
    hold the body open at roughly its settled size, so filling in barely moves.
    .fr-members: one .fr-member row = 38px avatar + 0.5rem*2 padding + 2px border.
    Tune --dev-rows-reserve to however many devices you normally have online. */
-.fr-members.is-loading {
+.fr-members.is-fetching {
   min-height: 56px;
   align-items: center;
 }
 
-.dev-rows.is-loading {
+.dev-rows.is-fetching {
   --dev-rows-reserve: 2;
   /* per row: ~28px content + 0.45rem*2 padding + 2px border, + 0.55rem gaps */
   min-height: calc(
@@ -243,14 +243,14 @@ body:has(.about) .hub {
   );
 }
 
-.fr-members.is-loading .fr-empty,
-.dev-rows.is-loading .dev-empty {
+.fr-members.is-fetching .fr-empty,
+.dev-rows.is-fetching .dev-empty {
   opacity: 0.65;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .fr-members.is-loading .fr-empty,
-  .dev-rows.is-loading .dev-empty {
+  .fr-members.is-fetching .fr-empty,
+  .dev-rows.is-fetching .dev-empty {
     animation: ctp-pulse 1.6s ease-in-out infinite;
   }
 }

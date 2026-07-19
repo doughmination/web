@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { MusicNoteBeamed } from "react-bootstrap-icons";
 
 /* Ported from music.js — now-playing hero, synced lyrics (LRCLIB) with a
    follow/lock scroll, recent plays + top artists (Last.fm). The per-frame
@@ -675,8 +676,8 @@ export default function Music() {
           <p className="ly-note">{ly.msg}</p>
         ) : ly.kind === "instrumental" ? (
           <p className="ly-note">
-            <i className="bi bi-music-note-beamed" aria-hidden="true" /> instrumental{" "}
-            <i className="bi bi-music-note-beamed" aria-hidden="true" />
+            <MusicNoteBeamed aria-hidden="true" /> instrumental{" "}
+            <MusicNoteBeamed aria-hidden="true" />
           </p>
         ) : ly.kind === "synced" ? (
           ly.lines.map((l, i) => (
@@ -730,7 +731,7 @@ export default function Music() {
                   <img className="rc-art" src={t.art} alt="" loading="lazy" />
                 ) : (
                   <span className="rc-art rc-art-blank" aria-hidden="true">
-                    <i className="bi bi-music-note-beamed" />
+                    <MusicNoteBeamed />
                   </span>
                 )}
                 <span className="rc-text">
@@ -763,7 +764,7 @@ export default function Music() {
                       <img className="top-art" src={topImg[a.name]} alt="" referrerPolicy="no-referrer" />
                     ) : (
                       <span className="top-art top-art-blank" aria-hidden="true">
-                        <i className="bi bi-music-note-beamed" />
+                        <MusicNoteBeamed />
                       </span>
                     )}
                     <span className="top-text">
