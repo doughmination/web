@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "@/styles/pages/blog.css";
 
 export const metadata: Metadata = {
   title: "Welcome to the blog | Clove Twilight",
@@ -25,7 +26,6 @@ export const metadata: Metadata = {
 export default function WelcomePost() {
   return (
     <main className="blog-contents">
-      <link rel="stylesheet" href="/css/pages/blog.css" precedence="page" />
       <header className="blog-header">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img

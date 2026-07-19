@@ -52,12 +52,13 @@
   box-shadow: 0 10px 26px -16px rgba(0, 0, 0, 0.7);
 }
 
+/* No border-radius or cover-crop: theme artwork is shown whole rather than
+   masked into a circle, so nothing gets clipped off the edges. */
 .themeIcon {
   width: 22px;
   height: 22px;
   display: block;
-  border-radius: 50%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 /* ---- Theme picker ------------------------------------------------------
@@ -122,9 +123,7 @@
   height: 20px;
   flex: 0 0 auto;
   display: block;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 1px solid var(--surface-2);
+  object-fit: contain;
 }
 
 .themeName {

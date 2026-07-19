@@ -1,0 +1,5 @@
+
+
+# 104MB of pre-optimisation source models — regenerate with:
+#   gltf-transform optimize in.glb out.glb --texture-compress webp --compress draco --simplify false
+public/models/original/

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Award, BoxArrowUpRight, Feather, Layers, Stars, XLg } from "react-bootstrap-icons";
+import { createWave } from "./skinAnimations";
 
 /* Ported from minecraft.js — account cards + a detail modal (Overview / 3D
    Model / Hypixel). The 3D tab uses the lazy-loaded skinview3d WebGL viewer,
@@ -179,7 +180,6 @@ function Skin3D({ data }: { data: ProfileData }) {
         }
         const viewer = new sv.SkinViewer({ canvas: canvasRef.current, width: 300, height: 400 });
         viewer.controls.enableZoom = true;
-        viewer.autoRotateSpeed = 1.2;
         viewerRef.current = viewer;
         setReady(true);
         viewer
@@ -235,15 +235,14 @@ function Skin3D({ data }: { data: ProfileData }) {
     const viewer = viewerRef.current;
     const sv = svRef.current;
     if (!ready || !viewer || !sv) return;
+    // Wave is ours, not sv.WaveAnimation — see skinAnimations.ts for why.
     const makers = [
       () => new sv.IdleAnimation(),
       () => new sv.WalkingAnimation(),
       () => new sv.RunningAnimation(),
-      () => null,
-      () => null,
+      () => createWave(sv, "right"),
     ];
     viewer.animation = makers[animIdx]();
-    viewer.autoRotate = animIdx === 3;
   }, [ready, animIdx]);
 
   const capeOptions = [
@@ -300,7 +299,7 @@ function Skin3D({ data }: { data: ProfileData }) {
 
       <div className="mc-anim-select mc-ctl-group">
         <span className="mc-ctl-label">Animation</span>
-        {["Idle", "Walk", "Run", "Spin", "None"].map((label, i) => (
+        {["Idle", "Walk", "Run", "Wave"].map((label, i) => (
           <button
             key={i}
             type="button"

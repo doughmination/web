@@ -22,10 +22,10 @@ function storeKey(ns: string, key: string) {
    sessionStorage token; a new tab starts fresh. */
 function getCached(ns: string, key: string): number | null {
   try {
-    const raw = localStorage.getItem(storeKey(ns, key));
+    const raw = window.localStorage.getItem(storeKey(ns, key));
     if (!raw) return null;
     const { count, session } = JSON.parse(raw);
-    const token = sessionStorage.getItem("vc-session");
+    const token = window.sessionStorage.getItem("vc-session");
     return token && token === session ? count : null;
   } catch {
     return null;
@@ -34,12 +34,12 @@ function getCached(ns: string, key: string): number | null {
 
 function setCached(ns: string, key: string, count: number) {
   try {
-    let token = sessionStorage.getItem("vc-session");
+    let token = window.sessionStorage.getItem("vc-session");
     if (!token) {
       token = Math.random().toString(36).slice(2);
-      sessionStorage.setItem("vc-session", token);
+      window.sessionStorage.setItem("vc-session", token);
     }
-    localStorage.setItem(storeKey(ns, key), JSON.stringify({ count, session: token }));
+    window.localStorage.setItem(storeKey(ns, key), JSON.stringify({ count, session: token }));
   } catch {
     /* storage unavailable — just skip caching */
   }

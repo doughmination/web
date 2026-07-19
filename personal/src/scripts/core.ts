@@ -952,10 +952,10 @@ const spriteFor = (c) => c.sprite || BASE_SPRITE;
   }
   function cacheKey(resource, params) { return resource + ":" + stableStringify(params || {}); }
   function readStore(key) {
-    try { var s = sessionStorage.getItem(STORE_PREFIX + key); return s ? JSON.parse(s) : null; } catch { return null; }
+    try { var s = window.sessionStorage.getItem(STORE_PREFIX + key); return s ? JSON.parse(s) : null; } catch { return null; }
   }
   function writeStore(key, rec) {
-    try { sessionStorage.setItem(STORE_PREFIX + key, JSON.stringify(rec)); } catch { /* private mode / quota */ }
+    try { window.sessionStorage.setItem(STORE_PREFIX + key, JSON.stringify(rec)); } catch { /* private mode / quota */ }
   }
 
   function request(resource, params, opts) {

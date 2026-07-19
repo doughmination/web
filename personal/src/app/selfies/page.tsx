@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import SelfiesGallery from "@scripts/SelfiesGallery";
+import "@/styles/pages/selfies.css";
 
 export const metadata: Metadata = {
   title: "Clove Twilight",
@@ -32,7 +33,6 @@ export const metadata: Metadata = {
 export default function SelfiesPage() {
   return (
     <>
-      <link rel="stylesheet" href="/css/pages/selfies.css" precedence="page" />
       <div className="hub selfies-wrap">
         <header className="hub-header">
           <h1>Selfies</h1>

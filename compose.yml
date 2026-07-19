@@ -25,6 +25,7 @@ services:
     build:
       context: ./mailbox
       dockerfile: Dockerfile
+    container_name: inbox
     ports:
       - "127.0.0.1:4040:4040"
     volumes:

@@ -5,6 +5,23 @@ import SettingsMenu from "@components/chrome/SettingsMenu";
 import WebringDock from "@components/chrome/WebringDock";
 import SiteChrome from "@components/chrome/SiteChrome";
 import { DEFAULT_THEME, themeBootScript } from "@lib/themes";
+// Palettes now live in TypeScript. Importing for side effects emits the
+// html[data-flavor="…"] blocks at build time; see src/styles/themes.css.ts.
+import "@/styles/themes.css";
+// Global rules migrated from public/css to Vanilla Extract, one file at a time.
+// Import order here IS the cascade order, so keep it matching main.css.
+import "@/styles/fonts.css";
+import "@/styles/base.css";
+import "@/styles/bg-music.css";
+import "@/styles/cat-picker.css";
+import "@/styles/keyring.css";
+import "@/styles/layout.css";
+import "@/styles/nav.css";
+import "@/styles/visitor-counter.css";
+import "@/styles/sections.css";
+import "@/styles/scroll-wrap.css";
+// Last, so its media queries override the base rules above.
+import "@/styles/responsive.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://c.stupid.cat"),
@@ -85,18 +102,11 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://doughmination.uk" />
         <link rel="preconnect" href="https://abacus.jasoncameron.dev" crossOrigin="" />
         <link rel="dns-prefetch" href="https://abacus.jasoncameron.dev" />
-        {/* The webfonts sit three hops deep — HTML → main.css → fonts.css →
-            here — so without this the DNS/TCP/TLS handshake can't even begin
-            until two stylesheets have downloaded and parsed. */}
+        {/* Comic Code is served from here (see styles/fonts.css.ts). Warming
+            the connection early matters because the @font-face is only
+            discovered once Next's CSS chunk has parsed. */}
         <link rel="preconnect" href="https://fonts.doughmination.co.uk" crossOrigin="" />
         <link rel="dns-prefetch" href="https://fonts.doughmination.co.uk" />
-        {/* Ported Catppuccin stylesheet manifest (lives in public/css).
-            precedence="global" is load-bearing: React 19 hoists precedence-managed
-            stylesheets above plain <link> tags, so without it the per-route sheets
-            would cascade BEFORE this one and global styles would win. Declaring it
-            here — in the layout, which renders before any page — establishes
-            "global" as the first precedence tier, ahead of "page". */}
-        <link rel="stylesheet" href="/css/main.css" precedence="global" />
         <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
       </head>
       <body>

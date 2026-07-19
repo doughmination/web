@@ -1,4 +1,10 @@
 import type { NextConfig } from "next";
+import { createVanillaExtractPlugin } from "@vanilla-extract/next-plugin";
+
+/* Compiles .css.ts files to static CSS at build time — zero runtime. The plugin
+ * configures Turbopack on Next >= 16 and webpack otherwise, so it works under
+ * both `dev` (--webpack) and `dev:turbo`. */
+const withVanillaExtract = createVanillaExtractPlugin();
 
 const nextConfig: NextConfig = {
   /* Emit a self-contained production server (.next/standalone) so the Docker
@@ -21,4 +27,4 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: ["192.168.0.121"],
 };
 
-export default nextConfig;
+export default withVanillaExtract(nextConfig);

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "@/styles/pages/projects.css";
 
 export const metadata: Metadata = {
   title: "Clove Twilight",
@@ -140,7 +141,6 @@ function ProjectCard({ p }: { p: Project }) {
 export default function ProjectsPage() {
   return (
     <main>
-      <link rel="stylesheet" href="/css/pages/projects.css" precedence="page" />
       <header className="hub-header">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Music from "@scripts/Music";
+import "@/styles/pages/music.css";
 
 export const metadata: Metadata = {
   title: "Clove Twilight",
@@ -35,7 +36,6 @@ export const metadata: Metadata = {
 export default function MusicPage() {
   return (
     <>
-      <link rel="stylesheet" href="/css/pages/music.css" precedence="page" />
       {/* Warm up the origins this page's JS fetches on load */}
       <link rel="preconnect" href="https://doughmination.uk" crossOrigin="" />
       <link rel="dns-prefetch" href="https://doughmination.uk" />

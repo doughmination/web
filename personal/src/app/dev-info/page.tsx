@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
 import DevInfo from "@scripts/DevInfo";
+import "@/styles/pages/dev-info.css";
 
 export const metadata: Metadata = {
   title: "Clove Twilight",
@@ -101,7 +102,6 @@ function HardwareRow({
 export default function DevInfoPage() {
   return (
     <>
-      <link rel="stylesheet" href="/css/pages/dev-info.css" precedence="page" />
       {/* Warm up the origins this page's JS fetches on load */}
       <link rel="preconnect" href="https://doughmination.uk" crossOrigin="" />
       <link rel="dns-prefetch" href="https://doughmination.uk" />

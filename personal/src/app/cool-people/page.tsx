@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import FriendsGrid from "@scripts/FriendsGrid";
+import "@/styles/presence-card.css";
+import "@/styles/pages/cool-people.css";
 
 export const metadata: Metadata = {
   title: "Clove Twilight",
@@ -34,8 +36,6 @@ export const metadata: Metadata = {
 export default function CoolPeoplePage() {
   return (
     <>
-      <link rel="stylesheet" href="/css/shared/presence-card.css" precedence="page" />
-      <link rel="stylesheet" href="/css/pages/cool-people.css" precedence="page" />
       {/* Warm up the origins this page's JS fetches on load */}
       <link rel="preconnect" href="https://doughmination.uk" crossOrigin="" />
       <link rel="dns-prefetch" href="https://doughmination.uk" />

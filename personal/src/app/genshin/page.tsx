@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Model3D from "@components/chrome/Model3D";
+import "@/styles/pages/genshin.css";
 
 export const metadata: Metadata = {
   title: "Genshin — Clove Twilight",
@@ -66,7 +67,6 @@ const CHARACTERS: Character[] = [
 export default function GenshinPage() {
   return (
     <main className="genshin-stage">
-      <link rel="stylesheet" href="/css/pages/genshin.css" precedence="page" />
       <div className="genshin-intro">
         <h1>Genshin</h1>
         <p>

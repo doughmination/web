@@ -209,7 +209,7 @@ function mbFetch(url: string): Promise<{ artists?: unknown[]; relations?: unknow
 }
 function artCacheGet(name: string): string | undefined {
   try {
-    const raw = localStorage.getItem(ART_CACHE_PREFIX + name.toLowerCase());
+    const raw = window.localStorage.getItem(ART_CACHE_PREFIX + name.toLowerCase());
     if (!raw) return undefined;
     const hit = JSON.parse(raw);
     const ttl = hit.url ? ART_TTL_HIT : ART_TTL_MISS;
@@ -221,7 +221,7 @@ function artCacheGet(name: string): string | undefined {
 }
 function artCacheSet(name: string, url: string) {
   try {
-    localStorage.setItem(
+    window.localStorage.setItem(
       ART_CACHE_PREFIX + name.toLowerCase(),
       JSON.stringify({ url: url || "", ts: Date.now() }),
     );

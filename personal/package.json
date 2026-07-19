@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev --webpack",
     "dev:turbo": "next dev",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint"
   },
@@ -21,6 +21,8 @@
     "@types/node": "^20.19.43",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
+    "@vanilla-extract/css": "^1.21.1",
+    "@vanilla-extract/next-plugin": "^2.5.2",
     "eslint": "^9.39.5",
     "eslint-config-next": "16.2.10",
     "typescript": "^5.9.3"
@@ -30,6 +32,8 @@
     "unrs-resolver"
   ],
   "trustedDependencies": [
+    "@swc/core",
+    "esbuild",
     "sharp",
     "unrs-resolver"
   ]
