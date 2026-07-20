@@ -1,15 +1,17 @@
 /**
  * Theme registry — the single source of truth for site flavors.
  *
- * Adding a theme is three steps:
- *   1. Write public/css/themes/<id>.css, scoped to html[data-flavor="<id>"].
- *   2. Add `@import url(/css/themes/<id>.css);` to public/css/main.css.
- *   3. Add an entry to THEMES below.
+ * Adding a theme is two steps:
+ *   1. Add a createGlobalTheme('html[data-flavor="<id>"]', vars, { … }) block to
+ *      src/styles/themes.css.ts, plus its globalStyle colorScheme line.
+ *   2. Add an entry to THEMES below.
  *
- * Step 2 can't be automated from here — main.css is plain CSS and can't read
- * TypeScript. Everything else (the picker UI, the pre-paint boot script, the
- * <meta theme-color> sync, and the localStorage validation) derives from this
- * array, so those can't drift out of sync with each other.
+ * Every token in the contract must be present or the BUILD FAILS, so a
+ * half-finished palette can't ship. Everything else (the picker UI, the pre-paint
+ * boot script, the <meta theme-color> sync, and the localStorage validation)
+ * derives from this array, so those can't drift out of sync with each other.
+ *
+ * `icon` is optional — omit it and the picker renders a flat swatch of `dot`.
  */
 
 export type Theme = {
@@ -30,6 +32,8 @@ export const THEMES: Theme[] = [
   { id: "cherry", label: "Cherry", dot: "#f4b8e4", icon: "/assets/theme/cherry.png" },
   { id: "toxic", label: "Toxic", dot: "#7fff3f", icon: "/assets/theme/toxic.png" },
   { id: "lemon", label: "Lemon", dot: "#ffe14d", icon: "/assets/theme/lemon.png" },
+  { id: "estrogen", label: "Estrogen", dot: "#34c9bf", icon: "/assets/theme/estrogen.png" },
+  { id: "cyberpunk", label: "Cyberpunk", dot: "#f84800", icon: "/assets/theme/cyberpunk.png" },
 ];
 
 /** The flavor applied when nothing is stored, or when the stored value is junk. */

@@ -1,10 +1,17 @@
 "use client";
 
-/* PresenceCard.tsx — the Discord presence card, as a React component.
+/* PresenceCard.tsx — the COMPACT Discord presence card, as a React component.
  *
- * Replaces the old imperative createPresenceCard() factory. Used by:
- *   - OwnerDiscordCard.tsx  (/discord)      one full card
- *   - FriendsGrid.tsx       (/cool-people)  a grid of mini cards
+ * Replaces the old imperative createPresenceCard() factory. Sole consumer is
+ * FriendsGrid.tsx (/cool-people), which renders ~23 of these as mini cards.
+ *
+ * /discord used to render this too, scaled up by ~150 lines of
+ * `.presence-stage .pc-*` descendant overrides. It now has its own
+ * PresenceDashboard.tsx — a widget and a full page want genuinely different
+ * markup, and fighting this component's compact constraints (max-width 280px,
+ * 200px caps on row text) with CSS specificity is what kept the Spotify
+ * progress bar from filling its container. Both components share every hook and
+ * helper in presenceShared.ts, so no data logic is duplicated.
  *
  * Every class name, data-attribute and CSS custom property the old factory
  * toggled is preserved exactly — presence-card.css.ts keys off ~144 of them, so

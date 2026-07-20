@@ -394,6 +394,53 @@ export function useTicker(active: boolean): number {
   );
 }
 
+/**
+ * True when the user asks for reduced motion. Goes through useSyncExternalStore
+ * for the same reason useTicker does — matchMedia is an external mutable source,
+ * and reading it during render would be impure.
+ *
+ * Server snapshot is `false` so SSR matches the common case; if the user does
+ * prefer reduced motion, the first client read corrects it before anything
+ * animates.
+ */
+export function useReducedMotion(): boolean {
+  const subscribe = useCallback((onChange: () => void) => {
+    if (typeof window === "undefined" || !window.matchMedia) return () => {};
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+  return useSyncExternalStore(
+    subscribe,
+    () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false,
+    () => false,
+  );
+}
+
+/** One equipped collectible (nameplate, avatar decoration, profile effect). */
+export interface Collectible {
+  slot?: string;
+  type?: string;
+  name?: string;
+  summary?: string;
+  static_image_url?: string | null;
+  animated_image_url?: string | null;
+  video_url?: string | null;
+  palette?: string | null;
+}
+
+/** Pull one equipped collectible slot out of the API's `collectibles` array. */
+export function collectibleForSlot(
+  collectibles: unknown,
+  slot: string,
+): Collectible | null {
+  if (!Array.isArray(collectibles)) return null;
+  const hit = (collectibles as Dict[]).find(
+    (c) => c && (c.slot === slot || c.type === slot),
+  );
+  return (hit as Collectible | undefined) ?? null;
+}
+
 const ACCENT_VARS = [
   "rosewater", "flamingo", "pink", "mauve", "red", "maroon", "peach",
   "yellow", "green", "teal", "sky", "saphire", "blue", "lavender",

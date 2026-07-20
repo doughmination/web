@@ -1,24 +1,3 @@
-/**
- * themes.css.ts — the site palette, as a typed contract.
- *
- * Names are semantic, not Catppuccin. Three groups:
- *
- *   accents    accent / accentAlt / success / warning / danger / info
- *              What a colour MEANS. Use these for UI.
- *   hues       rosewater / maroon / peach / teal / sky / sapphire / lavender
- *              Pure swatches with no semantic role. They exist for the
- *              /dev-info tech-icon palette and the Minecraft role accents,
- *              where the point is "a distinct colour", not a meaning.
- *   neutrals   bgDeep < bgRaised < bg < surface < surfaceHi < surfaceHigher,
- *              and textFaint < textDim < textMuted < textSoft < text.
- *              Both scales run dark -> light.
- *
- * createGlobalThemeContract pins each token to a literal CSS variable name, so
- * `var(--accent)` works from markup and from code that builds var() strings at
- * runtime (MinecraftAccounts does exactly that for role accents).
- *
- * Omit or misspell a token in any flavour and the BUILD FAILS.
- */
 import {
   createGlobalTheme,
   createGlobalThemeContract,
@@ -110,19 +89,90 @@ createGlobalTheme('html[data-flavor="toxic"]', vars, {
 globalStyle('html[data-flavor="toxic"]', { colorScheme: "dark" });
 
 /**
- * Lemon — warm dark citrus. Charcoal-olive neutrals under a bright lemon accent.
+ * Estrogen — teal keyed to the estradiol pill in the picker icon (sampled
+ * #28b8b0, brightened to #34c9bf so it clears AA on `surface`), with the trans
+ * flag's pink as accentAlt.
  *
- * Two deliberate choices:
+ * Two knock-on moves, both forced by the accent occupying the teal slot:
  *
- * `warning` is amber, not yellow. Yellow is already the accent here, so a yellow
- * warning would be invisible as a signal — the low-battery chip would look
- * identical to every other accented thing on the page.
+ * The `teal` hue token is pushed green (#4fbf85). Left near its usual value it
+ * sat on top of the accent — and it's a Minecraft role accent (see ROLE_META)
+ * whose whole job is telling six accounts apart at a glance.
  *
- * sapphire / sky / teal / maroon stay in cool + rust families rather than being
- * tinted lemon. They're the Minecraft role accents (see ROLE_META), and their
- * whole job is telling six accounts apart at a glance — collapsing them toward
- * the theme hue would defeat that.
+ * `info` is blue here, unlike the other cool flavours' usual choices, precisely
+ * because a teal accent frees blue back up for signalling. `danger` stays a true
+ * red rather than drifting pink, since accentAlt is already a soft pink.
  */
+createGlobalTheme('html[data-flavor="estrogen"]', vars, {
+  accent: "#34c9bf",
+  accentAlt: "#f5a9b8",
+  success: "#6ede8f",
+  danger: "#ff4d5e",
+  warning: "#ffb454",
+  info: "#7fa8ff",
+  rosewater: "#f7d6e0",
+  maroon: "#a8324f",
+  peach: "#ffab7a",
+  teal: "#4fbf85",
+  sky: "#7fd0f5",
+  sapphire: "#2f6fd0",
+  lavender: "#c4a5f5",
+  bgDeep: "#03090a",
+  bgRaised: "#081314",
+  bg: "#0d1b1d",
+  surface: "#14282a",
+  surfaceHi: "#1d383b",
+  surfaceHigher: "#26484c",
+  textFaint: "#4e7a7c",
+  textDim: "#689498",
+  textMuted: "#9cc6c8",
+  textSoft: "#c4e2e3",
+  text: "#e4f7f7",
+});
+globalStyle('html[data-flavor="estrogen"]', { colorScheme: "dark" });
+
+/**
+ * Cyberpunk — keyed to the Samurai icon's flame orange (sampled #f84800) over
+ * warm charcoal, with a chrome-cyan `info` for the machine half of the artwork.
+ *
+ * Orange rather than Cyberpunk 2077's canonical acid yellow: yellow lands 99
+ * from Lemon's accent, which is the tightest pairing in the whole registry, and
+ * it wouldn't match this icon anyway. Orange is also the one warm slot nothing
+ * else occupies — nearest neighbour is Cherry at 200.
+ *
+ * `danger` is pushed to a pink-red (#ff2d55) so it stays separable from the
+ * orange accent; a conventional red would read as just another accent here.
+ * Neutrals are warm-tinted charcoal rather than true black, so the orange
+ * doesn't vibrate against them the way it would on #000.
+ */
+createGlobalTheme('html[data-flavor="cyberpunk"]', vars, {
+  accent: "#f84800",
+  accentAlt: "#ff8a4d",
+  success: "#5fd88a",
+  danger: "#ff2d55",
+  warning: "#ffc233",
+  info: "#00d9e0",
+  rosewater: "#ffd8c4",
+  maroon: "#8f2418",
+  peach: "#ffab7a",
+  teal: "#2fbfa8",
+  sky: "#5fb8e0",
+  sapphire: "#3d6fd0",
+  lavender: "#b09aef",
+  bgDeep: "#080503",
+  bgRaised: "#100b07",
+  bg: "#17100b",
+  surface: "#241a12",
+  surfaceHi: "#33251a",
+  surfaceHigher: "#453222",
+  textFaint: "#8a6b52",
+  textDim: "#a68466",
+  textMuted: "#d0b49a",
+  textSoft: "#e8d3bf",
+  text: "#f9ece1",
+});
+globalStyle('html[data-flavor="cyberpunk"]', { colorScheme: "dark" });
+
 createGlobalTheme('html[data-flavor="lemon"]', vars, {
   accent: "#ffe14d",
   accentAlt: "#e0b92e",

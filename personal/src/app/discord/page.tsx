@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
-import OwnerDiscordCard from "@scripts/OwnerDiscordCard";
-import "@/styles/presence-card.css";
+import PresenceDashboard from "@scripts/PresenceDashboard";
+import * as s from "@/styles/presence-dashboard.css";
+
+const MY_DISCORD_USER_ID = "1464890289922641993";
 
 export const metadata: Metadata = {
   title: "Clove Twilight",
@@ -44,13 +46,13 @@ export default function DiscordPage() {
       <link rel="preconnect" href="https://cdn.discordapp.com" />
       <link rel="dns-prefetch" href="https://cdn.discordapp.com" />
 
-      <main className="presence-stage">
-        <div className="presence-intro">
-          <h1>Discord</h1>
-          <p>What fae is up to, live via Doughmination Restful.</p>
+      <main className={s.page}>
+        <div className={s.intro}>
+          <h1 className={s.introTitle}>Discord</h1>
+          <p className={s.introSub}>What fae is up to, live via Doughmination Restful.</p>
         </div>
 
-        <OwnerDiscordCard />
+        <PresenceDashboard userId={MY_DISCORD_USER_ID} />
       </main>
     </>
   );
