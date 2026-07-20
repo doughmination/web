@@ -30,6 +30,7 @@ import {
   useReducedMotion, useTicker, wlImg, collectibleForSlot,
   type Collectible, type Dict, type SelfJson,
 } from "./presenceShared";
+import { renderDiscordMarkdown } from "./discordMarkdown";
 import * as s from "@/styles/presence-dashboard.css";
 
 /** Status → the theme token used for its dot and label. */
@@ -150,17 +151,32 @@ function Clock({ offsetMin, tzName }: { offsetMin: number; tzName: string | null
 
 /* ---- now playing ---------------------------------------------------------- */
 
-/** `accent` is the "r, g, b" triplet sampled off the album art, or null — the
-    bar falls back to the theme accent from CSS when there's nothing to sample. */
-function NowPlaying({ sp, accent }: { sp: Dict; accent: string | null }) {
-  const ts = sp.timestamps as { start?: number; end?: number } | undefined;
+/**
+ * `sp` is null when nothing is playing — the panel still renders, with a
+ * placeholder, so the grid keeps a stable shape. `accent` is the "r, g, b"
+ * triplet sampled off the album art; the bar falls back to the theme accent
+ * from CSS when there's nothing to sample.
+ *
+ * The hook runs before the null check so hook order stays constant either way.
+ */
+function NowPlaying({ sp, accent }: { sp: Dict | null; accent: string | null }) {
+  const ts = sp?.timestamps as { start?: number; end?: number } | undefined;
   const start = ts?.start ?? 0;
   const end = ts?.end ?? 0;
-  const live = end > start;
+  const live = !!sp && end > start;
   const now = useTicker(live);
 
   const elapsed = live ? clamp(now - start, 0, end - start) : 0;
   const pct = live ? clamp((elapsed / (end - start)) * 100, 0, 100) : 0;
+
+  if (!sp) {
+    return (
+      <section className={s.panelWide}>
+        <h2 className={s.panelTitle}>Now Playing</h2>
+        <p className={s.empty}>Not listening to anything right now</p>
+      </section>
+    );
+  }
 
   return (
     <section className={s.panelWide}>
@@ -280,44 +296,6 @@ function StreamRow({ a }: { a: Dict }) {
   );
 }
 
-/* ---- bio ------------------------------------------------------------------ */
-
-/** Linkify URLs and swap <:name:id> for the emoji image, as React nodes. */
-function bioNodes(raw: string): React.ReactNode[] {
-  const EMOJI = /<(a)?:(\w+):(\d+)>/g;
-  const URL = /https?:\/\/[^\s<]+/g;
-  const out: React.ReactNode[] = [];
-  let i = 0;
-  let key = 0;
-  while (i < raw.length) {
-    EMOJI.lastIndex = i;
-    URL.lastIndex = i;
-    const em = EMOJI.exec(raw);
-    const ur = URL.exec(raw);
-    let hit: RegExpExecArray | null = null;
-    let kind: string | null = null;
-    if (em && (!ur || em.index <= ur.index)) { hit = em; kind = "emoji"; }
-    else if (ur) { hit = ur; kind = "url"; }
-    if (!hit) { out.push(raw.slice(i)); break; }
-    if (hit.index > i) out.push(raw.slice(i, hit.index));
-    if (kind === "emoji") {
-      const url = emojiUrl({ id: hit[3], animated: hit[1] === "a" });
-      out.push(
-        url ? (
-          <img key={key++} className={s.bioEmoji} src={url} alt={":" + hit[2] + ":"}
-               title={":" + hit[2] + ":"} loading="lazy" />
-        ) : hit[0],
-      );
-    } else {
-      out.push(
-        <a key={key++} href={hit[0]} target="_blank" rel="noopener noreferrer">{hit[0]}</a>,
-      );
-    }
-    i = hit.index + hit[0].length;
-  }
-  return out;
-}
-
 /* ---- connections ---------------------------------------------------------- */
 
 function ConnIcon({ type }: { type: string }) {
@@ -342,7 +320,19 @@ export default function PresenceDashboard({ userId }: { userId: string }) {
   const accent = useAlbumAccent(spotify?.album_art_url as string | undefined);
 
   const bioRaw = apiUser.bio == null ? "" : String(apiUser.bio).trim();
-  const bioContent = useMemo(() => (bioRaw ? bioNodes(bioRaw) : []), [bioRaw]);
+  // Bios are Discord-flavoured Markdown, not plain text — **bold**, __underline__,
+  // ||spoilers||, > quotes, and \ escapes all have to be interpreted.
+  const bioContent = useMemo(
+    () =>
+      bioRaw
+        ? renderDiscordMarkdown(bioRaw, {
+            emojiUrl,
+            emojiClass: s.bioEmoji,
+            spoilerClass: s.spoiler,
+          })
+        : [],
+    [bioRaw],
+  );
 
   if (!d) return <div className={s.skeleton} aria-busy="true" aria-label="Loading profile" />;
 
@@ -504,28 +494,32 @@ export default function PresenceDashboard({ userId }: { userId: string }) {
       </header>
 
       <div className={s.grid}>
-        {spotify ? <NowPlaying sp={spotify} accent={accent} /> : null}
+        <NowPlaying sp={spotify} accent={accent} />
 
-        {games.length || streams.length ? (
-          <section className={s.panel}>
-            <h2 className={s.panelTitle}>Activity</h2>
+        <section className={s.panel}>
+          <h2 className={s.panelTitle}>Activity</h2>
+          {games.length || streams.length ? (
             <div className={s.actList}>
               {games.map((a, i) => <ActivityRow a={a} key={"g" + i} />)}
               {streams.map((a, i) => <StreamRow a={a} key={"s" + i} />)}
             </div>
-          </section>
-        ) : null}
+          ) : (
+            <p className={s.empty}>No current activity</p>
+          )}
+        </section>
 
-        {bioRaw ? (
-          <section className={s.panel}>
-            <h2 className={s.panelTitle}>About</h2>
+        <section className={s.panel}>
+          <h2 className={s.panelTitle}>About</h2>
+          {bioRaw ? (
             <p className={s.bio}>{bioContent}</p>
-          </section>
-        ) : null}
+          ) : (
+            <p className={s.empty}>No bio set</p>
+          )}
+        </section>
 
-        {hasBadges ? (
-          <section className={s.panel}>
-            <h2 className={s.panelTitle}>Badges</h2>
+        <section className={s.panel}>
+          <h2 className={s.panelTitle}>Badges</h2>
+          {hasBadges ? (
             <div className={s.badgeGrid}>
               {doughBadges?.length
                 ? doughBadges.map((b) => {
@@ -565,11 +559,13 @@ export default function PresenceDashboard({ userId }: { userId: string }) {
                 />
               ))}
             </div>
-          </section>
-        ) : null}
+          ) : (
+            <p className={s.empty}>No badges</p>
+          )}
+        </section>
 
-        {conns.length ? (
-          <CollapsiblePanel title="Connections" count={conns.length}>
+        <CollapsiblePanel title="Connections" count={conns.length}>
+          {conns.length ? (
             <div className={s.connGrid}>
               {conns.map((a, i) => {
                 const maker = CONNECTION_URLS[a.type as string];
@@ -593,11 +589,13 @@ export default function PresenceDashboard({ userId }: { userId: string }) {
                 );
               })}
             </div>
-          </CollapsiblePanel>
-        ) : null}
+          ) : (
+            <p className={s.empty}>No connected accounts</p>
+          )}
+        </CollapsiblePanel>
 
-        {wishlist.length ? (
-          <CollapsiblePanel title="Wishlist" count={wishlist.length} collapseAbove={6}>
+        <CollapsiblePanel title="Wishlist" count={wishlist.length} collapseAbove={6}>
+          {wishlist.length ? (
             <div className={s.wlGrid}>
               {wishlist.map((w, i) => {
                 const ic = wlImg(w);
@@ -617,8 +615,10 @@ export default function PresenceDashboard({ userId }: { userId: string }) {
                 );
               })}
             </div>
-          </CollapsiblePanel>
-        ) : null}
+          ) : (
+            <p className={s.empty}>Nothing on the wishlist</p>
+          )}
+        </CollapsiblePanel>
       </div>
     </div>
   );

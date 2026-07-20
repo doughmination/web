@@ -88,21 +88,6 @@ createGlobalTheme('html[data-flavor="toxic"]', vars, {
 });
 globalStyle('html[data-flavor="toxic"]', { colorScheme: "dark" });
 
-/**
- * Estrogen — teal keyed to the estradiol pill in the picker icon (sampled
- * #28b8b0, brightened to #34c9bf so it clears AA on `surface`), with the trans
- * flag's pink as accentAlt.
- *
- * Two knock-on moves, both forced by the accent occupying the teal slot:
- *
- * The `teal` hue token is pushed green (#4fbf85). Left near its usual value it
- * sat on top of the accent — and it's a Minecraft role accent (see ROLE_META)
- * whose whole job is telling six accounts apart at a glance.
- *
- * `info` is blue here, unlike the other cool flavours' usual choices, precisely
- * because a teal accent frees blue back up for signalling. `danger` stays a true
- * red rather than drifting pink, since accentAlt is already a soft pink.
- */
 createGlobalTheme('html[data-flavor="estrogen"]', vars, {
   accent: "#34c9bf",
   accentAlt: "#f5a9b8",
@@ -131,20 +116,6 @@ createGlobalTheme('html[data-flavor="estrogen"]', vars, {
 });
 globalStyle('html[data-flavor="estrogen"]', { colorScheme: "dark" });
 
-/**
- * Cyberpunk — keyed to the Samurai icon's flame orange (sampled #f84800) over
- * warm charcoal, with a chrome-cyan `info` for the machine half of the artwork.
- *
- * Orange rather than Cyberpunk 2077's canonical acid yellow: yellow lands 99
- * from Lemon's accent, which is the tightest pairing in the whole registry, and
- * it wouldn't match this icon anyway. Orange is also the one warm slot nothing
- * else occupies — nearest neighbour is Cherry at 200.
- *
- * `danger` is pushed to a pink-red (#ff2d55) so it stays separable from the
- * orange accent; a conventional red would read as just another accent here.
- * Neutrals are warm-tinted charcoal rather than true black, so the orange
- * doesn't vibrate against them the way it would on #000.
- */
 createGlobalTheme('html[data-flavor="cyberpunk"]', vars, {
   accent: "#f84800",
   accentAlt: "#ff8a4d",

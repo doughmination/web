@@ -653,15 +653,31 @@ globalStyle(".presence-card.has-banner-color::before", {
 });
 
 /** With a banner present, lift the avatar up over it. */
+/* The head is no longer pulled up over the banner as a whole — a negative
+   marginTop here lifted the avatar AND the name together, so the name overlapped
+   the banner art. Only the avatar rides up now (below), which keeps the name
+   clear no matter how tall the text runs. */
 globalStyle(
   ".presence-card.has-banner .pc-head, .presence-card.has-banner-color .pc-head",
-  { marginTop: -22 },
+  { paddingTop: "0.7rem" },
 );
 
-/** With a banner, the avatar grows and gains a ring against the artwork. */
+/** With a banner, the avatar grows and gains a ring against the artwork.
+    transform lifts it over the banner without affecting layout; the matching
+    negative marginBottom stops it reserving space it no longer occupies. */
 globalStyle(
   ".presence-card.has-banner .pc-avatar, .presence-card.has-banner-color .pc-avatar",
-  { width: 56, height: 56 },
+  {
+    width: 56,
+    height: 56,
+    // .pc-head centres its children, so without this the avatar's height — and
+    // therefore how far it rode into the banner — drifted with each card's
+    // content (bios, chip rows). Pinning it to the top makes the overlap
+    // identical on every card.
+    alignSelf: "flex-start",
+    transform: "translateY(-26px)",
+    marginBottom: -26,
+  },
 );
 
 globalStyle(
@@ -827,3 +843,62 @@ globalStyle(".presence-card.is-mini svg.pc-conn-ic", {
   height: 13,
   fontSize: 13,
 });
+
+/* ---- Discord markdown inside the mini-card bio -----------------------------
+   discordMarkdown.tsx emits plain semantic tags; these style them at mini-card
+   scale. __x__ is UNDERLINE in Discord's dialect, not bold — <u> carries that. */
+
+globalStyle(".pc-bio strong", { fontWeight: 700, color: vars.text });
+globalStyle(".pc-bio em", { fontStyle: "italic" });
+globalStyle(".pc-bio u", { textDecoration: "underline" });
+globalStyle(".pc-bio s", { textDecoration: "line-through", color: vars.textDim });
+
+globalStyle(".pc-bio code", {
+  fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
+  fontSize: "0.88em",
+  background: vars.bgDeep,
+  padding: "0.05em 0.28em",
+  borderRadius: 4,
+});
+
+globalStyle(".pc-bio pre", {
+  margin: "0.25rem 0",
+  padding: "0.35rem 0.45rem",
+  background: vars.bgDeep,
+  borderRadius: 6,
+  overflowX: "auto",
+});
+globalStyle(".pc-bio pre code", { background: "none", padding: 0, fontSize: "0.85em" });
+
+globalStyle(".pc-bio blockquote", {
+  margin: "0.1rem 0",
+  paddingLeft: "0.45rem",
+  borderLeft: `2px solid ${vars.surfaceHigher}`,
+  color: vars.textMuted,
+});
+
+globalStyle(".pc-bio h1, .pc-bio h2, .pc-bio h3", {
+  margin: "0.2rem 0 0.1rem",
+  fontWeight: 700,
+  color: vars.text,
+  fontSize: "1.05em",
+  lineHeight: 1.2,
+});
+
+globalStyle(".pc-bio small", { fontSize: "0.85em", color: vars.textDim });
+globalStyle(".pc-bio li", { display: "list-item", marginLeft: "0.9rem" });
+
+/** Spoiler: blacked out until clicked, as Discord does. */
+globalStyle(".pc-spoiler", {
+  background: vars.surfaceHigher,
+  borderRadius: 3,
+  cursor: "pointer",
+  color: "transparent",
+  transition: "color 0.12s ease, background 0.12s ease",
+});
+globalStyle('.pc-spoiler[data-revealed="true"]', {
+  background: vars.bgDeep,
+  color: "inherit",
+  cursor: "auto",
+});
+globalStyle('.pc-spoiler[data-revealed="false"] *', { visibility: "hidden" });

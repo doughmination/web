@@ -79,28 +79,43 @@ export const bannerFallback = style([
   },
 ]);
 
+/* The row itself is NOT pulled up over the banner. Previously it had a negative
+   marginTop, which lifted the avatar and the name together — so the name
+   overlapped the banner, and how badly depended on how tall the text happened to
+   be. Only the avatar overlaps now (see avatarWrap), which keeps the text clear
+   of the banner regardless of font size or how many chips wrap onto the row. */
 export const identity = style({
   display: "flex",
   alignItems: "flex-end",
   gap: "1rem",
-  padding: "0 1.5rem 1.25rem",
-  marginTop: -52,
+  padding: "1.1rem 1.5rem 1.25rem",
   position: "relative",
   "@media": {
     "(max-width: 640px)": {
-      padding: "0 1rem 1rem",
-      marginTop: -40,
+      padding: "0.85rem 1rem 1rem",
       gap: "0.7rem",
     },
   },
 });
 
+/* transform lifts the avatar over the banner without affecting layout; the
+   matching negative marginBottom stops it reserving the space it no longer
+   visually occupies, so the text below isn't pushed down by it. */
 export const avatarWrap = style({
   position: "relative",
   width: 104,
   height: 104,
   flexShrink: 0,
-  "@media": { "(max-width: 640px)": { width: 76, height: 76 } },
+  transform: "translateY(-44px)",
+  marginBottom: -44,
+  "@media": {
+    "(max-width: 640px)": {
+      width: 76,
+      height: 76,
+      transform: "translateY(-30px)",
+      marginBottom: -30,
+    },
+  },
 });
 
 export const avatar = style({
@@ -679,6 +694,73 @@ globalStyle(`${bio} a`, {
 });
 globalStyle(`${bio} a:hover`, { textDecoration: "underline" });
 
+/* ---- Discord markdown inside the bio --------------------------------------
+   discordMarkdown.tsx emits plain semantic tags, styled here. Note __x__ is
+   UNDERLINE in Discord's dialect, not bold — <u> carries that. */
+
+globalStyle(`${bio} strong`, { fontWeight: 700, color: vars.text });
+globalStyle(`${bio} em`, { fontStyle: "italic" });
+globalStyle(`${bio} u`, { textDecoration: "underline" });
+globalStyle(`${bio} s`, { textDecoration: "line-through", color: vars.textDim });
+
+globalStyle(`${bio} code`, {
+  fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
+  fontSize: "0.86em",
+  background: vars.bgDeep,
+  padding: "0.1em 0.35em",
+  borderRadius: 5,
+});
+
+globalStyle(`${bio} pre`, {
+  margin: "0.4rem 0",
+  padding: "0.5rem 0.6rem",
+  background: vars.bgDeep,
+  borderRadius: 8,
+  overflowX: "auto",
+});
+globalStyle(`${bio} pre code`, { background: "none", padding: 0, fontSize: "0.82em" });
+
+globalStyle(`${bio} blockquote`, {
+  margin: "0.15rem 0",
+  paddingLeft: "0.6rem",
+  borderLeft: `3px solid ${vars.surfaceHigher}`,
+  color: vars.textMuted,
+});
+
+globalStyle(`${bio} h1, ${bio} h2, ${bio} h3`, {
+  margin: "0.3rem 0 0.15rem",
+  fontWeight: 700,
+  color: vars.text,
+  lineHeight: 1.25,
+});
+globalStyle(`${bio} h1`, { fontSize: "1.15em" });
+globalStyle(`${bio} h2`, { fontSize: "1.06em" });
+globalStyle(`${bio} h3`, { fontSize: "1em" });
+
+globalStyle(`${bio} small`, { fontSize: "0.82em", color: vars.textDim });
+
+globalStyle(`${bio} li`, { display: "list-item", marginLeft: "1.1rem" });
+
+/** Spoiler: blacked out until clicked, matching Discord's behaviour. */
+export const spoiler = style({
+  background: vars.surfaceHigher,
+  borderRadius: 4,
+  cursor: "pointer",
+  color: "transparent",
+  transition: "color 0.12s ease, background 0.12s ease",
+  selectors: {
+    '&[data-revealed="true"]': {
+      background: vars.bgDeep,
+      color: "inherit",
+      cursor: "auto",
+    },
+    "&:focus-visible": { outline: `2px solid ${vars.accent}`, outlineOffset: 2 },
+  },
+});
+
+/** Hide anything nested inside an unrevealed spoiler (emoji, links). */
+globalStyle(`${spoiler}[data-revealed="false"] *`, { visibility: "hidden" });
+
 /* ---- wishlist ------------------------------------------------------------- */
 
 export const wlGrid = style({
@@ -714,6 +796,18 @@ export const wlPrice = style({
 });
 
 /* ---- empty / loading ------------------------------------------------------ */
+
+/** Every panel renders whether or not it has data, so the page keeps a stable
+    landmark structure — panels blinking in and out between presence pushes is
+    disorienting with a screen reader, and shifts the grid under the cursor.
+    This is the placeholder each empty panel shows instead. */
+export const empty = style({
+  margin: 0,
+  padding: "0.3rem 0 0.1rem",
+  fontSize: "0.82rem",
+  fontStyle: "italic",
+  color: vars.textDim,
+});
 
 const pulse = keyframes({
   "0%, 100%": { opacity: 0.45 },

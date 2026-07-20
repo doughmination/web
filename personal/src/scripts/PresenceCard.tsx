@@ -38,6 +38,7 @@ import {
   useTicker, wlImg,
   type Dict, type PresenceOpts, type SelfJson,
 } from "./presenceShared";
+import { renderDiscordMarkdown } from "./discordMarkdown";
 
 /* ---- small shared bits ---------------------------------------------------- */
 
@@ -172,69 +173,23 @@ function Premium({ prem }: { prem: Dict | undefined }) {
 
 /* ---- bio ------------------------------------------------------------------ */
 
-/** Linkify URLs and swap <:name:id> for the emoji image, as React nodes. */
-function bioNodes(raw: string): React.ReactNode[] {
-  const EMOJI = /<(a)?:(\w+):(\d+)>/g;
-  const URL = /https?:\/\/[^\s<]+/g;
-  const out: React.ReactNode[] = [];
-  let i = 0;
-  let key = 0;
-  while (i < raw.length) {
-    EMOJI.lastIndex = i;
-    URL.lastIndex = i;
-    const em = EMOJI.exec(raw);
-    const ur = URL.exec(raw);
-    let hit: RegExpExecArray | null = null;
-    let kind: string | null = null;
-    if (em && (!ur || em.index <= ur.index)) {
-      hit = em;
-      kind = "emoji";
-    } else if (ur) {
-      hit = ur;
-      kind = "url";
-    }
-    if (!hit) {
-      out.push(raw.slice(i));
-      break;
-    }
-    if (hit.index > i) out.push(raw.slice(i, hit.index));
-    if (kind === "emoji") {
-      const url = emojiUrl({ id: hit[3], animated: hit[1] === "a" });
-      out.push(
-        url ? (
-          <img
-            key={key++}
-            className="pc-bio-emoji"
-            src={url}
-            alt={":" + hit[2] + ":"}
-            title={":" + hit[2] + ":"}
-            loading="lazy"
-          />
-        ) : (
-          hit[0]
-        ),
-      );
-    } else {
-      out.push(
-        <a
-          key={key++}
-          className="pc-bio-link"
-          href={hit[0]}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {hit[0]}
-        </a>,
-      );
-    }
-    i = hit.index + hit[0].length;
-  }
-  return out;
-}
-
+/** Bios are Discord-flavoured Markdown, not plain text — **bold**,
+    __underline__, ||spoilers||, > quotes and \ escapes all need interpreting.
+    Shared with the dashboard so the two can't drift. */
 function Bio({ text }: { text: unknown }) {
   const raw = text == null ? "" : String(text).trim();
-  const nodes = useMemo(() => (raw ? bioNodes(raw) : []), [raw]);
+  const nodes = useMemo(
+    () =>
+      raw
+        ? renderDiscordMarkdown(raw, {
+            emojiUrl,
+            emojiClass: "pc-bio-emoji",
+            spoilerClass: "pc-spoiler",
+            linkClass: "pc-bio-link",
+          })
+        : [],
+    [raw],
+  );
   if (!raw) return <div className="pc-bio" hidden />;
   return <div className="pc-bio">{nodes}</div>;
 }
