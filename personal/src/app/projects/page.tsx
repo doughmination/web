@@ -72,7 +72,7 @@ const GIRLS_NETWORK: Project[] = [
 
 const PERSONAL: Project[] = [
   {
-    href: "https://codeberg.org/clove/web/src/branch/main/mailbox",
+    href: "https://github.com/doughmination/web/tree/main/mailbox",
     img: "/assets/favicon/avatar.png",
     alt: "Doughmination Mail",
     title: "Doughmination Mail",
@@ -81,7 +81,7 @@ const PERSONAL: Project[] = [
     live: "https://doughmination.tech",
   },
   {
-    href: "https://codeberg.org/clove/api",
+    href: "https://github.com/doughmination/api",
     img: "/assets/favicon/avatar.png",
     alt: "API",
     title: "Doughmination API",
@@ -90,7 +90,7 @@ const PERSONAL: Project[] = [
     live: "https://doughmination.uk",
   },
   {
-    href: "https://codeberg.org/clove/shortcuts-bot",
+    href: "https://github.com/doughmination/utils",
     img: "/assets/favicon/favicon.png",
     alt: "Shortcuts Bot",
     title: "Shortcuts Bot",

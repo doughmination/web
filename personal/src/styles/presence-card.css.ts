@@ -5,10 +5,11 @@
  *
  * Ported from public/css/shared/presence-card.css.
  *
- * globalStyle throughout, and permanently: presenceCard.ts builds this entire
- * card imperatively with ~93 hardcoded class strings. Scoped style() names would
- * break all of it, so this file can only become scoped after that module is
- * ported to React.
+ * globalStyle throughout: the card was built imperatively by presenceCard.ts
+ * with ~93 hardcoded class strings. That module is now a React component
+ * (PresenceCard.tsx), but it still writes these same class names literally, so
+ * scoped style() names would break it. Converting to scoped styles is possible
+ * now — it just means changing both files together, class by class.
  *
  * Dropped as dead: .api-stage, .api-body, .api-empty and
  * `html[data-theme] body.api-body` — the standalone /api embed page they styled
@@ -29,7 +30,7 @@ const ELLIPSIS = {
 
 globalStyle(".presence-card", {
   // RGB triplet, not a hex — it feeds rgba() below and is overwritten at
-  // runtime by presenceCard.ts from the user's Discord accent colour.
+  // runtime by PresenceCard.tsx from the album-art accent (--dc-accent).
   vars: { "--dc-accent": "245, 194, 231" },
   position: "fixed",
   top: "1rem",
@@ -181,7 +182,7 @@ globalStyle(".pc-sections", {
   transition: "opacity 0.2s ease",
 });
 
-/** has-sections is toggled by presenceCard.ts once there's something to show. */
+/** has-sections is set by PresenceCard.tsx once there's something to show. */
 globalStyle(".presence-card:not(.has-sections) .pc-sections", { display: "none" });
 
 globalStyle(".pc-row", {
@@ -412,6 +413,15 @@ globalStyle(".pc-sub-row", {
   gap: "0.35rem",
 });
 
+/** Shared base for the inline SVG icons emitted by presenceIcons.ts (core.ts).
+    <svg> sits on the text baseline, which a webfont glyph did not — nudge it
+    back so icons sitting in a text run (timezone clock, wishlist empty state)
+    stay optically centred. */
+globalStyle("svg.pc-ic", {
+  verticalAlign: "-0.125em",
+  flex: "none",
+});
+
 globalStyle(".pc-platforms", {
   display: "inline-flex",
   alignItems: "center",
@@ -534,7 +544,7 @@ globalStyle(".pc-star", {
 
 globalStyle(".pc-star:hover", { color: vars.accent, transform: "scale(1.12)" });
 
-/** `on` is toggled by presenceCard.ts when the panel is open. */
+/** `on` is set by PresenceCard.tsx when the panel is open. */
 globalStyle(".pc-star.on", { color: vars.warning });
 
 globalStyle(".pc-wishlist", { display: "none" });
@@ -741,10 +751,12 @@ globalStyle(".pc-conn-ic", {
   flex: "none",
 });
 
-/** Bootstrap Icons variant: it's a glyph <i>, so size via font-size + colour. */
-globalStyle("i.pc-conn-ic", {
-  width: "auto",
-  height: "auto",
+/** Inline-SVG variant (presenceIcons.ts). The <svg> carries width/height 1em
+    and fill:currentColor, so it inherits sizing and colour the way the old
+    Bootstrap Icons glyph did — the base .pc-conn-ic box above still applies. */
+globalStyle("svg.pc-conn-ic", {
+  width: 14,
+  height: 14,
   fontSize: 14,
   lineHeight: 1,
   color: "currentColor",
@@ -841,7 +853,7 @@ globalStyle(".presence-intro p", {
 /* ---- /discord page: the big "fills the page" card -------------------------
    Everything below re-scales the shared card for the dedicated stage. Kept as
    .presence-stage descendant overrides (rather than a variant class) because
-   presenceCard.ts builds one card and the page decides how big it reads.
+   PresenceCard.tsx renders one card and the page decides how big it reads.
    ------------------------------------------------------------------------- */
 
 globalStyle(".presence-stage .presence-card", {
@@ -1000,8 +1012,8 @@ globalStyle(".presence-stage .pc-star", { fontSize: "1.2rem" });
 /** Connection icons shrink in the mini card. */
 globalStyle(".presence-card.is-mini .pc-conn-ic", { width: 13, height: 13 });
 
-globalStyle(".presence-card.is-mini i.pc-conn-ic", {
-  width: "auto",
-  height: "auto",
+globalStyle(".presence-card.is-mini svg.pc-conn-ic", {
+  width: 13,
+  height: 13,
   fontSize: 13,
 });

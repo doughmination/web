@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { createPresenceCard, destroyCard } from "./presenceCard";
+import { useEffect } from "react";
+import PresenceCard from "./PresenceCard";
 
 /* /cool-people — the friends/alts grid. React renders the section/heading/grid
-   structure; each member slot is a full-but-mini presence card built by the
-   shared factory. Each card fetches its own /discord/users/:id (then rides the
-   site socket for live presence) — the batched ?ids= call was dropped because
-   it double-requested and choked the API. */
+   structure; each member slot is a full-but-mini presence card. Each card
+   fetches its own /discord/users/:id (then rides the site socket for live
+   presence) — the batched ?ids= call was dropped because it double-requested
+   and choked the API. */
 
 type Member = {
   name: string;
@@ -81,31 +81,20 @@ function slugify(str: string) {
 }
 
 function FriendSlot({ m }: { m: Member }) {
-  const wrapRef = useRef<HTMLDivElement | null>(null);
-  useEffect(() => {
-    const wrap = wrapRef.current;
-    if (!wrap) return;
-    const inner = document.createElement("div");
-    wrap.appendChild(inner);
-    // No `batch` → each card loads its own /discord/users/:id, then rides the
-    // socket (or polls at pollMs when there's no socket).
-    const card = createPresenceCard({
-      mount: inner,
-      userId: m.discordId || null,
-      mini: true,
-      pollMs: FRIEND_POLL_MS,
-      tier: m.tier || null,
-      link: m.link || null,
-      fallbackName: m.name,
-      fallbackUser: !m.discordId && m.user ? m.user : null,
-      fallbackImg: m.img || null,
-    });
-    return () => {
-      destroyCard(card);
-      card?.remove();
-    };
-  }, [m]);
-  return <div ref={wrapRef} style={{ display: "contents" }} />;
+  // No batching → each card loads its own /discord/users/:id, then rides the
+  // socket (or polls at pollMs when there's no socket).
+  return (
+    <PresenceCard
+      userId={m.discordId || null}
+      mini
+      pollMs={FRIEND_POLL_MS}
+      tier={m.tier || null}
+      link={m.link || null}
+      fallbackName={m.name}
+      fallbackUser={!m.discordId && m.user ? m.user : null}
+      fallbackImg={m.img || null}
+    />
+  );
 }
 
 export default function FriendsGrid() {

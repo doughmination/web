@@ -5,6 +5,9 @@
  * boot, the bg-music gate, and the oneko cat + picker. It is fundamentally an
  * imperative init script, so it is kept as-is and run once (client-only) from
  * SiteChrome on mount. @ts-nocheck/eslint-disable: faithful legacy port. */
+// Icons are inline SVG, not the old `bi` webfont — see presenceIcons.ts.
+import { icon } from "./presenceIcons";
+
 export function initCore(catSrc: string = "/assets/oneko/classics/classic.png") {
 /* Ari was here uwu
  * Professional boob lover
@@ -264,7 +267,7 @@ window.ctpBuildNav = buildNav;
   gate.tabIndex = 0;
   gate.innerHTML = `
     <div class="bgm-gate-panel">
-      <p class="bgm-gate-note"><i class="bi bi-music-note-beamed" aria-hidden="true"></i> click to enter <i class="bi bi-music-note-beamed" aria-hidden="true"></i></p>
+      <p class="bgm-gate-note">${icon("music-note-beamed")} click to enter ${icon("music-note-beamed")}</p>
       <p class="bgm-gate-hint">turns on background music</p>
     </div>`;
   document.body.appendChild(gate);

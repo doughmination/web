@@ -3,7 +3,7 @@
  *
  * Ported from public/css/pages/cool-people.css, which was mostly dead. Friend
  * cards used to be a bespoke `.friend-card` / `.fc-*` component; they're now
- * built by presenceCard.ts as mini presence cards (FriendsGrid calls
+ * rendered by PresenceCard.tsx as mini cards (FriendsGrid passes
  * createPresenceCard). The old implementation was never removed — roughly 60 of
  * the file's 78 rules styled markup nothing renders any more:
  *
@@ -66,7 +66,7 @@ globalStyle(".friends-disclaimer a", {
 });
 
 /* ---- mini presence cards ---------------------------------------------------
-   Each friend is a full presence card built by presenceCard.ts, just smaller
+   Each friend is a full presence card from PresenceCard.tsx, just smaller
    than the /discord one. The base card is already compact (~280px); this mostly
    un-fixes it from the viewport corner so the cards can tile in .friend-grid.
    ------------------------------------------------------------------------- */
@@ -100,7 +100,7 @@ globalStyle(".presence-card.is-mini .pc-name--link:hover", {
 });
 
 /* ---- tier hearts ----------------------------------------------------------
-   Ported from the old .fc-name prefixes. presenceCard.ts adds `tier-<name>`
+   Ported from the old .fc-name prefixes. PresenceCard.tsx adds `tier-<name>`
    alongside is-mini, so the heart is chosen purely in CSS.
    ------------------------------------------------------------------------- */
 

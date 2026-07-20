@@ -7,7 +7,7 @@
  * Dropped as dead: .music-back — nothing renders it.
  *
  * Moved out: the .pc-conn-ic rules that lived here. They style connection brand
- * logos drawn by presenceCard.ts on /discord and /cool-people — neither of which
+ * logos drawn by PresenceCard.tsx on /discord and /cool-people — neither of which
  * loads this file — so they now live in presence-card.css alongside the markup
  * that uses them.
  *

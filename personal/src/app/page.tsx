@@ -1,4 +1,4 @@
-import { Git } from "react-bootstrap-icons";
+import { Github } from "react-bootstrap-icons";
 import Fronting from "@scripts/Fronting";
 import Devices from "@scripts/Devices";
 import Location from "@scripts/Location";
@@ -28,12 +28,12 @@ export default function Home() {
           </p>
           <a
             className="about-source"
-            href="https://codeberg.org/clove/web/src/branch/main/personal"
+            href="hhttps://github.com/doughmination/web/tree/main/personal"
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Git aria-hidden="true" />
-            View source on Codeberg
+            <Github aria-hidden="true" />
+            View source on GitHub
           </a>
         </section>
 
