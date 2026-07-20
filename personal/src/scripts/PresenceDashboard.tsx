@@ -1,22 +1,4 @@
 "use client";
-
-/* PresenceDashboard.tsx — the /discord profile page.
- *
- * A multi-panel dashboard: full-bleed masthead, then a panel grid. This is a
- * SEPARATE component from PresenceCard.tsx on purpose — that one is a compact
- * fixed-position widget (max-width 280px, hard 200px caps on row text) used 23×
- * on /cool-people, and /discord used to blow it up with ~155 lines of
- * `.presence-stage .pc-*` descendant overrides. Fighting a widget's constraints
- * with specificity is what left the Spotify progress bar short of full width.
- *
- * Both components share every hook and helper from presenceShared.ts, so only
- * presentation diverges — there's no duplicated data logic. Styles here are
- * scoped vanilla-extract (see presence-dashboard.css.ts), not globalStyle.
- *
- * Panels self-hide when they have no data, so the grid closes up rather than
- * leaving holes.
- */
-
 import Link from "next/link";
 import { useId, useMemo, useState } from "react";
 import {
@@ -31,7 +13,7 @@ import {
   type Collectible, type Dict, type SelfJson,
 } from "./presenceShared";
 import { renderDiscordMarkdown } from "./discordMarkdown";
-import * as s from "@/styles/presence-dashboard.css";
+import * as s from "@styles/presence-dashboard.css";
 
 /** Status → the theme token used for its dot and label. */
 const STATUS_VAR: Record<string, string> = {
@@ -193,7 +175,7 @@ function NowPlaying({ sp, accent }: { sp: Dict | null; accent: string | null }) 
           <div className={s.npArtist}>{String(sp.artist || "")}</div>
           {sp.album ? <div className={s.npAlbum}>{String(sp.album)}</div> : null}
           <div className={s.npBar} role="progressbar" aria-valuemin={0} aria-valuemax={100}
-               aria-valuenow={Math.round(pct)} aria-label="Track progress">
+            aria-valuenow={Math.round(pct)} aria-label="Track progress">
             <div
               className={s.npFill}
               style={{ width: pct + "%", background: accent ? `rgb(${accent})` : undefined }}
@@ -326,10 +308,10 @@ export default function PresenceDashboard({ userId }: { userId: string }) {
     () =>
       bioRaw
         ? renderDiscordMarkdown(bioRaw, {
-            emojiUrl,
-            emojiClass: s.bioEmoji,
-            spoilerClass: s.spoiler,
-          })
+          emojiUrl,
+          emojiClass: s.bioEmoji,
+          spoilerClass: s.spoiler,
+        })
         : [],
     [bioRaw],
   );
@@ -427,8 +409,8 @@ export default function PresenceDashboard({ userId }: { userId: string }) {
                 style={{
                   backgroundImage: gradCols
                     ? "linear-gradient(90deg, " +
-                      (gradCols.length === 1 ? gradCols[0] + "," + gradCols[0] : gradCols.join(", ")) +
-                      ")"
+                    (gradCols.length === 1 ? gradCols[0] + "," + gradCols[0] : gradCols.join(", ")) +
+                    ")"
                     : undefined,
                   fontFamily: (styles && NAME_FONTS[styles.font_id as number]) || undefined,
                 }}
@@ -455,7 +437,7 @@ export default function PresenceDashboard({ userId }: { userId: string }) {
               ) : null}
               {nitroLabel ? (
                 <span
-                  className={s.nitroChip}
+                  className={s.chip}
                   title={nitroLabel + (prem?.since ? " · since " + fmtSinceDate(prem.since as string) : "")}
                 >
                   {nitroLabel}
@@ -481,30 +463,23 @@ export default function PresenceDashboard({ userId }: { userId: string }) {
             </div>
           </div>
         </div>
-
-        {hasCustom ? (
-          <div className={s.customStatus}>
-            {(() => {
-              const eu = emojiUrl(custom!.emoji as { id?: string; animated?: boolean });
-              return eu ? <img className={s.customEmoji} src={eu} alt="" /> : null;
-            })()}
-            <span>{String(custom!.state || "")}</span>
-          </div>
-        ) : null}
       </header>
 
       <div className={s.grid}>
         <NowPlaying sp={spotify} accent={accent} />
 
         <section className={s.panel}>
-          <h2 className={s.panelTitle}>Activity</h2>
-          {games.length || streams.length ? (
-            <div className={s.actList}>
-              {games.map((a, i) => <ActivityRow a={a} key={"g" + i} />)}
-              {streams.map((a, i) => <StreamRow a={a} key={"s" + i} />)}
+          <h2 className={s.panelTitle}>Status</h2>
+          {hasCustom ? (
+            <div className={s.statusBody}>
+              {(() => {
+                const eu = emojiUrl(custom!.emoji as { id?: string; animated?: boolean });
+                return eu ? <img className={s.customEmoji} src={eu} alt="" /> : null;
+              })()}
+              <span>{String(custom!.state || "")}</span>
             </div>
           ) : (
-            <p className={s.empty}>No current activity</p>
+            <p className={s.empty}>No custom status set</p>
           )}
         </section>
 
@@ -523,30 +498,30 @@ export default function PresenceDashboard({ userId }: { userId: string }) {
             <div className={s.badgeGrid}>
               {doughBadges?.length
                 ? doughBadges.map((b) => {
-                    const img = (
-                      <SafeImg
-                        className={s.badge}
-                        src={proxyImg("https://cdn.discordapp.com/badge-icons/" + String(b.icon) + ".png")}
-                        alt={String(b.description || b.id)}
-                        title={String(b.description || b.id)}
-                      />
-                    );
-                    return b.link ? (
-                      <a className={s.badgeLink} key={String(b.id)} href={String(b.link)}
-                         target="_blank" rel="noopener">{img}</a>
-                    ) : (
-                      <span key={String(b.id)} style={{ lineHeight: 0 }}>{img}</span>
-                    );
-                  })
-                : flagBadges.map(([bit, nm, hash]) => (
+                  const img = (
                     <SafeImg
-                      key={bit}
                       className={s.badge}
-                      src={proxyImg("https://cdn.discordapp.com/badge-icons/" + hash + ".png")}
-                      alt={nm}
-                      title={nm}
+                      src={proxyImg("https://cdn.discordapp.com/badge-icons/" + String(b.icon) + ".png")}
+                      alt={String(b.description || b.id)}
+                      title={String(b.description || b.id)}
                     />
-                  ))}
+                  );
+                  return b.link ? (
+                    <a className={s.badgeLink} key={String(b.id)} href={String(b.link)}
+                      target="_blank" rel="noopener">{img}</a>
+                  ) : (
+                    <span key={String(b.id)} style={{ lineHeight: 0 }}>{img}</span>
+                  );
+                })
+                : flagBadges.map(([bit, nm, hash]) => (
+                  <SafeImg
+                    key={bit}
+                    className={s.badge}
+                    src={proxyImg("https://cdn.discordapp.com/badge-icons/" + hash + ".png")}
+                    alt={nm}
+                    title={nm}
+                  />
+                ))}
               {clientBadges.map((b) => (
                 <SafeImg
                   key={String(b.id)}
@@ -561,6 +536,18 @@ export default function PresenceDashboard({ userId }: { userId: string }) {
             </div>
           ) : (
             <p className={s.empty}>No badges</p>
+          )}
+        </section>
+
+        <section className={s.panel}>
+          <h2 className={s.panelTitle}>Activity</h2>
+          {games.length || streams.length ? (
+            <div className={s.actList}>
+              {games.map((a, i) => <ActivityRow a={a} key={"g" + i} />)}
+              {streams.map((a, i) => <StreamRow a={a} key={"s" + i} />)}
+            </div>
+          ) : (
+            <p className={s.empty}>No current activity</p>
           )}
         </section>
 

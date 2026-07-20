@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import MinecraftAccounts from "@scripts/MinecraftAccounts";
-import "@/styles/stage.css";
-import "@/styles/pages/minecraft.css";
+import "@styles/stage.css";
+import "@styles/pages/minecraft.css";
 
 export const metadata: Metadata = {
   title: "Clove Twilight",

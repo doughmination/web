@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Guestbook from "@scripts/Guestbook";
-import "@/styles/pages/guestbook.css";
+import "@styles/pages/guestbook.css";
 
 export const metadata: Metadata = {
   title: "Clove Twilight",

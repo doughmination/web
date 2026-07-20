@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import "@/styles/pages/blog.css";
+import "@styles/pages/blog.css";
 
 export const metadata: Metadata = {
   title: "Welcome to the blog | Clove Twilight",

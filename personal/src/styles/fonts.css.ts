@@ -1,17 +1,3 @@
-/**
- * fonts.css.ts — every @font-face on the site.
- *
- * Ported from public/css/fonts.css.
- *
- * globalFontFace (not fontFace) is deliberate: fontFace() generates a hashed
- * family name, but these families are referenced by literal string from CSS that
- * hasn't been migrated yet AND from core.ts's flavour switcher, which writes
- * font-family values at runtime. globalFontFace keeps the names literal.
- *
- * Comic Code is served from fonts.doughmination.co.uk — layout.tsx preconnects
- * to that origin, which matters because it sits behind the stylesheet on the
- * critical path.
- */
 import { globalFontFace } from "@vanilla-extract/css";
 
 const CDN = "https://fonts.doughmination.co.uk";
@@ -34,13 +20,6 @@ for (const { file, weight, style } of COMIC_CODE) {
   });
 }
 
-/**
- * DDN display faces — one weight each, self-hosted under /assets/fonts.
- * Selectable per-theme by core.ts's flavour switcher.
- *
- * Note "gg sans" has a space in its filename, hence the %20. Keeping the URL
- * pre-encoded avoids relying on the browser to escape it.
- */
 const DDN: Array<[family: string, file: string]> = [
   ["DDN 8Bit", "8Bit.woff2"],
   ["DDN Jellybean", "Jellybean.woff2"],

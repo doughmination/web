@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import "@/styles/pages/projects.css";
+import "@styles/pages/projects.css";
 
 export const metadata: Metadata = {
   title: "Clove Twilight",
@@ -96,6 +96,14 @@ const PERSONAL: Project[] = [
     title: "Shortcuts Bot",
     status: "Open Source",
     bio: "My personal Discord bot I use for utilies",
+  },
+  {
+    href: "https://github.com/doughmination/cf-error-worker",
+    img: "/assets/projects/cf.png",
+    alt: "CF Error Worker",
+    title: "CF Error Worker",
+    status: "Open Source",
+    bio: "This is what displays the error 500-600 when a page goes down",
   },
 ];
 

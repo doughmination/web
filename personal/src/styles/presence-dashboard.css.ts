@@ -280,16 +280,24 @@ export const statusDot = style({
 export const chip = style({
   display: "inline-flex",
   alignItems: "center",
+  justifyContent: "center",
   gap: "0.28rem",
-  padding: "0.14rem 0.45rem",
+  height: 24,
+  padding: "0 0.5rem",
   borderRadius: 999,
   background: vars.bgRaised,
   border: `1px solid ${vars.surfaceHi}`,
   fontSize: "0.72rem",
   color: vars.textMuted,
+  boxSizing: "border-box",
+  lineHeight: 1,
 });
 
-export const nitroChip = style([chip, { color: vars.accentAlt, borderColor: vars.accentAlt }]);
+globalStyle(`${chip} svg`, {
+  width: 13,
+  height: 13,
+  flexShrink: 0,
+});
 
 export const platforms = style({
   display: "inline-flex",
@@ -301,21 +309,17 @@ export const platforms = style({
 
 /* ---- custom status -------------------------------------------------------- */
 
-export const customStatus = style({
+export const statusBody = style({
   display: "flex",
   alignItems: "center",
-  gap: "0.45rem",
-  margin: "0.5rem 1.5rem 0",
-  padding: "0.5rem 0.75rem",
-  borderRadius: 10,
-  background: vars.bgRaised,
-  border: `1px solid ${vars.surfaceHi}`,
+  gap: "0.5rem",
   fontSize: "0.85rem",
   color: vars.textSoft,
-  "@media": { "(max-width: 640px)": { margin: "0.5rem 1rem 0" } },
 });
 
 export const customEmoji = style({ width: 18, height: 18, flexShrink: 0 });
+
+export const customStatusText = style({ ...ELLIPSIS, minWidth: 0 });
 
 /* ---- panel grid ----------------------------------------------------------- */
 

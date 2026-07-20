@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import SelfiesGallery from "@scripts/SelfiesGallery";
-import "@/styles/pages/selfies.css";
+import "@styles/pages/selfies.css";
 
 export const metadata: Metadata = {
   title: "Clove Twilight",

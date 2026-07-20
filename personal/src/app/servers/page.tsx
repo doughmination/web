@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import ServersGuilds from "@scripts/ServersGuilds";
 // Shared card styles first, page overrides second — that's the cascade order.
-import "@/styles/stage.css";
-import "@/styles/pages/guilds.css";
+import "@styles/stage.css";
+import "@styles/pages/guilds.css";
 
 export const metadata: Metadata = {
   title: "Servers | Clove Twilight",

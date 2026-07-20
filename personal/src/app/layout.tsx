@@ -7,21 +7,21 @@ import SiteChrome from "@components/chrome/SiteChrome";
 import { DEFAULT_THEME, themeBootScript } from "@lib/themes";
 // Palettes now live in TypeScript. Importing for side effects emits the
 // html[data-flavor="…"] blocks at build time; see src/styles/themes.css.ts.
-import "@/styles/themes.css";
+import "@styles/themes.css";
 // Global rules migrated from public/css to Vanilla Extract, one file at a time.
 // Import order here IS the cascade order, so keep it matching main.css.
-import "@/styles/fonts.css";
-import "@/styles/base.css";
-import "@/styles/bg-music.css";
-import "@/styles/cat-picker.css";
-import "@/styles/keyring.css";
-import "@/styles/layout.css";
-import "@/styles/nav.css";
-import "@/styles/visitor-counter.css";
-import "@/styles/sections.css";
-import "@/styles/scroll-wrap.css";
+import "@styles/fonts.css";
+import "@styles/base.css";
+import "@styles/bg-music.css";
+import "@styles/cat-picker.css";
+import "@styles/keyring.css";
+import "@styles/layout.css";
+import "@styles/nav.css";
+import "@styles/visitor-counter.css";
+import "@styles/sections.css";
+import "@styles/scroll-wrap.css";
 // Last, so its media queries override the base rules above.
-import "@/styles/responsive.css";
+import "@styles/responsive.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://c.stupid.cat"),

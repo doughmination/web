@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
 import DevInfo from "@scripts/DevInfo";
-import "@/styles/pages/dev-info.css";
+import "@styles/pages/dev-info.css";
 
 export const metadata: Metadata = {
   title: "Clove Twilight",

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import BlogCards from "@scripts/BlogCards";
-import "@/styles/pages/blog.css";
+import "@styles/pages/blog.css";
 
 export const metadata: Metadata = {
   title: "Clove Twilight",

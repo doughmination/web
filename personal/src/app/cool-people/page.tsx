@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import FriendsGrid from "@scripts/FriendsGrid";
-import "@/styles/presence-card.css";
-import "@/styles/pages/cool-people.css";
+import "@styles/presence-card.css";
+import "@styles/pages/cool-people.css";
 
 export const metadata: Metadata = {
   title: "Clove Twilight",

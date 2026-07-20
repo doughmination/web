@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Music from "@scripts/Music";
-import "@/styles/pages/music.css";
+import "@styles/pages/music.css";
 
 export const metadata: Metadata = {
   title: "Clove Twilight",

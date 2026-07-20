@@ -1,15 +1,3 @@
-/**
- * keyring.css.ts — re-theme for the lanyard.cafe webring widget (#lc-embed).
- * Bottom-left, shared across all pages.
- *
- * Ported from public/css/shared/keyring.css.
- *
- * globalStyle rather than style(), and permanently so: embed.js is third-party
- * and injects #lc-embed with all its styles inline. We don't own that DOM, can't
- * add classes to it, and every override needs !important to beat the inline
- * styles. Those flags are load-bearing — drop them and the widget reverts to its
- * default cream/brown look.
- */
 import { globalStyle } from "@vanilla-extract/css";
 import { vars } from "./themes.css";
 

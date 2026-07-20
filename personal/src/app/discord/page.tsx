@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import PresenceDashboard from "@scripts/PresenceDashboard";
-import * as s from "@/styles/presence-dashboard.css";
+import * as s from "@styles/presence-dashboard.css";
 
 const MY_DISCORD_USER_ID = "1464890289922641993";
 

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import "@/styles/pages/88x31.css";
+import "@styles/pages/88x31.css";
 
 export const metadata: Metadata = {
   title: "Clove Twilight",
