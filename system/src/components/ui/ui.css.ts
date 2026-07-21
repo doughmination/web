@@ -44,7 +44,7 @@ export const button = recipe({
     selectors: {
       "&:focus-visible": {
         outline: "none",
-        boxShadow: `0 0 0 2px ${vars.bg}, 0 0 0 4px ${vars.ring}`,
+        boxShadow: `0 0 0 2px ${vars.bg}, 0 0 0 4px ${vars.accent}`,
       },
       "&:disabled": {
         pointerEvents: "none",
@@ -167,7 +167,7 @@ export const input = style({
   selectors: {
     "&:focus-visible": {
       outline: "none",
-      boxShadow: `0 0 0 2px ${vars.bg}, 0 0 0 4px ${vars.ring}`,
+      boxShadow: `0 0 0 2px ${vars.bg}, 0 0 0 4px ${vars.accent}`,
     },
     "&:disabled": {
       cursor: "not-allowed",
@@ -294,7 +294,7 @@ export const checkbox = style({
     },
     "&:focus-visible": {
       outline: "none",
-      boxShadow: `0 0 0 2px ${vars.bg}, 0 0 0 4px ${vars.ring}`,
+      boxShadow: `0 0 0 2px ${vars.bg}, 0 0 0 4px ${vars.accent}`,
     },
     "&:disabled": {
       cursor: "not-allowed",
@@ -350,7 +350,7 @@ export const selectTrigger = style({
   selectors: {
     "&:focus": {
       outline: "none",
-      boxShadow: `0 0 0 2px ${vars.bg}, 0 0 0 4px ${vars.ring}`,
+      boxShadow: `0 0 0 2px ${vars.bg}, 0 0 0 4px ${vars.accent}`,
     },
     "&:disabled": {
       cursor: "not-allowed",
@@ -570,7 +570,7 @@ export const toastAction = style({
   selectors: {
     "&:focus": {
       outline: "none",
-      boxShadow: `0 0 0 2px ${vars.ring}`,
+      boxShadow: `0 0 0 2px ${vars.accent}`,
     },
     "&:disabled": { pointerEvents: "none", opacity: 0.5 },
   },
@@ -590,7 +590,7 @@ export const toastClose = style({
   cursor: "pointer",
   ":hover": { color: vars.text },
   selectors: {
-    "&:focus": { opacity: 1, outline: "none", boxShadow: `0 0 0 2px ${vars.ring}` },
+    "&:focus": { opacity: 1, outline: "none", boxShadow: `0 0 0 2px ${vars.accent}` },
   },
 });
 
