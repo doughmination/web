@@ -24,6 +24,10 @@ interface User {
   id: string;
   username: string;
   display_name?: string;
+  email?: string | null;
+  email_verified?: boolean;
+  pending_email?: string | null;
+  created_at?: string | null;
   is_admin: boolean;
   is_owner?: boolean;
   is_pet?: boolean;
@@ -35,6 +39,12 @@ const FALLBACK_AVATAR = "https://c.stupid.cat/assets/favicon/avatar.png";
 const UserManager: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [currentUserId, setCurrentUserId] = useState<string>("");
+  // Email rules on the API: a user may change their OWN address (with their
+  // password, via the profile page), the owner may change ANYONE's outright,
+  // and a plain admin may not touch someone else's. This panel only ever acts
+  // on other people, so the control is owner-only here — editing your own
+  // address lives on the profile page where the password prompt is.
+  const [isOwner, setIsOwner] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; content: string } | null>(
@@ -46,12 +56,14 @@ const UserManager: React.FC = () => {
   const [newUsername, setNewUsername] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [newDisplayName, setNewDisplayName] = useState("");
+  const [newEmail, setNewEmail] = useState("");
   const [newIsAdmin, setNewIsAdmin] = useState(false);
   const [newIsPet, setNewIsPet] = useState(false);
 
   // Per-user edit panel state
   const [editingUserId, setEditingUserId] = useState<string | null>(null);
   const [editDisplayName, setEditDisplayName] = useState("");
+  const [editEmail, setEditEmail] = useState("");
   const [editAvatarUrl, setEditAvatarUrl] = useState("");
   const [editIsAdmin, setEditIsAdmin] = useState(false);
   const [editIsPet, setEditIsPet] = useState(false);
@@ -93,6 +105,7 @@ const UserManager: React.FC = () => {
         if (response.ok) {
           const data = unwrap(await response.json());
           setCurrentUserId(data.id);
+          setIsOwner(!!data.is_owner);
         }
       } catch (err) {
         console.error("Error fetching current user:", err);
@@ -137,6 +150,7 @@ const UserManager: React.FC = () => {
           username: newUsername.trim(),
           password: newPassword,
           display_name: newDisplayName.trim() || undefined,
+          email: newEmail.trim() || undefined,
           is_admin: newIsAdmin,
           is_pet: newIsPet,
         }),
@@ -151,6 +165,7 @@ const UserManager: React.FC = () => {
       setNewUsername("");
       setNewPassword("");
       setNewDisplayName("");
+      setNewEmail("");
       setNewIsAdmin(false);
       setNewIsPet(false);
       setShowCreateForm(false);
@@ -168,6 +183,7 @@ const UserManager: React.FC = () => {
   const startEditing = (user: User) => {
     setEditingUserId(user.id);
     setEditDisplayName(user.display_name || "");
+    setEditEmail(user.email || "");
     setEditAvatarUrl(user.avatar_url || "");
     setEditIsAdmin(!!user.is_admin);
     setEditIsPet(!!user.is_pet);
@@ -198,6 +214,10 @@ const UserManager: React.FC = () => {
           avatar_url: editAvatarUrl.trim() || null,
           is_admin: editIsAdmin,
           is_pet: editIsPet,
+          // Owner-only field, and only when it actually changed.
+          ...(isOwner && editEmail.trim() !== (user.email || "")
+            ? { email: editEmail.trim() || null }
+            : {}),
         }),
       });
 
@@ -332,6 +352,21 @@ const UserManager: React.FC = () => {
                 </div>
 
                 <div className={s.fieldBlock}>
+                  <Label htmlFor="new-email">Email</Label>
+                  <Input
+                    id="new-email"
+                    type="email"
+                    value={newEmail}
+                    onChange={(e) => setNewEmail(e.target.value)}
+                    placeholder="user@example.com"
+                    disabled={saving}
+                  />
+                  <p className={s.helpText}>
+                    Needed for password resets. Leave blank only if you'll set it later.
+                  </p>
+                </div>
+
+                <div className={s.fieldBlock}>
                   <Label htmlFor="new-display-name">Display Name</Label>
                   <Input
                     id="new-display-name"
@@ -379,6 +414,7 @@ const UserManager: React.FC = () => {
                       setNewUsername("");
                       setNewPassword("");
                       setNewDisplayName("");
+                      setNewEmail("");
                       setNewIsAdmin(false);
                       setNewIsPet(false);
                     }}
@@ -445,8 +481,18 @@ const UserManager: React.FC = () => {
                                 You
                               </Badge>
                             )}
+                            {user.email_verified === false && (
+                              <Badge variant="destructive" className={s.smallBadge}>
+                                Unconfirmed
+                              </Badge>
+                            )}
                           </div>
                           <p className={s.userHandle}>@{user.username}</p>
+                          <p className={s.userHandle}>
+                            {user.email || "no email on file"}
+                            {user.email && user.email_verified === false && " — unconfirmed"}
+                            {user.pending_email && ` — pending ${user.pending_email}`}
+                          </p>
                         </div>
 
                         {/* Actions */}
@@ -485,6 +531,23 @@ const UserManager: React.FC = () => {
                               placeholder="Display name"
                               disabled={saving}
                             />
+                          </div>
+
+                          <div className={s.fieldBlock}>
+                            <Label htmlFor={`edit-email-${user.id}`}>Email</Label>
+                            <Input
+                              id={`edit-email-${user.id}`}
+                              type="email"
+                              value={editEmail}
+                              onChange={(e) => setEditEmail(e.target.value)}
+                              placeholder="user@example.com"
+                              disabled={saving || !isOwner}
+                            />
+                            <p className={s.helpText}>
+                              {isOwner
+                                ? "Applied immediately and marked confirmed. Changes where this account's reset links are sent."
+                                : "Only the owner can change someone else's email. Your own is on your profile page."}
+                            </p>
                           </div>
 
                           <div className={s.fieldBlock}>

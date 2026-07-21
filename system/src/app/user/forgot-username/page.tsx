@@ -12,8 +12,8 @@ import { API_BASE, errorMessage } from "@/lib/api";
 import { useTurnstile } from "@/lib/useTurnstile";
 import * as s from "../auth.css";
 
-const ForgotPassword: React.FC = () => {
-  const [username, setUsername] = useState("");
+const ForgotUsername: React.FC = () => {
+  const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [sentTo, setSentTo] = useState<string | null>(null);
@@ -23,8 +23,8 @@ const ForgotPassword: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!username.trim()) {
-      setError("Please enter your username");
+    if (!email.trim()) {
+      setError("Please enter your email address");
       return;
     }
     if (!turnstile.token) {
@@ -36,11 +36,11 @@ const ForgotPassword: React.FC = () => {
     setError("");
 
     try {
-      const res = await fetch(`${API_BASE}/forgot-password`, {
+      const res = await fetch(`${API_BASE}/forgot-username`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          username: username.trim(),
+          email: email.trim(),
           turnstile_token: turnstile.token,
         }),
       });
@@ -48,15 +48,14 @@ const ForgotPassword: React.FC = () => {
       const data = await res.json().catch(() => null);
 
       if (!res.ok) {
-        setError(errorMessage(data, "Couldn't send the reset link. Please try again."));
-        // Turnstile tokens are single-use, so a retry needs a fresh challenge.
+        setError(errorMessage(data, "Couldn't send that email. Please try again."));
         turnstile.reset();
         return;
       }
 
       setSentTo(data?.sent_to ?? null);
     } catch (err) {
-      console.error("Forgot password error:", err);
+      console.error("Forgot username error:", err);
       setError("Network error. Please check your connection and try again.");
       turnstile.reset();
     } finally {
@@ -68,14 +67,17 @@ const ForgotPassword: React.FC = () => {
     return (
       <div className={s.card}>
         <div className={s.sentInner}>
-          <div className={s.sentEmoji}>📬</div>
-          <h2 className={s.sentTitle}>Reset link sent</h2>
-          <p className={s.sentText}>We&apos;ve emailed a reset link to</p>
+          <div className={s.sentEmoji}>✉️</div>
+          <h2 className={s.sentTitle}>Username sent</h2>
+          <p className={s.sentText}>We&apos;ve emailed your username to</p>
           <span className={s.maskedAddress}>{sentTo}</span>
           <p className={s.sentText}>
-            The link expires in 15 minutes and can only be used once.
+            Once you have it, you can reset your password if you need to.
           </p>
-          <Link href="/user/login" className={s.backLink}>
+          <Link href="/user/forgot-password" className={s.backLink}>
+            Reset my password
+          </Link>
+          <Link href="/user/login" className={s.blueLink}>
             Back to login
           </Link>
         </div>
@@ -85,35 +87,29 @@ const ForgotPassword: React.FC = () => {
 
   return (
     <div className={s.card}>
-      <h2 className={s.heading}>Reset your password</h2>
+      <h2 className={s.heading}>Forgot your username?</h2>
       <p className={s.subtitle}>
-        Enter your username and we&apos;ll email a reset link to the address on your account.
+        Enter the email address on your account and we&apos;ll send your username to it.
       </p>
 
       {(error || turnstile.error) && <div className={s.errorBox}>{error || turnstile.error}</div>}
 
       <form onSubmit={handleSubmit} className={s.form}>
         <div>
-          <label htmlFor="username" className={s.fieldLabel}>
-            Username
+          <label htmlFor="email" className={s.fieldLabel}>
+            Email address
           </label>
           <input
-            id="username"
-            type="text"
-            placeholder="Enter your username"
+            id="email"
+            type="email"
+            placeholder="you@example.com"
             className={s.textInput}
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             disabled={loading}
-            autoComplete="username"
+            autoComplete="email"
+            inputMode="email"
           />
-          <p className={s.helperText}>
-            Not sure what your username is?{" "}
-            <Link href="/user/forgot-username" className={s.blueLink}>
-              Look it up with your email
-            </Link>
-            .
-          </p>
         </div>
 
         <div className={s.turnstileBlock}>
@@ -125,7 +121,7 @@ const ForgotPassword: React.FC = () => {
         </div>
 
         <button type="submit" className={s.submitBtn} disabled={loading || !turnstile.token}>
-          {loading ? "Sending..." : "Send reset link"}
+          {loading ? "Sending..." : "Email me my username"}
         </button>
       </form>
 
@@ -133,12 +129,12 @@ const ForgotPassword: React.FC = () => {
         <Link href="/user/login" className={s.blueLink}>
           ← Back to login
         </Link>
-        <Link href="/user/signup" className={s.blueLink}>
-          Create an account
+        <Link href="/user/forgot-password" className={s.blueLink}>
+          Reset password
         </Link>
       </div>
     </div>
   );
 };
 
-export default ForgotPassword;
+export default ForgotUsername;

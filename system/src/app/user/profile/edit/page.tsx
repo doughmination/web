@@ -15,7 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { unwrap, errorMessage } from "@/lib/api";
+import { API_BASE, unwrap, errorMessage } from "@/lib/api";
 import * as s from "./edit.css";
 
 interface UserData {
@@ -23,8 +23,14 @@ interface UserData {
   username: string;
   display_name?: string;
   avatar_url?: string;
+  email?: string | null;
+  email_verified?: boolean;
+  pending_email?: string | null;
   is_admin: boolean;
 }
+
+/** Loose client-side sanity check only — the API does the real validation. */
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function UserEdit() {
   const [userData, setUserData] = useState<UserData | null>(null);
@@ -33,6 +39,9 @@ function UserEdit() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [emailPassword, setEmailPassword] = useState("");
+  const [pendingEmail, setPendingEmail] = useState<string | null>(null);
   const [imageError, setImageError] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -59,7 +68,7 @@ function UserEdit() {
       }
 
       console.log("Fetching user data...");
-      const response = await fetch("https://doughmination.uk/v2/plural/user_info", {
+      const response = await fetch(`${API_BASE}/user_info`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -75,6 +84,7 @@ function UserEdit() {
         setUserData(data);
         setDisplayName(data.display_name || "");
         setAvatarUrl(data.avatar_url || "");
+        setPendingEmail(data.pending_email || null);
         setImageError(false);
       } else {
         setMessage({ type: "error", content: "Failed to fetch user data" });
@@ -137,7 +147,7 @@ function UserEdit() {
 
       // Update display name + avatar URL (avatars are external image URLs now)
       const updateResponse = await fetch(
-        `https://doughmination.uk/v2/plural/users/${userData.id}`,
+        `${API_BASE}/users/${userData.id}`,
         {
           method: "PUT",
           headers: {
@@ -210,7 +220,7 @@ function UserEdit() {
 
     try {
       console.log("Changing password...");
-      const response = await fetch(`https://doughmination.uk/v2/plural/users/${userData.id}`, {
+      const response = await fetch(`${API_BASE}/users/${userData.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -239,6 +249,67 @@ function UserEdit() {
       setMessage({
         type: "error",
         content: err instanceof Error ? err.message : "Failed to change password",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleEmailChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!userData) return;
+
+    if (!EMAIL_PATTERN.test(newEmail.trim())) {
+      setMessage({ type: "error", content: "Please enter a valid email address" });
+      return;
+    }
+    if (newEmail.trim().toLowerCase() === (userData.email || "").toLowerCase()) {
+      setMessage({ type: "error", content: "That's already your email address" });
+      return;
+    }
+    if (!emailPassword) {
+      setMessage({ type: "error", content: "Enter your current password to change your email" });
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setMessage({ type: "error", content: "Authentication required" });
+      return;
+    }
+
+    setSaving(true);
+    setMessage(null);
+
+    try {
+      const response = await fetch(`${API_BASE}/users/${userData.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          email: newEmail.trim(),
+          current_password: emailPassword,
+        }),
+      });
+
+      const data = await response.json().catch(() => null);
+      if (!response.ok) {
+        throw new Error(errorMessage(data, "Failed to change email address"));
+      }
+
+      // The address does NOT switch until the new one is confirmed.
+      setPendingEmail(data?.pending_email ?? newEmail.trim());
+      setMessage({
+        type: "success",
+        content:
+          data?.message ||
+          "Check the new address for a confirmation link. Your current email stays active until then.",
+      });
+      setNewEmail("");
+      setEmailPassword("");
+    } catch (err: unknown) {
+      setMessage({
+        type: "error",
+        content: err instanceof Error ? err.message : "Failed to change email address",
       });
     } finally {
       setSaving(false);
@@ -365,6 +436,72 @@ function UserEdit() {
               <div className={s.submitRow}>
                 <Button type="submit" disabled={saving}>
                   {saving ? "Saving..." : "Save Changes"}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+
+        {/* Change Email */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Email Address</CardTitle>
+            <CardDescription>Used for password resets and account recovery</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className={s.fieldBlock} style={{ marginBottom: "1rem" }}>
+              <Label>Current</Label>
+              <p className={s.helpText}>
+                {userData.email || "No email address on file"}
+                {userData.email && userData.email_verified === false && " (unconfirmed)"}
+              </p>
+            </div>
+
+            {pendingEmail && (
+              <Alert style={{ marginBottom: "1rem" }}>
+                <AlertDescription>
+                  Waiting on confirmation for <strong>{pendingEmail}</strong>. Your current address
+                  stays active until that link is used.
+                </AlertDescription>
+              </Alert>
+            )}
+
+            <Separator />
+
+            <form onSubmit={handleEmailChange} className={s.formTight} style={{ marginTop: "1rem" }}>
+              <div className={s.fieldBlock}>
+                <Label htmlFor="newEmail">New Email Address</Label>
+                <Input
+                  id="newEmail"
+                  type="email"
+                  value={newEmail}
+                  onChange={(e) => setNewEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  autoComplete="email"
+                />
+                <p className={s.helpText}>
+                  We&apos;ll send a confirmation link there. Nothing changes until you click it.
+                </p>
+              </div>
+
+              <div className={s.fieldBlock}>
+                <Label htmlFor="emailPassword">Current Password</Label>
+                <Input
+                  id="emailPassword"
+                  type="password"
+                  value={emailPassword}
+                  onChange={(e) => setEmailPassword(e.target.value)}
+                  placeholder="Confirm it's you"
+                  autoComplete="current-password"
+                />
+                <p className={s.helpText}>
+                  Required — email is how you recover this account, so we check it&apos;s really you.
+                </p>
+              </div>
+
+              <div className={s.submitRow}>
+                <Button type="submit" disabled={saving}>
+                  {saving ? "Sending..." : "Change Email"}
                 </Button>
               </div>
             </form>

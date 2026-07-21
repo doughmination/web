@@ -21,6 +21,11 @@ const Login: React.FC = () => {
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [turnstileLoaded, setTurnstileLoaded] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
+  // Set when login fails specifically because the address isn't confirmed, so
+  // we can offer a resend instead of a dead-end error.
+  const [unverified, setUnverified] = useState(false);
+  const [resendMessage, setResendMessage] = useState("");
+  const [resendBusy, setResendBusy] = useState(false);
   const [, setWelcomeUsername] = useState("");
   const [welcomeDisplayName, setWelcomeDisplayName] = useState("");
 
@@ -100,6 +105,8 @@ const Login: React.FC = () => {
 
     setLoading(true);
     setError("");
+    setUnverified(false);
+    setResendMessage("");
 
     const redirect = () => {
       const redirectTo = from === "/admin/login" ? "/admin/dash" : from;
@@ -167,6 +174,10 @@ const Login: React.FC = () => {
           data.detail || data.message || "Login failed. Please check your credentials.";
         setError(errorMessage);
 
+        // 403 here means the credentials were right but the address isn't
+        // confirmed — surface the resend path rather than leaving them stuck.
+        if (res.status === 403) setUnverified(true);
+
         // Reset Turnstile on login failure
         if (widgetId.current && window.turnstile) {
           window.turnstile.reset(widgetId.current);
@@ -197,6 +208,41 @@ const Login: React.FC = () => {
     }
   };
 
+  const handleResendVerification = async () => {
+    if (!turnstileToken) {
+      setError("Please complete the security verification first");
+      return;
+    }
+
+    setResendBusy(true);
+    setResendMessage("");
+
+    try {
+      const res = await fetch("https://doughmination.uk/v2/plural/resend-verification", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password, turnstile_token: turnstileToken }),
+      });
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        setError(data?.detail || "Couldn't resend the confirmation email.");
+      } else {
+        setResendMessage(data?.message || "Confirmation email sent. Check your inbox.");
+        setError("");
+      }
+    } catch (err) {
+      console.error("Resend verification error:", err);
+      setError("Network error. Please try again.");
+    } finally {
+      setResendBusy(false);
+      if (widgetId.current && window.turnstile) {
+        window.turnstile.reset(widgetId.current);
+        setTurnstileToken(null);
+      }
+    }
+  };
+
   // Show welcome screen after successful login
   if (showWelcome) {
     return (
@@ -219,6 +265,26 @@ const Login: React.FC = () => {
       <h2 className={s.heading}>User Login</h2>
 
       {error && <div className={s.errorBox}>{error}</div>}
+      {resendMessage && <div className={s.successBox}>{resendMessage}</div>}
+
+      {unverified && !resendMessage && (
+        <div className={s.infoPanel}>
+          <p className={s.sentText}>
+            Your account exists but the email address hasn&apos;t been confirmed yet.
+          </p>
+          <button
+            type="button"
+            className={s.submitBtn}
+            onClick={handleResendVerification}
+            disabled={resendBusy || !turnstileToken}
+          >
+            {resendBusy ? "Sending..." : "Resend confirmation email"}
+          </button>
+          <p className={s.helperText}>
+            Complete the verification below first if the button is greyed out.
+          </p>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className={s.form}>
         <div>
@@ -254,7 +320,10 @@ const Login: React.FC = () => {
         </div>
 
         {/* Forgot Password Link */}
-        <div className={s.linkRight}>
+        <div className={s.linkRow}>
+          <Link href="/user/forgot-username" className={s.blueLink}>
+            Forgot username?
+          </Link>
           <Link href="/user/forgot-password" className={s.blueLink}>
             Forgot password?
           </Link>

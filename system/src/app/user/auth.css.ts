@@ -185,3 +185,153 @@ export const spinner = style({
   width: "2rem",
   borderBottom: `2px solid ${vars.accent}`,
 });
+
+/* ---------------------------------------------------------------------------
+   Account recovery (forgot password / forgot username / reset password)
+   --------------------------------------------------------------------------- */
+
+export const subtitle = style({
+  marginTop: "-1rem",
+  marginBottom: "1.5rem",
+  textAlign: "center",
+  fontSize: "0.875rem",
+  color: vars.textMuted,
+  fontFamily: vars.fontComic,
+  lineHeight: 1.5,
+});
+
+/** Confirmation panel shown after a recovery email goes out. */
+export const sentInner = style({
+  textAlign: "center",
+  display: "flex",
+  flexDirection: "column",
+  gap: "1rem",
+  alignItems: "center",
+});
+
+export const sentEmoji = style({ fontSize: "3rem" });
+
+export const sentTitle = style({
+  fontSize: "1.5rem",
+  fontWeight: 700,
+  fontFamily: vars.fontComic,
+  color: vars.success,
+  margin: 0,
+});
+
+export const sentText = style({
+  fontSize: "0.9375rem",
+  fontFamily: vars.fontComic,
+  lineHeight: 1.6,
+  margin: 0,
+});
+
+/** The masked a•••@d•••.win hint. Monospace so the dots line up. */
+export const maskedAddress = style({
+  display: "inline-block",
+  padding: "0.5rem 0.875rem",
+  borderRadius: "0.375rem",
+  backgroundColor: vars.surface,
+  border: `1px solid ${vars.surfaceHi}`,
+  color: vars.accent,
+  fontFamily: vars.fontComic,
+  fontWeight: 600,
+  fontSize: "1rem",
+  letterSpacing: "0.02em",
+});
+
+/** Inline availability / validation feedback under a field. */
+export const fieldHint = style({
+  marginTop: "0.375rem",
+  fontSize: "0.8125rem",
+  fontFamily: vars.fontComic,
+});
+
+export const hintOk = style([fieldHint, { color: vars.success }]);
+export const hintBad = style([fieldHint, { color: vars.danger }]);
+export const hintMuted = style([fieldHint, { color: vars.textMuted }]);
+
+export const helperText = style({
+  fontSize: "0.8125rem",
+  color: vars.textMuted,
+  fontFamily: vars.fontComic,
+  marginTop: "0.375rem",
+  lineHeight: 1.5,
+});
+
+/** Requirement checklist on the reset form. */
+export const ruleList = style({
+  listStyle: "none",
+  margin: "0.5rem 0 0",
+  padding: 0,
+  display: "flex",
+  flexDirection: "column",
+  gap: "0.25rem",
+});
+
+export const ruleItem = style({
+  fontSize: "0.8125rem",
+  fontFamily: vars.fontComic,
+  color: vars.textMuted,
+  display: "flex",
+  alignItems: "center",
+  gap: "0.375rem",
+});
+
+export const ruleMet = style([ruleItem, { color: vars.success }]);
+
+export const linkRow = style({
+  marginTop: "1rem",
+  display: "flex",
+  justifyContent: "space-between",
+  gap: "1rem",
+  fontSize: "0.875rem",
+  fontFamily: vars.fontComic,
+});
+
+/** Full-card centred state, used while validating a reset token. */
+export const centerState = style({
+  textAlign: "center",
+  display: "flex",
+  flexDirection: "column",
+  gap: "1rem",
+  alignItems: "center",
+  padding: "1rem 0",
+});
+
+export const stateEmoji = style({ fontSize: "3rem" });
+
+export const stateTitle = style({
+  fontSize: "1.375rem",
+  fontWeight: 700,
+  fontFamily: vars.fontComic,
+  margin: 0,
+});
+
+export const stateTitleBad = style([stateTitle, { color: vars.danger }]);
+
+/** Callout panel — e.g. the "confirm your email" prompt on failed login. */
+export const infoPanel = style({
+  display: "flex",
+  flexDirection: "column",
+  gap: "0.75rem",
+  padding: "1rem",
+  marginBottom: "1rem",
+  borderRadius: "0.5rem",
+  backgroundColor: `color-mix(in srgb, ${vars.warning} 12%, ${vars.bg})`,
+  border: `1px solid color-mix(in srgb, ${vars.warning} 40%, transparent)`,
+});
+
+export const backLink = style({
+  display: "inline-block",
+  marginTop: "0.5rem",
+  padding: "0.5rem 1.25rem",
+  borderRadius: "0.375rem",
+  backgroundColor: vars.accent,
+  color: vars.bg,
+  fontFamily: vars.fontComic,
+  fontWeight: 600,
+  fontSize: "0.875rem",
+  textDecoration: "none",
+  ":hover": { backgroundColor: vars.accentAlt },
+});
