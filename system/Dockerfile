@@ -18,7 +18,7 @@ RUN npm run build
 FROM base AS runner
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV PORT=5001
+ENV PORT=5000
 ENV HOSTNAME=0.0.0.0
 
 COPY --from=builder /app/public ./public
@@ -27,5 +27,5 @@ COPY --from=builder /app/.next/static ./.next/static
 
 USER bun
 
-EXPOSE 5001
+EXPOSE 5000
 CMD ["bun", "server.js"]
