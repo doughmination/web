@@ -40,7 +40,7 @@ export const searchActions = style({
 export const selectedCount = style({
   marginLeft: "auto",
   fontSize: "0.875rem",
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   fontFamily: vars.fontComic,
   fontWeight: 600,
   display: "flex",
@@ -62,16 +62,16 @@ export const memberOption = style({
   gap: "0.75rem",
   padding: "0.75rem",
   borderRadius: "0.5rem",
-  border: `2px solid ${vars.border}`,
+  border: `2px solid ${vars.surface}`,
   cursor: "pointer",
   transition: "all 0.15s ease",
   ":hover": {
-    borderColor: `color-mix(in srgb, ${vars.primary} 50%, transparent)`,
+    borderColor: `color-mix(in srgb, ${vars.accent} 50%, transparent)`,
   },
 });
 
 export const memberOptionSelected = style({
-  borderColor: `${vars.primary} !important` as unknown as string,
+  borderColor: `${vars.accent} !important` as unknown as string,
   backgroundColor: vars.accent,
 });
 
@@ -79,8 +79,8 @@ export const tagChip = style({
   fontSize: "0.75rem",
   padding: "0.125rem 0.5rem",
   borderRadius: "9999px",
-  backgroundColor: vars.secondary,
-  color: vars.secondaryForeground,
+  backgroundColor: vars.surface,
+  color: vars.text,
   fontFamily: vars.fontComic,
   fontWeight: 600,
 });
@@ -119,7 +119,7 @@ export const sideName = style({
 });
 
 export const removeBtn = style({
-  color: vars.destructive,
+  color: vars.danger,
   background: "transparent",
   border: "none",
   cursor: "pointer",
@@ -130,7 +130,7 @@ export const removeBtn = style({
 export const centerNoteXs = style({
   fontSize: "0.75rem",
   textAlign: "center",
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   fontFamily: vars.fontComic,
   fontWeight: 600,
 });

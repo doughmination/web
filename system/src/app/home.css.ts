@@ -24,13 +24,13 @@ export const loadingText = style({
   fontSize: "1.5rem",
   fontFamily: vars.fontComic,
   fontWeight: 600,
-  color: vars.foreground,
+  color: vars.text,
 });
 
 export const page = style({
   minHeight: "100vh",
-  backgroundColor: vars.background,
-  color: vars.foreground,
+  backgroundColor: vars.bg,
+  color: vars.text,
   transition: "background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease",
 });
 
@@ -56,10 +56,10 @@ export const header = style({
   left: 0,
   width: "100%",
   zIndex: 40,
-  backgroundColor: mix(vars.card, 90),
+  backgroundColor: mix(vars.bg, 90),
   backdropFilter: "blur(4px)",
   WebkitBackdropFilter: "blur(4px)",
-  borderBottom: `1px solid ${vars.border}`,
+  borderBottom: `1px solid ${vars.surface}`,
   transition: "background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease",
 });
 
@@ -76,22 +76,22 @@ export const logoLink = style({
   fontSize: "1.5rem",
   fontWeight: 700,
   fontFamily: vars.fontComic,
-  color: vars.primary,
+  color: vars.accent,
   textDecoration: "none",
   transition: "color 0.15s ease",
-  ":hover": { color: mix(vars.primary, 80) },
+  ":hover": { color: mix(vars.accent, 80) },
 });
 
 export const navUser = style({
   fontSize: "0.875rem",
   fontFamily: vars.fontComic,
   fontWeight: 600,
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   marginRight: "0.5rem",
 });
 
 export const navUserName = style({
-  color: vars.foreground,
+  color: vars.text,
   fontWeight: 600,
 });
 
@@ -101,14 +101,14 @@ export const mobileMenuBtn = style({
   justifyContent: "center",
   padding: "0.5rem",
   borderRadius: "0.375rem",
-  backgroundColor: vars.secondary,
-  color: vars.secondaryForeground,
+  backgroundColor: vars.surface,
+  color: vars.text,
   border: "none",
   cursor: "pointer",
   transition: "color 0.15s ease, background-color 0.15s ease",
   ":hover": {
     backgroundColor: vars.accent,
-    color: vars.accentForeground,
+    color: vars.bg,
   },
   "@media": {
     "screen and (min-width: 768px)": { display: "none" },
@@ -137,10 +137,10 @@ export const mobilePanel = style({
   maxWidth: "80vw",
   height: "100vh",
   boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
-  backgroundColor: mix(vars.card, 95),
+  backgroundColor: mix(vars.bg, 95),
   backdropFilter: "blur(4px)",
   WebkitBackdropFilter: "blur(4px)",
-  borderLeft: `1px solid ${vars.border}`,
+  borderLeft: `1px solid ${vars.surface}`,
 });
 
 export const mobileList = style({
@@ -156,12 +156,12 @@ export const mobileUser = style({
   fontSize: "0.875rem",
   fontFamily: vars.fontComic,
   fontWeight: 600,
-  color: vars.mutedForeground,
-  borderBottom: `1px solid ${vars.border}`,
+  color: vars.textMuted,
+  borderBottom: `1px solid ${vars.surface}`,
 });
 
 export const mobileUserName = style({
-  color: vars.foreground,
+  color: vars.text,
   fontWeight: 600,
   display: "block",
   marginTop: "0.25rem",
@@ -177,22 +177,22 @@ export const mobileLink = style({
   transition: "all 0.15s ease",
   fontFamily: vars.fontComic,
   fontWeight: 600,
-  backgroundColor: vars.secondary,
-  color: vars.secondaryForeground,
+  backgroundColor: vars.surface,
+  color: vars.text,
   textDecoration: "none",
   border: "none",
   cursor: "pointer",
   ":hover": {
     backgroundColor: vars.accent,
-    color: vars.accentForeground,
+    color: vars.accentAlt,
   },
 });
 
 export const mobileLogout = style({
   width: "100%",
   padding: "0.75rem 1rem",
-  backgroundColor: vars.destructive,
-  color: vars.destructiveForeground,
+  backgroundColor: vars.danger,
+  color: vars.bg,
   borderRadius: "0.5rem",
   fontSize: "0.875rem",
   textAlign: "center",
@@ -201,7 +201,7 @@ export const mobileLogout = style({
   fontWeight: 600,
   border: "none",
   cursor: "pointer",
-  ":hover": { backgroundColor: mix(vars.destructive, 80) },
+  ":hover": { backgroundColor: mix(vars.danger, 80) },
 });
 
 export const headerSpacer = style({ height: "5rem" });
@@ -232,7 +232,7 @@ export const pageTitle = style({
   marginBottom: "2rem",
   textAlign: "center",
   fontFamily: vars.fontComic,
-  color: vars.primary,
+  color: vars.accent,
 });
 
 /* Mental state banner extras */
@@ -264,7 +264,7 @@ export const bannerUpdated = style({
 export const frontingSection = style({
   marginBottom: "1.5rem",
   padding: "1rem",
-  borderBottom: `1px solid ${vars.border}`,
+  borderBottom: `1px solid ${vars.surface}`,
 });
 
 export const frontingTitle = style({
@@ -302,8 +302,8 @@ export const bubbleWrapGrid = style([bubbleWrap, { top: "-3rem" }]);
 
 export const bubble = style({
   position: "relative",
-  backgroundColor: vars.card,
-  border: `2px solid ${vars.border}`,
+  backgroundColor: vars.bg,
+  border: `2px solid ${vars.surface}`,
   borderRadius: "30px",
   padding: "0.375rem 0.75rem",
   boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
@@ -322,7 +322,7 @@ export const bubbleText = style({
   fontSize: "0.75rem",
   fontFamily: vars.fontComic,
   fontWeight: 600,
-  color: vars.foreground,
+  color: vars.text,
   overflow: "hidden",
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
@@ -345,8 +345,8 @@ export const bubbleDotWrapSmall = style({
 export const bubbleDotLarge = style({
   width: "0.625rem",
   height: "0.625rem",
-  backgroundColor: vars.card,
-  border: `2px solid ${vars.border}`,
+  backgroundColor: vars.bg,
+  border: `2px solid ${vars.surface}`,
   borderRadius: "9999px",
   boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
 });
@@ -354,8 +354,8 @@ export const bubbleDotLarge = style({
 export const bubbleDotSmall = style({
   width: "0.375rem",
   height: "0.375rem",
-  backgroundColor: vars.card,
-  border: `1px solid ${vars.border}`,
+  backgroundColor: vars.bg,
+  border: `1px solid ${vars.surface}`,
   borderRadius: "9999px",
   boxShadow: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
 });
@@ -405,7 +405,7 @@ export const memberCardName = style({
 
 export const memberPronouns = style({
   fontSize: "0.75rem",
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   marginTop: "0.25rem",
   fontFamily: vars.fontComic,
   fontWeight: 600,
@@ -425,15 +425,15 @@ export const tagChip = style({
   fontSize: "0.75rem",
   padding: "0.125rem 0.5rem",
   borderRadius: "9999px",
-  backgroundColor: vars.secondary,
-  color: vars.secondaryForeground,
+  backgroundColor: vars.surface,
+  color: vars.text,
   fontFamily: vars.fontComic,
   fontWeight: 600,
 });
 
 export const tagMore = style({
   fontSize: "0.75rem",
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   fontFamily: vars.fontComic,
   fontWeight: 600,
 });
@@ -472,7 +472,7 @@ export const emptyText = style({
   fontFamily: vars.fontComic,
   fontWeight: 600,
   fontSize: "1.125rem",
-  color: vars.mutedForeground,
+  color: vars.textMuted,
 });
 
 export const emptyActions = style({
@@ -486,7 +486,7 @@ export const emptyActions = style({
 export const footerNote = style({
   marginTop: "1rem",
   fontSize: "0.875rem",
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   fontFamily: vars.fontComic,
   fontWeight: 600,
 });
@@ -495,7 +495,7 @@ export const footerNoteLink = style({
   textDecoration: "underline",
   color: "inherit",
   transition: "color 0.15s ease",
-  ":hover": { color: vars.foreground },
+  ":hover": { color: vars.text },
 });
 
 /* Screen-reader-only SEO block */

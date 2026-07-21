@@ -8,7 +8,7 @@
 
 import { useEffect, useState } from "react";
 
-const THEMES = ["mocha", "macchiato", "frappe", "latte"] as const;
+const THEMES = ["cherry", "toxic", "lemon", "estrogen", "cyberpunk"] as const;
 export type Theme = (typeof THEMES)[number];
 
 const isValidTheme = (value: string | null): value is Theme =>
@@ -16,7 +16,7 @@ const isValidTheme = (value: string | null): value is Theme =>
 
 const useTheme = () => {
   // SSR-safe: default to mocha on the server, hydrate the saved theme after mount.
-  const [theme, setTheme] = useState<Theme>("mocha");
+  const [theme, setTheme] = useState<Theme>("cherry");
 
   useEffect(() => {
     const saved = localStorage.getItem("theme");

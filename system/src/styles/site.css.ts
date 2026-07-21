@@ -9,14 +9,18 @@
  */
 
 import { globalStyle, keyframes, style } from "@vanilla-extract/css";
-import { palette, vars } from "./theme.css";
+import { vars } from "./theme.css";
 
 const mobile = "screen and (max-width: 640px)";
 const tablet = "screen and (min-width: 641px) and (max-width: 1024px)";
 const ultrawide = "screen and (min-width: 1920px)";
 
+// No per-flavor font token in the new theme contract — same face across
+// every flavor, so it just lives here as a plain constant.
+const FONT_COMIC = "'Comic Code', cursive";
+
 export const fontComic = style({
-  fontFamily: vars.fontComic,
+  fontFamily: FONT_COMIC,
   fontWeight: 600,
 });
 
@@ -40,11 +44,11 @@ export const header = style({
   right: 0,
   zIndex: 40,
   height: "68px",
-  backgroundColor: `color-mix(in srgb, ${vars.card} 90%, transparent)`,
+  backgroundColor: `color-mix(in srgb, ${vars.bg} 90%, transparent)`,
   backdropFilter: "blur(12px)",
   WebkitBackdropFilter: "blur(12px)",
-  borderBottom: `1px solid color-mix(in srgb, ${vars.border} 50%, transparent)`,
-  boxShadow: `0 1px 3px color-mix(in srgb, ${vars.foreground} 8%, transparent)`,
+  borderBottom: `1px solid color-mix(in srgb, ${vars.surface} 50%, transparent)`,
+  boxShadow: `0 1px 3px color-mix(in srgb, ${vars.text} 8%, transparent)`,
   "@media": {
     [mobile]: { height: "60px", padding: "0.5rem 1rem" },
   },
@@ -92,21 +96,21 @@ globalStyle(`${desktopNav} button, ${desktopNav} a`, {
   minHeight: "3rem",
   borderRadius: "0.375rem",
   transition: "all 0.2s ease",
-  fontFamily: vars.fontComic,
+  fontFamily: FONT_COMIC,
   fontWeight: 600,
   display: "inline-flex",
   alignItems: "center",
   justifyContent: "center",
   textDecoration: "none",
-  backgroundColor: vars.secondary,
-  color: vars.secondaryForeground,
-  border: `1px solid ${vars.border}`,
+  backgroundColor: vars.surface,
+  color: vars.text,
+  border: `1px solid ${vars.surface}`,
 });
 
 globalStyle(`${desktopNav} button:hover, ${desktopNav} a:hover`, {
-  backgroundColor: vars.accent,
-  color: vars.accentForeground,
-  borderColor: vars.ring,
+  backgroundColor: vars.accentAlt,
+  color: vars.bg,
+  borderColor: vars.accent,
 });
 
 /* Member grid */
@@ -151,16 +155,16 @@ globalStyle(`${memberGridItem} a`, {
   WebkitBackdropFilter: "blur(10px)",
   transition: "all 0.3s ease",
   textDecoration: "none !important" as unknown as "none",
-  backgroundColor: `color-mix(in srgb, ${vars.card} 70%, transparent)`,
-  border: `1px solid color-mix(in srgb, ${vars.border} 30%, transparent)`,
-  color: vars.cardForeground,
+  backgroundColor: `color-mix(in srgb, ${vars.bg} 70%, transparent)`,
+  border: `1px solid color-mix(in srgb, ${vars.surface} 30%, transparent)`,
+  color: vars.text,
 });
 
 globalStyle(`${memberGridItem} a:hover`, {
   transform: "translateY(-5px)",
-  boxShadow: `0 10px 15px -3px color-mix(in srgb, ${vars.primary} 40%, transparent)`,
-  borderColor: `color-mix(in srgb, ${vars.primary} 70%, transparent)`,
-  backgroundColor: `color-mix(in srgb, ${vars.card} 90%, transparent)`,
+  boxShadow: `0 10px 15px -3px color-mix(in srgb, ${vars.accent} 40%, transparent)`,
+  borderColor: `color-mix(in srgb, ${vars.accent} 70%, transparent)`,
+  backgroundColor: `color-mix(in srgb, ${vars.bg} 90%, transparent)`,
 });
 
 /* Avatars */
@@ -173,8 +177,8 @@ export const avatarContainer = style({
   boxSizing: "border-box",
   width: "4.5rem",
   height: "4.5rem",
-  border: `2px solid ${vars.border}`,
-  backgroundColor: vars.muted,
+  border: `2px solid ${vars.surface}`,
+  backgroundColor: vars.surface,
   "@media": {
     [mobile]: { width: "3.5rem", height: "3.5rem" },
     [tablet]: { width: "4rem", height: "4rem" },
@@ -227,13 +231,13 @@ export const frontingMember = style({
 
 export const frontingMemberName = style({
   marginTop: "0.75rem",
-  fontFamily: vars.fontComic,
+  fontFamily: FONT_COMIC,
   fontWeight: 600,
   fontSize: "1.5rem",
   lineHeight: 1.2,
   wordWrap: "break-word",
   maxWidth: "100%",
-  color: vars.foreground,
+  color: vars.text,
   "@media": {
     [mobile]: { fontSize: "1.25rem", marginTop: "0.5rem" },
   },
@@ -241,7 +245,7 @@ export const frontingMemberName = style({
 
 export const memberName = style({
   fontSize: "1.5rem",
-  fontFamily: vars.fontComic,
+  fontFamily: FONT_COMIC,
   fontWeight: 600,
   "@media": {
     [mobile]: { fontSize: "1.25rem" },
@@ -260,12 +264,12 @@ export const mentalStateBanner = style({
   borderRadius: "0.5rem",
   border: "2px solid",
   position: "relative",
-  fontFamily: vars.fontComic,
+  fontFamily: FONT_COMIC,
   fontWeight: 600,
 });
 
 globalStyle(`${mentalStateBanner} *`, {
-  fontFamily: vars.fontComic,
+  fontFamily: FONT_COMIC,
   fontWeight: 600,
 });
 
@@ -309,10 +313,10 @@ export const hostBadge = style({
   textTransform: "uppercase",
   verticalAlign: "middle",
   letterSpacing: "0.5px",
-  fontFamily: vars.fontComic,
-  background: vars.primary,
-  color: vars.primaryForeground,
-  boxShadow: `0 2px 4px color-mix(in srgb, ${vars.primary} 50%, transparent)`,
+  fontFamily: FONT_COMIC,
+  background: vars.accent,
+  color: vars.bg,
+  boxShadow: `0 2px 4px color-mix(in srgb, ${vars.accent} 50%, transparent)`,
 });
 
 /* Footer */
@@ -321,8 +325,8 @@ export const githubFooter = style({
   padding: "1.5rem 0",
   textAlign: "center",
   width: "100%",
-  fontFamily: vars.fontComic,
-  borderTop: `1px solid color-mix(in srgb, ${vars.border} 30%, transparent)`,
+  fontFamily: FONT_COMIC,
+  borderTop: `1px solid color-mix(in srgb, ${vars.surface} 30%, transparent)`,
 });
 
 export const githubButton = style({
@@ -334,17 +338,17 @@ export const githubButton = style({
   borderRadius: "0.5rem",
   fontWeight: 600,
   transition: "all 0.2s ease",
-  fontFamily: vars.fontComic,
+  fontFamily: FONT_COMIC,
   textDecoration: "none",
-  background: vars.secondary,
-  color: `${vars.secondaryForeground} !important` as unknown as string,
-  boxShadow: `0 2px 4px color-mix(in srgb, ${vars.foreground} 10%, transparent)`,
-  border: `1px solid ${vars.border}`,
+  background: vars.surface,
+  color: `${vars.text} !important` as unknown as string,
+  boxShadow: `0 2px 4px color-mix(in srgb, ${vars.text} 10%, transparent)`,
+  border: `1px solid ${vars.surface}`,
   ":hover": {
     transform: "translateY(-1px)",
-    boxShadow: `0 4px 6px color-mix(in srgb, ${vars.primary} 30%, transparent)`,
-    background: vars.accent,
-    color: vars.accentForeground,
+    boxShadow: `0 4px 6px color-mix(in srgb, ${vars.accent} 30%, transparent)`,
+    background: vars.accentAlt,
+    color: vars.bg,
   },
 });
 
@@ -359,19 +363,19 @@ export const searchInput = style({
   width: "100%",
   padding: "0.75rem 1rem 0.75rem 3rem",
   borderRadius: "0.5rem",
-  border: `1px solid ${vars.border}`,
-  backgroundColor: vars.input,
-  color: vars.foreground,
-  fontFamily: vars.fontComic,
+  border: `1px solid ${vars.surface}`,
+  backgroundColor: vars.surface,
+  color: vars.text,
+  fontFamily: FONT_COMIC,
   fontSize: "0.875rem",
   transition: "all 0.2s ease",
   ":focus": {
     outline: "none",
-    borderColor: vars.ring,
-    boxShadow: `0 0 0 2px color-mix(in srgb, ${vars.ring} 20%, transparent)`,
+    borderColor: vars.accent,
+    boxShadow: `0 0 0 2px color-mix(in srgb, ${vars.accent} 20%, transparent)`,
   },
   "::placeholder": {
-    color: vars.mutedForeground,
+    color: vars.textMuted,
   },
 });
 
@@ -380,7 +384,7 @@ export const searchIcon = style({
   left: "0.75rem",
   top: "50%",
   transform: "translateY(-50%)",
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   width: "1.25rem",
   height: "1.25rem",
 });
@@ -390,14 +394,14 @@ export const searchClear = style({
   right: "0.75rem",
   top: "50%",
   transform: "translateY(-50%)",
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   cursor: "pointer",
   padding: "0.25rem",
   borderRadius: "0.25rem",
   transition: "all 0.2s ease",
   ":hover": {
-    color: vars.foreground,
-    backgroundColor: vars.muted,
+    color: vars.text,
+    backgroundColor: vars.surface,
   },
 });
 
@@ -406,24 +410,24 @@ export const filterButton = style({
   padding: "0.5rem 1rem",
   borderRadius: "0.5rem",
   transition: "all 0.2s ease",
-  fontFamily: vars.fontComic,
+  fontFamily: FONT_COMIC,
   fontWeight: 600,
   fontSize: "0.875rem",
   cursor: "pointer",
-  border: `1px solid ${vars.border}`,
-  backgroundColor: vars.secondary,
-  color: vars.secondaryForeground,
+  border: `1px solid ${vars.surface}`,
+  backgroundColor: vars.surface,
+  color: vars.text,
   ":hover": {
-    backgroundColor: vars.accent,
-    color: vars.accentForeground,
-    borderColor: vars.ring,
+    backgroundColor: vars.accentAlt,
+    color: vars.bg,
+    borderColor: vars.accent,
   },
 });
 
 export const filterButtonActive = style({
-  backgroundColor: `${vars.primary} !important` as unknown as string,
-  color: `${vars.primaryForeground} !important` as unknown as string,
-  borderColor: vars.primary,
+  backgroundColor: `${vars.accent} !important` as unknown as string,
+  color: `${vars.bg} !important` as unknown as string,
+  borderColor: vars.accent,
 });
 
 /* Fronting glow */
@@ -469,7 +473,7 @@ globalStyle(`${frontingGlow} a::before`, {
   borderRadius: "0.25rem",
   fontWeight: 700,
   letterSpacing: "0.5px",
-  fontFamily: vars.fontComic,
+  fontFamily: FONT_COMIC,
   boxShadow: "0 2px 8px color-mix(in srgb, var(--member-color) 40%, transparent)",
   zIndex: 10,
   textShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
@@ -480,5 +484,5 @@ export const themeTransition = style({
   transition: "background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease",
 });
 
-// Re-export palette for pages that need raw colors (e.g. charts)
-export { palette, vars };
+// Re-export vars for pages that need raw tokens (e.g. charts)
+export { vars };

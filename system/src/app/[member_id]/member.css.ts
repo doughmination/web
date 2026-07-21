@@ -56,8 +56,8 @@ export const bubbleWrap = style({
 
 export const bubble = style({
   position: "relative",
-  backgroundColor: vars.card,
-  border: `2px solid ${vars.border}`,
+  backgroundColor: vars.bg,
+  border: `2px solid ${vars.surface}`,
   borderRadius: "30px",
   padding: "0.5rem 1rem",
   boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
@@ -76,7 +76,7 @@ export const bubbleText = style({
   fontSize: "0.875rem",
   fontFamily: vars.fontComic,
   fontWeight: 600,
-  color: vars.foreground,
+  color: vars.text,
   overflow: "hidden",
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
@@ -106,24 +106,24 @@ export const bubbleDot3Wrap = style({
 export const bubbleDot1 = style({
   width: "0.75rem",
   height: "0.75rem",
-  backgroundColor: vars.card,
-  border: `2px solid ${vars.border}`,
+  backgroundColor: vars.bg,
+  border: `2px solid ${vars.surface}`,
   borderRadius: "9999px",
   boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
 });
 export const bubbleDot2 = style({
   width: "0.5rem",
   height: "0.5rem",
-  backgroundColor: vars.card,
-  border: `2px solid ${vars.border}`,
+  backgroundColor: vars.bg,
+  border: `2px solid ${vars.surface}`,
   borderRadius: "9999px",
   boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
 });
 export const bubbleDot3 = style({
   width: "0.375rem",
   height: "0.375rem",
-  backgroundColor: vars.card,
-  border: `1px solid ${vars.border}`,
+  backgroundColor: vars.bg,
+  border: `1px solid ${vars.surface}`,
   borderRadius: "9999px",
   boxShadow: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
 });
@@ -167,7 +167,7 @@ export const sectionTitle = style({
 });
 
 export const description = style({
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   fontFamily: vars.fontComic,
   fontWeight: 600,
 });

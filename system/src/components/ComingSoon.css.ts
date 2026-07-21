@@ -25,8 +25,8 @@ const pulse = keyframes({
 
 export const page = style({
   minHeight: "100vh",
-  backgroundColor: vars.background,
-  color: vars.foreground,
+  backgroundColor: vars.bg,
+  color: vars.text,
   transition: "background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease",
   display: "flex",
   alignItems: "center",
@@ -69,7 +69,7 @@ export const title = style({
   fontSize: "2.25rem",
   fontWeight: 700,
   fontFamily: vars.fontComic,
-  color: vars.primary,
+  color: vars.accent,
 });
 
 export const subtitle = style({
@@ -86,7 +86,7 @@ export const content = style({
 
 export const description = style({
   textAlign: "center",
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   fontFamily: vars.fontComic,
   fontWeight: 600,
   fontSize: "1.125rem",
@@ -107,16 +107,16 @@ export const progressLabels = style({
   fontWeight: 600,
 });
 
-export const progressMuted = style({ color: vars.mutedForeground });
+export const progressMuted = style({ color: vars.textMuted });
 
 export const progressActive = style({
-  color: vars.primary,
+  color: vars.accent,
   fontWeight: 600,
 });
 
 export const progressTrack = style({
   width: "100%",
-  backgroundColor: vars.muted,
+  backgroundColor: vars.surface,
   borderRadius: "9999px",
   height: "0.75rem",
   overflow: "hidden",
@@ -124,13 +124,13 @@ export const progressTrack = style({
 
 export const progressBar = style({
   height: "100%",
-  background: `linear-gradient(to right, ${vars.primary}, ${vars.accent})`,
+  background: `linear-gradient(to right, ${vars.accent}, ${vars.accent})`,
   borderRadius: "9999px",
   animation: `${pulse} 2s cubic-bezier(0.4, 0, 0.6, 1) infinite`,
 });
 
 export const featuresBox = style({
-  backgroundColor: `color-mix(in srgb, ${vars.muted} 50%, transparent)`,
+  backgroundColor: `color-mix(in srgb, ${vars.surface} 50%, transparent)`,
   borderRadius: "0.5rem",
   padding: "1.5rem",
   display: "flex",
@@ -168,7 +168,7 @@ export const featureText = style({
   fontSize: "0.875rem",
   fontFamily: vars.fontComic,
   fontWeight: 600,
-  color: vars.mutedForeground,
+  color: vars.textMuted,
 });
 
 export const actions = style({
@@ -192,18 +192,18 @@ export const btnIcon = style({
 export const footerBlock = style({
   textAlign: "center",
   paddingTop: "1.5rem",
-  borderTop: `1px solid ${vars.border}`,
+  borderTop: `1px solid ${vars.surface}`,
 });
 
 export const footerText = style({
   fontSize: "0.875rem",
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   fontFamily: vars.fontComic,
   fontWeight: 600,
 });
 
 export const footerLink = style({
-  color: vars.primary,
+  color: vars.accent,
   fontWeight: 600,
   textDecoration: "none",
   ":hover": { textDecoration: "underline" },

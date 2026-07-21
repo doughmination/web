@@ -5,14 +5,14 @@
  */
 
 import { style } from "@vanilla-extract/css";
-import { palette, vars } from "@/styles/theme.css";
+import { vars } from "@/styles/theme.css";
 
 export const page = style({
   display: "flex",
   minHeight: "100vh",
   alignItems: "center",
   justifyContent: "center",
-  backgroundColor: vars.background,
+  backgroundColor: vars.bg,
 });
 
 export const inner = style({ textAlign: "center" });
@@ -26,11 +26,11 @@ export const title = style({
 export const text = style({
   marginBottom: "1rem",
   fontSize: "1.25rem",
-  color: vars.mutedForeground,
+  color: vars.textMuted,
 });
 
 export const link = style({
-  color: palette.blue,
+  color: vars.info,
   textDecoration: "underline",
-  ":hover": { color: palette.saphire },
+  ":hover": { color: vars.sapphire },
 });

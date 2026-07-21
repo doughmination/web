@@ -7,6 +7,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { API_BASE, errorMessage, unwrap } from "@/lib/api";
 import { TURNSTILE_SITE_KEY, loadTurnstileScript } from "@/lib/turnstile";
@@ -298,9 +299,9 @@ const SignUp: React.FC = () => {
 
       <div className={s.bottomNote}>
         Already have an account?{" "}
-        <a href="/user/login" className={s.blueLink}>
+        <Link href="/user/login" className={s.blueLink}>
           Log in here
-        </a>
+        </Link>
       </div>
 
       <div className={s.loadingNote}>

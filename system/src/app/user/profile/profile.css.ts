@@ -66,7 +66,7 @@ export const avatar = style({
   borderRadius: "9999px",
   margin: "0 auto",
   objectFit: "cover",
-  border: `2px solid ${vars.border}`,
+  border: `2px solid ${vars.surface}`,
   display: "block",
 });
 
@@ -74,12 +74,12 @@ export const avatarFallback = style({
   width: "6rem",
   height: "6rem",
   borderRadius: "9999px",
-  backgroundColor: vars.muted,
+  backgroundColor: vars.surface,
   margin: "0 auto 1rem",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  border: `2px solid ${vars.border}`,
+  border: `2px solid ${vars.surface}`,
 });
 
 export const avatarFallbackEmoji = style({ fontSize: "2.25rem" });
@@ -99,7 +99,7 @@ export const adminBadge = style({
 
 export const username = style({
   fontSize: "0.875rem",
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   fontFamily: vars.fontComic,
   fontWeight: 600,
 });

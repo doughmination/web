@@ -5,38 +5,38 @@
  */
 
 import { style } from "@vanilla-extract/css";
-import { palette, vars } from "@/styles/theme.css";
+import { vars } from "@/styles/theme.css";
 
 const tint = (color: string, pct: number) =>
-  `color-mix(in srgb, ${color} ${pct}%, ${vars.background})`;
+  `color-mix(in srgb, ${color} ${pct}%, ${vars.bg})`;
 
 export const stateCardBase = style({
   borderWidth: "2px",
 });
 
 export const stateSafe = style({
-  backgroundColor: tint(palette.green, 12),
-  borderColor: palette.green,
+  backgroundColor: tint(vars.success, 12),
+  borderColor: vars.success,
 });
 
 export const stateUnstable = style({
-  backgroundColor: tint(palette.yellow, 12),
-  borderColor: palette.yellow,
+  backgroundColor: tint(vars.warning, 12),
+  borderColor: vars.warning,
 });
 
 export const stateIdealizing = style({
-  backgroundColor: tint(palette.peach, 12),
-  borderColor: palette.peach,
+  backgroundColor: tint(vars.peach, 12),
+  borderColor: vars.peach,
 });
 
 export const stateSelfHarming = style({
-  backgroundColor: tint(palette.red, 12),
-  borderColor: palette.red,
+  backgroundColor: tint(vars.danger, 12),
+  borderColor: vars.danger,
 });
 
 export const stateHighRisk = style({
-  backgroundColor: tint(palette.maroon, 18),
-  borderColor: palette.maroon,
+  backgroundColor: tint(vars.maroon, 18),
+  borderColor: vars.maroon,
 });
 
 export const currentRow = style({
@@ -56,7 +56,7 @@ export const currentLabel = style({
 
 export const currentNotes = style({
   fontSize: "0.875rem",
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   fontFamily: vars.fontComic,
   fontWeight: 600,
   marginTop: "0.25rem",
@@ -65,20 +65,20 @@ export const currentNotes = style({
 export const select = style({
   width: "100%",
   padding: "0.5rem",
-  border: `1px solid ${vars.input}`,
+  border: `1px solid ${vars.surface}`,
   borderRadius: "0.375rem",
-  backgroundColor: vars.background,
-  color: vars.foreground,
+  backgroundColor: vars.bg,
+  color: vars.text,
   fontFamily: vars.fontComic,
 });
 
 export const textarea = style({
   width: "100%",
   padding: "0.5rem",
-  border: `1px solid ${vars.input}`,
+  border: `1px solid ${vars.surface}`,
   borderRadius: "0.375rem",
-  backgroundColor: vars.background,
-  color: vars.foreground,
+  backgroundColor: vars.bg,
+  color: vars.text,
   fontFamily: vars.fontComic,
   resize: "none",
 });

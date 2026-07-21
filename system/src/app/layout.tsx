@@ -8,7 +8,8 @@ import type { Metadata, Viewport } from "next";
 import "@/styles/theme.css";
 import "@/styles/global.css";
 import Providers from "./providers";
-import VisitorTracker from "@/components/VisitorTracker";
+// import VisitorTracker from "@/components/VisitorTracker";
+import { WebSocketProvider } from "@/lib/websocket";
 
 export const metadata: Metadata = {
   title: "Doughmination System | Plural System Member Tracker & Fronting Manager",
@@ -67,10 +68,10 @@ export const viewport: Viewport = {
 const themeInitScript = `
 try {
   var t = localStorage.getItem('theme');
-  var valid = ['mocha', 'macchiato', 'frappe', 'latte'];
-  document.documentElement.setAttribute('data-flavor', valid.indexOf(t) !== -1 ? t : 'mocha');
+  var valid = ['cherry', 'toxic', 'lemon', 'estrogen', 'cyberpunk'];
+  document.documentElement.setAttribute('data-flavor', valid.indexOf(t) !== -1 ? t : 'cherry');
 } catch (e) {
-  document.documentElement.setAttribute('data-flavor', 'mocha');
+  document.documentElement.setAttribute('data-flavor', 'cherry');
 }
 `;
 
@@ -80,15 +81,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-flavor="mocha" data-scroll-behavior="smooth" suppressHydrationWarning>
+    <html lang="en" data-flavor="cherry" data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body>
-        <Providers>
-          <VisitorTracker />
-          {children}
-        </Providers>
+        <WebSocketProvider>
+          <Providers>
+            {children}
+          </Providers>
+        </WebSocketProvider>
       </body>
     </html>
   );

@@ -44,7 +44,7 @@ export const button = recipe({
     selectors: {
       "&:focus-visible": {
         outline: "none",
-        boxShadow: `0 0 0 2px ${vars.background}, 0 0 0 4px ${vars.ring}`,
+        boxShadow: `0 0 0 2px ${vars.bg}, 0 0 0 4px ${vars.ring}`,
       },
       "&:disabled": {
         pointerEvents: "none",
@@ -55,40 +55,40 @@ export const button = recipe({
   variants: {
     variant: {
       default: {
-        backgroundColor: vars.primary,
-        color: vars.primaryForeground,
-        ":hover": { backgroundColor: mix(vars.primary, 90) },
+        backgroundColor: vars.accent,
+        color: vars.bg,
+        ":hover": { backgroundColor: mix(vars.accent, 90) },
       },
       destructive: {
-        backgroundColor: vars.destructive,
-        color: vars.destructiveForeground,
-        ":hover": { backgroundColor: mix(vars.destructive, 90) },
+        backgroundColor: vars.danger,
+        color: vars.dangerForeground,
+        ":hover": { backgroundColor: mix(vars.danger, 90) },
       },
       outline: {
-        border: `1px solid ${vars.input}`,
-        backgroundColor: vars.background,
-        color: vars.foreground,
+        border: `1px solid ${vars.surface}`,
+        backgroundColor: vars.bg,
+        color: vars.text,
         ":hover": {
           backgroundColor: vars.accent,
-          color: vars.accentForeground,
+          color: vars.bg,
         },
       },
       secondary: {
-        backgroundColor: vars.secondary,
-        color: vars.secondaryForeground,
-        ":hover": { backgroundColor: mix(vars.secondary, 80) },
+        backgroundColor: vars.surface,
+        color: vars.text,
+        ":hover": { backgroundColor: mix(vars.surface, 80) },
       },
       ghost: {
         backgroundColor: "transparent",
-        color: vars.foreground,
+        color: vars.text,
         ":hover": {
           backgroundColor: vars.accent,
-          color: vars.accentForeground,
+          color: vars.bg,
         },
       },
       link: {
         backgroundColor: "transparent",
-        color: vars.primary,
+        color: vars.accent,
         textUnderlineOffset: "4px",
         ":hover": { textDecoration: "underline" },
       },
@@ -111,9 +111,9 @@ export const button = recipe({
    ============================================================================ */
 export const card = style({
   borderRadius: "0.5rem",
-  border: `1px solid ${vars.border}`,
-  backgroundColor: vars.card,
-  color: vars.cardForeground,
+  border: `1px solid ${vars.surface}`,
+  backgroundColor: vars.bg,
+  color: vars.bgForeground,
   boxShadow: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
 });
 
@@ -133,7 +133,7 @@ export const cardTitle = style({
 
 export const cardDescription = style({
   fontSize: "0.875rem",
-  color: vars.mutedForeground,
+  color: vars.textMuted,
 });
 
 export const cardContent = style({
@@ -156,18 +156,18 @@ export const input = style({
   height: "2.5rem",
   width: "100%",
   borderRadius: "0.375rem",
-  border: `1px solid ${vars.input}`,
-  backgroundColor: vars.background,
+  border: `1px solid ${vars.surface}`,
+  backgroundColor: vars.bg,
   padding: "0.5rem 0.75rem",
   fontSize: "1rem",
-  color: vars.foreground,
+  color: vars.text,
   "::placeholder": {
-    color: vars.mutedForeground,
+    color: vars.textMuted,
   },
   selectors: {
     "&:focus-visible": {
       outline: "none",
-      boxShadow: `0 0 0 2px ${vars.background}, 0 0 0 4px ${vars.ring}`,
+      boxShadow: `0 0 0 2px ${vars.bg}, 0 0 0 4px ${vars.ring}`,
     },
     "&:disabled": {
       cursor: "not-allowed",
@@ -205,20 +205,20 @@ export const badge = recipe({
   variants: {
     variant: {
       default: {
-        backgroundColor: vars.primary,
-        color: vars.primaryForeground,
+        backgroundColor: vars.accent,
+        color: vars.bg,
       },
       secondary: {
-        backgroundColor: vars.secondary,
-        color: vars.secondaryForeground,
+        backgroundColor: vars.surface,
+        color: vars.text,
       },
       destructive: {
-        backgroundColor: vars.destructive,
-        color: vars.destructiveForeground,
+        backgroundColor: vars.danger,
+        color: vars.dangerForeground,
       },
       outline: {
-        color: vars.foreground,
-        borderColor: vars.border,
+        color: vars.text,
+        borderColor: vars.surface,
         backgroundColor: "transparent",
       },
     },
@@ -234,18 +234,18 @@ export const alert = recipe({
     position: "relative",
     width: "100%",
     borderRadius: "0.5rem",
-    border: `1px solid ${vars.border}`,
+    border: `1px solid ${vars.surface}`,
     padding: "1rem",
   },
   variants: {
     variant: {
       default: {
-        backgroundColor: vars.background,
-        color: vars.foreground,
+        backgroundColor: vars.bg,
+        color: vars.text,
       },
       destructive: {
-        borderColor: mix(vars.destructive, 50),
-        color: vars.destructive,
+        borderColor: mix(vars.danger, 50),
+        color: vars.danger,
       },
     },
   },
@@ -270,7 +270,7 @@ globalStyle(`${alertDescription} p`, { lineHeight: 1.625 });
    ============================================================================ */
 export const separatorBase = style({
   flexShrink: 0,
-  backgroundColor: vars.border,
+  backgroundColor: vars.surface,
 });
 
 export const separatorHorizontal = style({ height: "1px", width: "100%" });
@@ -284,17 +284,17 @@ export const checkbox = style({
   width: "1rem",
   flexShrink: 0,
   borderRadius: "0.125rem",
-  border: `1px solid ${vars.primary}`,
+  border: `1px solid ${vars.accent}`,
   backgroundColor: "transparent",
   cursor: "pointer",
   selectors: {
     '&[data-state="checked"]': {
-      backgroundColor: vars.primary,
-      color: vars.primaryForeground,
+      backgroundColor: vars.accent,
+      color: vars.bg,
     },
     "&:focus-visible": {
       outline: "none",
-      boxShadow: `0 0 0 2px ${vars.background}, 0 0 0 4px ${vars.ring}`,
+      boxShadow: `0 0 0 2px ${vars.bg}, 0 0 0 4px ${vars.ring}`,
     },
     "&:disabled": {
       cursor: "not-allowed",
@@ -317,7 +317,7 @@ export const tooltipContent = style({
   zIndex: 50,
   overflow: "hidden",
   borderRadius: "0.375rem",
-  border: `1px solid ${vars.border}`,
+  border: `1px solid ${vars.surface}`,
   backgroundColor: vars.popover,
   padding: "0.375rem 0.75rem",
   fontSize: "0.875rem",
@@ -341,16 +341,16 @@ export const selectTrigger = style({
   alignItems: "center",
   justifyContent: "space-between",
   borderRadius: "0.375rem",
-  border: `1px solid ${vars.input}`,
-  backgroundColor: vars.background,
-  color: vars.foreground,
+  border: `1px solid ${vars.surface}`,
+  backgroundColor: vars.bg,
+  color: vars.text,
   padding: "0.5rem 0.75rem",
   fontSize: "0.875rem",
   cursor: "pointer",
   selectors: {
     "&:focus": {
       outline: "none",
-      boxShadow: `0 0 0 2px ${vars.background}, 0 0 0 4px ${vars.ring}`,
+      boxShadow: `0 0 0 2px ${vars.bg}, 0 0 0 4px ${vars.ring}`,
     },
     "&:disabled": {
       cursor: "not-allowed",
@@ -386,7 +386,7 @@ export const selectContent = style({
   minWidth: "8rem",
   overflow: "hidden",
   borderRadius: "0.375rem",
-  border: `1px solid ${vars.border}`,
+  border: `1px solid ${vars.surface}`,
   backgroundColor: vars.popover,
   color: vars.popoverForeground,
   boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
@@ -434,7 +434,7 @@ export const selectItem = style({
     },
     "&:focus": {
       backgroundColor: vars.accent,
-      color: vars.accentForeground,
+      color: vars.bg,
     },
   },
 });
@@ -452,7 +452,7 @@ export const selectItemIndicator = style({
 export const selectSeparator = style({
   margin: "0.25rem -0.25rem",
   height: "1px",
-  backgroundColor: vars.muted,
+  backgroundColor: vars.surface,
 });
 
 /* ============================================================================
@@ -504,7 +504,7 @@ export const toastRoot = recipe({
     gap: "1rem",
     overflow: "hidden",
     borderRadius: "0.375rem",
-    border: `1px solid ${vars.border}`,
+    border: `1px solid ${vars.surface}`,
     padding: "1.5rem",
     paddingRight: "2rem",
     boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
@@ -539,13 +539,13 @@ export const toastRoot = recipe({
   variants: {
     variant: {
       default: {
-        backgroundColor: vars.background,
-        color: vars.foreground,
+        backgroundColor: vars.bg,
+        color: vars.text,
       },
       destructive: {
-        borderColor: vars.destructive,
-        backgroundColor: vars.destructive,
-        color: vars.destructiveForeground,
+        borderColor: vars.danger,
+        backgroundColor: vars.danger,
+        color: vars.dangerForeground,
       },
     },
   },
@@ -559,14 +559,14 @@ export const toastAction = style({
   alignItems: "center",
   justifyContent: "center",
   borderRadius: "0.375rem",
-  border: `1px solid ${vars.border}`,
+  border: `1px solid ${vars.surface}`,
   backgroundColor: "transparent",
   padding: "0 0.75rem",
   fontSize: "0.875rem",
   fontWeight: 500,
   cursor: "pointer",
   transition: "colors 0.15s ease",
-  ":hover": { backgroundColor: vars.secondary },
+  ":hover": { backgroundColor: vars.surface },
   selectors: {
     "&:focus": {
       outline: "none",
@@ -582,13 +582,13 @@ export const toastClose = style({
   top: "0.5rem",
   borderRadius: "0.375rem",
   padding: "0.25rem",
-  color: mix(vars.foreground, 50),
+  color: mix(vars.text, 50),
   opacity: 0,
   transition: "opacity 0.15s ease",
   background: "transparent",
   border: "none",
   cursor: "pointer",
-  ":hover": { color: vars.foreground },
+  ":hover": { color: vars.text },
   selectors: {
     "&:focus": { opacity: 1, outline: "none", boxShadow: `0 0 0 2px ${vars.ring}` },
   },

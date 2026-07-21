@@ -51,7 +51,7 @@ export const pageTitle = style({
 });
 
 export const pageSubtitle = style({
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   fontFamily: vars.fontComic,
   fontWeight: 600,
 });
@@ -93,18 +93,18 @@ export const avatar = style({
   height: "5rem",
   borderRadius: "9999px",
   objectFit: "cover",
-  border: `2px solid ${vars.border}`,
+  border: `2px solid ${vars.surface}`,
 });
 
 export const avatarFallback = style({
   width: "5rem",
   height: "5rem",
   borderRadius: "9999px",
-  backgroundColor: vars.muted,
+  backgroundColor: vars.surface,
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  border: `2px solid ${vars.border}`,
+  border: `2px solid ${vars.surface}`,
 });
 
 export const avatarFallbackEmoji = style({ fontSize: "1.5rem" });
@@ -113,8 +113,8 @@ export const avatarCheck = style({
   position: "absolute",
   bottom: "-0.25rem",
   right: "-0.25rem",
-  backgroundColor: vars.primary,
-  color: vars.primaryForeground,
+  backgroundColor: vars.accent,
+  color: vars.bg,
   borderRadius: "9999px",
   width: "1.5rem",
   height: "1.5rem",
@@ -138,7 +138,7 @@ export const buttonRow = style({
 
 export const fileNote = style({
   fontSize: "0.75rem",
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   fontFamily: vars.fontComic,
   fontWeight: 600,
 });
@@ -147,7 +147,7 @@ export const hiddenInput = style({ display: "none" });
 
 export const helpText = style({
   fontSize: "0.875rem",
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   fontFamily: vars.fontComic,
   fontWeight: 600,
 });

@@ -5,19 +5,19 @@
  */
 
 import { style } from "@vanilla-extract/css";
-import { palette, vars } from "@/styles/theme.css";
+import { vars } from "@/styles/theme.css";
 
 const tint = (color: string, pct: number) =>
-  `color-mix(in srgb, ${color} ${pct}%, ${vars.background})`;
+  `color-mix(in srgb, ${color} ${pct}%, ${vars.bg})`;
 
 export const card = style({
   maxWidth: "42rem",
   margin: "2.5rem auto 0",
   padding: "1.5rem",
-  border: `1px solid ${vars.border}`,
+  border: `1px solid ${vars.surface}`,
   borderRadius: "0.5rem",
   boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
-  backgroundColor: vars.card,
+  backgroundColor: vars.bg,
 });
 
 export const header = style({
@@ -33,7 +33,7 @@ export const title = style({
 });
 
 export const subtitle = style({
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   fontFamily: vars.fontComic,
   fontWeight: 600,
 });
@@ -47,40 +47,40 @@ const noticeBase = {
 
 export const infoBox = style({
   ...noticeBase,
-  backgroundColor: tint(palette.yellow, 15),
-  border: `1px solid ${tint(palette.yellow, 40)}`,
+  backgroundColor: tint(vars.warning, 15),
+  border: `1px solid ${tint(vars.warning, 40)}`,
 });
 
 export const infoTitle = style({
   fontWeight: 600,
-  color: palette.yellow,
+  color: vars.warning,
   fontFamily: vars.fontComic,
   marginBottom: "0.25rem",
 });
 
 export const infoText = style({
   fontSize: "0.875rem",
-  color: palette.yellow,
+  color: vars.warning,
   fontFamily: vars.fontComic,
   fontWeight: 600,
 });
 
 export const futureBox = style({
   ...noticeBase,
-  backgroundColor: tint(palette.mauve, 15),
-  border: `1px solid ${tint(palette.mauve, 40)}`,
+  backgroundColor: tint(vars.accent, 15),
+  border: `1px solid ${tint(vars.accent, 40)}`,
 });
 
 export const futureTitle = style({
   fontWeight: 600,
-  color: palette.mauve,
+  color: vars.accent,
   fontFamily: vars.fontComic,
   marginBottom: "0.25rem",
 });
 
 export const futureText = style({
   fontSize: "0.875rem",
-  color: palette.mauve,
+  color: vars.accent,
   fontFamily: vars.fontComic,
   fontWeight: 600,
 });
@@ -116,21 +116,21 @@ export const contactCard = style({
 });
 
 export const contactDiscord = style({
-  backgroundColor: tint(palette.lavender, 15),
-  borderColor: tint(palette.lavender, 40),
-  color: palette.lavender,
+  backgroundColor: tint(vars.lavender, 15),
+  borderColor: tint(vars.lavender, 40),
+  color: vars.lavender,
 });
 
 export const contactEmail = style({
-  backgroundColor: tint(palette.blue, 15),
-  borderColor: tint(palette.blue, 40),
-  color: palette.blue,
+  backgroundColor: tint(vars.info, 15),
+  borderColor: tint(vars.info, 40),
+  color: vars.info,
 });
 
 export const contactTwitter = style({
-  backgroundColor: tint(palette.sky, 15),
-  borderColor: tint(palette.sky, 40),
-  color: palette.sky,
+  backgroundColor: tint(vars.sky, 15),
+  borderColor: tint(vars.sky, 40),
+  color: vars.sky,
 });
 
 export const contactRow = style({
@@ -157,8 +157,8 @@ export const contactName = style({
 
 export const preferredBadge = style({
   fontSize: "0.75rem",
-  backgroundColor: palette.green,
-  color: vars.background,
+  backgroundColor: vars.success,
+  color: vars.bg,
   padding: "0.125rem 0.5rem",
   borderRadius: "9999px",
   fontFamily: vars.fontComic,
@@ -174,8 +174,8 @@ export const contactValue = style({
 /* What to include */
 export const includeBox = style({
   ...noticeBase,
-  backgroundColor: vars.muted,
-  border: `1px solid ${vars.border}`,
+  backgroundColor: vars.surface,
+  border: `1px solid ${vars.surface}`,
 });
 
 export const includeTitle = style({
@@ -202,7 +202,7 @@ export const includeItem = style({
 });
 
 export const includeCheck = style({
-  color: palette.green,
+  color: vars.success,
   fontWeight: 700,
 });
 
@@ -211,27 +211,27 @@ export const backWrap = style({ textAlign: "center" });
 
 export const backButton = style({
   display: "inline-block",
-  backgroundColor: palette.blue,
-  color: vars.background,
+  backgroundColor: vars.info,
+  color: vars.bg,
   padding: "0.5rem 1.5rem",
   borderRadius: "0.25rem",
   transition: "background-color 0.15s ease",
   fontFamily: vars.fontComic,
   fontWeight: 600,
   textDecoration: "none",
-  ":hover": { backgroundColor: palette.saphire },
+  ":hover": { backgroundColor: vars.sapphire },
 });
 
 export const helpBlock = style({
   marginTop: "1.5rem",
   paddingTop: "1.5rem",
-  borderTop: `1px solid ${vars.border}`,
+  borderTop: `1px solid ${vars.surface}`,
 });
 
 export const helpText = style({
   textAlign: "center",
   fontSize: "0.875rem",
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   fontFamily: vars.fontComic,
   fontWeight: 600,
 });

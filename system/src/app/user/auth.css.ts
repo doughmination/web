@@ -7,7 +7,7 @@
  */
 
 import { keyframes, style } from "@vanilla-extract/css";
-import { palette, vars } from "@/styles/theme.css";
+import { vars } from "@/styles/theme.css";
 
 const bounce = keyframes({
   "0%, 100%": {
@@ -29,10 +29,10 @@ export const card = style({
   maxWidth: "28rem",
   margin: "2.5rem auto 0",
   padding: "1.5rem",
-  border: `1px solid ${vars.border}`,
+  border: `1px solid ${vars.surface}`,
   borderRadius: "0.5rem",
   boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
-  backgroundColor: vars.card,
+  backgroundColor: vars.bg,
 });
 
 export const heading = style({
@@ -44,16 +44,16 @@ export const heading = style({
 });
 
 export const errorBox = style({
-  backgroundColor: `color-mix(in srgb, ${vars.destructive} 15%, ${vars.background})`,
-  color: vars.destructive,
+  backgroundColor: `color-mix(in srgb, ${vars.danger} 15%, ${vars.bg})`,
+  color: vars.danger,
   padding: "0.75rem",
   borderRadius: "0.375rem",
   marginBottom: "1rem",
 });
 
 export const successBox = style({
-  backgroundColor: `color-mix(in srgb, ${palette.green} 15%, ${vars.background})`,
-  color: palette.green,
+  backgroundColor: `color-mix(in srgb, ${vars.success} 15%, ${vars.bg})`,
+  color: vars.success,
   padding: "0.75rem",
   borderRadius: "0.375rem",
   marginBottom: "1rem",
@@ -75,11 +75,11 @@ export const fieldLabel = style({
 
 export const textInput = style({
   width: "100%",
-  border: `1px solid ${vars.input}`,
+  border: `1px solid ${vars.surface}`,
   padding: "0.5rem",
   borderRadius: "0.25rem",
-  backgroundColor: vars.background,
-  color: vars.foreground,
+  backgroundColor: vars.bg,
+  color: vars.text,
   fontFamily: vars.fontComic,
 });
 
@@ -89,11 +89,11 @@ export const linkRight = style({
 
 export const blueLink = style({
   fontSize: "0.875rem",
-  color: palette.blue,
+  color: vars.info,
   fontFamily: vars.fontComic,
   textDecoration: "none",
   ":hover": {
-    color: palette.saphire,
+    color: vars.sapphire,
     textDecoration: "underline",
   },
 });
@@ -111,23 +111,23 @@ export const turnstileCenter = style({
 
 export const mutedNote = style({
   fontSize: "0.875rem",
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   textAlign: "center",
   fontFamily: vars.fontComic,
 });
 
 export const submitBtn = style({
-  backgroundColor: palette.blue,
-  color: vars.background,
+  backgroundColor: vars.info,
+  color: vars.bg,
   padding: "0.5rem",
   borderRadius: "0.25rem",
   border: "none",
   cursor: "pointer",
   transition: "background-color 0.15s ease",
   fontFamily: vars.fontComic,
-  ":hover": { backgroundColor: palette.saphire },
+  ":hover": { backgroundColor: vars.sapphire },
   ":disabled": {
-    backgroundColor: `color-mix(in srgb, ${palette.blue} 50%, ${vars.background})`,
+    backgroundColor: `color-mix(in srgb, ${vars.info} 50%, ${vars.bg})`,
     cursor: "not-allowed",
   },
 });
@@ -143,7 +143,7 @@ export const loadingNote = style({
   marginTop: "1rem",
   textAlign: "center",
   fontSize: "0.875rem",
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   fontFamily: vars.fontComic,
 });
 
@@ -164,7 +164,7 @@ export const welcomeTitle = style({
   fontSize: "1.875rem",
   fontWeight: 700,
   fontFamily: vars.fontComic,
-  color: vars.primary,
+  color: vars.accent,
 });
 
 export const welcomeName = style({
@@ -183,5 +183,5 @@ export const spinner = style({
   borderRadius: "9999px",
   height: "2rem",
   width: "2rem",
-  borderBottom: `2px solid ${vars.primary}`,
+  borderBottom: `2px solid ${vars.accent}`,
 });

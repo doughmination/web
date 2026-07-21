@@ -51,7 +51,7 @@ export const pageTitle = style({
 });
 
 export const pageSubtitle = style({
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   fontFamily: vars.fontComic,
   fontWeight: 600,
 });
@@ -77,13 +77,13 @@ export const dashGrid = style({
 export const dashCard = style({
   padding: "1.5rem",
   borderRadius: "0.5rem",
-  border: `2px solid ${vars.border}`,
+  border: `2px solid ${vars.surface}`,
   transition: "all 0.15s ease",
   cursor: "pointer",
   textAlign: "center",
   height: "100%",
   ":hover": {
-    borderColor: vars.primary,
+    borderColor: vars.accent,
     backgroundColor: vars.accent,
   },
 });
@@ -105,7 +105,7 @@ export const dashLabel = style({
 
 export const dashDesc = style({
   fontSize: "0.75rem",
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   fontFamily: vars.fontComic,
   fontWeight: 600,
   marginTop: "0.25rem",
@@ -159,13 +159,13 @@ export const userRow = style({
   alignItems: "center",
   gap: "0.75rem",
   padding: "1rem",
-  backgroundColor: vars.muted,
+  backgroundColor: vars.surface,
   borderRadius: "0.5rem",
-  border: `1px solid ${vars.border}`,
+  border: `1px solid ${vars.surface}`,
 });
 
 export const userRowCurrent = style({
-  borderColor: vars.primary,
+  borderColor: vars.accent,
 });
 
 export const userAvatar = style({
@@ -195,7 +195,7 @@ export const userName = style({
 
 export const userHandle = style({
   fontSize: "0.875rem",
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   fontFamily: vars.fontComic,
   fontWeight: 600,
 });
@@ -208,9 +208,9 @@ export const smallBadge = style({
 /* Per-user edit panel */
 export const editPanel = style({
   padding: "1rem",
-  backgroundColor: vars.background,
+  backgroundColor: vars.bg,
   borderRadius: "0.5rem",
-  border: `1px solid ${vars.border}`,
+  border: `1px solid ${vars.surface}`,
   display: "flex",
   flexDirection: "column",
   gap: "1rem",
@@ -225,13 +225,13 @@ export const statsGrid = style({
 
 export const statBox = style({
   padding: "1rem",
-  backgroundColor: vars.muted,
+  backgroundColor: vars.surface,
   borderRadius: "0.5rem",
 });
 
 export const statLabel = style({
   fontSize: "0.875rem",
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   fontFamily: vars.fontComic,
   fontWeight: 600,
 });
@@ -244,7 +244,7 @@ export const statValue = style({
 
 export const emptyNote = style({
   fontSize: "0.875rem",
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   fontFamily: vars.fontComic,
   fontWeight: 600,
   textAlign: "center",
@@ -257,16 +257,16 @@ export const memberRow = style({
   alignItems: "center",
   gap: "0.75rem",
   padding: "0.75rem",
-  backgroundColor: vars.muted,
+  backgroundColor: vars.surface,
   borderRadius: "0.5rem",
-  border: `1px solid ${vars.border}`,
+  border: `1px solid ${vars.surface}`,
   transition: "border-color 0.15s ease",
   cursor: "pointer",
-  ":hover": { borderColor: vars.primary },
+  ":hover": { borderColor: vars.accent },
 });
 
 export const memberRowSelected = style({
-  borderColor: vars.primary,
+  borderColor: vars.accent,
   backgroundColor: vars.accent,
 });
 
@@ -299,7 +299,7 @@ export const inlineRowTight = style({
 
 export const smallMuted = style({
   fontSize: "0.75rem",
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   fontFamily: vars.fontComic,
   fontWeight: 600,
 });
@@ -354,9 +354,9 @@ export const emojiPickerRow = style({
 export const statusBox = style({
   marginTop: "1rem",
   padding: "0.75rem",
-  backgroundColor: vars.muted,
+  backgroundColor: vars.surface,
   borderRadius: "0.5rem",
-  border: `1px solid ${vars.border}`,
+  border: `1px solid ${vars.surface}`,
 });
 
 export const statusBoxText = style({
@@ -381,8 +381,8 @@ export const chip = style({
   fontSize: "0.75rem",
   padding: "0.25rem 0.625rem",
   borderRadius: "9999px",
-  backgroundColor: vars.secondary,
-  color: vars.secondaryForeground,
+  backgroundColor: vars.surface,
+  color: vars.text,
   fontFamily: vars.fontComic,
   fontWeight: 600,
 });
@@ -395,13 +395,13 @@ export const chipRemove = style({
   fontWeight: 700,
   padding: 0,
   lineHeight: 1,
-  ":hover": { color: vars.destructive },
+  ":hover": { color: vars.danger },
 });
 
 /* Force refresh banner */
 export const dangerBanner = style({
-  backgroundColor: `color-mix(in srgb, ${vars.destructive} 10%, transparent)`,
-  border: `2px solid ${vars.destructive}`,
+  backgroundColor: `color-mix(in srgb, ${vars.danger} 10%, transparent)`,
+  border: `2px solid ${vars.danger}`,
   borderRadius: "0.5rem",
   padding: "1rem",
 });
@@ -416,7 +416,7 @@ export const dangerBannerRow = style({
 export const dangerBannerTitle = style({
   fontFamily: vars.fontComic,
   fontWeight: 600,
-  color: vars.destructive,
+  color: vars.danger,
   marginBottom: "0.25rem",
 });
 
@@ -424,14 +424,14 @@ export const dangerBannerText = style({
   fontSize: "0.875rem",
   fontFamily: vars.fontComic,
   fontWeight: 600,
-  color: vars.mutedForeground,
+  color: vars.textMuted,
 });
 
 export const noWrap = style({ whiteSpace: "nowrap" });
 
 export const helpText = style({
   fontSize: "0.875rem",
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   fontFamily: vars.fontComic,
   fontWeight: 600,
 });

@@ -8,7 +8,7 @@
  */
 
 import { globalFontFace, globalStyle } from "@vanilla-extract/css";
-import { palette, vars } from "./theme.css";
+import { vars } from "./theme.css";
 
 /* ============================================================================
    FONTS — Comic Code
@@ -43,7 +43,7 @@ globalStyle("*", {
   margin: 0,
   padding: 0,
   boxSizing: "border-box",
-  borderColor: vars.border,
+  borderColor: vars.surface,
 });
 
 globalStyle("html, body", {
@@ -57,8 +57,8 @@ globalStyle("html", {
 
 globalStyle("body", {
   fontFamily: `'${comic}', sans-serif`,
-  background: vars.background,
-  color: vars.foreground,
+  background: vars.bg,
+  color: vars.text,
   minHeight: "100vh",
   transition: "background-color 0.3s ease, color 0.3s ease",
 });
@@ -77,7 +77,7 @@ globalStyle("h3", { fontSize: "1.75rem", fontWeight: 600 });
 globalStyle(
   "button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible",
   {
-    outline: `2px solid ${vars.ring}`,
+    outline: `2px solid ${vars.accent}`,
     outlineOffset: "2px",
   },
 );
@@ -95,22 +95,22 @@ globalStyle("html[data-flavor] ::-webkit-scrollbar", {
   height: "12px",
 });
 globalStyle("html[data-flavor] ::-webkit-scrollbar-track", {
-  background: palette.mantle,
+  background: vars.bgRaised,
   borderRadius: "6px",
 });
 globalStyle("html[data-flavor] ::-webkit-scrollbar-thumb", {
-  background: palette.mauve,
+  background: vars.accent,
   borderRadius: "6px",
-  border: `2px solid ${palette.mantle}`,
+  border: `2px solid ${vars.bgRaised}`,
   transition: "background-color 0.2s ease",
 });
 globalStyle("html[data-flavor] ::-webkit-scrollbar-thumb:hover", {
-  background: palette.pink,
+  background: vars.accentAlt,
 });
 globalStyle("html[data-flavor] ::-webkit-scrollbar-thumb:active", {
-  background: palette.lavender,
+  background: vars.lavender,
 });
 globalStyle("html[data-flavor]", {
   scrollbarWidth: "thin",
-  scrollbarColor: `${palette.mauve} ${palette.mantle}`,
+  scrollbarColor: `${vars.accent} ${vars.bgRaised}`,
 });

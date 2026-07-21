@@ -41,7 +41,7 @@ export const pageTitle = style({
 });
 
 export const pageSubtitle = style({
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   fontFamily: vars.fontComic,
   fontWeight: 600,
 });
@@ -95,15 +95,15 @@ export const overviewValue = style({
 
 export const overviewNote = style({
   fontSize: "0.875rem",
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   fontFamily: vars.fontComic,
   fontWeight: 600,
   marginTop: "0.25rem",
 });
 
 export const tooltipBox = style({
-  backgroundColor: vars.card,
-  border: `1px solid ${vars.border}`,
+  backgroundColor: vars.bg,
+  border: `1px solid ${vars.surface}`,
   borderRadius: "0.5rem",
   padding: "0.75rem",
   boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
@@ -118,7 +118,7 @@ export const tooltipValue = style({
   fontFamily: vars.fontComic,
   fontWeight: 600,
   fontSize: "0.875rem",
-  color: vars.mutedForeground,
+  color: vars.textMuted,
 });
 
 export const frontersList = style({
@@ -132,7 +132,7 @@ export const fronterRow = style({
   alignItems: "center",
   gap: "0.75rem",
   padding: "0.75rem",
-  backgroundColor: vars.muted,
+  backgroundColor: vars.surface,
   borderRadius: "0.5rem",
 });
 
@@ -143,8 +143,8 @@ export const fronterRank = style({
   width: "2rem",
   height: "2rem",
   borderRadius: "9999px",
-  backgroundColor: vars.primary,
-  color: vars.primaryForeground,
+  backgroundColor: vars.accent,
+  color: vars.bg,
   fontWeight: 700,
   fontFamily: vars.fontComic,
   fontSize: "0.875rem",
@@ -169,7 +169,7 @@ export const fronterName = style({
 
 export const fronterDuration = style({
   fontSize: "0.875rem",
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   fontFamily: vars.fontComic,
   fontWeight: 600,
 });
@@ -184,14 +184,14 @@ export const progressWrap = style({
 
 export const progressTrack = style({
   height: "0.5rem",
-  backgroundColor: vars.background,
+  backgroundColor: vars.bg,
   borderRadius: "9999px",
   overflow: "hidden",
 });
 
 export const progressBar = style({
   height: "100%",
-  backgroundColor: vars.primary,
+  backgroundColor: vars.accent,
   transition: "all 0.15s ease",
 });
 
@@ -201,7 +201,7 @@ export const noDataContent = style({
 
 export const noDataText = style({
   textAlign: "center",
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   fontFamily: vars.fontComic,
   fontWeight: 600,
 });

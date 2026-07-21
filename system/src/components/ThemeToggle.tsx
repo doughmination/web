@@ -11,13 +11,14 @@ import { Button } from "@/components/ui/button";
 import useTheme from "@/lib/useTheme";
 import * as s from "./components.css";
 
-const THEME_ORDER = ["mocha", "macchiato", "frappe", "latte"] as const;
+const THEME_ORDER = ["cherry", "toxic", "lemon", "estrogen", "cyberpunk"] as const;
 
 const THEME_META = {
-  latte: { icon: "🌻", label: "Latte" },
-  frappe: { icon: "🪴", label: "Frappe" },
-  macchiato: { icon: "🌺", label: "Macchiato" },
-  mocha: { icon: "🌿", label: "Mocha" },
+  cyberpunk: { icon: "🥷🏻", label: "Cyberpunk" },
+  estrogen: { icon: "💊", label: "Estrogen" },
+  lemon: { icon: "🍋", label: "Lemon" },
+  toxic: { icon: "☢️", label: "Toxic" },
+  cherry: { icon: "🍒", label: "Cherry" },
 };
 
 const ThemeToggle: React.FC = () => {

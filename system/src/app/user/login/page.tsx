@@ -7,6 +7,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, Suspense } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { unwrap } from "@/lib/api";
 import { TURNSTILE_SITE_KEY, loadTurnstileScript } from "@/lib/turnstile";
@@ -215,7 +216,7 @@ const Login: React.FC = () => {
 
   return (
     <div className={s.card}>
-      <h2 className={s.heading}>Admin Login</h2>
+      <h2 className={s.heading}>User Login</h2>
 
       {error && <div className={s.errorBox}>{error}</div>}
 
@@ -254,9 +255,9 @@ const Login: React.FC = () => {
 
         {/* Forgot Password Link */}
         <div className={s.linkRight}>
-          <a href="/user/forgot-password" className={s.blueLink}>
+          <Link href="/user/forgot-password" className={s.blueLink}>
             Forgot password?
-          </a>
+          </Link>
         </div>
 
         {/* Turnstile Widget */}
@@ -276,9 +277,9 @@ const Login: React.FC = () => {
       {/* Sign Up Link */}
       <div className={s.bottomNote}>
         Don&apos;t have an account?{" "}
-        <a href="/user/signup" className={s.blueLink}>
+        <Link href="/user/signup" className={s.blueLink}>
           Sign up here
-        </a>
+        </Link>
       </div>
 
       {loading && <div className={s.loadingNote}>Please wait while we log you in...</div>}

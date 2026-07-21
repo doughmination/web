@@ -24,7 +24,7 @@ export const statusCompactEmoji = style({
 
 export const statusCompactText = style({
   fontSize: "0.75rem",
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   fontFamily: vars.fontComic,
   fontWeight: 600,
   overflow: "hidden",
@@ -39,8 +39,8 @@ export const statusFull = style({
   gap: "0.5rem",
   padding: "0.75rem",
   borderRadius: "0.5rem",
-  backgroundColor: `color-mix(in srgb, ${vars.muted} 50%, transparent)`,
-  border: `1px solid ${vars.border}`,
+  backgroundColor: `color-mix(in srgb, ${vars.surface} 50%, transparent)`,
+  border: `1px solid ${vars.surface}`,
 });
 
 export const statusFullEmoji = style({
@@ -62,7 +62,7 @@ export const statusFullText = style({
 
 export const statusFullUpdated = style({
   fontSize: "0.75rem",
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   fontFamily: vars.fontComic,
   fontWeight: 600,
   marginTop: "0.25rem",
@@ -122,13 +122,13 @@ export const guardTitle = style({
 });
 
 export const guardText = style({
-  color: vars.mutedForeground,
+  color: vars.textMuted,
   fontFamily: vars.fontComic,
   fontWeight: 600,
 });
 
 export const guardBack = style({
-  color: vars.primary,
+  color: vars.accent,
   fontFamily: vars.fontComic,
   fontWeight: 600,
   background: "none",

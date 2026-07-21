@@ -16,6 +16,7 @@ import { unwrap } from "@/lib/api";
 import * as site from "@/styles/site.css";
 import * as s from "@/app/home.css";
 import { Github } from "react-bootstrap-icons";
+import { useWebSocket } from "@/lib/websocket";
 
 // Define interfaces for type safety
 interface Member {
@@ -78,173 +79,33 @@ export default function HomePage() {
   const [currentTagFilter, setCurrentTagFilter] = useState<string | null>(null);
   const [filteredMembers, setFilteredMembers] = useState<Member[]>([]);
   const [availableTags, setAvailableTags] = useState<string[]>([]);
-  const [wsConnected, setWsConnected] = useState(false);
+  const { connected: wsConnected, subscribe } = useWebSocket();
 
   // WebSocket connection with improved reconnection logic
   useEffect(() => {
-    let ws: WebSocket | null = null;
-    let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
-    let heartbeatInterval: ReturnType<typeof setInterval> | null = null;
-    let reconnectAttempts = 0;
-    const maxReconnectAttempts = 10;
+  const unsubscribers = [
+    subscribe("fronting_update", (data) => setFronting(data)),
+    subscribe("mental_state_update", (data) =>
+      setSystemInfo((prev) => (prev ? { ...prev, mental_state: data } : null)),
+    ),
+    subscribe("members_update", (data) => {
+      if (!data?.members) return;
+      const sortedMembers = [...data.members].sort((a: Member, b: Member) => {
+        const nameA = (a.display_name || a.name).toLowerCase();
+        const nameB = (b.display_name || b.name).toLowerCase();
+        return nameA.localeCompare(nameB);
+      });
+      setMembers(sortedMembers);
 
-    const connectWebSocket = () => {
-      try {
-        // Clear any existing connection
-        if (ws) {
-          ws.close();
-          ws = null;
-        }
+      const tags = new Set<string>();
+      sortedMembers.forEach((m: Member) => m.tags?.forEach((t) => tags.add(t)));
+      setAvailableTags(Array.from(tags).sort((a, b) => a.localeCompare(b)));
+    }),
+    subscribe("force_refresh", () => window.location.reload()),
+  ];
 
-        const wsUrl = `wss://doughmination.uk/v2/ws`;
-
-        console.log("🔌 Connecting to WebSocket:", wsUrl);
-        ws = new WebSocket(wsUrl);
-
-        ws.onopen = () => {
-          console.log("✅ WebSocket connected");
-          setWsConnected(true);
-          reconnectAttempts = 0;
-
-          // Send initial subscription message
-          ws!.send("subscribe");
-
-          // Clear any existing heartbeat
-          if (heartbeatInterval) {
-            clearInterval(heartbeatInterval);
-          }
-
-          // Send heartbeat every 25 seconds (before typical 30s timeout)
-          heartbeatInterval = setInterval(() => {
-            if (ws?.readyState === WebSocket.OPEN) {
-              console.log("💓 Sending heartbeat ping");
-              ws.send("ping");
-            }
-          }, 25000);
-        };
-
-        ws.onmessage = (event) => {
-          try {
-            const message = JSON.parse(event.data);
-            console.log("📩 WebSocket message received:", message.type);
-
-            switch (message.type) {
-              case "connection_established":
-                console.log("✅ Connection established:", message.message);
-                break;
-
-              case "subscribed":
-                console.log("✅ Subscribed to updates");
-                break;
-
-              case "keepalive":
-                console.log("💓 Keepalive received");
-                break;
-
-              case "fronting_update":
-                console.log("👥 Fronting update received");
-                setFronting(message.data);
-                break;
-
-              case "mental_state_update":
-                console.log("🧠 Mental state update received");
-                setSystemInfo((prev) => (prev ? { ...prev, mental_state: message.data } : null));
-                break;
-
-              case "members_update":
-                console.log("📋 Members update received");
-                if (message.data?.members) {
-                  const sortedMembers = [...message.data.members].sort((a: Member, b: Member) => {
-                    const nameA = (a.display_name || a.name).toLowerCase();
-                    const nameB = (b.display_name || b.name).toLowerCase();
-                    return nameA.localeCompare(nameB);
-                  });
-                  setMembers(sortedMembers);
-
-                  // Update tags
-                  const tags = new Set<string>();
-                  sortedMembers.forEach((member: Member) => {
-                    member.tags?.forEach((tag) => tags.add(tag));
-                  });
-                  setAvailableTags(Array.from(tags).sort((a, b) => a.localeCompare(b)));
-                }
-                break;
-
-              case "force_refresh":
-                console.log("🔄 Force refresh received from admin");
-                window.location.reload();
-                break;
-
-              default:
-                console.log("❓ Unknown message type:", message.type);
-            }
-          } catch (err) {
-            // Handle non-JSON messages (like "pong")
-            if (event.data === "pong") {
-              console.log("💓 Received pong");
-            } else {
-              console.error("❌ Error parsing WebSocket message:", err);
-            }
-          }
-        };
-
-        ws.onerror = (error) => {
-          console.error("❌ WebSocket error:", error);
-          setWsConnected(false);
-        };
-
-        ws.onclose = (event) => {
-          console.log(
-            "🔌 WebSocket disconnected. Code:",
-            event.code,
-            "Reason:",
-            event.reason || "No reason provided",
-          );
-          setWsConnected(false);
-
-          // Clear heartbeat
-          if (heartbeatInterval) {
-            clearInterval(heartbeatInterval);
-            heartbeatInterval = null;
-          }
-
-          // Attempt to reconnect with exponential backoff
-          if (reconnectAttempts < maxReconnectAttempts) {
-            const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000);
-            console.log(
-              `🔄 Reconnecting in ${delay}ms (attempt ${reconnectAttempts + 1}/${maxReconnectAttempts})`,
-            );
-
-            reconnectTimeout = setTimeout(() => {
-              reconnectAttempts++;
-              connectWebSocket();
-            }, delay);
-          } else {
-            console.error("❌ Max reconnection attempts reached. Please refresh the page.");
-          }
-        };
-      } catch (err) {
-        console.error("❌ Error creating WebSocket:", err);
-        setWsConnected(false);
-      }
-    };
-
-    connectWebSocket();
-
-    // Cleanup on unmount
-    return () => {
-      console.log("🧹 Cleaning up WebSocket connection");
-      if (heartbeatInterval) {
-        clearInterval(heartbeatInterval);
-      }
-      if (reconnectTimeout) {
-        clearTimeout(reconnectTimeout);
-      }
-      if (ws) {
-        ws.close();
-      }
-    };
-  }, []);
+  return () => unsubscribers.forEach((unsub) => unsub());
+}, [subscribe]);
 
   // Initialize app data
   useEffect(() => {
