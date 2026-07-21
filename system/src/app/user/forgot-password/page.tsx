@@ -23,7 +23,7 @@ const ForgotPassword: React.FC = () => {
     {
       icon: "📧",
       name: "Email",
-      value: "forgot-password@doughmination",
+      value: "forgot-password@doughmination.win",
       label: "Email Address",
       className: s.contactEmail,
     },
