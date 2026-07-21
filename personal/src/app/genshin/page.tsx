@@ -49,7 +49,7 @@ const TIER_LABEL: Record<NonNullable<Character["tier"]>, string> = {
 const CHARACTERS: Character[] = [
   { name: "Furina", model: "/models/furina.glb", tier: "want" },
   { name: "Hu Tao", model: "/models/hutao.glb", tier: "want" },
-  { name: "Sandrone", model: "/models/sandrone.glb", tier: "want" },
+  { name: "Sandrone", model: "/models/sandrone.glb", tier: "owned" },
   { name: "Lumine", model: "/models/lumine.glb", tier: "owned" },
   { name: "Aino", model: "/models/aino.glb", tier: "owned" },
   { name: "Yumemizuki Mizuki", model: "/models/yumemizuki.glb", tier: "owned" },
