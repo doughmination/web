@@ -112,8 +112,8 @@ export const button = recipe({
 export const card = style({
   borderRadius: "0.5rem",
   border: `1px solid ${vars.surface}`,
-  backgroundColor: vars.bg,
-  color: vars.bgForeground,
+  backgroundColor: vars.danger,
+  color: vars.bg,
   boxShadow: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
 });
 
@@ -318,10 +318,10 @@ export const tooltipContent = style({
   overflow: "hidden",
   borderRadius: "0.375rem",
   border: `1px solid ${vars.surface}`,
-  backgroundColor: vars.popover,
+  backgroundColor: vars.bgRaised,
   padding: "0.375rem 0.75rem",
   fontSize: "0.875rem",
-  color: vars.popoverForeground,
+  color: vars.text,
   boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
   animation: `${fadeZoomIn} 0.15s ease`,
   selectors: {
@@ -387,8 +387,8 @@ export const selectContent = style({
   overflow: "hidden",
   borderRadius: "0.375rem",
   border: `1px solid ${vars.surface}`,
-  backgroundColor: vars.popover,
-  color: vars.popoverForeground,
+  backgroundColor: vars.bgRaised,
+  color: vars.text,
   boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
   animation: `${fadeZoomIn} 0.15s ease`,
   selectors: {
