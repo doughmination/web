@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "doughminaiton-frontend-next",
+      "name": "frontend",
       "dependencies": {
         "@vanilla-extract/recipes": "^0.5.7",
         "clsx": "^2.1.1",
