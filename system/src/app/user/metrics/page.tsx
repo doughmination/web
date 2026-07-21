@@ -307,9 +307,13 @@ const Metrics: React.FC = () => {
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ name, percent }) =>
-                      `${name} ${((percent ?? 0) * 100).toFixed(0)}%`
-                    }
+                    label={({ name, percent }) => {
+                      const pct = (percent ?? 0) * 100;
+                      // Slivers below 3% all round to "0%" and pile up on top
+                      // of each other; leave them to the tooltip instead.
+                      if (pct < 3) return "";
+                      return `${name} ${pct.toFixed(0)}%`;
+                    }}
                     outerRadius={120}
                     fill="#8884d8"
                     dataKey="value"
@@ -340,8 +344,8 @@ const Metrics: React.FC = () => {
                   <YAxis />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: "var(--card)",
-                      border: "1px solid var(--border)",
+                      backgroundColor: "var(--bg-raised)",
+                      border: "1px solid var(--surface)",
                       borderRadius: "0.5rem",
                     }}
                   />

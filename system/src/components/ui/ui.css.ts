@@ -112,8 +112,8 @@ export const button = recipe({
 export const card = style({
   borderRadius: "0.5rem",
   border: `1px solid ${vars.surface}`,
-  backgroundColor: vars.danger,
-  color: vars.bg,
+  backgroundColor: vars.bgRaised,
+  color: vars.text,
   boxShadow: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
 });
 

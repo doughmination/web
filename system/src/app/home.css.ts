@@ -400,7 +400,16 @@ export const memberCardName = style({
   fontFamily: vars.fontComic,
   fontWeight: 600,
   fontSize: "0.875rem",
+  lineHeight: 1.25,
+  margin: 0,
   transition: "color 0.15s ease",
+  /* Names wrap to at most two lines; the reserved height keeps every card in
+     a row the same height whether or not the name wraps. */
+  minHeight: "2.5em",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  textAlign: "center",
 });
 
 export const memberPronouns = style({
@@ -458,7 +467,14 @@ export const searchRelative = style({ position: "relative" });
 /* Grid extras */
 export const gridItemRelative = style({ position: "relative" });
 
-export const cardCenter = style({ textAlign: "center" });
+export const cardCenter = style({
+  textAlign: "center",
+  width: "100%",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  gap: "0.125rem",
+});
 
 export const relativeInline = style({ position: "relative", display: "inline-block" });
 

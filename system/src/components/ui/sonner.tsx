@@ -27,9 +27,9 @@ const Toaster = ({ ...props }: ToasterProps) => {
       theme={flavor === "latte" ? "light" : "dark"}
       style={
         {
-          "--normal-bg": "var(--background)",
-          "--normal-text": "var(--foreground)",
-          "--normal-border": "var(--border)",
+          "--normal-bg": "var(--bg)",
+          "--normal-text": "var(--text)",
+          "--normal-border": "var(--surface)",
         } as React.CSSProperties
       }
       {...props}

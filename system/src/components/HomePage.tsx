@@ -11,7 +11,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import ThemeToggle from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, normalizeColor, readableOnDark } from "@/lib/utils";
 import { unwrap } from "@/lib/api";
 import * as site from "@/styles/site.css";
 import * as s from "@/app/home.css";
@@ -293,15 +293,6 @@ export default function HomePage() {
     [fronting],
   );
 
-  // Helper function to normalize color values from PluralKit
-  const normalizeColor = (color: string | null | undefined): string | null => {
-    if (!color) return null;
-    // If it's already got a #, return as-is
-    if (color.startsWith("#")) return color;
-    // Add # prefix to hex colors from PluralKit
-    return `#${color}`;
-  };
-
   // Mental state helper functions
   const getMentalStateLabel = (level: string) => {
     const labels: { [key: string]: string } = {
@@ -517,7 +508,12 @@ export default function HomePage() {
                 <div className={s.frontingRow}>
                   {fronting.members.map((member, index) => {
                     const memberColor = normalizeColor(member.color);
-                    const borderColor = memberColor || "var(--primary)";
+                    const borderColor = memberColor || "var(--accent)";
+                    const nameColor = readableOnDark(member.color, "var(--accent)");
+                    // Appending "40" only yields valid CSS for a hex literal.
+                    const glow = memberColor
+                      ? `${memberColor}40`
+                      : "color-mix(in srgb, var(--accent) 25%, transparent)";
 
                     return (
                       <div key={member.id || `${member.name}-${index}`} className={s.frontingItem}>
@@ -550,7 +546,7 @@ export default function HomePage() {
                               className={s.avatarImg}
                               style={{
                                 borderColor: borderColor,
-                                boxShadow: `0 0 12px ${borderColor}40`,
+                                boxShadow: `0 0 12px ${glow}`,
                               }}
                               loading="lazy"
                               onError={(e) => {
@@ -563,7 +559,7 @@ export default function HomePage() {
                           <Link
                             href={`/${member.name}`}
                             className={s.memberLink}
-                            style={{ color: memberColor || "var(--primary)" }}
+                            style={{ color: nameColor }}
                           >
                             {member.display_name || member.name || "Unknown"}
                           </Link>
@@ -656,7 +652,11 @@ export default function HomePage() {
                 {filteredMembers.map((member) => {
                   const isFronting = isMemberFronting(member.id, member.name);
                   const memberColor = normalizeColor(member.color);
-                  const borderColor = memberColor || "var(--primary)";
+                  const borderColor = memberColor || "var(--accent)";
+                  const nameColor = readableOnDark(member.color, "var(--text)");
+                  const glow = memberColor
+                    ? `${memberColor}40`
+                    : "color-mix(in srgb, var(--accent) 25%, transparent)";
 
                   return (
                     <div
@@ -702,7 +702,7 @@ export default function HomePage() {
                               className={s.avatarImgGrid}
                               style={{
                                 borderColor: borderColor,
-                                boxShadow: `0 0 12px ${borderColor}40`,
+                                boxShadow: `0 0 12px ${glow}`,
                               }}
                               onError={(e) => {
                                 (e.target as HTMLImageElement).src = FALLBACK_AVATAR;
@@ -711,7 +711,7 @@ export default function HomePage() {
                           </div>
                           <h3
                             className={s.memberCardName}
-                            style={{ color: memberColor || "var(--card-foreground)" }}
+                            style={{ color: nameColor }}
                           >
                             {member.display_name || member.name}
                           </h3>

@@ -78,13 +78,20 @@ export const dashCard = style({
   padding: "1.5rem",
   borderRadius: "0.5rem",
   border: `2px solid ${vars.surface}`,
+  backgroundColor: vars.bgRaised,
+  color: vars.text,
   transition: "all 0.15s ease",
   cursor: "pointer",
   textAlign: "center",
   height: "100%",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "flex-start",
+  gap: "0.25rem",
   ":hover": {
     borderColor: vars.accent,
-    backgroundColor: vars.accent,
+    backgroundColor: vars.surfaceHi,
   },
 });
 
@@ -101,6 +108,11 @@ export const dashIcon = style({
 export const dashLabel = style({
   fontFamily: vars.fontComic,
   fontWeight: 600,
+  /* Explicit size: without it this h3 inherits the global 1.75rem heading
+     rule and overflows the card. */
+  fontSize: "1.0625rem",
+  lineHeight: 1.3,
+  margin: 0,
 });
 
 export const dashDesc = style({
@@ -267,7 +279,7 @@ export const memberRow = style({
 
 export const memberRowSelected = style({
   borderColor: vars.accent,
-  backgroundColor: vars.accent,
+  backgroundColor: vars.surfaceHi,
 });
 
 export const memberAvatarSm = style({
@@ -340,7 +352,7 @@ export const emojiButton = style({
   background: "transparent",
   cursor: "pointer",
   transition: "background-color 0.15s ease",
-  ":hover": { backgroundColor: vars.accent },
+  ":hover": { backgroundColor: vars.surfaceHi },
 });
 
 export const emojiPickerRow = style({

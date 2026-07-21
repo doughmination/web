@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { unwrap } from "@/lib/api";
+import { normalizeColor, readableOnDark } from "@/lib/utils";
 import * as s from "./member.css";
 
 interface Member {
@@ -40,15 +41,6 @@ export default function MemberDetails() {
   const [member, setMember] = useState<Member | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
-  // Helper function to normalize color values from PluralKit
-  const normalizeColor = (color: string | null | undefined): string | null => {
-    if (!color) return null;
-    // If it's already got a #, return as-is
-    if (color.startsWith("#")) return color;
-    // Add # prefix to hex colors from PluralKit
-    return `#${color}`;
-  };
 
   useEffect(() => {
     const fetchMemberData = async () => {
@@ -124,7 +116,15 @@ export default function MemberDetails() {
   }
 
   const memberColor = normalizeColor(member.color);
-  const borderColor = memberColor || "var(--primary)";
+  const borderColor = memberColor || "var(--accent)";
+  const nameColor = readableOnDark(member.color, "var(--text)");
+  // Appending an alpha suffix only yields valid CSS for a hex literal.
+  const glow = memberColor
+    ? `${memberColor}40`
+    : "color-mix(in srgb, var(--accent) 25%, transparent)";
+  const pronounColor = memberColor
+    ? `${nameColor}cc`
+    : "var(--text-muted)";
 
   return (
     <div className={s.page}>
@@ -162,7 +162,7 @@ export default function MemberDetails() {
                 className={s.avatar}
                 style={{
                   borderColor: borderColor,
-                  boxShadow: `0 0 20px ${borderColor}40`,
+                  boxShadow: `0 0 20px ${glow}`,
                 }}
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = FALLBACK_AVATAR;
@@ -171,7 +171,7 @@ export default function MemberDetails() {
             </div>
             <CardTitle
               className={s.title}
-              style={{ color: memberColor || "var(--foreground)" }}
+              style={{ color: nameColor }}
             >
               {member.display_name || member.name}
             </CardTitle>
@@ -179,7 +179,7 @@ export default function MemberDetails() {
               <p
                 className={s.pronouns}
                 style={{
-                  color: memberColor ? `${memberColor}cc` : "var(--muted-foreground)",
+                  color: pronounColor,
                 }}
               >
                 {member.pronouns}
@@ -191,7 +191,7 @@ export default function MemberDetails() {
               <div>
                 <h3
                   className={s.sectionTitle}
-                  style={{ color: memberColor || "var(--foreground)" }}
+                  style={{ color: nameColor }}
                 >
                   About
                 </h3>
@@ -203,7 +203,7 @@ export default function MemberDetails() {
               <div>
                 <h3
                   className={s.sectionTitle}
-                  style={{ color: memberColor || "var(--foreground)" }}
+                  style={{ color: nameColor }}
                 >
                   Tags
                 </h3>

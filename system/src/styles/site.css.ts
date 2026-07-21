@@ -117,6 +117,8 @@ globalStyle(`${desktopNav} button:hover, ${desktopNav} a:hover`, {
 export const memberGrid = style({
   display: "grid",
   gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))",
+  gridAutoRows: "1fr",
+  alignItems: "stretch",
   gap: "1.5rem",
   padding: "1rem",
   width: "100%",
@@ -140,14 +142,20 @@ export const memberGrid = style({
   },
 });
 
-export const memberGridItem = style({});
+/* Grid items stretch to the tallest card in their row so the bottoms stay
+   flush regardless of name wrapping or missing pronouns. */
+export const memberGridItem = style({
+  display: "flex",
+  height: "100%",
+});
 
 globalStyle(`${memberGridItem} a`, {
   padding: "1rem",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  justifyContent: "center",
+  justifyContent: "flex-start",
+  gap: "0.25rem",
   height: "100%",
   width: "100%",
   borderRadius: "0.75rem",
@@ -155,16 +163,20 @@ globalStyle(`${memberGridItem} a`, {
   WebkitBackdropFilter: "blur(10px)",
   transition: "all 0.3s ease",
   textDecoration: "none !important" as unknown as "none",
-  backgroundColor: `color-mix(in srgb, ${vars.bg} 70%, transparent)`,
-  border: `1px solid color-mix(in srgb, ${vars.surface} 30%, transparent)`,
+  /* `surface` sits one step lighter than `bg` in every flavour, so the card
+     reads as a distinct panel instead of blending into the page. */
+  backgroundColor: vars.surface,
+  border: `1px solid ${vars.surfaceHi}`,
+  boxShadow: "0 1px 3px rgb(0 0 0 / 0.35)",
   color: vars.text,
 });
 
+/* Lift on hover, and go one shade lighter than the resting card. */
 globalStyle(`${memberGridItem} a:hover`, {
   transform: "translateY(-5px)",
   boxShadow: `0 10px 15px -3px color-mix(in srgb, ${vars.accent} 40%, transparent)`,
   borderColor: `color-mix(in srgb, ${vars.accent} 70%, transparent)`,
-  backgroundColor: `color-mix(in srgb, ${vars.bg} 90%, transparent)`,
+  backgroundColor: vars.surfaceHi,
 });
 
 /* Avatars */

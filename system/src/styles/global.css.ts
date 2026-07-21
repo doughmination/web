@@ -70,6 +70,15 @@ globalStyle(
   },
 );
 
+/* Anchors inherit their surrounding colour and are not underlined by default.
+   Without this, every next/link renders with the user-agent blue/purple
+   underline, which wrecks card and nav styling. Content links opt back in
+   via their own class. */
+globalStyle("a", {
+  color: "inherit",
+  textDecoration: "none",
+});
+
 globalStyle("h1", { fontSize: "2.5rem", fontWeight: 700 });
 globalStyle("h2", { fontSize: "2rem", fontWeight: 600 });
 globalStyle("h3", { fontSize: "1.75rem", fontWeight: 600 });
