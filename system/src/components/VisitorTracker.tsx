@@ -4,21 +4,23 @@
  * See LICENCE.md in the project root for full licence information.
  */
 
+"use client";
+
 import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { usePathname } from "next/navigation";
 
 /**
  * Pings POST /helper on every route change so the backend can log the visit.
- * Renders nothing. Mount inside <BrowserRouter> so useLocation works.
+ * Renders nothing. Mounted in the root layout.
  *
  * Fires for ALL paths, including the 404 catch-all (which is the point —
  * the backend wants to see attempts at non-existent URLs too).
  */
 const VisitorTracker = () => {
-  const location = useLocation();
+  const pathname = usePathname();
 
   useEffect(() => {
-    const path = `${location.pathname}${location.search}${location.hash}`;
+    const path = `${pathname}${window.location.search}${window.location.hash}`;
     const body = JSON.stringify({ path });
 
     // Prefer sendBeacon when leaving the page; otherwise plain fetch.
@@ -42,7 +44,7 @@ const VisitorTracker = () => {
     }).catch(() => {
       // Silently ignore — visitor logging must never break the UI.
     });
-  }, [location.pathname, location.search, location.hash]);
+  }, [pathname]);
 
   return null;
 };

@@ -4,8 +4,8 @@
  * See LICENCE.md in the project root for full licence information.
  */
 
-import React from 'react';
-import { Badge } from '@components/badge';
+import React from "react";
+import * as s from "./components.css";
 
 interface MemberStatus {
   text: string;
@@ -26,26 +26,20 @@ export default function MemberStatus({ status, compact = false }: MemberStatusPr
   if (compact) {
     // Compact version for member cards
     return (
-      <div className="mt-2 flex items-center justify-center gap-1">
-        {status.emoji && (
-          <span className="text-sm">{status.emoji}</span>
-        )}
-        <span className="text-xs text-muted-foreground font-comic truncate max-w-[100px]">
-          {status.text}
-        </span>
+      <div className={s.statusCompact}>
+        {status.emoji && <span className={s.statusCompactEmoji}>{status.emoji}</span>}
+        <span className={s.statusCompactText}>{status.text}</span>
       </div>
     );
   }
 
   // Full version for member details page
   return (
-    <div className="flex items-start gap-2 p-3 rounded-lg bg-muted/50 border border-border">
-      {status.emoji && (
-        <span className="text-2xl flex-shrink-0">{status.emoji}</span>
-      )}
-      <div className="flex-1 min-w-0">
-        <p className="font-comic text-sm break-words">{status.text}</p>
-        <p className="text-xs text-muted-foreground font-comic mt-1">
+    <div className={s.statusFull}>
+      {status.emoji && <span className={s.statusFullEmoji}>{status.emoji}</span>}
+      <div className={s.statusFullBody}>
+        <p className={s.statusFullText}>{status.text}</p>
+        <p className={s.statusFullUpdated}>
           Updated {new Date(status.updated_at).toLocaleString()}
         </p>
       </div>

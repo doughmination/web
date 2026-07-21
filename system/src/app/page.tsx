@@ -1,0 +1,11 @@
+/*
+ * Copyright (c) 2026 Clove Twilight
+ * Licensed under the ESAL-2.0 Licence.
+ * See LICENCE.md in the project root for full licence information.
+ */
+
+import HomePage from "@/components/HomePage";
+
+export default function Home() {
+  return <HomePage />;
+}

@@ -1,35 +1,52 @@
-/*
- * Copyright (c) 2026 Clove Twilight
- * Licensed under the ESAL-2.0 Licence.
- * See LICENCE.md in the project root for full licence information.
- */
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "useDefineForClassFields": true,
-    "lib": ["ES2023", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "jsx": "react-jsx",
+    "target": "ES2017",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowImportingTsExtensions": true,
-    "isolatedModules": true,
-    "moduleDetection": "force",
-    "noEmit": true,
-    "resolveJsonModule": true,
-    "paths": {
-      "@pages/*": ["./src/pages/*"],
-      "@components/*": ["./src/components/*"],
-      "@util/*": ["./src/util/*"]
-    },
-
     "strict": true,
-    "strictNullChecks": false,
-    "noImplicitAny": false,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    }
   },
-  "include": ["src", "vite.config.ts", "tailwind.config.ts"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts",
+    "**/*.mts",
+    ".next-sandbox/types/**/*.ts",
+    ".next-sandbox/dev/types/**/*.ts",
+    ".next-sandbox2/types/**/*.ts",
+    ".next-sandbox2/dev/types/**/*.ts",
+    ".next-sandbox3/types/**/*.ts",
+    ".next-sandbox3/dev/types/**/*.ts",
+    ".next-sandbox4/types/**/*.ts",
+    ".next-sandbox4/dev/types/**/*.ts",
+    ".next-sandbox5/types/**/*.ts",
+    ".next-sandbox5/dev/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

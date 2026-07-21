@@ -4,8 +4,12 @@
  * See LICENCE.md in the project root for full licence information.
  */
 
-import React, { useEffect, useState } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+"use client";
+
+import React, { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { API_BASE, authHeaders, unwrap } from "@/lib/api";
+import * as s from "./components.css";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -14,23 +18,24 @@ interface ProtectedRouteProps {
   petRequired?: boolean;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
-  children, 
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+  children,
   adminRequired = false,
   ownerRequired = false,
-  petRequired = false
+  petRequired = false,
 }) => {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isOwner, setIsOwner] = useState(false);
   const [isPet, setIsPet] = useState(false);
-  const location = useLocation();
+  const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     const checkAuth = async () => {
-      const token = localStorage.getItem('token');
-      
+      const token = localStorage.getItem("token");
+
       if (!token) {
         setIsAuthenticated(false);
         setLoading(false);
@@ -38,29 +43,31 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       }
 
       // Fast-path for mock dev token
-      if (token.startsWith('mock-')) {
+      if (token.startsWith("mock-")) {
         setIsAuthenticated(true);
-        setIsAdmin(token === 'mock-admin');
-        setIsOwner(token === 'mock-owner');
-        setIsPet(token === 'mock-pet');
+        setIsAdmin(token === "mock-admin");
+        setIsOwner(token === "mock-owner");
+        setIsPet(token === "mock-pet");
         setLoading(false);
         return;
       }
 
       try {
-        // Check user permissions from the API
-        const response = await fetch('https://doughmination.uk/v2/plural/auth/is_admin', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-        
-        if (response.ok) {
-          const data = await response.json();
+        // Check user permissions from the API (separate endpoints per role)
+        const [adminRes, ownerRes, petRes] = await Promise.all([
+          fetch(`${API_BASE}/auth/is_admin`, { headers: authHeaders(token) }),
+          fetch(`${API_BASE}/auth/is_owner`, { headers: authHeaders(token) }),
+          fetch(`${API_BASE}/auth/is_pet`, { headers: authHeaders(token) }),
+        ]);
+
+        if (adminRes.ok) {
+          const admin = unwrap(await adminRes.json());
+          const owner = ownerRes.ok ? unwrap(await ownerRes.json()) : {};
+          const pet = petRes.ok ? unwrap(await petRes.json()) : {};
           setIsAuthenticated(true);
-          setIsAdmin(!!data.isAdmin);
-          setIsOwner(!!data.isOwner);
-          setIsPet(!!data.isPet);
+          setIsAdmin(!!admin.isAdmin);
+          setIsOwner(!!owner.isOwner);
+          setIsPet(!!pet.isPet);
         } else {
           setIsAuthenticated(false);
           setIsAdmin(false);
@@ -68,7 +75,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
           setIsPet(false);
         }
       } catch (error) {
-        console.error('Auth check error:', error);
+        console.error("Auth check error:", error);
         setIsAuthenticated(false);
         setIsAdmin(false);
         setIsOwner(false);
@@ -81,75 +88,46 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     checkAuth();
   }, []);
 
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      router.replace(`/user/login?from=${encodeURIComponent(pathname)}`);
+    }
+  }, [loading, isAuthenticated, router, pathname]);
+
   if (loading) {
-    return <div className="text-center p-8 font-comic">Verifying access...</div>;
+    return <div className={s.guardLoading}>Verifying access...</div>;
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/user/login" state={{ from: location }} replace />;
+    return null; // redirecting to /user/login
   }
+
+  const denied = (emoji: string, title: string, text: string) => (
+    <div className={s.guardPage}>
+      <div className={s.guardCard}>
+        <div className={s.guardEmoji}>{emoji}</div>
+        <h1 className={s.guardTitle}>{title}</h1>
+        <p className={s.guardText}>{text}</p>
+        <button onClick={() => window.history.back()} className={s.guardBack}>
+          ← Go Back
+        </button>
+      </div>
+    </div>
+  );
 
   // Check owner permission (owner has all permissions)
   if (ownerRequired && !isOwner) {
-    return (
-      <div className="container mx-auto p-6 pt-20">
-        <div className="max-w-md mx-auto text-center space-y-4">
-          <div className="text-6xl">🔒</div>
-          <h1 className="text-2xl font-bold font-comic">Owner Access Required</h1>
-          <p className="text-muted-foreground font-comic">
-            This area is restricted to system owners only.
-          </p>
-          <button
-            onClick={() => window.history.back()}
-            className="text-primary hover:underline font-comic"
-          >
-            ← Go Back
-          </button>
-        </div>
-      </div>
-    );
+    return denied("🔒", "Owner Access Required", "This area is restricted to system owners only.");
   }
 
   // Check admin permission (admin and owner have admin access)
   if (adminRequired && !isAdmin && !isOwner) {
-    return (
-      <div className="container mx-auto p-6 pt-20">
-        <div className="max-w-md mx-auto text-center space-y-4">
-          <div className="text-6xl">🔒</div>
-          <h1 className="text-2xl font-bold font-comic">Admin Access Required</h1>
-          <p className="text-muted-foreground font-comic">
-            This area is restricted to administrators only.
-          </p>
-          <button
-            onClick={() => window.history.back()}
-            className="text-primary hover:underline font-comic"
-          >
-            ← Go Back
-          </button>
-        </div>
-      </div>
-    );
+    return denied("🔒", "Admin Access Required", "This area is restricted to administrators only.");
   }
 
   // Check pet permission
   if (petRequired && !isPet && !isOwner) {
-    return (
-      <div className="container mx-auto p-6 pt-20">
-        <div className="max-w-md mx-auto text-center space-y-4">
-          <div className="text-6xl">🐾</div>
-          <h1 className="text-2xl font-bold font-comic">Pet Access Required</h1>
-          <p className="text-muted-foreground font-comic">
-            This area is restricted to pets only.
-          </p>
-          <button
-            onClick={() => window.history.back()}
-            className="text-primary hover:underline font-comic"
-          >
-            ← Go Back
-          </button>
-        </div>
-      </div>
-    );
+    return denied("🐾", "Pet Access Required", "This area is restricted to pets only.");
   }
 
   return <>{children}</>;
