@@ -129,6 +129,53 @@ globalStyle(".genshin-meta h2", {
   fontSize: "1.15rem",
 });
 
+/** Level readout + ascension progress bar, owned characters only. */
+globalStyle(".genshin-level", {
+  marginTop: "0.5rem",
+});
+
+globalStyle(".genshin-level-row", {
+  display: "flex",
+  alignItems: "baseline",
+  justifyContent: "space-between",
+  gap: "0.5rem",
+  marginBottom: "0.35rem",
+});
+
+globalStyle(".genshin-level-value", {
+  fontSize: "0.82rem",
+  fontWeight: 700,
+  color: vars.peach,
+  letterSpacing: "0.01em",
+});
+
+globalStyle(".genshin-level-cap", {
+  fontSize: "0.72rem",
+  color: vars.text,
+  opacity: 0.55,
+});
+
+globalStyle(".genshin-level-track", {
+  position: "relative",
+  height: 6,
+  width: "100%",
+  borderRadius: 999,
+  background: vars.bgDeep,
+  overflow: "hidden",
+});
+
+globalStyle(".genshin-level-fill", {
+  display: "block",
+  height: "100%",
+  borderRadius: 999,
+  background: `linear-gradient(90deg, ${vars.accentAlt}, ${vars.accent})`,
+  transition: "width 0.3s ease",
+});
+
+globalStyle(".genshin-level-track.maxed .genshin-level-fill", {
+  background: vars.success,
+});
+
 globalStyle(".genshin-meta .element", {
   fontSize: "0.85rem",
   color: vars.peach,
