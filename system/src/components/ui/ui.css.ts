@@ -61,7 +61,7 @@ export const button = recipe({
       },
       destructive: {
         backgroundColor: vars.danger,
-        color: vars.destructiveForeground,
+        color: vars.bg,
         ":hover": { backgroundColor: mix(vars.danger, 90) },
       },
       outline: {
@@ -214,7 +214,7 @@ export const badge = recipe({
       },
       destructive: {
         backgroundColor: vars.danger,
-        color: vars.destructiveForeground,
+        color: vars.bg,
       },
       outline: {
         color: vars.text,
@@ -545,7 +545,7 @@ export const toastRoot = recipe({
       destructive: {
         borderColor: vars.danger,
         backgroundColor: vars.danger,
-        color: vars.destructiveForeground,
+        color: vars.bg,
       },
     },
   },
