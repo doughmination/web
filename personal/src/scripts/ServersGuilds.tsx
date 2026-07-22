@@ -4,20 +4,12 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useGuild } from "@doughmination/react-api";
 
 /* Ported from guilds.js — Discord server cards, each resolved live via the
-   Doughmination Restful API (through DM's cache, or a direct fetch fallback). */
+   Doughmination API through the wrapper's useGuild hook. */
 
 type GuildCfg = { name: string; invite: string; role?: string };
-type GuildData = {
-  name?: string;
-  icon_url?: string | null;
-  banner_url?: string | null;
-  description?: string | null;
-  member_count?: number;
-  online_count?: number;
-};
 
 const GUILDS: GuildCfg[] = [
   {
@@ -64,8 +56,6 @@ const ROLE_LABELS: Record<string, string> = {
   member: "Member",
 };
 
-const GUILD_BASE = "https://doughmination.uk/v2/discord/guilds/";
-
 /* Discord CDN accepts ?size=<power of 2>; ensure a resolution big enough. */
 function withSize(url: string, size: number): string {
   if (!url) return url;
@@ -74,30 +64,8 @@ function withSize(url: string, size: number): string {
 }
 
 function GuildCard({ cfg }: { cfg: GuildCfg }) {
-  const [d, setD] = useState<GuildData | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    const apply = (data: GuildData | null) => {
-      if (!cancelled && data) setD(data);
-    };
-    const dm = window.DM;
-    if (dm?.request) {
-      dm.request("guild", { id: cfg.invite }, { maxAge: 300000, persist: true })
-        .then((data) => apply(data as GuildData | null))
-        .catch(() => {});
-    } else {
-      fetch(GUILD_BASE + encodeURIComponent(cfg.invite), { cache: "no-store" })
-        .then((r) => (r.ok ? r.json().catch(() => null) : null))
-        .then((j) => {
-          if (j && j.success && j.data) apply(j.data as GuildData);
-        })
-        .catch(() => {});
-    }
-    return () => {
-      cancelled = true;
-    };
-  }, [cfg.invite]);
+  // Resolves the invite via the shared REST client; cached for 5 min.
+  const { data: d } = useGuild(cfg.invite);
 
   const name = d?.name || cfg.name;
   const icon = d?.icon_url ? withSize(d.icon_url, 256) : null;

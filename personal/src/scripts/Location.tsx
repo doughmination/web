@@ -4,11 +4,10 @@
 
 "use client";
 
-import { useDMFeed } from "./useDMFeed";
+import { useDeviceState } from "@doughmination/react-api";
+
 import { realText, relTime } from "./util";
 import { BoxArrowUpRight, GeoAltFill } from "react-bootstrap-icons";
-
-type DeviceMap = Record<string, { location?: string | null; updated_at?: string }>;
 
 /* "A,B,C" -> "A, B, C", dropping empty/null-ish parts. */
 function fmtLocation(raw: string): string {
@@ -44,18 +43,14 @@ function parseLocation(v: unknown): { url: string | null; label: string; query: 
 }
 
 export default function Location() {
-  const data = useDMFeed<DeviceMap>(
-    "devices",
-    "https://doughmination.uk/v2/devices",
-    (raw) => (raw && typeof raw === "object" ? (raw as DeviceMap) : null),
-  );
+  // location lives on the iPhone entry only; seeds from REST, stays live.
+  const { device: iphone } = useDeviceState("iphone");
 
-  if (!data) return null;
-  const ip = data.iphone; // location lives on the iPhone entry only
-  const loc = parseLocation(ip?.location);
+  if (!iphone) return null;
+  const loc = parseLocation(iphone.location);
   if (!loc || !loc.label) return null;
 
-  const when = relTime(ip?.updated_at);
+  const when = relTime(iphone.updated_at);
   const linkUrl =
     loc.url || (loc.query ? "https://www.google.com/maps?q=" + encodeURIComponent(loc.query) : "");
 

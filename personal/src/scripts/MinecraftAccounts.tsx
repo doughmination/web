@@ -5,14 +5,26 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Award, BoxArrowUpRight, Feather, Layers, Stars, XLg } from "react-bootstrap-icons";
+import { useQueries } from "@tanstack/react-query";
+import {
+  useDoughminationClient,
+  queryKeys,
+} from "@doughmination/react-api";
+import type { UnifiedMinecraftGeneral } from "@doughmination/react-api";
+import {
+  Award,
+  BoxArrowUpRight,
+  Feather,
+  Layers,
+  Stars,
+  XLg,
+} from "react-bootstrap-icons";
 import { createWave } from "./skinAnimations";
 
 /* Ported from minecraft.js — account cards + a detail modal (Overview / 3D
    Model / Hypixel). The 3D tab uses the lazy-loaded skinview3d WebGL viewer,
    which is inherently imperative, so it's driven through refs/effects. */
 
-const API_BASE = "https://doughmination.uk/v2/minecraft/general/";
 const MC_HEADS = "https://mc-heads.net/";
 const CAPE_W = 60;
 const CAPE_H = 96;
@@ -44,6 +56,21 @@ type ProfileData = {
 };
 type AcctState = { uid: string; cfg: Cfg; data: ProfileData };
 type Cape = { url: string; name: string | null };
+
+// Bridge the wrapper's typed profile onto the local loose ProfileData shape
+// the card/modal already consume (render is read by dynamic key, so it stays
+// a plain string map).
+function toProfileData(profile: UnifiedMinecraftGeneral): ProfileData {
+  return {
+    uuid: profile.uuid,
+    name: profile.name ?? undefined,
+    skin_url: profile.skin_url ?? undefined,
+    skin_model: profile.skin_model ?? undefined,
+    cape_url: profile.cape_url ?? undefined,
+    capes: profile.capes,
+    render: Object.fromEntries(Object.entries(profile.render)),
+  };
+}
 
 // ---- skinview3d (npm package, code-split) ---------------------------------
 // Loaded via dynamic import() so the WebGL viewer stays out of the main bundle
@@ -522,26 +549,28 @@ function AccountCard({ cfg, data, onOpen }: { cfg: Cfg; data: ProfileData; onOpe
 
 // ---- root -----------------------------------------------------------------
 export default function MinecraftAccounts({ accounts }: { accounts: Cfg[] }) {
-  const [dataMap, setDataMap] = useState<Record<string, ProfileData>>({});
   const [openUid, setOpenUid] = useState<string | null>(null);
+  const client = useDoughminationClient();
 
-  useEffect(() => {
-    let cancelled = false;
-    accounts.forEach((cfg) => {
+  // One cached query per account (GET /v2/minecraft/general/:uuid). React
+  // Query dedupes by uuid, so a card and its open modal share one fetch.
+  const results = useQueries({
+    queries: accounts.map((cfg) => {
       const uid = shortUuid(cfg.uid);
-      const p: Promise<unknown> = window.DM?.request
-        ? window.DM.request("minecraft", { uuid: uid }, { maxAge: 1800000, persist: true })
-        : fetch(API_BASE + encodeURIComponent(uid), { cache: "no-store" })
-            .then((r) => (r.ok ? r.json().catch(() => null) : null))
-            .then((j) => (j && j.success ? j.data : null));
-      p.then((data) => {
-        if (!cancelled && data) setDataMap((m) => ({ ...m, [uid]: data as ProfileData }));
-      }).catch(() => {});
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [accounts]);
+      return {
+        queryKey: queryKeys.minecraft.profile(uid),
+        queryFn: ({ signal }: { signal?: AbortSignal }) =>
+          client.getMinecraftProfile(uid, signal),
+        staleTime: 5 * 60 * 1000,
+      };
+    }),
+  });
+
+  const dataMap: Record<string, ProfileData> = {};
+  accounts.forEach((cfg, index) => {
+    const profile = results[index]?.data;
+    if (profile) dataMap[shortUuid(cfg.uid)] = toProfileData(profile);
+  });
 
   const openCfg = openUid ? accounts.find((a) => shortUuid(a.uid) === openUid) : null;
 

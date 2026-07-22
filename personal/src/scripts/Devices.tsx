@@ -4,21 +4,17 @@
 
 "use client";
 
-import { useDMFeed } from "./useDMFeed";
-import { realText, relTime } from "./util";
-import { BatteryHalf, Earbuds, LightningChargeFill, Smartwatch, Wifi } from "react-bootstrap-icons";
+import { useDevices } from "@doughmination/react-api";
+import type { DeviceRecord } from "@doughmination/react-api";
 
-type DeviceRaw = {
-  device?: string;
-  level?: number | string;
-  updated_at?: string;
-  charging?: boolean;
-  lowPowerMode?: boolean;
-  wifi?: string | null;
-  watch?: unknown;
-  airpods?: unknown;
-};
-type DeviceMap = Record<string, DeviceRaw>;
+import { realText, relTime } from "./util";
+import {
+  BatteryHalf,
+  Earbuds,
+  LightningChargeFill,
+  Smartwatch,
+  Wifi,
+} from "react-bootstrap-icons";
 
 const NAMES: Record<string, string> = {
   iphone: "iPhone",
@@ -47,7 +43,7 @@ function isConnected(v: unknown): boolean {
   return v === true || v === 1 || String(v).trim().toLowerCase() === "true";
 }
 
-function DeviceRow({ d }: { d: DeviceRaw & { device: string } }) {
+function DeviceRow({ d }: { d: DeviceRecord }) {
   const lvl = clampLevel(d.level);
   const cls = levelClass(lvl);
   const charging = d.charging === true;
@@ -106,20 +102,21 @@ function DeviceRow({ d }: { d: DeviceRaw & { device: string } }) {
 }
 
 export default function Devices() {
-  const data = useDMFeed<DeviceMap>(
-    "devices",
-    "https://doughmination.uk/v2/devices",
-    (raw) => (raw && typeof raw === "object" ? (raw as DeviceMap) : null),
-  );
+  // Seeds from GET /v2/devices, then stays live via the socket's device_update
+  // event (report merges the record, delete removes the key).
+  const { data, isPending } = useDevices();
 
   // Render the shell while the feed is in flight — see the note in Fronting.tsx.
-  const loading = !data;
-  const list = !data ? [] : Object.keys(data)
-    .map((k) => {
-      const v = data[k] || {};
-      return { ...v, device: v.device || k };
-    })
-    .filter((d) => realText(d.device) !== "");
+  const loading = isPending;
+
+  const list = !data
+    ? []
+    : Object.keys(data)
+        .map((key) => {
+          const record = data[key];
+          return { ...record, device: record.device || key };
+        })
+        .filter((d) => realText(d.device) !== "");
 
   list.sort((a, b) => {
     const la = clampLevel(a.level);

@@ -5,6 +5,7 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import NavBridge from "./_components/NavBridge";
+import Providers from "./providers";
 import SettingsMenu from "@components/chrome/SettingsMenu";
 import WebringDock from "@components/chrome/WebringDock";
 import SiteChrome from "@components/chrome/SiteChrome";
@@ -130,11 +131,13 @@ export default function RootLayout({
         <SettingsMenu />
         <WebringDock />
 
-        {children}
+        {/* Wrapper data layer: one REST client + socket shared by every
+            migrated widget (Fronting first). See providers.tsx. */}
+        <Providers>{children}</Providers>
 
-        {/* Persistent chrome, ported into the bundle: nav builder, oneko cat, bg
-            music, and the shared realtime client (window.DM) that every widget
-            subscribes to. Runs once, client-only, via SiteChrome. */}
+        {/* Persistent chrome, ported into the bundle: nav builder, oneko cat, and
+            bg music. Runs once, client-only, via SiteChrome. (Realtime now lives
+            in the wrapper's shared socket via Providers, not here.) */}
         <SiteChrome catSrc="/assets/oneko/classics/classic.png" />
         {/* lanyard.cafe keyring (webring) */}
         <Script

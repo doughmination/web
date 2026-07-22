@@ -44,12 +44,23 @@ type Button = {
 };
 
 const BUTTONS: Button[] = [
-  // coding / web
+  // Personal Buttons
+  {
+    href: "https://www.monsterenergy.com/",
+    img: "monster.png",
+    alt: "MONSTER",
+  },
   {
     href: "https://doughmination.uk",
     img: "doughmination.png",
     alt: "Doughmination",
     eager: true
+  },
+  // coding / web
+  {
+    href: "https://claude.ai",
+    img: "claude.png",
+    alt: "Claude"
   },
   {
     href: "https://code.visualstudio.com",

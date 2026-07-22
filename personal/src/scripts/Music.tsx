@@ -5,6 +5,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useUserPresence } from "@doughmination/react-api";
 import { MusicNoteBeamed } from "react-bootstrap-icons";
 
 /* Ported from music.js — now-playing hero, synced lyrics (LRCLIB) with a
@@ -19,8 +20,6 @@ const LFM_KEY = "768e8bd0d366f4d6c7874740ca6610ad";
 const LFM_OK = !!(LFM_USER && LFM_KEY);
 const LFM = "https://ws.audioscrobbler.com/2.0/";
 const LFM_PLACEHOLDER = "2a96cbd8b46e442fc41c2b86b821562f";
-const SELF_BASE = "https://doughmination.uk/v2/discord/users/";
-const PRESENCE_POLL_MS = 10000;
 const LRCLIB_HOSTS = [
   "https://lrclib.schuh.wtf",
   "https://lyrics.lanyard.cafe",
@@ -486,40 +485,20 @@ export default function Music() {
     lockedRef.current = locked;
   }, [track, ly, locked]);
 
-  // presence: DM socket if available, else poll
+  // presence: live over the shared socket (was window.DM / poll fallback).
+  const livePresence = useUserPresence(DISCORD_ID);
   useEffect(() => {
-    let off: (() => void) | void;
-    let timer: ReturnType<typeof setInterval> | undefined;
-    let onVis: (() => void) | undefined;
-    const dm = window.DM;
-    if (dm) {
-      off = dm.on(`presence:${DISCORD_ID}`, (v: unknown) => {
-        const val = v as { data?: Parameters<typeof onPresence>[0] } | null;
-        if (val && val.data) onPresence(val.data);
-      });
-    } else {
-      const poll = () => {
-        if (document.hidden) return;
-        fetch(SELF_BASE + DISCORD_ID, { cache: "no-store" })
-          .then((r) => (r.ok ? r.json() : null))
-          .then((j) => {
-            if (j?.success && j.data) onPresence(j.data.presence || null);
-          })
-          .catch(() => {});
-      };
-      poll();
-      timer = setInterval(poll, PRESENCE_POLL_MS);
-      onVis = () => {
-        if (!document.hidden) poll();
-      };
-      document.addEventListener("visibilitychange", onVis);
-    }
-    return () => {
-      if (typeof off === "function") off();
-      if (timer) clearInterval(timer);
-      if (onVis) document.removeEventListener("visibilitychange", onVis);
-    };
-  }, [onPresence]);
+    onPresence(
+      livePresence
+        ? {
+            listening_to_spotify: livePresence.listening_to_spotify,
+            spotify: livePresence.spotify
+              ? Object.fromEntries(Object.entries(livePresence.spotify))
+              : undefined,
+          }
+        : null,
+    );
+  }, [livePresence, onPresence]);
 
   // boot: idle headline + recent + top; recent refresh
   useEffect(() => {

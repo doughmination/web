@@ -2,6 +2,8 @@
 
 This is my <a href=https://c.stupid.cat>c.stupid.cat</a> website, a personal project allowing me to mess with different frameworks.
 
+This site also uses the DoughminationAPI React Wrapper
+
 ## Tech Stack:
 
 ![Next.js](https://img.shields.io/badge/Next.js-000000?style=plastic&logo=nextdotjs&logoColor=white)

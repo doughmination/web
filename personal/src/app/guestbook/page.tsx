@@ -43,10 +43,7 @@ export default function GuestbookPage() {
           <p className="tagline">Leave a little note before you go &lt;3</p>
         </header>
 
-        <Guestbook
-          api="https://doughmination.uk/v2/guestbook"
-          turnstileKey="0x4AAAAAAB08ZhSxKn5rAD3d"
-        />
+        <Guestbook turnstileKey="0x4AAAAAAB08ZhSxKn5rAD3d" />
       </div>
     </>
   );

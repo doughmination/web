@@ -11,7 +11,15 @@
 
 "use client";
 
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
+import { useDiscordUser, useUserPresence } from "@doughmination/react-api";
 import type { Icon } from "react-bootstrap-icons";
 import {
   Amazon, Bluesky, Discord, Facebook, Github, Globe, Instagram, Laptop, Linkedin,
@@ -305,65 +313,35 @@ export function mapSelfHostToPresence(j: SelfJson, fallbackId: string | null): D
 
 /* ---- hooks ---------------------------------------------------------------- */
 
-const SELF_BASE = "https://doughmination.uk/v2/discord/users/";
-
 /**
  * The live presence feed for one user.
  *
- * Mirrors the old factory exactly: load once over REST, then ride core.ts's
- * socket (window.DM) patching `data.presence` in place, or fall back to polling
- * when there's no socket. Returns the whole SelfJson so the component can read
- * badges/banner/connections as well as presence.
+ * Now composed from the wrapper: useDiscordUser supplies the full record
+ * (user, badges, banner, connections + a presence snapshot), and
+ * useUserPresence rides the shared socket for live presence. We swap the live
+ * presence over the snapshot and re-wrap in the SelfJson envelope the
+ * components already read, so PresenceCard/Dashboard stay untouched.
+ *
+ * `pollMs` is kept for signature compatibility; the socket drives updates now,
+ * so there's no polling fallback to tune.
  */
-export function usePresenceFeed(userId: string | null, pollMs = 20000): SelfJson | null {
-  const [json, setJson] = useState<SelfJson | null>(null);
-  // The socket sends presence-only patches, so we merge against the last full
-  // payload without making it a render dependency.
-  const latest = useRef<SelfJson | null>(null);
+export function usePresenceFeed(
+  userId: string | null,
+  pollMs = 20000,
+): SelfJson | null {
+  void pollMs;
 
-  useEffect(() => {
-    if (!userId) return;
-    let cancelled = false;
-    let timer: ReturnType<typeof setInterval> | undefined;
-    let off: (() => void) | void;
+  const { data: record } = useDiscordUser(userId);
+  const livePresence = useUserPresence(userId);
 
-    const load = () =>
-      fetch(SELF_BASE + userId, { cache: "no-store" })
-        .then((r) => (r.ok ? r.json().catch(() => null) : null))
-        .then((j: SelfJson | null) => {
-          if (cancelled || !j || !j.success || !j.data || !j.data.user) return false;
-          latest.current = j;
-          setJson(j);
-          return true;
-        })
-        .catch(() => false);
-
-    load();
-
-    if (window.DM) {
-      off = window.DM.on("presence:" + userId, (v: unknown) => {
-        const data = g(v, "data") as Dict | undefined;
-        const prev = latest.current;
-        if (cancelled || !data || !prev || !prev.data) return;
-        // New object identity so React re-renders; presence swapped, rest kept.
-        const next: SelfJson = { ...prev, data: { ...prev.data, presence: data } };
-        latest.current = next;
-        setJson(next);
-      });
-    } else {
-      timer = setInterval(() => {
-        if (!document.hidden) load();
-      }, pollMs);
-    }
-
-    return () => {
-      cancelled = true;
-      if (timer) clearInterval(timer);
-      if (typeof off === "function") off();
+  return useMemo<SelfJson | null>(() => {
+    if (!record) return null;
+    const presence = livePresence ?? record.presence;
+    return {
+      success: true,
+      data: { ...record, presence } as Dict,
     };
-  }, [userId, pollMs]);
-
-  return json;
+  }, [record, livePresence]);
 }
 
 /**
