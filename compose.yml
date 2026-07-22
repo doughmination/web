@@ -11,7 +11,7 @@ services:
       - "127.0.0.1:5002:5002"
     restart: unless-stopped
 
-  dough-front:
+  system:
     build:
       context: ./system
       dockerfile: Dockerfile
