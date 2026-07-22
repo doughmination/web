@@ -1,3 +1,7 @@
+/* src/scripts/ServersGuilds.tsx
+ * ESAL-2.3
+ */
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -16,13 +20,41 @@ type GuildData = {
 };
 
 const GUILDS: GuildCfg[] = [
-  { name: "Doughmination", invite: "KuVW2zSyTU", role: "owner" },
-  { name: "Girls", invite: "TransRights", role: "mod" },
-  { name: "Lanyard", invite: "Lanyard", role: "member" },
-  { name: "is-a.dev", invite: "is-a-dev-830872854677422150", role: "member" },
-  { name: "Furina Mains", invite: "focalorsmains", role: "member" },
-  { name: "Discord Previews", invite: "discord-603970300668805120", role: "member" },
-  { name: "Global Badges", invite: "JsgsS8kzz8", role: "member" },
+  {
+    name: "Doughmination",
+    invite: "KuVW2zSyTU",
+    role: "owner"
+  },
+  {
+    name: "Girls",
+    invite: "TransRights",
+    role: "mod"
+  },
+  {
+    name: "Lanyard",
+    invite: "Lanyard",
+    role: "member"
+  },
+  {
+    name: "is-a.dev",
+    invite: "is-a-dev-830872854677422150",
+    role: "member"
+  },
+  {
+    name: "Furina Mains",
+    invite: "focalorsmains",
+    role: "member"
+  },
+  {
+    name: "Discord Previews",
+    invite: "discord-603970300668805120",
+    role: "member"
+  },
+  {
+    name: "Global Badges",
+    invite: "JsgsS8kzz8",
+    role: "member"
+  },
 ];
 
 const ROLE_LABELS: Record<string, string> = {

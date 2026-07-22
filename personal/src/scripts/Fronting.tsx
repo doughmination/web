@@ -1,3 +1,7 @@
+/* src/scripts/Fronting.tsx
+ * ESAL-2.3
+ */
+
 "use client";
 
 import type { CSSProperties } from "react";

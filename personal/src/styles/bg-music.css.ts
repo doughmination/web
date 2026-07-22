@@ -1,3 +1,7 @@
+/* src/styles/bg-music.css.ts
+ * ESAL-2.3
+ */
+
 /**
  * bg-music.css.ts — sitewide background audio: the "click to enter" gate that
  * starts it, and the play/pause button it leaves behind in the settings row.

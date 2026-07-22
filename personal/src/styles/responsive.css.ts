@@ -1,3 +1,7 @@
+/* src/styles/responsive.css.ts
+ * ESAL-2.3
+ */
+
 /**
  * responsive.css.ts — cross-page responsive overrides.
  *

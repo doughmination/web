@@ -1,3 +1,7 @@
+/* src/styles/pages/selfies.css.ts
+ * ESAL-2.3
+ */
+
 /**
  * selfies.css.ts — the /selfies grid and lightbox.
  *

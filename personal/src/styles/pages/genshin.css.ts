@@ -1,3 +1,7 @@
+/* src/styles/pages/genshin.css.ts
+ * ESAL-2.3
+ */
+
 /**
  * genshin.css.ts — the /genshin 3D render gallery.
  *

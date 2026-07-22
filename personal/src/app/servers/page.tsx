@@ -1,3 +1,7 @@
+/* src/app/servers/page.tsx
+ * ESAL-2.3
+ */
+
 import type { Metadata } from "next";
 import ServersGuilds from "@scripts/ServersGuilds";
 // Shared card styles first, page overrides second — that's the cascade order.

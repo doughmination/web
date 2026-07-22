@@ -1,3 +1,7 @@
+/* src/styles/pages/cool-people.css.ts
+ * ESAL-2.3
+ */
+
 /**
  * cool-people.css.ts — the /cool-people page.
  *

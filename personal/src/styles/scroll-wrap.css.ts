@@ -1,3 +1,7 @@
+/* src/styles/scroll-wrap.css.ts
+ * ESAL-2.3
+ */
+
 /**
  * scroll-wrap.css.ts — lets tall pages scroll.
  *

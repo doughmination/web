@@ -1,3 +1,7 @@
+/* src/scripts/MinecraftAccounts.tsx
+ * ESAL-2.3
+ */
+
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -252,7 +256,10 @@ function Skin3D({ data }: { data: ProfileData }) {
   }, [ready, animIdx]);
 
   const capeOptions = [
-    { label: "No cape", url: null as string | null },
+    {
+      label: "No cape",
+      url: null as string | null
+    },
     ...capes.map((c, i) => ({
       label: c.name ? cap(c.name) : capes.length > 1 ? `Cape ${i + 1}` : "Cape",
       url: c.url,

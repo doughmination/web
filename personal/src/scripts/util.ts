@@ -1,3 +1,7 @@
+/* src/scripts/util.ts
+ * ESAL-2.3
+ */
+
 /* Shared helpers for the homepage status widgets (ported from the vanilla JS). */
 
 /** Real null/undefined AND the literal strings "null"/"undefined"/blank -> "". */

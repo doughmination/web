@@ -1,3 +1,7 @@
+/* src/scripts/core.ts
+ * ESAL-2.3
+ */
+
 /* eslint-disable */
 // @ts-nocheck
 /* core.ts — the global site shell, ported verbatim from core.js: the realtime

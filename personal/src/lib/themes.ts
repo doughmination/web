@@ -1,3 +1,7 @@
+/* src/lib/themes.ts
+ * ESAL-2.3
+ */
+
 /**
  * Theme registry — the single source of truth for site flavors.
  *
@@ -29,11 +33,36 @@ export type Theme = {
 };
 
 export const THEMES: Theme[] = [
-  { id: "cherry", label: "Cherry", dot: "#f4b8e4", icon: "/assets/theme/cherry.png" },
-  { id: "toxic", label: "Toxic", dot: "#7fff3f", icon: "/assets/theme/toxic.png" },
-  { id: "lemon", label: "Lemon", dot: "#ffe14d", icon: "/assets/theme/lemon.png" },
-  { id: "estrogen", label: "Estrogen", dot: "#34c9bf", icon: "/assets/theme/estrogen.png" },
-  { id: "cyberpunk", label: "Cyberpunk", dot: "#f84800", icon: "/assets/theme/cyberpunk.png" },
+  {
+    id: "cherry",
+    label: "Cherry",
+    dot: "#f4b8e4",
+    icon: "/assets/theme/cherry.png"
+  },
+  {
+    id: "toxic",
+    label: "Toxic",
+    dot: "#7fff3f",
+    icon: "/assets/theme/toxic.png"
+  },
+  {
+    id: "lemon",
+    label: "Lemon",
+    dot: "#ffe14d",
+    icon: "/assets/theme/lemon.png"
+  },
+  {
+    id: "estrogen",
+    label: "Estrogen",
+    dot: "#34c9bf",
+    icon: "/assets/theme/estrogen.png"
+  },
+  {
+    id: "cyberpunk",
+    label: "Cyberpunk",
+    dot: "#f84800",
+    icon: "/assets/theme/cyberpunk.png"
+  },
 ];
 
 /** The flavor applied when nothing is stored, or when the stored value is junk. */

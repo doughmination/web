@@ -1,3 +1,7 @@
+/* src/components/chrome/SiteChrome.tsx
+ * ESAL-2.3
+ */
+
 "use client";
 
 import { useEffect } from "react";

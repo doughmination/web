@@ -1,3 +1,7 @@
+/* src/styles/pages/88x31.css.ts
+ * ESAL-2.3
+ */
+
 /**
  * 88x31.css.ts — the /88x31 button wall.
  *

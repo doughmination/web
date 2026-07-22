@@ -1,3 +1,7 @@
+/* src/components/chrome/WebringDock.tsx
+ * ESAL-2.3
+ */
+
 "use client";
 
 import { useEffect, useRef, useState } from "react";

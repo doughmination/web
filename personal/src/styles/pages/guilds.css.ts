@@ -1,3 +1,7 @@
+/* src/styles/pages/guilds.css.ts
+ * ESAL-2.3
+ */
+
 import { globalStyle } from "@vanilla-extract/css";
 import { vars } from "../themes.css";
 

@@ -1,3 +1,7 @@
+/* src/styles/pages/index.css.ts
+ * ESAL-2.3
+ */
+
 /**
  * index.css.ts — the homepage: About card, plus the Fronting / Devices /
  * Location status cards beneath it.

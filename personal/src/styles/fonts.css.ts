@@ -1,13 +1,33 @@
+/* src/styles/fonts.css.ts
+ * ESAL-2.3
+ */
+
 import { globalFontFace } from "@vanilla-extract/css";
 
 const CDN = "https://fonts.doughmination.co.uk";
 
 /** Comic Code — the site's body/mono face, four cuts. */
 const COMIC_CODE = [
-  { file: "ComicCode-Regular_2022-05-24-151938_hsmz", weight: 400, style: "normal" },
-  { file: "ComicCode-Italic_2022-05-24-151939_rdtu", weight: 400, style: "italic" },
-  { file: "ComicCode-Medium_2022-05-24-151941_ugqm", weight: 500, style: "normal" },
-  { file: "ComicCode-Bold_2022-05-24-152309_zqkm", weight: 700, style: "normal" },
+  {
+    file: "ComicCode-Regular_2022-05-24-151938_hsmz",
+    weight: 400,
+    style: "normal"
+  },
+  {
+    file: "ComicCode-Italic_2022-05-24-151939_rdtu",
+    weight: 400,
+    style: "italic"
+  },
+  {
+    file: "ComicCode-Medium_2022-05-24-151941_ugqm",
+    weight: 500,
+    style: "normal"
+  },
+  {
+    file: "ComicCode-Bold_2022-05-24-152309_zqkm",
+    weight: 700,
+    style: "normal"
+  },
 ] as const;
 
 for (const { file, weight, style } of COMIC_CODE) {

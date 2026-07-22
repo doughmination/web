@@ -1,3 +1,7 @@
+/* src/scripts/PresenceDashboard.tsx
+ * ESAL-2.3
+ */
+
 "use client";
 import Link from "next/link";
 import { useId, useMemo, useState } from "react";

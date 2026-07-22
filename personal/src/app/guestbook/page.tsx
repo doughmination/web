@@ -1,3 +1,7 @@
+/* src/app/guestbook/page.tsx
+ * ESAL-2.3
+ */
+
 import type { Metadata } from "next";
 import Guestbook from "@scripts/Guestbook";
 import "@styles/pages/guestbook.css";

@@ -1,3 +1,7 @@
+/* src/app/minecraft/page.tsx
+ * ESAL-2.3
+ */
+
 import type { Metadata } from "next";
 import MinecraftAccounts from "@scripts/MinecraftAccounts";
 import "@styles/stage.css";

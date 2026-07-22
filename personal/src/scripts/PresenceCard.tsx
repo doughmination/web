@@ -1,3 +1,7 @@
+/* src/scripts/PresenceCard.tsx
+ * ESAL-2.3
+ */
+
 "use client";
 
 /* PresenceCard.tsx — the COMPACT Discord presence card, as a React component.

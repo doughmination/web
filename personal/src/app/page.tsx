@@ -1,3 +1,7 @@
+/* src/app/page.tsx
+ * ESAL-2.3
+ */
+
 import { Github } from "react-bootstrap-icons";
 import Fronting from "@scripts/Fronting";
 import Devices from "@scripts/Devices";

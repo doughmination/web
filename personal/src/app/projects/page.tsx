@@ -1,3 +1,7 @@
+/* src/app/projects/page.tsx
+ * ESAL-2.3
+ */
+
 import type { Metadata } from "next";
 import "@styles/pages/projects.css";
 

@@ -1,3 +1,7 @@
+/* src/app/selfies/page.tsx
+ * ESAL-2.3
+ */
+
 import type { Metadata } from "next";
 import SelfiesGallery from "@scripts/SelfiesGallery";
 import "@styles/pages/selfies.css";

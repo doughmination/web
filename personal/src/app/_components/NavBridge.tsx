@@ -1,3 +1,7 @@
+/* src/app/_components/NavBridge.tsx
+ * ESAL-2.3
+ */
+
 "use client";
 
 import { useEffect } from "react";

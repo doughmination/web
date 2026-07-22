@@ -1,3 +1,7 @@
+/* src/styles/pages/music.css.ts
+ * ESAL-2.3
+ */
+
 /**
  * music.css.ts — the /music page: now-playing hero, lyrics panel, recently
  * played, and top artists.

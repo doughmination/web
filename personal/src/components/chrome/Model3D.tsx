@@ -1,3 +1,7 @@
+/* src/components/chrome/Model3D.tsx
+ * ESAL-2.3
+ */
+
 "use client";
 
 import { useEffect, useRef } from "react";

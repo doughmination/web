@@ -1,3 +1,7 @@
+/* src/app/blog/05072026-welcome/page.tsx
+ * ESAL-2.3
+ */
+
 import type { Metadata } from "next";
 import "@styles/pages/blog.css";
 

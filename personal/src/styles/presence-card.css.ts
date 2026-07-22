@@ -1,3 +1,7 @@
+/* src/styles/presence-card.css.ts
+ * ESAL-2.3
+ */
+
 /**
  * presence-card.css.ts — the shared Discord-style presence card, used full-size
  * on /discord and /servers and in mini form on /cool-people, plus the stage
@@ -682,12 +686,19 @@ globalStyle(
 
 globalStyle(
   ".presence-card.has-banner .pc-av-img, .presence-card.has-banner-color .pc-av-img",
-  { width: 56, height: 56, border: `3px solid ${vars.surface}` },
+  {
+    width: 56,
+    height: 56,
+    border: `3px solid ${vars.surface}`
+  },
 );
 
 globalStyle(
   ".presence-card.has-banner .pc-av-deco, .presence-card.has-banner-color .pc-av-deco",
-  { width: 72, height: 72 },
+  {
+    width: 72,
+    height: 72
+  },
 );
 
 /* ---- bio ------------------------------------------------------------------ */

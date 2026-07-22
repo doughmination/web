@@ -1,3 +1,7 @@
+/* src/styles/pages/guestbook.css.ts
+ * ESAL-2.3
+ */
+
 /**
  * guestbook.css.ts — the sign form and entry list on /guestbook.
  *

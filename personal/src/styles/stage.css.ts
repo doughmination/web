@@ -1,3 +1,7 @@
+/* src/styles/stage.css.ts
+ * ESAL-2.3
+ */
+
 /**
  * stage.css.ts — the centred full-height page shell (`.presence-stage`) and its
  * heading block (`.presence-intro`).

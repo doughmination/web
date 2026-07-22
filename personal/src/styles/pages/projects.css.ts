@@ -1,3 +1,7 @@
+/* src/styles/pages/projects.css.ts
+ * ESAL-2.3
+ */
+
 /**
  * projects.css.ts — the /projects card grid.
  *

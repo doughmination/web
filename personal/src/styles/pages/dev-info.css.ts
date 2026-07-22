@@ -1,3 +1,7 @@
+/* src/styles/pages/dev-info.css.ts
+ * ESAL-2.3
+ */
+
 /**
  * dev-info.css.ts — the /dev-info page: tech-stack icons, hardware list,
  * WakaTime stats cards, and the GitHub contribution heatmap.

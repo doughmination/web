@@ -1,3 +1,7 @@
+/* src/app/layout.tsx
+ * ESAL-2.3
+ */
+
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import NavBridge from "./_components/NavBridge";
@@ -49,7 +53,10 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/assets/favicon/favicon.svg", type: "image/svg+xml" },
+      {
+        url: "/assets/favicon/favicon.svg",
+        type: "image/svg+xml"
+      },
       { url: "/favicon.ico" },
     ],
   },

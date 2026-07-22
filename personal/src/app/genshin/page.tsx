@@ -1,3 +1,7 @@
+/* src/app/genshin/page.tsx
+ * ESAL-2.3
+ */
+
 import type { Metadata } from "next";
 import Model3D from "@components/chrome/Model3D";
 import "@styles/pages/genshin.css";
@@ -74,21 +78,100 @@ function ascensionProgress(level: number) {
 // Attribution handled separately — names only here.
 // Kept alphabetical by name; display order (want first) is derived below.
 const CHARACTERS: Character[] = [
-  { name: "Aino", model: "/models/aino.glb", tier: "owned", level: 20 },
-  { name: "Amber", model: "/models/amber.glb", tier: "owned", level: 40 },
-  { name: "Barbara", model: "/models/barbara.glb", tier: "owned", level: 1 },
-  { name: "Diona", model: "/models/diona.glb", tier: "owned", level: 40 },
-  { name: "Fischl", model: "/models/fischl.glb", tier: "owned", level: 38 },
-  { name: "Furina", model: "/models/furina.glb", tier: "want" },
-  { name: "Hu Tao", model: "/models/hutao.glb", tier: "want" },
-  { name: "Kaeya", model: "/models/kaeya.glb", tier: "owned", level: 40 },
-  { name: "Lisa", model: "/models/lisa.glb", tier: "owned", level: 20 },
-  { name: "Lumine", model: "/models/lumine.glb", tier: "owned", level: 56 },
-  { name: "Noelle", model: "/models/noelle.glb", tier: "owned", level: 20 },
-  { name: "Prune", model: "/models/prune.glb", tier: "owned", level: 39 },
-  { name: "Sandrone", model: "/models/sandrone.glb", tier: "owned", level: 20 },
-  { name: "Sucrose", model: "/models/sucrose.glb", tier: "owned", level: 13 },
-  { name: "Yumemizuki Mizuki", model: "/models/yumemizuki.glb", tier: "owned", level: 55 },
+  {
+    name: "Aino",
+    model: "/models/aino.glb",
+    tier: "owned",
+    level: 20
+  },
+  {
+    name: "Amber",
+    model: "/models/amber.glb",
+    tier: "owned",
+    level: 40
+  },
+  {
+    name: "Barbara",
+    model: "/models/barbara.glb",
+    tier: "owned",
+    level: 1
+  },
+  {
+    name: "Diona",
+    model: "/models/diona.glb",
+    tier: "owned",
+    level: 40
+  },
+  {
+    name: "Fischl",
+    model: "/models/fischl.glb",
+    tier: "owned",
+    level: 38
+  },
+  {
+    name: "Freminet",
+    model: "/models/freminet.glb",
+    tier: "owned",
+    level: 1
+  },
+  {
+    name: "Furina",
+    model: "/models/furina.glb",
+    tier: "want"
+  },
+  {
+    name: "Hu Tao",
+    model: "/models/hutao.glb",
+    tier: "want"
+  },
+  {
+    name: "Kaeya",
+    model: "/models/kaeya.glb",
+    tier: "owned",
+    level: 40
+  },
+  {
+    name: "Lisa",
+    model: "/models/lisa.glb",
+    tier: "owned",
+    level: 20
+  },
+  {
+    name: "Lumine",
+    model: "/models/lumine.glb",
+    tier: "owned",
+    level: 56
+  },
+  {
+    name: "Noelle",
+    model: "/models/noelle.glb",
+    tier: "owned",
+    level: 20
+  },
+  {
+    name: "Prune",
+    model: "/models/prune.glb",
+    tier: "owned",
+    level: 39
+  },
+  {
+    name: "Sandrone",
+    model: "/models/sandrone.glb",
+    tier: "owned",
+    level: 20
+  },
+  {
+    name: "Sucrose",
+    model: "/models/sucrose.glb",
+    tier: "owned",
+    level: 13
+  },
+  {
+    name: "Yumemizuki Mizuki",
+    model: "/models/yumemizuki.glb",
+    tier: "owned",
+    level: 55
+  },
 ];
 
 // TODO: Add Freminent (lvl 1)

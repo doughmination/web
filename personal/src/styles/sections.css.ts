@@ -1,3 +1,7 @@
+/* src/styles/sections.css.ts
+ * ESAL-2.3
+ */
+
 /**
  * sections.css.ts — the shared .section / .section-title / .section-subtitle trio.
  *

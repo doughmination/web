@@ -1,3 +1,7 @@
+/* src/scripts/Guestbook.tsx
+ * ESAL-2.3
+ */
+
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";

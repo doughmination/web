@@ -1,3 +1,7 @@
+/* src/scripts/Devices.tsx
+ * ESAL-2.3
+ */
+
 "use client";
 
 import { useDMFeed } from "./useDMFeed";

@@ -1,3 +1,7 @@
+/* src/styles/nav.css.ts
+ * ESAL-2.3
+ */
+
 /**
  * nav.css.ts — the page nav, pinned top-left.
  *

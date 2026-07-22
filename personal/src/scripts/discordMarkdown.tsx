@@ -1,3 +1,7 @@
+/* src/scripts/discordMarkdown.tsx
+ * ESAL-2.3
+ */
+
 "use client";
 
 /* discordMarkdown.tsx — Discord-flavoured Markdown → React nodes.
@@ -70,14 +74,40 @@ const MASKED_RE = /^\[([^\]\n]+)\]\((https?:\/\/[^\s)]+)\)/;
 
 /** Delimiters, longest first so ** is never mistaken for two *. */
 const DELIMS: { open: string; tag: "strong" | "em" | "u" | "s" | "spoiler"; both?: boolean }[] = [
-  { open: "***", tag: "strong", both: true },
-  { open: "___", tag: "u", both: true },
-  { open: "**", tag: "strong" },
-  { open: "__", tag: "u" },
-  { open: "~~", tag: "s" },
-  { open: "||", tag: "spoiler" },
-  { open: "*", tag: "em" },
-  { open: "_", tag: "em" },
+  {
+    open: "***",
+    tag: "strong",
+    both: true
+  },
+  {
+    open: "___",
+    tag: "u",
+    both: true
+  },
+  {
+    open: "**",
+    tag: "strong"
+  },
+  {
+    open: "__",
+    tag: "u"
+  },
+  {
+    open: "~~",
+    tag: "s"
+  },
+  {
+    open: "||",
+    tag: "spoiler"
+  },
+  {
+    open: "*",
+    tag: "em"
+  },
+  {
+    open: "_",
+    tag: "em"
+  },
 ];
 
 function isWordChar(c: string | undefined): boolean {

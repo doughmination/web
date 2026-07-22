@@ -1,3 +1,7 @@
+/* src/app/blog/page.tsx
+ * ESAL-2.3
+ */
+
 import type { Metadata } from "next";
 import BlogCards from "@scripts/BlogCards";
 import "@styles/pages/blog.css";

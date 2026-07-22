@@ -1,3 +1,7 @@
+/* src/app/discord/page.tsx
+ * ESAL-2.3
+ */
+
 import type { Metadata } from "next";
 import PresenceDashboard from "@scripts/PresenceDashboard";
 import * as s from "@styles/presence-dashboard.css";

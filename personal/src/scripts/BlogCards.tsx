@@ -1,3 +1,7 @@
+/* src/scripts/BlogCards.tsx
+ * ESAL-2.3
+ */
+
 "use client";
 
 import Link from "next/link";

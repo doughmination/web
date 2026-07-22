@@ -1,3 +1,7 @@
+/* src/styles/themes.css.ts
+ * ESAL-2.3
+ */
+
 import {
   createGlobalTheme,
   createGlobalThemeContract,

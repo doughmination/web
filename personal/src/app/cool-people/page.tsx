@@ -1,3 +1,7 @@
+/* src/app/cool-people/page.tsx
+ * ESAL-2.3
+ */
+
 import type { Metadata } from "next";
 import FriendsGrid from "@scripts/FriendsGrid";
 import "@styles/presence-card.css";

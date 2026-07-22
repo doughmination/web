@@ -1,3 +1,7 @@
+/* src/styles/presence-dashboard.css.ts
+ * ESAL-2.3
+ */
+
 /**
  * presence-dashboard.css.ts — the /discord profile dashboard.
  *

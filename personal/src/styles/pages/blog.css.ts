@@ -1,3 +1,7 @@
+/* src/styles/pages/blog.css.ts
+ * ESAL-2.3
+ */
+
 /**
  * blog.css.ts — the /blog card grid and the individual post layout.
  *

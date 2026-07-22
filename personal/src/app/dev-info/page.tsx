@@ -1,3 +1,7 @@
+/* src/app/dev-info/page.tsx
+ * ESAL-2.3
+ */
+
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
 import DevInfo from "@scripts/DevInfo";

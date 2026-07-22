@@ -1,3 +1,7 @@
+/* src/styles/cat-picker.css.ts
+ * ESAL-2.3
+ */
+
 /**
  * cat-picker.css.ts — the oneko cat-collection modal.
  *

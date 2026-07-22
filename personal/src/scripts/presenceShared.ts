@@ -1,3 +1,7 @@
+/* src/scripts/presenceShared.ts
+ * ESAL-2.3
+ */
+
 /* presenceShared.ts — pure helpers, constants and data hooks behind PresenceCard.
  *
  * Split out of the old imperative presenceCard.ts so the component file stays

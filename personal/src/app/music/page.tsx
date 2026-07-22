@@ -1,3 +1,7 @@
+/* src/app/music/page.tsx
+ * ESAL-2.3
+ */
+
 import type { Metadata } from "next";
 import Music from "@scripts/Music";
 import "@styles/pages/music.css";

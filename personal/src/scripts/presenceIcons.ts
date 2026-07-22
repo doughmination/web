@@ -1,3 +1,7 @@
+/* src/scripts/presenceIcons.ts
+ * ESAL-2.3
+ */
+
 /* presenceIcons.ts — inline SVG for core.ts, the legacy imperative shell.
  *
  * GENERATED FILE — do not edit by hand.

@@ -1,3 +1,7 @@
+/* src/scripts/skinAnimations.ts
+ * ESAL-2.3
+ */
+
 /**
  * Custom skinview3d animations.
  *

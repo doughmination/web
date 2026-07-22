@@ -1,3 +1,7 @@
+/* src/styles/layout.css.ts
+ * ESAL-2.3
+ */
+
 /**
  * layout.css.ts — the shared .hub / .pfp / .hub-header chrome at the top of
  * most pages.

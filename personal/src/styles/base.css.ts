@@ -1,3 +1,7 @@
+/* src/styles/base.css.ts
+ * ESAL-2.3
+ */
+
 /**
  * base.css.ts — global reset, the custom cursor set, and the background
  * watermark layers. Applies on every page.

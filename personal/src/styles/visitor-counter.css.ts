@@ -1,3 +1,7 @@
+/* src/styles/visitor-counter.css.ts
+ * ESAL-2.3
+ */
+
 /**
  * visitor-counter.css.ts — the #visitor-counter widget, top-right.
  *

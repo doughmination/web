@@ -1,3 +1,7 @@
+/* src/components/chrome/SettingsMenu.tsx
+ * ESAL-2.3
+ */
+
 "use client";
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
