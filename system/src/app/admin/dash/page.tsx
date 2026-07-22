@@ -8,13 +8,14 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useDoughminationClient, isDoughminationError } from "@doughmination/react-api";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { API_BASE, authHeaders, errorMessage } from "@/lib/api";
 import * as s from "@/styles/admin.css";
 
 const AdminDash: React.FC = () => {
+  const client = useDoughminationClient();
   const [refreshing, setRefreshing] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; content: string } | null>(
     null,
@@ -35,12 +36,6 @@ const AdminDash: React.FC = () => {
   ];
 
   const handleForceRefresh = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setMessage({ type: "error", content: "Authentication required" });
-      return;
-    }
-
     if (!window.confirm("This will reload the website for ALL connected users. Are you sure?")) {
       return;
     }
@@ -49,15 +44,7 @@ const AdminDash: React.FC = () => {
     setMessage(null);
 
     try {
-      const response = await fetch(`${API_BASE}/admin/refresh`, {
-        method: "POST",
-        headers: authHeaders(token),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        throw new Error(errorMessage(errorData, "Failed to send refresh command"));
-      }
+      await client.forceRefresh();
 
       setMessage({
         type: "success",
@@ -72,7 +59,7 @@ const AdminDash: React.FC = () => {
     } catch (err: unknown) {
       setMessage({
         type: "error",
-        content: err instanceof Error ? err.message : "Failed to send refresh command",
+        content: isDoughminationError(err) ? err.message : "Failed to send refresh command",
       });
       setRefreshing(false);
     }

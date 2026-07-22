@@ -6,7 +6,7 @@
 
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -22,24 +22,69 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { API_BASE, authHeaders, errorMessage, unwrap } from "@/lib/api";
+import {
+  useMembers,
+  useDoughminationClient,
+  type PluralMember,
+} from "@doughmination/react-api";
 import * as s from "@/styles/admin.css";
 
-interface Member {
-  id: string;
-  name: string;
-  display_name?: string;
-  avatar_url?: string;
-  tags?: string[];
-}
+type Member = PluralMember;
 
 const FALLBACK_AVATAR = "https://c.stupid.cat/assets/favicon/avatar.png";
 
+// Member-tag add/remove aren't wrapped by the package client, so these two
+// endpoints are called inline off the client's base URL.
+async function addMemberTag(baseUrl: string, identifier: string, tag: string): Promise<void> {
+  const token = localStorage.getItem("token");
+  const response = await fetch(`${baseUrl}/plural/member-tags/${encodeURIComponent(identifier)}/add`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify({ tag }),
+  });
+
+  if (!response.ok) {
+    const body = await response.json().catch(() => null);
+    throw new Error(body?.detail || body?.error?.message || "Failed to add tag");
+  }
+}
+
+async function removeMemberTag(baseUrl: string, identifier: string, tag: string): Promise<void> {
+  const token = localStorage.getItem("token");
+  const response = await fetch(
+    `${baseUrl}/plural/member-tags/${encodeURIComponent(identifier)}/${encodeURIComponent(tag)}`,
+    {
+      method: "DELETE",
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    },
+  );
+
+  if (!response.ok) {
+    const body = await response.json().catch(() => null);
+    throw new Error(body?.detail || body?.error?.message || "Failed to remove tag");
+  }
+}
+
 const TagManager: React.FC = () => {
-  const [members, setMembers] = useState<Member[]>([]);
+  const client = useDoughminationClient();
+  const membersQuery = useMembers();
+
+  const members = useMemo(() => {
+    const list = membersQuery.data ?? [];
+    return [...list].sort((a, b) =>
+      (a.display_name || a.name || "")
+        .toLowerCase()
+        .localeCompare((b.display_name || b.name || "").toLowerCase()),
+    );
+  }, [membersQuery.data]);
+
+  const loading = membersQuery.isLoading;
+
   const [selectedMember, setSelectedMember] = useState<string>("");
   const [newTag, setNewTag] = useState("");
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; content: string } | null>(
     null,
@@ -50,43 +95,6 @@ const TagManager: React.FC = () => {
   const allTags = Array.from(new Set(members.flatMap((m) => m.tags || []))).sort((a, b) =>
     a.localeCompare(b),
   );
-
-  const fetchMembers = useCallback(async () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setMessage({ type: "error", content: "Authentication required" });
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const response = await fetch(`${API_BASE}/members`, {
-        headers: authHeaders(token),
-      });
-
-      if (response.ok) {
-        const data = unwrap<Member[]>(await response.json());
-        const regularMembers = [...data].sort((a, b) =>
-          (a.display_name || a.name)
-            .toLowerCase()
-            .localeCompare((b.display_name || b.name).toLowerCase()),
-        );
-
-        setMembers(regularMembers);
-      } else {
-        setMessage({ type: "error", content: "Failed to fetch members" });
-      }
-    } catch (err) {
-      console.error("Error fetching members:", err);
-      setMessage({ type: "error", content: "Network error occurred" });
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchMembers();
-  }, [fetchMembers]);
 
   const handleAddTag = async () => {
     if (!selectedMember) {
@@ -99,30 +107,15 @@ const TagManager: React.FC = () => {
       return;
     }
 
-    const token = localStorage.getItem("token");
-    if (!token) return setMessage({ type: "error", content: "Authentication required" });
-
     setSaving(true);
     setMessage(null);
 
     try {
-      const response = await fetch(`${API_BASE}/member-tags/${selectedMember}/add`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...authHeaders(token),
-        },
-        body: JSON.stringify({ tag: newTag.trim() }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        throw new Error(errorMessage(errorData, "Failed to add tag"));
-      }
+      await addMemberTag(client.baseUrl, selectedMember, newTag.trim());
 
       setNewTag("");
       setMessage({ type: "success", content: "Tag added successfully!" });
-      await fetchMembers();
+      await membersQuery.refetch();
     } catch (err: unknown) {
       setMessage({
         type: "error",
@@ -134,30 +127,16 @@ const TagManager: React.FC = () => {
   };
 
   const handleRemoveTag = async (memberName: string, tag: string) => {
-    const token = localStorage.getItem("token");
-    if (!token) return setMessage({ type: "error", content: "Authentication required" });
-
     if (!window.confirm(`Remove tag "${tag}" from ${memberName}?`)) return;
 
     setSaving(true);
     setMessage(null);
 
     try {
-      const response = await fetch(
-        `${API_BASE}/member-tags/${memberName}/${encodeURIComponent(tag)}`,
-        {
-          method: "DELETE",
-          headers: authHeaders(token),
-        },
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        throw new Error(errorMessage(errorData, "Failed to remove tag"));
-      }
+      await removeMemberTag(client.baseUrl, memberName, tag);
 
       setMessage({ type: "success", content: "Tag removed successfully!" });
-      await fetchMembers();
+      await membersQuery.refetch();
     } catch (err: unknown) {
       setMessage({
         type: "error",
@@ -174,7 +153,7 @@ const TagManager: React.FC = () => {
 
   const filteredMembers = members.filter(
     (m) =>
-      (m.display_name || m.name).toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (m.display_name || m.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
       m.tags?.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase())),
   );
 
@@ -223,7 +202,7 @@ const TagManager: React.FC = () => {
                 </SelectTrigger>
                 <SelectContent>
                   {members.map((member) => (
-                    <SelectItem key={member.id} value={member.name}>
+                    <SelectItem key={member.id} value={member.name ?? ""}>
                       <div className={s.inlineRow}>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
@@ -338,7 +317,7 @@ const TagManager: React.FC = () => {
                 {filteredMembers.map((member) => (
                   <div
                     key={member.id}
-                    onClick={() => setSelectedMember(member.name)}
+                    onClick={() => setSelectedMember(member.name ?? "")}
                     className={s.memberRow}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -362,7 +341,7 @@ const TagManager: React.FC = () => {
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  handleRemoveTag(member.name, tag);
+                                  handleRemoveTag(member.name ?? "", tag);
                                 }}
                                 className={s.chipRemove}
                                 title={`Remove ${tag}`}

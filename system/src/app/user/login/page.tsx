@@ -9,11 +9,19 @@
 import React, { useState, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { unwrap } from "@/lib/api";
+import {
+  useLogin,
+  useResendVerification,
+  useDoughminationClient,
+  isDoughminationError,
+} from "@doughmination/react-api";
 import { TURNSTILE_SITE_KEY, loadTurnstileScript } from "@/lib/turnstile";
 import * as s from "../auth.css";
 
 const Login: React.FC = () => {
+  const client = useDoughminationClient();
+  const loginMutation = useLogin();
+  const resendMutation = useResendVerification();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -114,89 +122,44 @@ const Login: React.FC = () => {
     };
 
     try {
-      const res = await fetch("https://doughmination.uk/v2/plural/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          password,
-          turnstile_token: turnstileToken,
-        }),
+      const data = await loginMutation.mutateAsync({
+        username,
+        password,
+        turnstileToken,
       });
 
-      // Read the response as text first to handle any parsing errors
-      const responseText = await res.text();
-
-      let data;
-      try {
-        data = JSON.parse(responseText);
-      } catch (parseError) {
-        console.error("Failed to parse login response:", parseError);
-        throw new Error("Invalid response from server. Please try again.");
-      }
-
-      if (res.ok && data.access_token) {
-        // Store the token
+      if (data.access_token) {
+        // Store the token — the provider's client reads it from here.
         localStorage.setItem("token", data.access_token);
 
-        // Fetch user info for welcome message
+        // Fetch user info for the welcome message.
         try {
-          const userResponse = await fetch("https://doughmination.uk/v2/plural/user_info", {
-            headers: {
-              Authorization: `Bearer ${data.access_token}`,
-            },
-          });
+          const userData = await client.getUserInfo();
+          setWelcomeUsername(userData.username);
+          setWelcomeDisplayName(userData.display_name || userData.username);
 
-          if (userResponse.ok) {
-            const userData = unwrap(await userResponse.json());
-            setWelcomeUsername(userData.username);
-            setWelcomeDisplayName(userData.display_name || userData.username);
-
-            // Show welcome message
-            setShowWelcome(true);
-
-            // Redirect after 2 seconds
-            setTimeout(redirect, 2000);
-          } else {
-            // If we can't get user info, just redirect immediately
-            redirect();
-          }
+          // Show welcome message, then redirect after 2 seconds.
+          setShowWelcome(true);
+          setTimeout(redirect, 2000);
         } catch (userError) {
           console.error("Error fetching user info:", userError);
           // Still redirect on error
           redirect();
         }
       } else {
-        // Handle login failure
-        const errorMessage =
-          data.detail || data.message || "Login failed. Please check your credentials.";
-        setError(errorMessage);
-
-        // 403 here means the credentials were right but the address isn't
-        // confirmed — surface the resend path rather than leaving them stuck.
-        if (res.status === 403) setUnverified(true);
-
-        // Reset Turnstile on login failure
-        if (widgetId.current && window.turnstile) {
-          window.turnstile.reset(widgetId.current);
-          setTurnstileToken(null);
-        }
+        redirect();
       }
     } catch (err: unknown) {
       console.error("Login error:", err);
 
-      // Better error message handling
-      let errorMessage = "Network error. Please check your connection and try again.";
-
-      if (err instanceof Error && err.message) {
-        errorMessage = err.message;
-      } else if (err && String(err) !== "[object Object]") {
-        errorMessage = String(err);
-      }
-
+      const errorMessage = isDoughminationError(err)
+        ? err.message
+        : "Network error. Please check your connection and try again.";
       setError(errorMessage);
+
+      // A 403 means the credentials were right but the address isn't confirmed
+      // — surface the resend path rather than leaving them stuck.
+      if (isDoughminationError(err) && err.status === 403) setUnverified(true);
 
       // Reset Turnstile on error
       if (widgetId.current && window.turnstile) {
@@ -218,22 +181,20 @@ const Login: React.FC = () => {
     setResendMessage("");
 
     try {
-      const res = await fetch("https://doughmination.uk/v2/plural/resend-verification", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password, turnstile_token: turnstileToken }),
+      const data = await resendMutation.mutateAsync({
+        username,
+        password,
+        turnstileToken,
       });
-      const data = await res.json().catch(() => null);
-
-      if (!res.ok) {
-        setError(data?.detail || "Couldn't resend the confirmation email.");
-      } else {
-        setResendMessage(data?.message || "Confirmation email sent. Check your inbox.");
-        setError("");
-      }
+      setResendMessage(data?.message || "Confirmation email sent. Check your inbox.");
+      setError("");
     } catch (err) {
       console.error("Resend verification error:", err);
-      setError("Network error. Please try again.");
+      setError(
+        isDoughminationError(err)
+          ? err.message
+          : "Couldn't resend the confirmation email.",
+      );
     } finally {
       setResendBusy(false);
       if (widgetId.current && window.turnstile) {

@@ -6,33 +6,45 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import {
+  useMentalState,
+  useSetMentalState,
+  isDoughminationError,
+} from "@doughmination/react-api";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { API_BASE, authHeaders, errorMessage, unwrap } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import * as s from "@/styles/admin.css";
 import * as m from "./mental.css";
 
-interface MentalState {
-  level: string;
-  notes?: string;
-  updated_at: string;
-}
-
 const MentalHealthManager: React.FC = () => {
-  const [mentalState, setMentalState] = useState<MentalState | null>(null);
+  // Live current state; the socket keeps this current after any admin saves.
+  const mentalQuery = useMentalState();
+  const setMental = useSetMentalState();
+  const mentalState = mentalQuery.data ?? null;
+  const loading = mentalQuery.isLoading;
+
   const [selectedMentalState, setSelectedMentalState] = useState("");
   const [mentalStateNotes, setMentalStateNotes] = useState("");
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; content: string } | null>(
     null,
   );
+
+  // Seed the form once from the current state.
+  const seeded = useRef(false);
+  useEffect(() => {
+    if (!seeded.current && mentalQuery.data) {
+      seeded.current = true;
+      setSelectedMentalState(mentalQuery.data.level);
+      setMentalStateNotes(mentalQuery.data.notes || "");
+    }
+  }, [mentalQuery.data]);
 
   const mentalStateOptions = [
     { value: "safe", label: "Safe", icon: "✅", className: m.stateSafe },
@@ -42,35 +54,9 @@ const MentalHealthManager: React.FC = () => {
     { value: "highly at risk", label: "Highly At Risk", icon: "⛔", className: m.stateHighRisk },
   ];
 
-  useEffect(() => {
-    const fetchMentalState = async () => {
-      try {
-        const res = await fetch(`${API_BASE}/mental-state`);
-        if (res.ok) {
-          const data = unwrap(await res.json());
-          setMentalState(data);
-          setSelectedMentalState(data.level);
-          setMentalStateNotes(data.notes || "");
-        }
-      } catch (err) {
-        console.error("Error fetching mental state:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMentalState();
-  }, []);
-
   const handleUpdateMentalState = async () => {
     if (!selectedMentalState) {
       setMessage({ type: "error", content: "Please select a mental state level." });
-      return;
-    }
-
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setMessage({ type: "error", content: "Authentication required." });
       return;
     }
 
@@ -78,31 +64,16 @@ const MentalHealthManager: React.FC = () => {
     setSaving(true);
 
     try {
-      const response = await fetch(`${API_BASE}/mental-state`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...authHeaders(token),
-        },
-        body: JSON.stringify({
-          level: selectedMentalState,
-          notes: mentalStateNotes.trim() || undefined,
-        }),
+      await setMental.mutateAsync({
+        level: selectedMentalState,
+        notes: mentalStateNotes.trim() || undefined,
       });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        throw new Error(errorMessage(errorData, "Failed to update mental state"));
-      }
-
-      const data = unwrap(await response.json());
-      setMentalState(data);
       setMessage({ type: "success", content: "Mental state updated successfully." });
     } catch (error: unknown) {
       console.error("Mental state update error:", error);
       setMessage({
         type: "error",
-        content: error instanceof Error ? error.message : "An unknown error occurred",
+        content: isDoughminationError(error) ? error.message : "An unknown error occurred",
       });
     } finally {
       setSaving(false);

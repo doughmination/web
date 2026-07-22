@@ -9,7 +9,7 @@
 import React, { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { API_BASE, errorMessage } from "@/lib/api";
+import { useVerifyEmail, isDoughminationError } from "@doughmination/react-api";
 import * as s from "../auth.css";
 
 type State = "checking" | "verified" | "failed" | "missing";
@@ -22,6 +22,8 @@ const VerifyEmail: React.FC = () => {
   const [state, setState] = useState<State>("checking");
   const [error, setError] = useState("");
   const [username, setUsername] = useState("");
+
+  const verifyEmail = useVerifyEmail();
 
   // Verification spends the token, so this must fire exactly once. React 18
   // StrictMode double-invokes effects in dev, which would otherwise consume
@@ -38,28 +40,21 @@ const VerifyEmail: React.FC = () => {
 
     (async () => {
       try {
-        const res = await fetch(`${API_BASE}/verify-email`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token }),
-        });
-        const data = await res.json().catch(() => null);
-
-        if (!res.ok) {
-          setError(errorMessage(data, "We couldn't confirm that link."));
-          setState("failed");
-          return;
-        }
-
+        const data = await verifyEmail.mutateAsync(token);
         setUsername(data?.username ?? "");
         setState("verified");
         setTimeout(() => router.replace("/user/login"), 3000);
       } catch (err) {
         console.error("Verify email error:", err);
-        setError("Network error. Please check your connection and try again.");
+        setError(
+          isDoughminationError(err)
+            ? err.message
+            : "Network error. Please check your connection and try again.",
+        );
         setState("failed");
       }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, router]);
 
   if (state === "checking") {

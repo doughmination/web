@@ -16,9 +16,19 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { API_BASE, authHeaders, errorMessage, unwrap } from "@/lib/api";
+import { useUserInfo, useDoughminationClient } from "@doughmination/react-api";
 import { cn } from "@/lib/utils";
 import * as s from "@/styles/admin.css";
+
+// Human message from either API error convention; the /users admin endpoints
+// aren't wrapped by the package client, so errors are parsed here.
+function apiErrorMessage(body: unknown, fallback: string): string {
+  if (body && typeof body === "object") {
+    const b = body as { error?: { message?: string }; detail?: string; message?: string };
+    return b.error?.message || b.detail || b.message || fallback;
+  }
+  return fallback;
+}
 
 interface User {
   id: string;
@@ -37,14 +47,18 @@ interface User {
 const FALLBACK_AVATAR = "https://c.stupid.cat/assets/favicon/avatar.png";
 
 const UserManager: React.FC = () => {
-  const [users, setUsers] = useState<User[]>([]);
-  const [currentUserId, setCurrentUserId] = useState<string>("");
+  const client = useDoughminationClient();
+
   // Email rules on the API: a user may change their OWN address (with their
   // password, via the profile page), the owner may change ANYONE's outright,
   // and a plain admin may not touch someone else's. This panel only ever acts
   // on other people, so the control is owner-only here — editing your own
   // address lives on the profile page where the password prompt is.
-  const [isOwner, setIsOwner] = useState(false);
+  const currentUser = useUserInfo();
+  const currentUserId = currentUser.data?.id ?? "";
+  const isOwner = !!currentUser.data?.is_owner;
+
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; content: string } | null>(
@@ -76,12 +90,12 @@ const UserManager: React.FC = () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE}/users`, {
-        headers: authHeaders(token),
+      const response = await fetch(`${client.baseUrl}/plural/users`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       if (response.ok) {
-        const data = unwrap<User[]>(await response.json());
+        const data = (await response.json()) as User[];
         setUsers([...data].sort((a, b) => a.username.localeCompare(b.username)));
       } else {
         setMessage({ type: "error", content: "Failed to fetch users" });
@@ -90,34 +104,10 @@ const UserManager: React.FC = () => {
       console.error("Error fetching users:", err);
       setMessage({ type: "error", content: "Network error occurred" });
     }
-  }, []);
+  }, [client]);
 
   useEffect(() => {
-    const fetchCurrentUser = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-
-      try {
-        const response = await fetch(`${API_BASE}/user_info`, {
-          headers: authHeaders(token),
-        });
-
-        if (response.ok) {
-          const data = unwrap(await response.json());
-          setCurrentUserId(data.id);
-          setIsOwner(!!data.is_owner);
-        }
-      } catch (err) {
-        console.error("Error fetching current user:", err);
-      }
-    };
-
-    const initialize = async () => {
-      await Promise.all([fetchUsers(), fetchCurrentUser()]);
-      setLoading(false);
-    };
-
-    initialize();
+    fetchUsers().finally(() => setLoading(false));
   }, [fetchUsers]);
 
   const handleCreateUser = async (e: React.FormEvent) => {
@@ -140,11 +130,11 @@ const UserManager: React.FC = () => {
     setMessage(null);
 
     try {
-      const response = await fetch(`${API_BASE}/users`, {
+      const response = await fetch(`${client.baseUrl}/plural/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          ...authHeaders(token),
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           username: newUsername.trim(),
@@ -158,7 +148,7 @@ const UserManager: React.FC = () => {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
-        throw new Error(errorMessage(errorData, "Failed to create user"));
+        throw new Error(apiErrorMessage(errorData, "Failed to create user"));
       }
 
       setMessage({ type: "success", content: "User created successfully!" });
@@ -202,11 +192,11 @@ const UserManager: React.FC = () => {
     setMessage(null);
 
     try {
-      const response = await fetch(`${API_BASE}/users/${user.id}`, {
+      const response = await fetch(`${client.baseUrl}/plural/users/${user.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          ...authHeaders(token),
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           // null explicitly clears the field on the API; a value sets it
@@ -223,7 +213,7 @@ const UserManager: React.FC = () => {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
-        throw new Error(errorMessage(errorData, "Failed to update user"));
+        throw new Error(apiErrorMessage(errorData, "Failed to update user"));
       }
 
       setMessage({ type: "success", content: `Updated @${user.username} successfully!` });
@@ -256,14 +246,14 @@ const UserManager: React.FC = () => {
     setMessage(null);
 
     try {
-      const response = await fetch(`${API_BASE}/users/${userId}`, {
+      const response = await fetch(`${client.baseUrl}/plural/users/${userId}`, {
         method: "DELETE",
-        headers: authHeaders(token),
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
-        throw new Error(errorMessage(errorData, "Failed to delete user"));
+        throw new Error(apiErrorMessage(errorData, "Failed to delete user"));
       }
 
       setMessage({ type: "success", content: "User deleted successfully!" });

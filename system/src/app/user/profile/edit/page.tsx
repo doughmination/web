@@ -6,8 +6,9 @@
 
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { useUserInfo, useDoughminationClient } from "@doughmination/react-api";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,25 +16,27 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { API_BASE, unwrap, errorMessage } from "@/lib/api";
 import * as s from "./edit.css";
-
-interface UserData {
-  id: number;
-  username: string;
-  display_name?: string;
-  avatar_url?: string;
-  email?: string | null;
-  email_verified?: boolean;
-  pending_email?: string | null;
-  is_admin: boolean;
-}
 
 /** Loose client-side sanity check only — the API does the real validation. */
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Pull a human message out of either API error convention. The PUT /users/:id
+// writes below aren't wrapped by the package client, so they parse errors here.
+function apiErrorMessage(body: unknown, fallback: string): string {
+  if (body && typeof body === "object") {
+    const b = body as { error?: { message?: string }; detail?: string; message?: string };
+    return b.error?.message || b.detail || b.message || fallback;
+  }
+  return fallback;
+}
+
 function UserEdit() {
-  const [userData, setUserData] = useState<UserData | null>(null);
+  const client = useDoughminationClient();
+  const userQuery = useUserInfo();
+  const userData = userQuery.data ?? null;
+  const loading = userQuery.isLoading;
+
   const [displayName, setDisplayName] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -43,63 +46,21 @@ function UserEdit() {
   const [emailPassword, setEmailPassword] = useState("");
   const [pendingEmail, setPendingEmail] = useState<string | null>(null);
   const [imageError, setImageError] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; content: string } | null>(
     null,
   );
 
-  const fetchUserData = useCallback(async () => {
-    const fixAvatarUrl = (url: string | undefined): string | undefined => {
-      if (!url) return undefined;
-
-      // If it's a relative URL, return as-is
-      if (url.startsWith("/")) return url;
-
-      return url;
-    };
-
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setMessage({ type: "error", content: "No authentication token found" });
-        setLoading(false);
-        return;
-      }
-
-      console.log("Fetching user data...");
-      const response = await fetch(`${API_BASE}/user_info`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = unwrap(await response.json());
-        console.log("User data received:", data);
-
-        // Fix the avatar URL if needed
-        data.avatar_url = fixAvatarUrl(data.avatar_url);
-
-        setUserData(data);
-        setDisplayName(data.display_name || "");
-        setAvatarUrl(data.avatar_url || "");
-        setPendingEmail(data.pending_email || null);
-        setImageError(false);
-      } else {
-        setMessage({ type: "error", content: "Failed to fetch user data" });
-      }
-    } catch (err) {
-      console.error("Error fetching user data:", err);
-      setMessage({ type: "error", content: "Network error occurred" });
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
+  // Seed the form once the current profile arrives.
+  const seeded = useRef(false);
   useEffect(() => {
-    fetchUserData();
-  }, [fetchUserData]);
+    if (!seeded.current && userQuery.data) {
+      seeded.current = true;
+      setDisplayName(userQuery.data.display_name || "");
+      setAvatarUrl(userQuery.data.avatar_url || "");
+      setPendingEmail(userQuery.data.pending_email || null);
+    }
+  }, [userQuery.data]);
 
   const handleAvatarUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAvatarUrl(e.target.value);
@@ -143,35 +104,29 @@ function UserEdit() {
     setMessage(null);
 
     try {
-      console.log("Updating profile...");
-
       // Update display name + avatar URL (avatars are external image URLs now)
-      const updateResponse = await fetch(
-        `${API_BASE}/users/${userData.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            // null explicitly clears the field on the API; a value sets it
-            display_name: displayName.trim() || null,
-            avatar_url: avatarUrl.trim() || null,
-          }),
+      const updateResponse = await fetch(`${client.baseUrl}/plural/users/${userData.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-      );
+        body: JSON.stringify({
+          // null explicitly clears the field on the API; a value sets it
+          display_name: displayName.trim() || null,
+          avatar_url: avatarUrl.trim() || null,
+        }),
+      });
 
       if (!updateResponse.ok) {
         const errorData = await updateResponse.json().catch(() => null);
-        throw new Error(errorMessage(errorData, "Failed to update profile"));
+        throw new Error(apiErrorMessage(errorData, "Failed to update profile"));
       }
 
-      console.log("Profile updated successfully");
       setMessage({ type: "success", content: "Profile updated successfully" });
 
       // Refresh user data
-      await fetchUserData();
+      await userQuery.refetch();
     } catch (err: unknown) {
       console.error("Profile update error:", err);
       setMessage({
@@ -219,8 +174,7 @@ function UserEdit() {
     setMessage(null);
 
     try {
-      console.log("Changing password...");
-      const response = await fetch(`${API_BASE}/users/${userData.id}`, {
+      const response = await fetch(`${client.baseUrl}/plural/users/${userData.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -233,11 +187,10 @@ function UserEdit() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorMessage(errorData, "Failed to change password"));
+        const errorData = await response.json().catch(() => null);
+        throw new Error(apiErrorMessage(errorData, "Failed to change password"));
       }
 
-      console.log("Password changed successfully");
       setMessage({ type: "success", content: "Password changed successfully" });
 
       // Clear password fields
@@ -282,7 +235,7 @@ function UserEdit() {
     setMessage(null);
 
     try {
-      const response = await fetch(`${API_BASE}/users/${userData.id}`, {
+      const response = await fetch(`${client.baseUrl}/plural/users/${userData.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({
@@ -293,7 +246,7 @@ function UserEdit() {
 
       const data = await response.json().catch(() => null);
       if (!response.ok) {
-        throw new Error(errorMessage(data, "Failed to change email address"));
+        throw new Error(apiErrorMessage(data, "Failed to change email address"));
       }
 
       // The address does NOT switch until the new one is confirmed.

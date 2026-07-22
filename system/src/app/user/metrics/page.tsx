@@ -31,7 +31,7 @@ import {
   CartesianGrid,
 } from "recharts";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { unwrap } from "@/lib/api";
+import { useDoughminationClient } from "@doughmination/react-api";
 import * as s from "./metrics.css";
 
 interface MemberMetric {
@@ -77,6 +77,7 @@ const FALLBACK_AVATAR = "https://c.stupid.cat/assets/favicon/avatar.png";
 type TimeframeKey = "24h" | "48h" | "5d" | "7d" | "30d";
 
 const Metrics: React.FC = () => {
+  const client = useDoughminationClient();
   const [frontingMetrics, setFrontingMetrics] = useState<FrontingMetrics | null>(null);
   const [switchMetrics, setSwitchMetrics] = useState<SwitchMetrics | null>(null);
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>("7d");
@@ -103,20 +104,15 @@ const Metrics: React.FC = () => {
       }
 
       try {
+        const headers = { Authorization: `Bearer ${token}` };
         const [frontingRes, switchRes] = await Promise.all([
-          fetch("https://doughmination.uk/v2/plural/metrics/fronting-time?days=30", {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          fetch("https://doughmination.uk/v2/plural/metrics/switch-frequency?days=30", {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
+          fetch(`${client.baseUrl}/plural/metrics/fronting-time?days=30`, { headers }),
+          fetch(`${client.baseUrl}/plural/metrics/switch-frequency?days=30`, { headers }),
         ]);
 
         if (frontingRes.ok && switchRes.ok) {
-          const frontingData = unwrap(await frontingRes.json());
-          const switchData = unwrap(await switchRes.json());
-          setFrontingMetrics(frontingData);
-          setSwitchMetrics(switchData);
+          setFrontingMetrics(await frontingRes.json());
+          setSwitchMetrics(await switchRes.json());
         } else {
           setMessage({ type: "error", content: "Failed to fetch metrics" });
         }
@@ -129,7 +125,7 @@ const Metrics: React.FC = () => {
     };
 
     fetchMetrics();
-  }, []);
+  }, [client]);
 
   const formatDuration = (seconds: number): string => {
     const hours = Math.floor(seconds / 3600);

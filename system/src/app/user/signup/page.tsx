@@ -9,7 +9,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { API_BASE, errorMessage, unwrap } from "@/lib/api";
+import {
+  useSignup,
+  useCorrectEmail,
+  useDoughminationClient,
+  isDoughminationError,
+} from "@doughmination/react-api";
 import { TURNSTILE_SITE_KEY, loadTurnstileScript } from "@/lib/turnstile";
 import * as s from "../auth.css";
 
@@ -19,6 +24,9 @@ type Availability = "unknown" | "checking" | "available" | "taken";
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const SignUp: React.FC = () => {
+  const client = useDoughminationClient();
+  const signup = useSignup();
+  const correctEmail = useCorrectEmail();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [displayName, setDisplayName] = useState("");
@@ -107,22 +115,15 @@ const SignUp: React.FC = () => {
     setAvailability("checking");
     const timeout = setTimeout(async () => {
       try {
-        const res = await fetch(
-          `${API_BASE}/users/check-username?username=${encodeURIComponent(name)}`,
-        );
-        if (res.ok) {
-          const data = unwrap(await res.json());
-          setAvailability(data.available ? "available" : "taken");
-        } else {
-          setAvailability("unknown");
-        }
+        const data = await client.checkUsername(name);
+        setAvailability(data.available ? "available" : "taken");
       } catch {
         setAvailability("unknown");
       }
     }, 500);
 
     return () => clearTimeout(timeout);
-  }, [username]);
+  }, [username, client]);
 
   // Debounced email availability check, mirroring the username one above.
   // Only fires once the address looks well-formed, so we aren't querying on
@@ -137,20 +138,15 @@ const SignUp: React.FC = () => {
     setEmailAvailability("checking");
     const timeout = setTimeout(async () => {
       try {
-        const res = await fetch(`${API_BASE}/users/check-email?email=${encodeURIComponent(value)}`);
-        if (res.ok) {
-          const data = unwrap(await res.json());
-          setEmailAvailability(data.available ? "available" : "taken");
-        } else {
-          setEmailAvailability("unknown");
-        }
+        const data = await client.checkEmail(value);
+        setEmailAvailability(data.available ? "available" : "taken");
       } catch {
         setEmailAvailability("unknown");
       }
     }, 500);
 
     return () => clearTimeout(timeout);
-  }, [email]);
+  }, [email, client]);
 
   const resetTurnstile = () => {
     if (widgetId.current && window.turnstile) {
@@ -201,34 +197,23 @@ const SignUp: React.FC = () => {
     setError("");
 
     try {
-      const res = await fetch(`${API_BASE}/signup`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: username.trim(),
-          password,
-          email: email.trim(),
-          display_name: displayName.trim() || undefined,
-          turnstile_token: turnstileToken,
-        }),
+      const json = await signup.mutateAsync({
+        username: username.trim(),
+        password,
+        email: email.trim(),
+        displayName: displayName.trim() || undefined,
+        turnstileToken,
       });
 
-      const json = await res.json().catch(() => null);
-
-      if (res.ok && json?.success !== false) {
-        setCorrectionToken(json?.correction_token ?? null);
-        setEmailSent(json?.email_sent !== false);
-        setCreated(true);
-        // No auto-redirect any more: the user has to act on the confirmation
-        // email, and may need the "wrong address?" escape hatch on this screen.
-      } else {
-        setError(errorMessage(json, "Sign up failed. Please try again."));
-        resetTurnstile();
-      }
+      setCorrectionToken(json?.correction_token ?? null);
+      setEmailSent(json?.email_sent !== false);
+      setCreated(true);
+      // No auto-redirect any more: the user has to act on the confirmation
+      // email, and may need the "wrong address?" escape hatch on this screen.
     } catch (err: unknown) {
       console.error("Sign up error:", err);
       setError(
-        err instanceof Error && err.message
+        isDoughminationError(err)
           ? err.message
           : "Network error. Please check your connection and try again.",
       );
@@ -258,22 +243,11 @@ const SignUp: React.FC = () => {
 
     setCorrectionBusy(true);
     try {
-      const res = await fetch(`${API_BASE}/correct-email`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          correction_token: correctionToken,
-          email: correctedEmail.trim(),
-          turnstile_token: turnstileToken,
-        }),
+      await correctEmail.mutateAsync({
+        correctionToken,
+        email: correctedEmail.trim(),
+        turnstileToken,
       });
-      const json = await res.json().catch(() => null);
-
-      if (!res.ok) {
-        setCorrectionError(errorMessage(json, "Couldn't update that address."));
-        resetTurnstile();
-        return;
-      }
 
       setEmail(correctedEmail.trim());
       setCorrectionMessage(`Confirmation email sent to ${correctedEmail.trim()}.`);
@@ -282,7 +256,9 @@ const SignUp: React.FC = () => {
       resetTurnstile();
     } catch (err) {
       console.error("Correct email error:", err);
-      setCorrectionError("Network error. Please try again.");
+      setCorrectionError(
+        isDoughminationError(err) ? err.message : "Network error. Please try again.",
+      );
       resetTurnstile();
     } finally {
       setCorrectionBusy(false);

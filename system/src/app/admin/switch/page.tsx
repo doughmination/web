@@ -6,8 +6,15 @@
 
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
+import {
+  useMembers,
+  useFronters,
+  useDoughminationClient,
+  isDoughminationError,
+  type PluralMember,
+} from "@doughmination/react-api";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,75 +22,46 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { API_BASE, authHeaders, errorMessage, unwrap } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import * as s from "@/styles/admin.css";
 import * as sw from "./switch.css";
 
-interface Member {
-  id: string;
-  name: string;
-  display_name?: string;
-  avatar_url?: string;
-  pronouns?: string;
-  tags?: string[];
-}
-
-interface FrontingData {
-  id: string;
-  timestamp: string;
-  members: Member[];
-}
+type Member = PluralMember;
 
 const FALLBACK_AVATAR = "https://c.stupid.cat/assets/favicon/avatar.png";
 
 const SwitchManager: React.FC = () => {
-  const [members, setMembers] = useState<Member[]>([]);
-  const [currentFronters, setCurrentFronters] = useState<Member[]>([]);
+  const client = useDoughminationClient();
+  const membersQuery = useMembers();
+  const frontersQuery = useFronters();
+
+  const members = useMemo(() => {
+    const list = membersQuery.data ?? [];
+    return [...list].sort((a, b) =>
+      (a.display_name || a.name || "")
+        .toLowerCase()
+        .localeCompare((b.display_name || b.name || "").toLowerCase()),
+    );
+  }, [membersQuery.data]);
+
+  const currentFronters = frontersQuery.data?.members ?? [];
+  const loading = membersQuery.isLoading || frontersQuery.isLoading;
+
   const [selectedMembers, setSelectedMembers] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState("");
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; content: string } | null>(
     null,
   );
 
-  const fetchData = useCallback(async () => {
-    try {
-      const [membersRes, frontersRes] = await Promise.all([
-        fetch(`${API_BASE}/members`),
-        fetch(`${API_BASE}/fronters`),
-      ]);
-
-      if (membersRes.ok) {
-        const membersData = unwrap<Member[]>(await membersRes.json());
-        const regularMembers = [...membersData].sort((a, b) =>
-          (a.display_name || a.name)
-            .toLowerCase()
-            .localeCompare((b.display_name || b.name).toLowerCase()),
-        );
-        setMembers(regularMembers);
-      }
-
-      if (frontersRes.ok) {
-        const frontersData = unwrap<FrontingData>(await frontersRes.json());
-        setCurrentFronters(frontersData.members || []);
-
-        // Pre-populate selected members with current fronters
-        const fronterIds = new Set(frontersData.members?.map((m) => m.id) || []);
-        setSelectedMembers(fronterIds);
-      }
-    } catch (err) {
-      console.error("Error fetching data:", err);
-      setMessage({ type: "error", content: "Failed to fetch data" });
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
+  // Pre-populate the selection with the current fronters, once.
+  const seeded = useRef(false);
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    if (!seeded.current && frontersQuery.data) {
+      seeded.current = true;
+      setSelectedMembers(new Set(frontersQuery.data.members?.map((member) => member.id) || []));
+    }
+  }, [frontersQuery.data]);
 
   const handleToggleMember = (memberId: string) => {
     const newSelected = new Set(selectedMembers);
@@ -103,45 +81,23 @@ const SwitchManager: React.FC = () => {
       return;
     }
 
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setMessage({ type: "error", content: "Authentication required" });
-      return;
-    }
-
     setSaving(true);
     setMessage(null);
 
     try {
-      const response = await fetch(`${API_BASE}/multi_switch`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...authHeaders(token),
-        },
-        body: JSON.stringify({
-          member_ids: Array.from(selectedMembers),
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        throw new Error(errorMessage(errorData, "Failed to switch fronters"));
-      }
-
-      const data = unwrap(await response.json());
+      const data = await client.multiSwitch(Array.from(selectedMembers));
       const count = data.count ?? selectedMembers.size;
       setMessage({
         type: "success",
         content: `Successfully switched to ${count} member${count !== 1 ? "s" : ""}!`,
       });
 
-      // Refresh fronters data
-      await fetchData();
+      // Refresh fronters (also arrives live over the socket).
+      await frontersQuery.refetch();
     } catch (err: unknown) {
       setMessage({
         type: "error",
-        content: err instanceof Error ? err.message : "Failed to switch fronters",
+        content: isDoughminationError(err) ? err.message : "Failed to switch fronters",
       });
     } finally {
       setSaving(false);
@@ -150,7 +106,7 @@ const SwitchManager: React.FC = () => {
 
   const filteredMembers = members.filter(
     (m) =>
-      (m.display_name || m.name).toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (m.display_name || m.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
       m.tags?.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase())),
   );
 

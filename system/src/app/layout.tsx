@@ -9,7 +9,6 @@ import "@/styles/theme.css";
 import "@/styles/global.css";
 import Providers from "./providers";
 // import VisitorTracker from "@/components/VisitorTracker";
-import { WebSocketProvider } from "@/lib/websocket";
 
 export const metadata: Metadata = {
   title: "Doughmination System | Plural System Member Tracker & Fronting Manager",
@@ -86,11 +85,9 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body>
-        <WebSocketProvider>
-          <Providers>
-            {children}
-          </Providers>
-        </WebSocketProvider>
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );

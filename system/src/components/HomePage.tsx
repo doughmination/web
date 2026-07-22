@@ -6,47 +6,26 @@
 
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import {
+  useMembers,
+  useFronters,
+  useSystem,
+  useUserInfo,
+  useConnectionStatus,
+  type PluralMember,
+} from "@doughmination/react-api";
 import ThemeToggle from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { cn, normalizeColor, readableOnDark } from "@/lib/utils";
-import { unwrap } from "@/lib/api";
 import * as site from "@/styles/site.css";
 import * as s from "@/app/home.css";
 import { Github } from "react-bootstrap-icons";
-import { useWebSocket } from "@/lib/websocket";
 
-// Define interfaces for type safety
-interface Member {
-  id: number;
-  name: string;
-  display_name?: string;
-  avatar_url?: string;
-  pronouns?: string;
-  color?: string | null;
-  tags?: string[];
-  status?: {
-    text: string;
-    emoji?: string;
-    updated_at: string;
-  } | null;
-}
-
-interface Fronting {
-  members: Member[];
-}
-
-interface SystemInfo {
-  mental_state?: MentalState;
-}
-
-interface MentalState {
-  level: string;
-  notes?: string;
-  updated_at: string;
-}
+// The member shape comes straight from the package now.
+type Member = PluralMember;
 
 interface UserData {
   username: string;
@@ -65,176 +44,76 @@ const MENTAL_STATE_CLASSES: Record<string, string> = {
 export default function HomePage() {
   const router = useRouter();
 
-  // State management
-  const [members, setMembers] = useState<Member[]>([]);
-  const [fronting, setFronting] = useState<Fronting | null>(null);
-  const [systemInfo, setSystemInfo] = useState<SystemInfo | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [isOwner, setIsOwner] = useState(false);
-  const [currentUser, setCurrentUser] = useState<UserData | null>(null);
+  // UI-only state; all server data now comes from the package hooks below.
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentTagFilter, setCurrentTagFilter] = useState<string | null>(null);
   const [filteredMembers, setFilteredMembers] = useState<Member[]>([]);
-  const [availableTags, setAvailableTags] = useState<string[]>([]);
-  const { connected: wsConnected, subscribe } = useWebSocket();
 
-  // WebSocket connection with improved reconnection logic
+  // Live public data — seeded over REST, then kept current by the shared
+  // socket (fronters + mental state are broadcast to every client, and the
+  // provider invalidates on force_refresh).
+  const membersQuery = useMembers();
+  const frontersQuery = useFronters();
+  const systemQuery = useSystem();
+  const wsConnected = useConnectionStatus() === "open";
+
+  const members = useMemo(() => {
+    const list = membersQuery.data ?? [];
+    return [...list].sort((a, b) => {
+      const nameA = (a.display_name || a.name || "").toLowerCase();
+      const nameB = (b.display_name || b.name || "").toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+  }, [membersQuery.data]);
+
+  const availableTags = useMemo(() => {
+    const tags = new Set<string>();
+    members.forEach((m) => m.tags?.forEach((t) => tags.add(t)));
+    return Array.from(tags).sort((a, b) => a.localeCompare(b));
+  }, [members]);
+
+  const fronting = frontersQuery.data ?? null;
+  const systemInfo = systemQuery.data ?? null;
+  const loading =
+    membersQuery.isLoading || frontersQuery.isLoading || systemQuery.isLoading;
+
+  // Auth: the provider supplies the bearer token from localStorage, so
+  // useUserInfo covers real accounts; the mock-* dev tokens are handled inline.
+  const [token, setToken] = useState<string | null>(null);
   useEffect(() => {
-  const unsubscribers = [
-    subscribe("fronting_update", (data) => setFronting(data)),
-    subscribe("mental_state_update", (data) =>
-      setSystemInfo((prev) => (prev ? { ...prev, mental_state: data } : null)),
-    ),
-    subscribe("members_update", (data) => {
-      if (!data?.members) return;
-      const sortedMembers = [...data.members].sort((a: Member, b: Member) => {
-        const nameA = (a.display_name || a.name).toLowerCase();
-        const nameB = (b.display_name || b.name).toLowerCase();
-        return nameA.localeCompare(nameB);
-      });
-      setMembers(sortedMembers);
-
-      const tags = new Set<string>();
-      sortedMembers.forEach((m: Member) => m.tags?.forEach((t) => tags.add(t)));
-      setAvailableTags(Array.from(tags).sort((a, b) => a.localeCompare(b)));
-    }),
-    subscribe("force_refresh", () => window.location.reload()),
-  ];
-
-  return () => unsubscribers.forEach((unsub) => unsub());
-}, [subscribe]);
-
-  // Initialize app data
-  useEffect(() => {
-    const checkAuthStatus = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setLoggedIn(false);
-        setIsAdmin(false);
-        setIsOwner(false);
-        setCurrentUser(null);
-        return;
-      }
-
-      // Fast-path for mock dev token
-      if (token.startsWith("mock-")) {
-        setLoggedIn(true);
-        setIsAdmin(token === "mock-admin");
-        setIsOwner(token === "mock-owner");
-        setCurrentUser({ username: "mock-user", display_name: "Mock User" });
-        return;
-      }
-
-      try {
-        // user_info includes is_admin / is_owner / is_pet — one call does it all
-        const response = await fetch("https://doughmination.uk/v2/plural/user_info", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.ok) {
-          const userData = unwrap(await response.json());
-          setLoggedIn(true);
-          setIsAdmin(!!userData.is_admin);
-          setIsOwner(!!userData.is_owner);
-          setCurrentUser({
-            username: userData.username,
-            display_name: userData.display_name,
-          });
-        } else {
-          setLoggedIn(false);
-          setIsAdmin(false);
-          setIsOwner(false);
-          setCurrentUser(null);
-        }
-      } catch (error) {
-        console.error("Auth check error:", error);
-        setLoggedIn(false);
-        setIsAdmin(false);
-        setIsOwner(false);
-        setCurrentUser(null);
-      }
-    };
-
-    const fetchMembers = async () => {
-      try {
-        const response = await fetch("https://doughmination.uk/v2/plural/members");
-        if (response.ok) {
-          const data = unwrap(await response.json());
-
-          // Sort members alphabetically by display name or name
-          const sortedMembers = [...data].sort((a: Member, b: Member) => {
-            const nameA = (a.display_name || a.name).toLowerCase();
-            const nameB = (b.display_name || b.name).toLowerCase();
-            return nameA.localeCompare(nameB);
-          });
-
-          setMembers(sortedMembers);
-
-          // Extract unique tags and sort alphabetically
-          const tags = new Set<string>();
-          sortedMembers.forEach((member: Member) => {
-            member.tags?.forEach((tag) => tags.add(tag));
-          });
-          setAvailableTags(Array.from(tags).sort((a, b) => a.localeCompare(b)));
-        }
-      } catch (error) {
-        console.error("Error fetching members:", error);
-      }
-    };
-
-    const fetchFronting = async () => {
-      try {
-        const response = await fetch("https://doughmination.uk/v2/plural/fronters");
-        if (response.ok) {
-          const data = unwrap(await response.json());
-          setFronting(data);
-        }
-      } catch (error) {
-        console.error("Error fetching fronting:", error);
-      }
-    };
-
-    const fetchSystemInfo = async () => {
-      try {
-        const response = await fetch("https://doughmination.uk/v2/plural/system");
-        if (response.ok) {
-          const data = unwrap(await response.json());
-          setSystemInfo(data);
-        }
-      } catch (error) {
-        console.error("Error fetching system info:", error);
-      }
-    };
-
-    const initialize = async () => {
-      setLoading(true);
-      try {
-        // Check authentication status
-        await checkAuthStatus();
-
-        // Fetch public data
-        await Promise.all([fetchMembers(), fetchFronting(), fetchSystemInfo()]);
-      } catch (error) {
-        console.error("Initialization error:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    initialize();
+    setToken(localStorage.getItem("token"));
   }, []);
+  const isMock = token?.startsWith("mock-") ?? false;
+  const userInfoQuery = useUserInfo({ enabled: Boolean(token) && !isMock });
+
+  const { loggedIn, isAdmin, isOwner, currentUser } = useMemo(() => {
+    if (!token) {
+      return { loggedIn: false, isAdmin: false, isOwner: false, currentUser: null as UserData | null };
+    }
+    if (isMock) {
+      return {
+        loggedIn: true,
+        isAdmin: token === "mock-admin",
+        isOwner: token === "mock-owner",
+        currentUser: { username: "mock-user", display_name: "Mock User" } as UserData,
+      };
+    }
+    const u = userInfoQuery.data;
+    if (!u) {
+      return { loggedIn: false, isAdmin: false, isOwner: false, currentUser: null as UserData | null };
+    }
+    return {
+      loggedIn: true,
+      isAdmin: !!u.is_admin,
+      isOwner: !!u.is_owner,
+      currentUser: { username: u.username, display_name: u.display_name ?? undefined } as UserData,
+    };
+  }, [token, isMock, userInfoQuery.data]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    setLoggedIn(false);
-    setIsAdmin(false);
-    setIsOwner(false);
-    setCurrentUser(null);
+    setToken(null);
     router.push("/");
   };
 
@@ -263,7 +142,9 @@ export default function HomePage() {
     if (searchQuery) {
       filtered = filtered.filter(
         (member) =>
-          (member.display_name || member.name).toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (member.display_name || member.name || "")
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
           member.tags?.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase())),
       );
     }
@@ -282,7 +163,7 @@ export default function HomePage() {
 
   // Check if a member is currently fronting
   const isMemberFronting = useCallback(
-    (memberId: number, memberName: string): boolean => {
+    (memberId: string, memberName?: string): boolean => {
       if (!fronting?.members || fronting.members.length === 0) {
         return false;
       }

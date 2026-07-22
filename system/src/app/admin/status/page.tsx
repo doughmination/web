@@ -6,8 +6,14 @@
 
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
+import {
+  useMembers,
+  useDoughminationClient,
+  isDoughminationError,
+  type PluralMember,
+} from "@doughmination/react-api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,20 +27,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { API_BASE, authHeaders, errorMessage, unwrap } from "@/lib/api";
 import * as s from "@/styles/admin.css";
 
-interface Member {
-  id: string;
-  name: string;
-  display_name?: string;
-  avatar_url?: string;
-  status?: {
-    text: string;
-    emoji?: string;
-    updated_at: string;
-  } | null;
-}
+type Member = PluralMember;
 
 const EMOJI_SUGGESTIONS = [
   "💤", "🎮", "📚", "🎨", "🎵", "💻", "🌙", "☀️",
@@ -43,53 +38,46 @@ const EMOJI_SUGGESTIONS = [
 
 const FALLBACK_AVATAR = "https://c.stupid.cat/assets/favicon/avatar.png";
 
+// The package client covers setting a status; clearing it uses a DELETE the
+// client doesn't wrap, so this one endpoint is called inline.
+async function deleteMemberStatus(baseUrl: string, identifier: string): Promise<void> {
+  const token = localStorage.getItem("token");
+  const response = await fetch(
+    `${baseUrl}/plural/members/${encodeURIComponent(identifier)}/status`,
+    {
+      method: "DELETE",
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    },
+  );
+
+  if (!response.ok) {
+    const body = await response.json().catch(() => null);
+    throw new Error(body?.detail || body?.error?.message || "Failed to clear status");
+  }
+}
+
 function StatusManager() {
-  const [members, setMembers] = useState<Member[]>([]);
+  const client = useDoughminationClient();
+  const membersQuery = useMembers();
+
+  const members = useMemo(() => {
+    const list = membersQuery.data ?? [];
+    return [...list].sort((a, b) =>
+      (a.display_name || a.name || "")
+        .toLowerCase()
+        .localeCompare((b.display_name || b.name || "").toLowerCase()),
+    );
+  }, [membersQuery.data]);
+
+  const loading = membersQuery.isLoading;
+
   const [selectedMember, setSelectedMember] = useState<string>("");
   const [statusText, setStatusText] = useState("");
   const [emoji, setEmoji] = useState("");
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; content: string } | null>(
     null,
   );
-
-  const fetchMembers = useCallback(async () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setMessage({ type: "error", content: "Authentication required" });
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const response = await fetch(`${API_BASE}/members`, {
-        headers: authHeaders(token),
-      });
-
-      if (response.ok) {
-        const data = unwrap<Member[]>(await response.json());
-        const regularMembers = [...data].sort((a, b) =>
-          (a.display_name || a.name)
-            .toLowerCase()
-            .localeCompare((b.display_name || b.name).toLowerCase()),
-        );
-
-        setMembers(regularMembers);
-      } else {
-        setMessage({ type: "error", content: "Failed to fetch members" });
-      }
-    } catch (err) {
-      console.error("Error fetching members:", err);
-      setMessage({ type: "error", content: "Network error occurred" });
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchMembers();
-  }, [fetchMembers]);
 
   useEffect(() => {
     if (selectedMember) {
@@ -122,36 +110,21 @@ function StatusManager() {
       return;
     }
 
-    const token = localStorage.getItem("token");
-    if (!token) return setMessage({ type: "error", content: "Authentication required" });
-
     setSaving(true);
     setMessage(null);
 
     try {
-      const response = await fetch(`${API_BASE}/members/${selectedMember}/status`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...authHeaders(token),
-        },
-        body: JSON.stringify({
-          text: statusText.trim(),
-          emoji: emoji || undefined,
-        }),
+      await client.setMemberStatus(selectedMember, {
+        text: statusText.trim(),
+        emoji: emoji || undefined,
       });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        throw new Error(errorMessage(errorData, "Failed to update status"));
-      }
-
       setMessage({ type: "success", content: "Status updated!" });
-      await fetchMembers();
+      await membersQuery.refetch();
     } catch (err: unknown) {
       setMessage({
         type: "error",
-        content: err instanceof Error ? err.message : "Failed to update status",
+        content: isDoughminationError(err) ? err.message : "Failed to update status",
       });
     } finally {
       setSaving(false);
@@ -164,29 +137,18 @@ function StatusManager() {
       return;
     }
 
-    const token = localStorage.getItem("token");
-    if (!token) return setMessage({ type: "error", content: "Authentication required" });
-
     if (!window.confirm(`Clear status for ${selectedMember}?`)) return;
 
     setSaving(true);
     setMessage(null);
 
     try {
-      const response = await fetch(`${API_BASE}/members/${selectedMember}/status`, {
-        method: "DELETE",
-        headers: authHeaders(token),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        throw new Error(errorMessage(errorData, "Failed to clear status"));
-      }
+      await deleteMemberStatus(client.baseUrl, selectedMember);
 
       setStatusText("");
       setEmoji("");
       setMessage({ type: "success", content: "Status cleared!" });
-      await fetchMembers();
+      await membersQuery.refetch();
     } catch (err: unknown) {
       setMessage({
         type: "error",
@@ -247,7 +209,7 @@ function StatusManager() {
 
                   <SelectContent>
                     {members.map((member) => (
-                      <SelectItem key={member.id} value={member.name}>
+                      <SelectItem key={member.id} value={member.name ?? ""}>
                         <div className={s.inlineRow}>
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
@@ -379,7 +341,7 @@ function StatusManager() {
                   .map((member) => (
                     <div
                       key={member.id}
-                      onClick={() => setSelectedMember(member.name)}
+                      onClick={() => setSelectedMember(member.name ?? "")}
                       className={s.memberRow}
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}

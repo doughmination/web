@@ -6,82 +6,23 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { unwrap } from "@/lib/api";
+import { useUserInfo } from "@doughmination/react-api";
 import * as s from "./profile.css";
 
-interface UserData {
-  id: number;
-  username: string;
-  display_name?: string;
-  avatar_url?: string;
-  is_admin: boolean;
-  is_owner?: boolean;
-  is_pet?: boolean;
-}
-
 function UserProfile() {
-  const [userData, setUserData] = useState<UserData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const userQuery = useUserInfo();
+  const userData = userQuery.data ?? null;
+  const loading = userQuery.isLoading;
+  const error = userQuery.isError ? "Failed to fetch user data" : "";
+
   const [imageError, setImageError] = useState(false);
-
-  useEffect(() => {
-    const fixAvatarUrl = (url: string | undefined): string | undefined => {
-      if (!url) return undefined;
-
-      // If it's a relative URL, return as-is
-      if (url.startsWith("/")) return url;
-
-      return url;
-    };
-
-    const fetchUserData = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          setError("No authentication token found");
-          setLoading(false);
-          return;
-        }
-
-        console.log("Fetching user data...");
-        const response = await fetch("https://doughmination.uk/v2/plural/user_info", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.ok) {
-          const data = unwrap(await response.json());
-          console.log("User data received:", data);
-
-          // Fix the avatar URL if needed
-          data.avatar_url = fixAvatarUrl(data.avatar_url);
-
-          setUserData(data);
-          setImageError(false);
-        } else {
-          const errorText = await response.text();
-          console.error("Failed to fetch user data:", response.status, errorText);
-          setError("Failed to fetch user data");
-        }
-      } catch (err) {
-        console.error("Error fetching user data:", err);
-        setError("Network error occurred");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserData();
-  }, []);
 
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     console.error("Failed to load avatar:", userData?.avatar_url);

@@ -8,7 +8,7 @@
 
 import React, { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { API_BASE, authHeaders, unwrap } from "@/lib/api";
+import { useUserInfo } from "@doughmination/react-api";
 import * as s from "./components.css";
 
 interface ProtectedRouteProps {
@@ -24,69 +24,43 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   ownerRequired = false,
   petRequired = false,
 }) => {
-  const [loading, setLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [isOwner, setIsOwner] = useState(false);
-  const [isPet, setIsPet] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
+  // Read the token once on mount; the provider also feeds it to the client.
+  const [token, setToken] = useState<string | null>(null);
+  const [tokenLoaded, setTokenLoaded] = useState(false);
   useEffect(() => {
-    const checkAuth = async () => {
-      const token = localStorage.getItem("token");
-
-      if (!token) {
-        setIsAuthenticated(false);
-        setLoading(false);
-        return;
-      }
-
-      // Fast-path for mock dev token
-      if (token.startsWith("mock-")) {
-        setIsAuthenticated(true);
-        setIsAdmin(token === "mock-admin");
-        setIsOwner(token === "mock-owner");
-        setIsPet(token === "mock-pet");
-        setLoading(false);
-        return;
-      }
-
-      try {
-        // Check user permissions from the API (separate endpoints per role)
-        const [adminRes, ownerRes, petRes] = await Promise.all([
-          fetch(`${API_BASE}/auth/is_admin`, { headers: authHeaders(token) }),
-          fetch(`${API_BASE}/auth/is_owner`, { headers: authHeaders(token) }),
-          fetch(`${API_BASE}/auth/is_pet`, { headers: authHeaders(token) }),
-        ]);
-
-        if (adminRes.ok) {
-          const admin = unwrap(await adminRes.json());
-          const owner = ownerRes.ok ? unwrap(await ownerRes.json()) : {};
-          const pet = petRes.ok ? unwrap(await petRes.json()) : {};
-          setIsAuthenticated(true);
-          setIsAdmin(!!admin.isAdmin);
-          setIsOwner(!!owner.isOwner);
-          setIsPet(!!pet.isPet);
-        } else {
-          setIsAuthenticated(false);
-          setIsAdmin(false);
-          setIsOwner(false);
-          setIsPet(false);
-        }
-      } catch (error) {
-        console.error("Auth check error:", error);
-        setIsAuthenticated(false);
-        setIsAdmin(false);
-        setIsOwner(false);
-        setIsPet(false);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkAuth();
+    setToken(localStorage.getItem("token"));
+    setTokenLoaded(true);
   }, []);
+
+  const isMock = token?.startsWith("mock-") ?? false;
+
+  // user_info returns is_admin / is_owner / is_pet in one call, replacing the
+  // three separate /auth/* requests.
+  const userInfo = useUserInfo({ enabled: Boolean(token) && !isMock });
+
+  let isAuthenticated = false;
+  let isAdmin = false;
+  let isOwner = false;
+  let isPet = false;
+
+  if (token && isMock) {
+    isAuthenticated = true;
+    isAdmin = token === "mock-admin";
+    isOwner = token === "mock-owner";
+    isPet = token === "mock-pet";
+  } else if (token && userInfo.data) {
+    const u = userInfo.data;
+    isAuthenticated = true;
+    isAdmin = !!u.is_admin;
+    isOwner = !!u.is_owner;
+    isPet = !!u.is_pet;
+  }
+
+  const loading =
+    !tokenLoaded || (Boolean(token) && !isMock && userInfo.isLoading);
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {

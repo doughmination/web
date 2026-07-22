@@ -8,7 +8,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { API_BASE, errorMessage } from "@/lib/api";
+import { useForgotUsername, isDoughminationError } from "@doughmination/react-api";
 import { useTurnstile } from "@/lib/useTurnstile";
 import * as s from "../auth.css";
 
@@ -19,6 +19,7 @@ const ForgotUsername: React.FC = () => {
   const [sentTo, setSentTo] = useState<string | null>(null);
 
   const turnstile = useTurnstile();
+  const forgotUsername = useForgotUsername();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,27 +37,18 @@ const ForgotUsername: React.FC = () => {
     setError("");
 
     try {
-      const res = await fetch(`${API_BASE}/forgot-username`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: email.trim(),
-          turnstile_token: turnstile.token,
-        }),
+      const data = await forgotUsername.mutateAsync({
+        email: email.trim(),
+        turnstileToken: turnstile.token,
       });
-
-      const data = await res.json().catch(() => null);
-
-      if (!res.ok) {
-        setError(errorMessage(data, "Couldn't send that email. Please try again."));
-        turnstile.reset();
-        return;
-      }
-
       setSentTo(data?.sent_to ?? null);
     } catch (err) {
       console.error("Forgot username error:", err);
-      setError("Network error. Please check your connection and try again.");
+      setError(
+        isDoughminationError(err)
+          ? err.message
+          : "Couldn't send that email. Please try again.",
+      );
       turnstile.reset();
     } finally {
       setLoading(false);

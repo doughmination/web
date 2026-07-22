@@ -6,10 +6,14 @@
 
 "use client";
 
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { API_BASE, errorMessage } from "@/lib/api";
+import {
+  useResetTokenValid,
+  useResetPassword,
+  isDoughminationError,
+} from "@doughmination/react-api";
 import { useTurnstile } from "@/lib/useTurnstile";
 import * as s from "../auth.css";
 
@@ -22,7 +26,6 @@ const ResetPassword: React.FC = () => {
   const router = useRouter();
   const token = searchParams?.get("token") ?? "";
 
-  const [tokenState, setTokenState] = useState<TokenState>("checking");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
@@ -30,35 +33,18 @@ const ResetPassword: React.FC = () => {
   const [done, setDone] = useState(false);
 
   const turnstile = useTurnstile();
+  const resetPassword = useResetPassword();
 
   // Validate the token before showing the form, so an expired link says so
   // immediately instead of after the user has typed a new password.
-  useEffect(() => {
-    if (!token) {
-      setTokenState("missing");
-      return;
-    }
-
-    let cancelled = false;
-
-    (async () => {
-      try {
-        const res = await fetch(
-          `${API_BASE}/reset-password/check?token=${encodeURIComponent(token)}`,
-        );
-        const data = await res.json().catch(() => null);
-        if (cancelled) return;
-        setTokenState(res.ok && data?.valid ? "valid" : "invalid");
-      } catch (err) {
-        console.error("Token check error:", err);
-        if (!cancelled) setTokenState("invalid");
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [token]);
+  const tokenCheck = useResetTokenValid(token || undefined);
+  const tokenState: TokenState = !token
+    ? "missing"
+    : tokenCheck.isLoading
+      ? "checking"
+      : tokenCheck.data?.valid
+        ? "valid"
+        : "invalid";
 
   const longEnough = password.length >= MIN_PASSWORD_LENGTH;
   const matches = password.length > 0 && password === confirmPassword;
@@ -83,23 +69,11 @@ const ResetPassword: React.FC = () => {
     setError("");
 
     try {
-      const res = await fetch(`${API_BASE}/reset-password`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          token,
-          new_password: password,
-          turnstile_token: turnstile.token,
-        }),
+      await resetPassword.mutateAsync({
+        token,
+        newPassword: password,
+        turnstileToken: turnstile.token,
       });
-
-      const data = await res.json().catch(() => null);
-
-      if (!res.ok) {
-        setError(errorMessage(data, "Couldn't reset your password. Please try again."));
-        turnstile.reset();
-        return;
-      }
 
       // The old session, if any, is for the pre-reset password.
       localStorage.removeItem("token");
@@ -107,7 +81,11 @@ const ResetPassword: React.FC = () => {
       setTimeout(() => router.replace("/user/login"), 3000);
     } catch (err) {
       console.error("Reset password error:", err);
-      setError("Network error. Please check your connection and try again.");
+      setError(
+        isDoughminationError(err)
+          ? err.message
+          : "Couldn't reset your password. Please try again.",
+      );
       turnstile.reset();
     } finally {
       setLoading(false);

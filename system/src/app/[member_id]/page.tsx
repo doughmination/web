@@ -6,89 +6,42 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useMemo } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useMember, useMemberStatus } from "@doughmination/react-api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { unwrap } from "@/lib/api";
 import { normalizeColor, readableOnDark } from "@/lib/utils";
 import * as s from "./member.css";
-
-interface Member {
-  id: string;
-  name: string;
-  display_name?: string;
-  avatar_url?: string;
-  pronouns?: string;
-  description?: string;
-  color?: string | null;
-  tags?: string[];
-  status?: {
-    text: string;
-    emoji?: string;
-    updated_at: string;
-  } | null;
-}
 
 const FALLBACK_AVATAR = "https://c.stupid.cat/assets/favicon/avatar.png";
 
 export default function MemberDetails() {
   const params = useParams<{ member_id: string }>();
   const member_id = params?.member_id;
-  const [member, setMember] = useState<Member | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
 
-  useEffect(() => {
-    const fetchMemberData = async () => {
-      if (!member_id) {
-        setError("No member ID provided");
-        setLoading(false);
-        return;
-      }
+  // The member endpoint doesn't carry the status note, so fetch it alongside
+  // and merge — exactly what the old two-request effect did.
+  const memberQuery = useMember(member_id);
+  const statusQuery = useMemberStatus(member_id);
 
-      try {
-        console.log("Fetching member data for:", member_id);
-
-        // Fetch member basic info
-        const response = await fetch(`https://doughmination.uk/v2/plural/member/${member_id}`);
-        if (!response.ok) {
-          throw new Error("Member not found");
-        }
-        const memberData = unwrap(await response.json());
-        console.log("Member data received:", memberData);
-
-        // Fetch member status separately
-        try {
-          const statusResponse = await fetch(
-            `https://doughmination.uk/v2/plural/members/${member_id}/status`,
-          );
-          if (statusResponse.ok) {
-            const statusData = unwrap(await statusResponse.json());
-            console.log("Status data received:", statusData);
-            if (statusData.success && statusData.status) {
-              memberData.status = statusData.status;
-            }
-          }
-        } catch (statusErr) {
-          console.log("No status found for member:", statusErr);
-          // Not an error - member just doesn't have a status
-        }
-
-        setMember(memberData);
-      } catch (err) {
-        console.error("Error fetching member:", err);
-        setError("Member not found or error occurred");
-      } finally {
-        setLoading(false);
-      }
+  const loading = memberQuery.isLoading;
+  const member = useMemo(() => {
+    if (!memberQuery.data) return null;
+    return {
+      ...memberQuery.data,
+      status: statusQuery.data?.status ?? memberQuery.data.status ?? null,
     };
+  }, [memberQuery.data, statusQuery.data]);
 
-    fetchMemberData();
-  }, [member_id]);
+  const error = !member_id
+    ? "No member ID provided"
+    : memberQuery.isError
+      ? "Member not found or error occurred"
+      : "";
 
   if (loading) {
     return (
