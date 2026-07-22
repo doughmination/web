@@ -19,7 +19,7 @@ services:
     environment:
       - NODE_ENV=production
     ports:
-      - "127.0.0.1:5001:5001"
+      - "127.0.0.1:5000:5000"
 
   inbox:
     build:
