@@ -13,24 +13,23 @@
   <form id="loginForm" class="compose login-card">
     <h2>Sign in</h2>
 
-    <label for="username">
-      Username
+    <div class="field">
+      <label for="username">Username</label>
       <input id="username" name="username" type="text" autocomplete="username" placeholder="admin" required autofocus />
-    </label>
+    </div>
 
-    <label for="password">
-      Password
+    <div class="field">
+      <label for="password">Password</label>
       <input id="password" name="password" type="password" autocomplete="current-password" placeholder="password" required />
-    </label>
+    </div>
 
-    <!-- Honeypot temporarily disabled to test Proton Pass autofill.
-         Bots that fill every field trip this; server rejects if non-empty. -->
-    <!--
+    <!-- Honeypot: hidden from real users via CSS, off the tab order, and
+         excluded from autofill/autocomplete. Bots that fill in every field
+         they find trip this; the server rejects the login if it's non-empty. -->
     <div class="hp-field" aria-hidden="true">
       <label for="website">Website</label>
       <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
     </div>
-    -->
 
     <!-- TODO: replace with your real Turnstile site key -->
     <div class="cf-turnstile" data-sitekey="0x4AAAAAAB08ZhSxKn5rAD3d"></div>

@@ -351,6 +351,20 @@ a.btn-danger {
   color: var(--subtext1);
 }
 
+/* Sibling label+input field (matches the working Next.js form structure so
+   Proton Pass detects the login fields). Keeps the stacked look of a nested
+   label. */
+.compose .field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.compose .field label {
+  font-size: 0.85rem;
+  color: var(--subtext1);
+}
+
 .compose input,
 .compose textarea,
 .compose select {
