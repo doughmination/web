@@ -23,13 +23,14 @@
       <input id="password" name="password" type="password" autocomplete="current-password" placeholder="password" required />
     </label>
 
-    <!-- Honeypot: hidden from real users via CSS, off the tab order, and
-         excluded from autofill/autocomplete. Bots that fill in every field
-         they find trip this; the server rejects the login if it's non-empty. -->
+    <!-- Honeypot temporarily disabled to test Proton Pass autofill.
+         Bots that fill every field trip this; server rejects if non-empty. -->
+    <!--
     <div class="hp-field" aria-hidden="true">
       <label for="website">Website</label>
       <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
     </div>
+    -->
 
     <!-- TODO: replace with your real Turnstile site key -->
     <div class="cf-turnstile" data-sitekey="0x4AAAAAAB08ZhSxKn5rAD3d"></div>
