@@ -5,7 +5,7 @@
     "": {
       "name": "beta",
       "dependencies": {
-        "@doughmination/react-api": "^1.0.0",
+        "@doughmination/react-api": "^1.0.1",
         "@google/model-viewer": "^4.3.1",
         "@tanstack/react-query": "^5.101.4",
         "next": "16.2.10",
@@ -68,7 +68,7 @@
 
     "@babel/types": ["@babel/types@7.29.7", "", { "dependencies": { "@babel/helper-string-parser": "^7.29.7", "@babel/helper-validator-identifier": "^7.29.7" } }, "sha512-4zBIxpPzowiZpusoFkyGVwakdRJUyuH5PxQ/PrqghfdFWWasvnCdPfQXHrenDai+gyLARulZjZowCOj6fjT4pA=="],
 
-    "@doughmination/react-api": ["@doughmination/react-api@1.0.1", "", { "peerDependencies": { "@tanstack/react-query": "^5.0.0", "react": "^18.0.0 || ^19.0.0" } }, "sha512-5YEr4uGVMxx3EG0fEmjv0B+E8sHhxfl/p/etaVWtHvdCphUaUzyUbnCwVqFGf/hgDgBw/3RgIjUhjdibklu9GA=="],
+    "@doughmination/react-api": ["@doughmination/react-api@1.1.0", "", { "peerDependencies": { "@tanstack/react-query": "^5.0.0", "react": "^18.0.0 || ^19.0.0" } }, "sha512-QyZzBJfZL07bm4Vv0/6evqY/ICoa5VXXiUv5tdpDBU/jZ5x98smeU0FP7+YeQpE0ymtGD9IGkzcFtXBhxicV/w=="],
 
     "@emnapi/core": ["@emnapi/core@1.11.1", "", { "dependencies": { "@emnapi/wasi-threads": "1.2.2", "tslib": "^2.4.0" } }, "sha512-RSvbQmHzdKzNsLYa/wHrbc3KN4sYLKAdPZxqiM2HATqv/SBk2/ENSHpvXGaLOMcsAyz0poEGqkmmKYG3OWiJEQ=="],
 
