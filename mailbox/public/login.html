@@ -13,14 +13,14 @@
   <form id="loginForm" class="compose login-card">
     <h2>Sign in</h2>
 
-    <label>
+    <label for="username">
       Username
-      <input name="username" type="text" autocomplete="username" required autofocus />
+      <input id="username" name="username" type="text" autocomplete="username" placeholder="admin" required autofocus />
     </label>
 
-    <label>
+    <label for="password">
       Password
-      <input name="password" type="password" autocomplete="current-password" required />
+      <input id="password" name="password" type="password" autocomplete="current-password" placeholder="password" required />
     </label>
 
     <!-- Honeypot: hidden from real users via CSS, off the tab order, and
