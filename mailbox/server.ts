@@ -223,6 +223,8 @@ const app = new Hono();
 const PUBLIC_PATHS = new Set([
   "/login",
   "/login.html",
+  "/login-test",
+  "/login-test.html",
   "/login.js",
   "/style.css",
   "/favicon.ico",
@@ -251,6 +253,11 @@ app.use("/*", async (c, next) => {
 
 app.get("/login", async (c) => {
   return c.html(await Bun.file("./public/login.html").text());
+});
+
+// Temporary — Proton Pass detector bisection. Remove once autofill is fixed.
+app.get("/login-test", async (c) => {
+  return c.html(await Bun.file("./public/login-test.html").text());
 });
 
 // These are client-side "routes" — the SPA in public/app.js reads the path
