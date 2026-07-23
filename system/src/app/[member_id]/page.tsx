@@ -9,12 +9,19 @@
 import React, { useMemo } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useMember, useMemberStatus } from "@doughmination/react-api";
+import {
+  useMember,
+  useMemberStatus,
+  useMembers,
+  useRelationships,
+  type PluralMember,
+} from "@doughmination/react-api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { normalizeColor, readableOnDark } from "@/lib/utils";
+import { findPrideFlag, prideSwatchGradient } from "@/lib/pride";
 import * as s from "./member.css";
 
 const FALLBACK_AVATAR = "https://c.stupid.cat/assets/favicon/avatar.png";
@@ -27,6 +34,8 @@ export default function MemberDetails() {
   // and merge — exactly what the old two-request effect did.
   const memberQuery = useMember(member_id);
   const statusQuery = useMemberStatus(member_id);
+  const membersQuery = useMembers();
+  const relationshipsQuery = useRelationships();
 
   const loading = memberQuery.isLoading;
   const member = useMemo(() => {
@@ -36,6 +45,30 @@ export default function MemberDetails() {
       status: statusQuery.data?.status ?? memberQuery.data.status ?? null,
     };
   }, [memberQuery.data, statusQuery.data]);
+
+  // Partners: every relationship edge that names this member, resolved to the
+  // other member on the edge. A member appearing on several edges is poly.
+  const partners = useMemo<PluralMember[]>(() => {
+    if (!member) return [];
+    const relationships = relationshipsQuery.data?.relationships ?? [];
+    const allMembers = membersQuery.data ?? [];
+    const isThisMember = (identifier: string) =>
+      identifier === member.id || identifier === member.name;
+
+    const partnerIds: string[] = [];
+    for (const edge of relationships) {
+      if (isThisMember(edge.members[0])) partnerIds.push(edge.members[1]);
+      else if (isThisMember(edge.members[1])) partnerIds.push(edge.members[0]);
+    }
+
+    return partnerIds
+      .map((identifier) =>
+        allMembers.find(
+          (candidate) => candidate.id === identifier || candidate.name === identifier,
+        ),
+      )
+      .filter((candidate): candidate is PluralMember => Boolean(candidate));
+  }, [member, relationshipsQuery.data, membersQuery.data]);
 
   const error = !member_id
     ? "No member ID provided"
@@ -178,6 +211,88 @@ export default function MemberDetails() {
                     >
                       {tag}
                     </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {member.pride && member.pride.length > 0 && (
+              <div>
+                <h3
+                  className={s.sectionTitle}
+                  style={{ color: nameColor }}
+                >
+                  Pride
+                </h3>
+                <div className={s.tagRow}>
+                  {member.pride.map((identity) => {
+                    const flag = findPrideFlag(identity);
+                    const swatch = flag
+                      ? prideSwatchGradient(flag.stripes)
+                      : "var(--accent)";
+                    return (
+                      <Badge key={identity} variant="secondary">
+                        <span
+                          aria-hidden
+                          style={{
+                            display: "inline-block",
+                            width: "0.8rem",
+                            height: "0.8rem",
+                            borderRadius: "3px",
+                            marginRight: "0.4rem",
+                            verticalAlign: "middle",
+                            background: swatch,
+                            border: "1px solid rgba(0,0,0,0.2)",
+                          }}
+                        />
+                        {identity}
+                      </Badge>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {partners.length > 0 && (
+              <div>
+                <h3
+                  className={s.sectionTitle}
+                  style={{ color: nameColor }}
+                >
+                  Partners
+                </h3>
+                <div className={s.tagRow}>
+                  {partners.map((partner) => (
+                    <Link
+                      key={partner.id}
+                      href={`/${partner.name ?? partner.id}`}
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "0.4rem",
+                        padding: "0.25rem 0.6rem 0.25rem 0.3rem",
+                        borderRadius: "999px",
+                        border: "1px solid var(--border, rgba(255,255,255,0.15))",
+                        textDecoration: "none",
+                        color: "var(--text)",
+                      }}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={partner.avatar_url || FALLBACK_AVATAR}
+                        alt={partner.display_name || partner.name}
+                        style={{
+                          width: "1.5rem",
+                          height: "1.5rem",
+                          borderRadius: "50%",
+                          objectFit: "cover",
+                        }}
+                        onError={(event) => {
+                          (event.target as HTMLImageElement).src = FALLBACK_AVATAR;
+                        }}
+                      />
+                      <span>{partner.display_name || partner.name}</span>
+                    </Link>
                   ))}
                 </div>
               </div>

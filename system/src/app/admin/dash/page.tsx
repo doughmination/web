@@ -26,6 +26,13 @@ const AdminDash: React.FC = () => {
     { path: "/admin/mental", label: "Mental Health", icon: "🧠", desc: "Update mental state" },
     { path: "/admin/status", label: "Status Manager", icon: "💬", desc: "Set member statuses" },
     { path: "/admin/tags", label: "Tag Manager", icon: "🏷️", desc: "Manage member tags" },
+    { path: "/admin/pride", label: "Pride Manager", icon: "🏳️‍🌈", desc: "Set member pride identities" },
+    {
+      path: "/admin/relationships",
+      label: "Relationships",
+      icon: "💞",
+      desc: "Map who is dating who",
+    },
     {
       path: "https://doughmination.uk/docs",
       label: "API Endpoints",
