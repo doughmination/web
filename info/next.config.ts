@@ -1,3 +1,4 @@
+import type { NextConfig } from "next";
 import { createVanillaExtractPlugin } from "@vanilla-extract/next-plugin";
 
 const withVanillaExtract = createVanillaExtractPlugin({
@@ -6,6 +7,10 @@ const withVanillaExtract = createVanillaExtractPlugin({
   },
 });
 
-const nextConfig = {};
+// "standalone" makes Next emit .next/standalone/server.js — what the
+// Dockerfile copies and runs.
+const nextConfig: NextConfig = {
+  output: "standalone",
+};
 
 export default withVanillaExtract(nextConfig);

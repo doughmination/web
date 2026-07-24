@@ -11,6 +11,15 @@ services:
       - "127.0.0.1:5002:5002"
     restart: unless-stopped
 
+  info:
+    build:
+      context: ./info
+      dockerfile: Dockerfile
+    container_name: info
+    ports:
+      - "127.0.0.1:4050:4050"
+    restart: unless-stopped
+
   system:
     build:
       context: ./system

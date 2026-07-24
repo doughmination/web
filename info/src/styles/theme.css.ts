@@ -49,28 +49,31 @@ const shared = {
   },
 };
 
+// Light stays available for anyone who forces light mode, but tinted trans-pink
+// so it still feels on-brand.
 export const lightValues = {
   color: {
-    bg: "#fafafa",
+    bg: "#f8faff",
     surface: "#ffffff",
-    surfaceHover: "#f4f4f5",
-    text: "#18181b",
-    muted: "#71717a",
-    border: "#e4e4e7",
-    accent: "#6d28d9",
+    surfaceHover: "#eef3ff",
+    text: "#141726",
+    muted: "#5b6480",
+    border: "#e3e9f6",
+    accent: "#d15f8c",
   },
   ...shared,
 };
 
+// Dark mode trans: deep blue-black canvas, trans-pink accent, cool muted text.
 export const darkValues = {
   color: {
-    bg: "#09090b",
-    surface: "#121215",
-    surfaceHover: "#1c1c20",
-    text: "#fafafa",
-    muted: "#a1a1aa",
-    border: "#27272a",
-    accent: "#a78bfa",
+    bg: "#0a0b10",
+    surface: "#12141c",
+    surfaceHover: "#1b1e2a",
+    text: "#f4f6fb",
+    muted: "#9aa3c2",
+    border: "#232838",
+    accent: "#f5a9b8",
   },
   ...shared,
 };

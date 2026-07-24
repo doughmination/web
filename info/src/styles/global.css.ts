@@ -9,15 +9,16 @@ import {
   darkValues,
 } from "./theme.css";
 
-// Light theme is the default; dark kicks in with the OS preference.
+// Dark mode trans is the identity, so dark is the default; light only kicks in
+// for people who explicitly prefer it.
 globalStyle(":root", {
-  vars: assignVars(vars, lightValues),
+  vars: assignVars(vars, darkValues),
 });
 
 globalStyle(":root", {
   "@media": {
-    "(prefers-color-scheme: dark)": {
-      vars: assignVars(vars, darkValues),
+    "(prefers-color-scheme: light)": {
+      vars: assignVars(vars, lightValues),
     },
   },
 });
