@@ -268,14 +268,9 @@ export default function HomePage() {
                 </Button>
               </>
             ) : (
-              <>
-                <Button variant="outline" size="sm" asChild>
-                  <Link href="/user/signup">Sign Up</Link>
-                </Button>
-                <Button variant="outline" size="sm" asChild>
-                  <Link href="/user/login">Login</Link>
-                </Button>
-              </>
+              <Button variant="outline" size="sm" asChild>
+                <Link href="/user/login">Login</Link>
+              </Button>
             )}
           </div>
 

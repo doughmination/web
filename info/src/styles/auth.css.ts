@@ -110,3 +110,59 @@ export const error = style({
   fontSize: "0.85rem",
   color: "#ef4444",
 });
+
+export const rulesList = style({
+  display: "flex",
+  flexDirection: "column",
+  gap: vars.space.sm,
+  margin: 0,
+  padding: 0,
+  listStyle: "none",
+});
+
+export const ruleItem = style({
+  display: "flex",
+  gap: vars.space.sm,
+  fontSize: "0.9rem",
+  lineHeight: 1.45,
+  color: vars.color.text,
+  padding: vars.space.sm,
+  background: vars.color.bg,
+  border: `1px solid ${vars.color.border}`,
+  borderRadius: vars.radius.md,
+});
+
+export const ruleMarker = style({
+  flexShrink: 0,
+  fontWeight: 700,
+  color: vars.color.accent,
+});
+
+export const buttonRow = style({
+  display: "flex",
+  gap: vars.space.sm,
+});
+
+export const codeChip = style({
+  fontFamily: vars.font.mono,
+  fontSize: "0.85rem",
+  color: vars.color.accent,
+  wordBreak: "break-all",
+});
+
+export const notice = style({
+  fontSize: "0.9rem",
+  lineHeight: 1.5,
+  color: vars.color.muted,
+  padding: vars.space.md,
+  background: vars.color.bg,
+  border: `1px solid ${vars.color.border}`,
+  borderRadius: vars.radius.md,
+});
+
+export const rulesFooter = style({
+  fontSize: "0.8rem",
+  lineHeight: 1.4,
+  color: vars.color.muted,
+  textAlign: "center",
+});

@@ -5,314 +5,50 @@
 
 "use client";
 
-import React, { useState, useEffect, useRef, Suspense } from "react";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import {
-  useLogin,
-  useResendVerification,
-  useDoughminationClient,
-  isDoughminationError,
-} from "@doughmination/react-api";
-import { TURNSTILE_SITE_KEY, loadTurnstileScript } from "@/lib/turnstile";
+import React, { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useDoughminationClient } from "@doughmination/react-api";
 import * as s from "../auth.css";
 
 const Login: React.FC = () => {
   const client = useDoughminationClient();
-  const loginMutation = useLogin();
-  const resendMutation = useResendVerification();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
-  const [turnstileLoaded, setTurnstileLoaded] = useState(false);
-  const [showWelcome, setShowWelcome] = useState(false);
-  // Set when login fails specifically because the address isn't confirmed, so
-  // we can offer a resend instead of a dead-end error.
-  const [unverified, setUnverified] = useState(false);
-  const [resendMessage, setResendMessage] = useState("");
-  const [resendBusy, setResendBusy] = useState(false);
-  const [, setWelcomeUsername] = useState("");
-  const [welcomeDisplayName, setWelcomeDisplayName] = useState("");
-
-  const router = useRouter();
   const searchParams = useSearchParams();
-  const turnstileRef = useRef<HTMLDivElement>(null);
-  const widgetId = useRef<string | null>(null);
+  const [redirecting, setRedirecting] = useState(false);
 
-  const from = searchParams?.get("from") || "/";
+  // Where to send the user after a successful login. /admin/login is an alias
+  // for the dashboard, kept for backwards-compatible bookmarks.
+  const rawFrom = searchParams?.get("from") || "/";
+  const from = rawFrom === "/admin/login" ? "/admin/dash" : rawFrom;
 
-  // Load Turnstile script
-  useEffect(() => {
-    loadTurnstileScript(
-      () => setTurnstileLoaded(true),
-      () => {
-        console.error("Failed to load Turnstile script");
-        setError("Failed to load security verification. Please refresh the page.");
-      },
-    );
+  // The callback route bounces failures back here as ?error=…
+  const error = searchParams?.get("error");
 
-    // Cleanup function
-    return () => {
-      if (widgetId.current && window.turnstile) {
-        try {
-          window.turnstile.remove(widgetId.current);
-        } catch {
-          // widget already gone
-        }
-        widgetId.current = null;
-      }
-    };
-  }, []);
-
-  // Render Turnstile widget when loaded
-  useEffect(() => {
-    if (turnstileLoaded && turnstileRef.current && !widgetId.current) {
-      try {
-        widgetId.current = window.turnstile.render(turnstileRef.current, {
-          sitekey: TURNSTILE_SITE_KEY,
-          callback: (token: string) => {
-            setTurnstileToken(token);
-            // Clear any previous errors
-            setError("");
-          },
-          "error-callback": () => {
-            setError("Security verification failed. Please try again.");
-            setTurnstileToken(null);
-          },
-          "expired-callback": () => {
-            setError("Security verification expired. Please verify again.");
-            setTurnstileToken(null);
-          },
-          theme: "auto", // Automatically match the page theme
-          size: "normal",
-        });
-      } catch (err) {
-        console.error("Error rendering Turnstile:", err);
-        setError("Failed to initialize security verification.");
-      }
-    }
-  }, [turnstileLoaded]);
-
-  // Handle form submission
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Basic form validation
-    if (!username || !password) {
-      setError("Please enter both username and password");
-      return;
-    }
-
-    // Check for Turnstile token
-    if (!turnstileToken) {
-      setError("Please complete the security verification");
-      return;
-    }
-
-    setLoading(true);
-    setError("");
-    setUnverified(false);
-    setResendMessage("");
-
-    const redirect = () => {
-      const redirectTo = from === "/admin/login" ? "/admin/dash" : from;
-      router.replace(redirectTo);
-    };
-
-    try {
-      const data = await loginMutation.mutateAsync({
-        username,
-        password,
-        turnstileToken,
-      });
-
-      if (data.access_token) {
-        // Store the token — the provider's client reads it from here.
-        localStorage.setItem("token", data.access_token);
-
-        // Fetch user info for the welcome message.
-        try {
-          const userData = await client.getUserInfo();
-          setWelcomeUsername(userData.username);
-          setWelcomeDisplayName(userData.display_name || userData.username);
-
-          // Show welcome message, then redirect after 2 seconds.
-          setShowWelcome(true);
-          setTimeout(redirect, 2000);
-        } catch (userError) {
-          console.error("Error fetching user info:", userError);
-          // Still redirect on error
-          redirect();
-        }
-      } else {
-        redirect();
-      }
-    } catch (err: unknown) {
-      console.error("Login error:", err);
-
-      const errorMessage = isDoughminationError(err)
-        ? err.message
-        : "Network error. Please check your connection and try again.";
-      setError(errorMessage);
-
-      // A 403 means the credentials were right but the address isn't confirmed
-      // — surface the resend path rather than leaving them stuck.
-      if (isDoughminationError(err) && err.status === 403) setUnverified(true);
-
-      // Reset Turnstile on error
-      if (widgetId.current && window.turnstile) {
-        window.turnstile.reset(widgetId.current);
-        setTurnstileToken(null);
-      }
-    } finally {
-      setLoading(false);
-    }
+  const handleLogin = () => {
+    setRedirecting(true);
+    // Full navigation (not fetch): the API 302s to PocketID, which sends the
+    // browser back to our callback page with a token in the URL fragment.
+    window.location.href = client.pocketIdLoginUrl(from);
   };
-
-  const handleResendVerification = async () => {
-    if (!turnstileToken) {
-      setError("Please complete the security verification first");
-      return;
-    }
-
-    setResendBusy(true);
-    setResendMessage("");
-
-    try {
-      const data = await resendMutation.mutateAsync({
-        username,
-        password,
-        turnstileToken,
-      });
-      setResendMessage(data?.message || "Confirmation email sent. Check your inbox.");
-      setError("");
-    } catch (err) {
-      console.error("Resend verification error:", err);
-      setError(
-        isDoughminationError(err)
-          ? err.message
-          : "Couldn't resend the confirmation email.",
-      );
-    } finally {
-      setResendBusy(false);
-      if (widgetId.current && window.turnstile) {
-        window.turnstile.reset(widgetId.current);
-        setTurnstileToken(null);
-      }
-    }
-  };
-
-  // Show welcome screen after successful login
-  if (showWelcome) {
-    return (
-      <div className={s.card}>
-        <div className={s.welcomeInner}>
-          <div className={s.welcomeEmoji}>👋</div>
-          <h2 className={s.welcomeTitle}>Welcome back!</h2>
-          <p className={s.welcomeName}>{welcomeDisplayName}</p>
-          <div className={s.spinnerWrap}>
-            <div className={s.spinner}></div>
-          </div>
-          <p className={s.mutedNote}>Redirecting you now...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className={s.card}>
-      <h2 className={s.heading}>User Login</h2>
+      <h2 className={s.heading}>Sign in</h2>
+      <p className={s.subtitle}>Use your PocketID account to continue.</p>
 
       {error && <div className={s.errorBox}>{error}</div>}
-      {resendMessage && <div className={s.successBox}>{resendMessage}</div>}
 
-      {unverified && !resendMessage && (
-        <div className={s.infoPanel}>
-          <p className={s.sentText}>
-            Your account exists but the email address hasn&apos;t been confirmed yet.
-          </p>
-          <button
-            type="button"
-            className={s.submitBtn}
-            onClick={handleResendVerification}
-            disabled={resendBusy || !turnstileToken}
-          >
-            {resendBusy ? "Sending..." : "Resend confirmation email"}
-          </button>
-          <p className={s.helperText}>
-            Complete the verification below first if the button is greyed out.
-          </p>
-        </div>
-      )}
+      <button
+        type="button"
+        className={s.submitBtn}
+        onClick={handleLogin}
+        disabled={redirecting}
+      >
+        {redirecting ? "Redirecting to PocketID…" : "Sign in with PocketID"}
+      </button>
 
-      <form onSubmit={handleSubmit} className={s.form}>
-        <div>
-          <label htmlFor="username" className={s.fieldLabel}>
-            Username
-          </label>
-          <input
-            id="username"
-            type="text"
-            placeholder="Enter your username"
-            className={s.textInput}
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            disabled={loading}
-            autoComplete="username"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="password" className={s.fieldLabel}>
-            Password
-          </label>
-          <input
-            id="password"
-            type="password"
-            placeholder="Enter your password"
-            className={s.textInput}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            disabled={loading}
-            autoComplete="current-password"
-          />
-        </div>
-
-        {/* Forgot Password Link */}
-        <div className={s.linkRow}>
-          <Link href="/user/forgot-username" className={s.blueLink}>
-            Forgot username?
-          </Link>
-          <Link href="/user/forgot-password" className={s.blueLink}>
-            Forgot password?
-          </Link>
-        </div>
-
-        {/* Turnstile Widget */}
-        <div className={s.turnstileBlock}>
-          <label className={s.fieldLabel}>Security Verification</label>
-          <div ref={turnstileRef} className={s.turnstileCenter} />
-          {!turnstileLoaded && (
-            <div className={s.mutedNote}>Loading security verification...</div>
-          )}
-        </div>
-
-        <button type="submit" className={s.submitBtn} disabled={loading || !turnstileToken}>
-          {loading ? "Logging in..." : "Log In"}
-        </button>
-      </form>
-
-      {/* Sign Up Link */}
-      <div className={s.bottomNote}>
-        Don&apos;t have an account?{" "}
-        <Link href="/user/signup" className={s.blueLink}>
-          Sign up here
-        </Link>
-      </div>
-
-      {loading && <div className={s.loadingNote}>Please wait while we log you in...</div>}
+      <p className={s.mutedNote}>
+        You&apos;ll be taken to PocketID to sign in, then brought right back here.
+      </p>
     </div>
   );
 };

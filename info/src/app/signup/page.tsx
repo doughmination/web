@@ -1,7 +1,18 @@
+/* signup/page.tsx */
+
 "use client";
 
-import { Suspense, useState, type FormEvent } from "react";
-import { useSearchParams } from "next/navigation";
+import {
+  Suspense,
+  useEffect,
+  useState,
+  type FormEvent,
+} from "react";
+
+import {
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 
 import {
   page,
@@ -18,7 +29,11 @@ import {
 } from "@styles/auth.css";
 
 // Where PocketID lives. Its onboarding links look like <POCKETID>/st/<token>.
-const POCKETID = process.env.NEXT_PUBLIC_POCKETID_URL || "https://doughmination.xyz";
+const pocketIdUrl =
+  process.env.NEXT_PUBLIC_POCKETID_URL || "https://doughmination.xyz";
+
+// Remember the last code the visitor entered, so they can come back later.
+const storageKey = "doughmination:invite-code";
 
 // Accept a raw token, or a full pasted URL — pull the bit after /st/ either way.
 function normalizeCode(raw: string): string {
@@ -29,46 +44,89 @@ function normalizeCode(raw: string): string {
 }
 
 function SignupForm() {
+  const router = useRouter();
   const params = useSearchParams();
-  const [code, setCode] = useState(params.get("code") ?? "");
+
+  const [code, setCode] = useState("");
   const [err, setErr] = useState("");
+
+  // Prefill from the URL (?code=…) first, otherwise from a remembered code.
+  useEffect(() => {
+    const fromUrl = params.get("code");
+
+    if (fromUrl) {
+      setCode(fromUrl);
+      return;
+    }
+
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) setCode(saved);
+    } catch {
+      // localStorage may be unavailable (private mode) — that's fine.
+    }
+  }, [params]);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
+
     const clean = normalizeCode(code);
+
     if (!clean) {
       setErr("Enter your invite code.");
       return;
     }
-    // Hand off to PocketID, which validates the token and runs passkey setup.
-    window.location.href = `${POCKETID}/st/${encodeURIComponent(clean)}`;
+
+    // Remember the code before showing the rules, so denying is reversible.
+    try {
+      localStorage.setItem(storageKey, clean);
+    } catch {
+      // ignore
+    }
+
+    // Send them to the rules gate; PocketID is only reached after they agree.
+    router.push(`/rules?code=${encodeURIComponent(clean)}`);
   }
 
   return (
     <main className={page}>
       <div className={card}>
         <h1 className={title}>Sign up</h1>
+
         <p className={subtitle}>
           Enter the invite code you were given to set up your passkey.
         </p>
 
         <form className={form} onSubmit={handleSubmit}>
-          <label className={label} htmlFor="code">Invite code</label>
+          <label className={label} htmlFor="code">
+            Invite code
+          </label>
+
           <input
             id="code"
             className={input}
             value={code}
-            onChange={(e) => { setCode(e.target.value); setErr(""); }}
+            onChange={(e) => {
+              setCode(e.target.value);
+              setErr("");
+            }}
             placeholder="hqm4k9a1VubBGckh"
             autoComplete="off"
             autoFocus
           />
+
           {err ? <p className={errorClass}>{err}</p> : null}
-          <button type="submit" className={button}>Continue →</button>
+
+          <button type="submit" className={button}>
+            Continue →
+          </button>
         </form>
 
         <p className={divider}>Already have an account?</p>
-        <a href={POCKETID} className={ghost}>Log in</a>
+
+        <a href={pocketIdUrl} className={ghost}>
+          Log in
+        </a>
       </div>
     </main>
   );

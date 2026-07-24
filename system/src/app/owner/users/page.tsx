@@ -34,8 +34,6 @@ interface User {
   username: string;
   display_name?: string;
   email?: string | null;
-  email_verified?: boolean;
-  pending_email?: string | null;
   created_at?: string | null;
   is_admin: boolean;
   is_owner?: boolean;
@@ -48,11 +46,10 @@ const FALLBACK_AVATAR = "https://c.stupid.cat/assets/favicon/avatar.png";
 const UserManager: React.FC = () => {
   const client = useDoughminationClient();
 
-  // Email rules on the API: a user may change their OWN address (with their
-  // password, via the profile page), the owner may change ANYONE's outright,
-  // and a plain admin may not touch someone else's. This panel only ever acts
-  // on other people, so the control is owner-only here — editing your own
-  // address lives on the profile page where the password prompt is.
+  // Email is contact metadata only (sign-in is PocketID). A user may change
+  // their OWN address on their profile page; an admin/owner may change anyone
+  // else's. This panel only ever acts on other people, so the control is
+  // owner-only here.
   const currentUser = useUserInfo();
   const currentUserId = currentUser.data?.id ?? "";
   const isOwner = !!currentUser.data?.is_owner;
@@ -67,7 +64,6 @@ const UserManager: React.FC = () => {
   // Create user form state
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newUsername, setNewUsername] = useState("");
-  const [newPassword, setNewPassword] = useState("");
   const [newDisplayName, setNewDisplayName] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [newIsAdmin, setNewIsAdmin] = useState(false);
@@ -121,18 +117,10 @@ const UserManager: React.FC = () => {
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!newUsername.trim() || !newPassword.trim()) {
+    if (!newUsername.trim()) {
       setMessage({
         type: "error",
-        content: "Username and password are required"
-      });
-      return;
-    }
-
-    if (newPassword.length < 10) {
-      setMessage({
-        type: "error",
-        content: "Password must be at least 10 characters"
+        content: "Username is required"
       });
       return;
     }
@@ -155,7 +143,6 @@ const UserManager: React.FC = () => {
         },
         body: JSON.stringify({
           username: newUsername.trim(),
-          password: newPassword,
           display_name: newDisplayName.trim() || undefined,
           email: newEmail.trim() || undefined,
           is_admin: newIsAdmin,
@@ -170,10 +157,9 @@ const UserManager: React.FC = () => {
 
       setMessage({
         type: "success",
-        content: "User created successfully!"
+        content: "User created. They can sign in once they authenticate with PocketID under this username."
       });
       setNewUsername("");
-      setNewPassword("");
       setNewDisplayName("");
       setNewEmail("");
       setNewIsAdmin(false);
@@ -365,18 +351,6 @@ const UserManager: React.FC = () => {
                 </div>
 
                 <div className={s.fieldBlock}>
-                  <Label htmlFor="new-password">Password *</Label>
-                  <Input
-                    id="new-password"
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Enter password (min 10 characters)"
-                    disabled={saving}
-                  />
-                </div>
-
-                <div className={s.fieldBlock}>
                   <Label htmlFor="new-email">Email</Label>
                   <Input
                     id="new-email"
@@ -387,7 +361,8 @@ const UserManager: React.FC = () => {
                     disabled={saving}
                   />
                   <p className={s.helpText}>
-                    Needed for password resets. Leave blank only if you'll set it later.
+                    Optional contact address. Sign-in is handled by PocketID — this account links to
+                    the person the first time they log in under this username.
                   </p>
                 </div>
 
@@ -437,7 +412,6 @@ const UserManager: React.FC = () => {
                     onClick={() => {
                       setShowCreateForm(false);
                       setNewUsername("");
-                      setNewPassword("");
                       setNewDisplayName("");
                       setNewEmail("");
                       setNewIsAdmin(false);
@@ -506,18 +480,9 @@ const UserManager: React.FC = () => {
                                 You
                               </Badge>
                             )}
-                            {user.email_verified === false && (
-                              <Badge variant="destructive" className={s.smallBadge}>
-                                Unconfirmed
-                              </Badge>
-                            )}
                           </div>
                           <p className={s.userHandle}>@{user.username}</p>
-                          <p className={s.userHandle}>
-                            {user.email || "no email on file"}
-                            {user.email && user.email_verified === false && " — unconfirmed"}
-                            {user.pending_email && ` — pending ${user.pending_email}`}
-                          </p>
+                          <p className={s.userHandle}>{user.email || "no email on file"}</p>
                         </div>
 
                         {/* Actions */}
@@ -570,7 +535,7 @@ const UserManager: React.FC = () => {
                             />
                             <p className={s.helpText}>
                               {isOwner
-                                ? "Applied immediately and marked confirmed. Changes where this account's reset links are sent."
+                                ? "Contact address only — sign-in email is managed in PocketID."
                                 : "Only the owner can change someone else's email. Your own is on your profile page."}
                             </p>
                           </div>
