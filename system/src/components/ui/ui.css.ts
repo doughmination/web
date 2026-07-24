@@ -1,5 +1,4 @@
-/*
- * Copyright (c) 2026 Clove Twilight
+/* Copyright (c) 2026 Clove Twilight
  * Licensed under the ESAL-2.0 Licence.
  * See LICENCE.md in the project root for full licence information.
  *
@@ -16,12 +15,24 @@ const mix = (color: string, pct: number) =>
 
 /* Shared animations (replacing tailwindcss-animate) */
 const fadeZoomIn = keyframes({
-  from: { opacity: 0, transform: "scale(0.95)" },
-  to: { opacity: 1, transform: "scale(1)" },
+  from: {
+    opacity: 0,
+    transform: "scale(0.95)"
+  },
+  to: {
+    opacity: 1,
+    transform: "scale(1)"
+  },
 });
 const fadeZoomOut = keyframes({
-  from: { opacity: 1, transform: "scale(1)" },
-  to: { opacity: 0, transform: "scale(0.95)" },
+  from: {
+    opacity: 1,
+    transform: "scale(1)"
+  },
+  to: {
+    opacity: 0,
+    transform: "scale(0.95)"
+  },
 });
 
 /* ============================================================================
@@ -94,10 +105,25 @@ export const button = recipe({
       },
     },
     size: {
-      default: { height: "2.5rem", padding: "0.5rem 1rem" },
-      sm: { height: "2.25rem", borderRadius: "0.375rem", padding: "0 0.75rem" },
-      lg: { height: "2.75rem", borderRadius: "0.375rem", padding: "0 2rem" },
-      icon: { height: "2.5rem", width: "2.5rem", padding: 0 },
+      default: {
+        height: "2.5rem",
+        padding: "0.5rem 1rem"
+      },
+      sm: {
+        height: "2.25rem",
+        borderRadius: "0.375rem",
+        padding: "0 0.75rem"
+      },
+      lg: {
+        height: "2.75rem",
+        borderRadius: "0.375rem",
+        padding: "0 2rem"
+      },
+      icon: {
+        height: "2.5rem",
+        width: "2.5rem",
+        padding: 0
+      },
     },
   },
   defaultVariants: {
@@ -273,8 +299,14 @@ export const separatorBase = style({
   backgroundColor: vars.surface,
 });
 
-export const separatorHorizontal = style({ height: "1px", width: "100%" });
-export const separatorVertical = style({ height: "100%", width: "1px" });
+export const separatorHorizontal = style({
+  height: "1px",
+  width: "100%"
+});
+export const separatorVertical = style({
+  height: "100%",
+  width: "1px"
+});
 
 /* ============================================================================
    CHECKBOX
@@ -467,8 +499,14 @@ const slideInFromBottom = keyframes({
   to: { transform: "translateY(0)" },
 });
 const slideOutToRight = keyframes({
-  from: { transform: "translateX(0)", opacity: 1 },
-  to: { transform: "translateX(100%)", opacity: 0 },
+  from: {
+    transform: "translateX(0)",
+    opacity: 1
+  },
+  to: {
+    transform: "translateX(100%)",
+    opacity: 0
+  },
 });
 
 export const toastViewport = style({
@@ -572,7 +610,10 @@ export const toastAction = style({
       outline: "none",
       boxShadow: `0 0 0 2px ${vars.accent}`,
     },
-    "&:disabled": { pointerEvents: "none", opacity: 0.5 },
+    "&:disabled": {
+      pointerEvents: "none",
+      opacity: 0.5
+    },
   },
 });
 
@@ -590,7 +631,11 @@ export const toastClose = style({
   cursor: "pointer",
   ":hover": { color: vars.text },
   selectors: {
-    "&:focus": { opacity: 1, outline: "none", boxShadow: `0 0 0 2px ${vars.accent}` },
+    "&:focus": {
+      opacity: 1,
+      outline: "none",
+      boxShadow: `0 0 0 2px ${vars.accent}`
+    },
   },
 });
 

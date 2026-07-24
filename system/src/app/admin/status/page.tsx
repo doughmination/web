@@ -1,5 +1,4 @@
-/*
- * Copyright (c) 2026 Clove Twilight
+/* Copyright (c) 2026 Clove Twilight
  * Licensed under the ESAL-2.0 Licence.
  * See LICENCE.md in the project root for full licence information.
  */
@@ -96,17 +95,26 @@ function StatusManager() {
     e.preventDefault();
 
     if (!selectedMember) {
-      setMessage({ type: "error", content: "Please select a member" });
+      setMessage({
+        type: "error",
+        content: "Please select a member"
+      });
       return;
     }
 
     if (!statusText.trim()) {
-      setMessage({ type: "error", content: "Status text is required" });
+      setMessage({
+        type: "error",
+        content: "Status text is required"
+      });
       return;
     }
 
     if (statusText.length > 100) {
-      setMessage({ type: "error", content: "Status must be ≤ 100 chars" });
+      setMessage({
+        type: "error",
+        content: "Status must be ≤ 100 chars"
+      });
       return;
     }
 
@@ -119,7 +127,10 @@ function StatusManager() {
         emoji: emoji || undefined,
       });
 
-      setMessage({ type: "success", content: "Status updated!" });
+      setMessage({
+        type: "success",
+        content: "Status updated!"
+      });
       await membersQuery.refetch();
     } catch (err: unknown) {
       setMessage({
@@ -133,7 +144,10 @@ function StatusManager() {
 
   const handleClearStatus = async () => {
     if (!selectedMember) {
-      setMessage({ type: "error", content: "Please select a member" });
+      setMessage({
+        type: "error",
+        content: "Please select a member"
+      });
       return;
     }
 
@@ -147,7 +161,10 @@ function StatusManager() {
 
       setStatusText("");
       setEmoji("");
-      setMessage({ type: "success", content: "Status cleared!" });
+      setMessage({
+        type: "success",
+        content: "Status cleared!"
+      });
       await membersQuery.refetch();
     } catch (err: unknown) {
       setMessage({

@@ -106,7 +106,10 @@ globalStyle(".mdc-art", {
   background: vars.surface,
   boxShadow: "0 8px 24px rgba(0, 0, 0, 0.35)",
   "@media": {
-    "(max-width: 560px)": { width: 96, height: 96 },
+    "(max-width: 560px)": {
+      width: 96,
+      height: 96
+    },
   },
 });
 
@@ -122,7 +125,10 @@ globalStyle(".mdc-art:not(.has-art)::after", {
   height: "100%",
 });
 
-globalStyle(".mdc-meta", { minWidth: 0, position: "relative" });
+globalStyle(".mdc-meta", {
+  minWidth: 0,
+  position: "relative"
+});
 
 globalStyle(".mdc-state", {
   display: "inline-flex",
@@ -424,12 +430,21 @@ globalStyle(".rc-artist", {
   ...ELLIPSIS,
 });
 
-globalStyle(".rc-when, .rc-now", { fontSize: "0.72rem", whiteSpace: "nowrap" });
+globalStyle(".rc-when, .rc-now", {
+  fontSize: "0.72rem",
+  whiteSpace: "nowrap"
+});
 globalStyle(".rc-when", { color: vars.textMuted });
-globalStyle(".rc-now", { color: vars.accent, fontWeight: 700 });
+globalStyle(".rc-now", {
+  color: vars.accent,
+  fontWeight: 700
+});
 
 /** Highlights the track that's playing right now. */
-globalStyle(".is-now", { background: vars.accent, borderRadius: 12 });
+globalStyle(".is-now", {
+  background: vars.accent,
+  borderRadius: 12
+});
 
 globalStyle(".rc-note", {
   color: vars.textMuted,
@@ -500,8 +515,14 @@ globalStyle(".top-rank", {
   fontSize: "0.78rem",
 });
 
-globalStyle(".top-name", { color: vars.text, fontSize: "0.85rem" });
-globalStyle(".top-plays", { color: vars.textMuted, fontSize: "0.72rem" });
+globalStyle(".top-name", {
+  color: vars.text,
+  fontSize: "0.85rem"
+});
+globalStyle(".top-plays", {
+  color: vars.textMuted,
+  fontSize: "0.72rem"
+});
 
 /* ---- obsessions ----------------------------------------------------------- */
 
@@ -512,4 +533,7 @@ globalStyle(".obsessions", {
   marginBottom: "2rem",
 });
 
-globalStyle(".obsession-embed", { width: "100%", border: "none" });
+globalStyle(".obsession-embed", {
+  width: "100%",
+  border: "none"
+});

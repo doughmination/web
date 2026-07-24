@@ -8,7 +8,8 @@ const SETTINGS_FILE = path.join(DATA_DIR, "settings.json");
 // account is allowed to send as, plus which one is the default. It lives next
 // to emails.json so it rides along on the same persistent volume.
 export type Settings = {
-  fromAddresses: string[]; // "Name <addr@domain>" or bare "addr@domain"
+  // "Name <addr@domain>" or bare "addr@domain"
+  fromAddresses: string[];
   defaultFrom: string | null;
 };
 
@@ -39,7 +40,7 @@ export function parseAddressList(raw: string | undefined | null): string[] {
 let queue: Promise<unknown> = Promise.resolve();
 function withLock<T>(fn: () => Promise<T>): Promise<T> {
   const result = queue.then(fn, fn);
-  queue = result.catch(() => {});
+  queue = result.catch(() => { });
   return result;
 }
 
@@ -59,7 +60,10 @@ function dedupe(list: string[]): string[] {
 // setups carry over without any manual migration.
 function seedFromEnv(): Settings {
   const seeded = dedupe(parseAddressList(process.env.SEND_FROM));
-  return { fromAddresses: seeded, defaultFrom: seeded[0] ?? null };
+  return {
+    fromAddresses: seeded,
+    defaultFrom: seeded[0] ?? null
+  };
 }
 
 function normalize(raw: unknown): Settings {
@@ -76,7 +80,10 @@ function normalize(raw: unknown): Settings {
   }
   if (!defaultFrom && fromAddresses.length) defaultFrom = fromAddresses[0] ?? null;
 
-  return { fromAddresses, defaultFrom };
+  return {
+    fromAddresses,
+    defaultFrom
+  };
 }
 
 async function ensureFile(): Promise<void> {

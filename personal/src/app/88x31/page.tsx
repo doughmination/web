@@ -285,7 +285,10 @@ export default function ButtonsPage() {
                   href={b.href}
                   {...(b.internal
                     ? {}
-                    : { target: "_blank", rel: "noopener noreferrer" })}
+                    : {
+                      target: "_blank",
+                      rel: "noopener noreferrer"
+                    })}
                 >
                   <ButtonImg b={b} />
                 </a>

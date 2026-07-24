@@ -166,7 +166,10 @@ function parseInline(text: string, opts: MarkdownOpts, k: { n: number }): React.
     if (c === "<") {
       const m = EMOJI_RE.exec(text.slice(i));
       if (m) {
-        const url = opts.emojiUrl?.({ id: m[3], animated: m[1] === "a" }) ?? null;
+        const url = opts.emojiUrl?.({
+          id: m[3],
+          animated: m[1] === "a"
+        }) ?? null;
         if (url) {
           flush();
           out.push(

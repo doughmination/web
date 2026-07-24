@@ -98,39 +98,39 @@ function Badges({
   // as the old paintBadges() did.
   const primary = doughBadges?.length
     ? doughBadges.map((b) => {
-        const img = (
-          <SelfHidingImg
-            className="pc-badge"
-            data-badge-id={String(b.id)}
-            src={proxyImg("https://cdn.discordapp.com/badge-icons/" + String(b.icon) + ".png")}
-            alt={String(b.description || b.id)}
-            title={String(b.description || b.id)}
-          />
-        );
-        return b.link ? (
-          <a
-            className="pc-badge-link"
-            key={String(b.id)}
-            tabIndex={-1}
-            href={String(b.link)}
-            target="_blank"
-            rel="noopener"
-          >
-            {img}
-          </a>
-        ) : (
-          <span key={String(b.id)} style={{ display: "contents" }}>{img}</span>
-        );
-      })
-    : BADGE_FLAGS.filter(([bit]) => (Number(flags) || 0) & bit).map(([bit, name, hash]) => (
+      const img = (
         <SelfHidingImg
-          key={bit}
           className="pc-badge"
-          src={proxyImg("https://cdn.discordapp.com/badge-icons/" + hash + ".png")}
-          alt={name}
-          title={name}
+          data-badge-id={String(b.id)}
+          src={proxyImg("https://cdn.discordapp.com/badge-icons/" + String(b.icon) + ".png")}
+          alt={String(b.description || b.id)}
+          title={String(b.description || b.id)}
         />
-      ));
+      );
+      return b.link ? (
+        <a
+          className="pc-badge-link"
+          key={String(b.id)}
+          tabIndex={-1}
+          href={String(b.link)}
+          target="_blank"
+          rel="noopener"
+        >
+          {img}
+        </a>
+      ) : (
+        <span key={String(b.id)} style={{ display: "contents" }}>{img}</span>
+      );
+    })
+    : BADGE_FLAGS.filter(([bit]) => (Number(flags) || 0) & bit).map(([bit, name, hash]) => (
+      <SelfHidingImg
+        key={bit}
+        className="pc-badge"
+        src={proxyImg("https://cdn.discordapp.com/badge-icons/" + hash + ".png")}
+        alt={name}
+        title={name}
+      />
+    ));
 
   return (
     <span className="pc-badges" aria-hidden="true">
@@ -153,7 +153,9 @@ function Badges({
 
 function Premium({ prem }: { prem: Dict | undefined }) {
   const NITRO_LABEL: Record<string, string> = {
-    nitro: "Nitro", classic: "Nitro Classic", basic: "Nitro Basic",
+    nitro: "Nitro",
+    classic: "Nitro Classic",
+    basic: "Nitro Basic",
   };
   const label = prem ? NITRO_LABEL[prem.type as string] : undefined;
   const boosting = prem?.guild_since as string | undefined;
@@ -186,11 +188,11 @@ function Bio({ text }: { text: unknown }) {
     () =>
       raw
         ? renderDiscordMarkdown(raw, {
-            emojiUrl,
-            emojiClass: "pc-bio-emoji",
-            spoilerClass: "pc-spoiler",
-            linkClass: "pc-bio-link",
-          })
+          emojiUrl,
+          emojiClass: "pc-bio-emoji",
+          spoilerClass: "pc-spoiler",
+          linkClass: "pc-bio-link",
+        })
         : [],
     [raw],
   );
@@ -606,18 +608,18 @@ export default function PresenceCard(opts: PresenceOpts) {
               onKeyDown={
                 opts.link
                   ? (e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        goLink();
-                      }
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      goLink();
                     }
+                  }
                   : undefined
               }
               style={{
                 backgroundImage: gradCols
                   ? "linear-gradient(90deg, " +
-                    (gradCols.length === 1 ? gradCols[0] + "," + gradCols[0] : gradCols.join(", ")) +
-                    ")"
+                  (gradCols.length === 1 ? gradCols[0] + "," + gradCols[0] : gradCols.join(", ")) +
+                  ")"
                   : undefined,
                 fontFamily: (styles && NAME_FONTS[styles.font_id as number]) || undefined,
               }}

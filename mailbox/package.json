@@ -12,10 +12,11 @@
     "@types/web-push": "^3.6.4"
   },
   "peerDependencies": {
-    "typescript": "^5"
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "hono": "^4.12.28",
+    "jose": "^5.10.0",
     "resend": "^6.17.1",
     "web-push": "^3.6.7"
   }

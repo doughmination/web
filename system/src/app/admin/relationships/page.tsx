@@ -1,5 +1,4 @@
-/*
- * Copyright (c) 2026 Clove Twilight
+/* Copyright (c) 2026 Clove Twilight
  * Licensed under the ESAL-2.0 Licence.
  * See LICENCE.md in the project root for full licence information.
  */
@@ -76,11 +75,17 @@ const RelationshipManager: React.FC = () => {
   const handleAdd = async () => {
     setMessage(null);
     if (!memberA || !memberB) {
-      setMessage({ type: "error", content: "Pick two members" });
+      setMessage({
+        type: "error",
+        content: "Pick two members"
+      });
       return;
     }
     if (memberA === memberB) {
-      setMessage({ type: "error", content: "Pick two different members" });
+      setMessage({
+        type: "error",
+        content: "Pick two different members"
+      });
       return;
     }
     try {
@@ -94,7 +99,10 @@ const RelationshipManager: React.FC = () => {
       setMemberB("");
       setSince("");
       setType("partner");
-      setMessage({ type: "success", content: "Relationship added!" });
+      setMessage({
+        type: "success",
+        content: "Relationship added!"
+      });
     } catch (err: unknown) {
       setMessage({
         type: "error",
@@ -108,7 +116,10 @@ const RelationshipManager: React.FC = () => {
     setMessage(null);
     try {
       await removeRelationship.mutateAsync(id);
-      setMessage({ type: "success", content: "Relationship removed!" });
+      setMessage({
+        type: "success",
+        content: "Relationship removed!"
+      });
     } catch (err: unknown) {
       setMessage({
         type: "error",

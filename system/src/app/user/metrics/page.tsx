@@ -1,5 +1,4 @@
-/*
- * Copyright (c) 2026 Clove Twilight
+/* Copyright (c) 2026 Clove Twilight
  * Licensed under the ESAL-2.0 Licence.
  * See LICENCE.md in the project root for full licence information.
  */
@@ -87,18 +86,36 @@ const Metrics: React.FC = () => {
   );
 
   const timeframeOptions = [
-    { value: "24h", label: "Last 24 Hours" },
-    { value: "48h", label: "Last 48 Hours" },
-    { value: "5d", label: "Last 5 Days" },
-    { value: "7d", label: "Last 7 Days" },
-    { value: "30d", label: "Last 30 Days" },
+    {
+      value: "24h",
+      label: "Last 24 Hours"
+    },
+    {
+      value: "48h",
+      label: "Last 48 Hours"
+    },
+    {
+      value: "5d",
+      label: "Last 5 Days"
+    },
+    {
+      value: "7d",
+      label: "Last 7 Days"
+    },
+    {
+      value: "30d",
+      label: "Last 30 Days"
+    },
   ];
 
   useEffect(() => {
     const fetchMetrics = async () => {
       const token = localStorage.getItem("token");
       if (!token) {
-        setMessage({ type: "error", content: "Authentication required" });
+        setMessage({
+          type: "error",
+          content: "Authentication required"
+        });
         setLoading(false);
         return;
       }
@@ -114,11 +131,17 @@ const Metrics: React.FC = () => {
           setFrontingMetrics(await frontingRes.json());
           setSwitchMetrics(await switchRes.json());
         } else {
-          setMessage({ type: "error", content: "Failed to fetch metrics" });
+          setMessage({
+            type: "error",
+            content: "Failed to fetch metrics"
+          });
         }
       } catch (err) {
         console.error("Error fetching metrics:", err);
-        setMessage({ type: "error", content: "Network error occurred" });
+        setMessage({
+          type: "error",
+          content: "Network error occurred"
+        });
       } finally {
         setLoading(false);
       }
@@ -150,7 +173,8 @@ const Metrics: React.FC = () => {
     const filteredMembers = members
       .filter((m) => m[timeframeKey] > 0)
       .sort((a, b) => b[timeframeKey] - a[timeframeKey])
-      .slice(0, 10); // Top 10 members
+      // Top 10 members
+      .slice(0, 10);
 
     return filteredMembers.map((member) => ({
       name: member.display_name || member.name,
@@ -163,11 +187,26 @@ const Metrics: React.FC = () => {
     if (!switchMetrics) return [];
 
     return [
-      { timeframe: "24h", switches: switchMetrics.timeframes["24h"] },
-      { timeframe: "48h", switches: switchMetrics.timeframes["48h"] },
-      { timeframe: "5d", switches: switchMetrics.timeframes["5d"] },
-      { timeframe: "7d", switches: switchMetrics.timeframes["7d"] },
-      { timeframe: "30d", switches: switchMetrics.timeframes["30d"] },
+      {
+        timeframe: "24h",
+        switches: switchMetrics.timeframes["24h"]
+      },
+      {
+        timeframe: "48h",
+        switches: switchMetrics.timeframes["48h"]
+      },
+      {
+        timeframe: "5d",
+        switches: switchMetrics.timeframes["5d"]
+      },
+      {
+        timeframe: "7d",
+        switches: switchMetrics.timeframes["7d"]
+      },
+      {
+        timeframe: "30d",
+        switches: switchMetrics.timeframes["30d"]
+      },
     ];
   };
 

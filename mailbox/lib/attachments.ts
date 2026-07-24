@@ -64,7 +64,10 @@ export async function toResendAttachment(
 ): Promise<{ filename: string; content: string } | null> {
   const bytes = await readAttachment(att.id);
   if (!bytes) return null;
-  return { filename: att.filename, content: Buffer.from(bytes).toString("base64") };
+  return {
+    filename: att.filename,
+    content: Buffer.from(bytes).toString("base64")
+  };
 }
 
 // Resend's inbound webhook hands back attachment metadata plus base64
@@ -92,15 +95,21 @@ export async function persistInboundAttachments(attachments: unknown): Promise<S
     // the HTML body. Field name varies across Resend API versions.
     const contentId = normalizeContentId(
       (typeof a.contentId === "string" && a.contentId) ||
-        (typeof a.content_id === "string" && a.content_id) ||
-        (typeof a.cid === "string" && a.cid) ||
-        null
+      (typeof a.content_id === "string" && a.content_id) ||
+      (typeof a.cid === "string" && a.cid) ||
+      null
     );
 
     if (!content) {
       // No inline bytes available from the webhook — skip persisting to
       // disk but keep the metadata so the UI can still show the filename.
-      results.push({ id: "", filename, contentType, size: 0, contentId });
+      results.push({
+        id: "",
+        filename,
+        contentType,
+        size: 0,
+        contentId
+      });
       continue;
     }
 

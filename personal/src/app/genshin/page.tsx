@@ -61,7 +61,12 @@ const MAX_LEVEL = 90;
 function ascensionProgress(level: number) {
   const clamped = Math.min(Math.max(level, 1), MAX_LEVEL);
   if (clamped >= MAX_LEVEL) {
-    return { cap: MAX_LEVEL, floor: ASCENSION_CAPS.at(-2)!, fill: 1, maxed: true };
+    return {
+      cap: MAX_LEVEL,
+      floor: ASCENSION_CAPS.at(-2)!,
+      fill: 1,
+      maxed: true
+    };
   }
   const cap = ASCENSION_CAPS.find((c) => c > clamped)!;
   const capIndex = ASCENSION_CAPS.indexOf(cap);
@@ -180,7 +185,10 @@ const CHARACTERS: Character[] = [
  * Display order: want tier first, then owned sorted by level (highest first),
  * with same-level characters ordered alphabetically by name.
  */
-const TIER_ORDER: Record<Character["tier"], number> = { want: 0, owned: 1 };
+const TIER_ORDER: Record<Character["tier"], number> = {
+  want: 0,
+  owned: 1
+};
 const ORDERED_CHARACTERS = [...CHARACTERS].sort((a, b) => {
   if (TIER_ORDER[a.tier] !== TIER_ORDER[b.tier]) {
     return TIER_ORDER[a.tier] - TIER_ORDER[b.tier];
@@ -197,7 +205,7 @@ export default function GenshinPage() {
       <div className="genshin-intro">
         <h1>Genshin</h1>
         <p>
-         My Genshin wishlist.
+          My Genshin wishlist.
         </p>
       </div>
 

@@ -43,7 +43,10 @@ function setCached(ns: string, key: string, count: number) {
       token = Math.random().toString(36).slice(2);
       window.sessionStorage.setItem("vc-session", token);
     }
-    window.localStorage.setItem(storeKey(ns, key), JSON.stringify({ count, session: token }));
+    window.localStorage.setItem(storeKey(ns, key), JSON.stringify({
+      count,
+      session: token
+    }));
   } catch {
     /* storage unavailable — just skip caching */
   }
@@ -97,12 +100,12 @@ export default function VisitorCounter({
             {count === null
               ? null
               : String(Math.max(0, Math.floor(count)))
-                  .padStart(6, "0")
-                  .split("")
-                  .map((d, i) => (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img key={i} src={`${imgPath}${d}${imgExt}`} alt={d} width={22.5} height={50} />
-                  ))}
+                .padStart(6, "0")
+                .split("")
+                .map((d, i) => (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img key={i} src={`${imgPath}${d}${imgExt}`} alt={d} width={22.5} height={50} />
+                ))}
           </div>
           {label ? <span className="vc-label">{label}</span> : null}
         </>

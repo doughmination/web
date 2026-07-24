@@ -1,5 +1,4 @@
-/*
- * Copyright (c) 2026 Clove Twilight
+/* Copyright (c) 2026 Clove Twilight
  * Licensed under the ESAL-2.0 Licence.
  * See LICENCE.md in the project root for full licence information.
  */
@@ -303,7 +302,11 @@ const SignUp: React.FC = () => {
               <button
                 type="button"
                 className={s.blueLink}
-                style={{ background: "none", border: "none", cursor: "pointer" }}
+                style={{
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer"
+                }}
                 onClick={() => {
                   setCorrecting(true);
                   setCorrectionError("");
@@ -353,7 +356,11 @@ const SignUp: React.FC = () => {
               <button
                 type="button"
                 className={s.blueLink}
-                style={{ background: "none", border: "none", cursor: "pointer" }}
+                style={{
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer"
+                }}
                 onClick={() => setCorrecting(false)}
               >
                 Cancel
@@ -387,7 +394,10 @@ const SignUp: React.FC = () => {
             autoComplete="username"
           />
           {username.trim() && (
-            <div className={s.mutedNote} style={{ textAlign: "left", marginTop: "0.25rem" }}>
+            <div className={s.mutedNote} style={{
+              textAlign: "left",
+              marginTop: "0.25rem"
+            }}>
               {availability === "checking" && "Checking availability..."}
               {availability === "available" && "✓ Username is available"}
               {availability === "taken" && "✗ Username is already taken"}

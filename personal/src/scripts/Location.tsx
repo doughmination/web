@@ -36,10 +36,18 @@ function parseLocation(v: unknown): { url: string | null; label: string; query: 
     } catch {
       label = "View on map";
     }
-    return { url: raw, label: label || "View on map", query };
+    return {
+      url: raw,
+      label: label || "View on map",
+      query
+    };
   }
   const label = fmtLocation(raw);
-  return { url: null, label, query: label };
+  return {
+    url: null,
+    label,
+    query: label
+  };
 }
 
 export default function Location() {

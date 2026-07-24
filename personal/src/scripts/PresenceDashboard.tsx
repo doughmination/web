@@ -182,7 +182,10 @@ function NowPlaying({ sp, accent }: { sp: Dict | null; accent: string | null }) 
             aria-valuenow={Math.round(pct)} aria-label="Track progress">
             <div
               className={s.npFill}
-              style={{ width: pct + "%", background: accent ? `rgb(${accent})` : undefined }}
+              style={{
+                width: pct + "%",
+                background: accent ? `rgb(${accent})` : undefined
+              }}
             />
           </div>
           <div className={s.npTimes}>
@@ -358,7 +361,9 @@ export default function PresenceDashboard({ userId }: { userId: string }) {
 
   const prem = apiUser.premium as Dict | undefined;
   const NITRO_LABEL: Record<string, string> = {
-    nitro: "Nitro", classic: "Nitro Classic", basic: "Nitro Basic",
+    nitro: "Nitro",
+    classic: "Nitro Classic",
+    basic: "Nitro Basic",
   };
   const nitroLabel = prem ? NITRO_LABEL[prem.type as string] : undefined;
 

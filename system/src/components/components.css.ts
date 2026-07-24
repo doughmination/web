@@ -1,5 +1,4 @@
-/*
- * Copyright (c) 2026 Clove Twilight
+/* Copyright (c) 2026 Clove Twilight
  * Licensed under the ESAL-2.0 Licence.
  * See LICENCE.md in the project root for full licence information.
  *
@@ -87,7 +86,10 @@ export const themeToggleInner = style({
 });
 
 export const themeToggleIcon = style({ fontSize: "0.875rem" });
-export const themeToggleLabel = style({ fontSize: "0.75rem", fontWeight: 500 });
+export const themeToggleLabel = style({
+  fontSize: "0.75rem",
+  fontWeight: 500
+});
 
 /* ProtectedRoute */
 export const guardLoading = style({

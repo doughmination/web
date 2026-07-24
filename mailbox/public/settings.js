@@ -1,9 +1,14 @@
 // --- Settings page logic: send-from addresses + Web Push enrolment ---
 
 const fromListEl = document.getElementById("fromList");
-const addFromForm = document.getElementById("addFromForm");
-const addFromInput = document.getElementById("addFromInput");
-const fromError = document.getElementById("fromError");
+
+// Admin reservations panel
+const ownersCard = document.getElementById("ownersCard");
+const ownersListEl = document.getElementById("ownersList");
+const assignForm = document.getElementById("assignForm");
+const assignUser = document.getElementById("assignUser");
+const assignAddr = document.getElementById("assignAddr");
+const ownersError = document.getElementById("ownersError");
 
 const pushStatusEl = document.getElementById("pushStatus");
 const pushToggleBtn = document.getElementById("pushToggleBtn");
@@ -22,40 +27,22 @@ function bareAddr(s) {
   return (m ? m[1] : s).trim().toLowerCase();
 }
 
-function showFromError(msg) {
-  fromError.textContent = msg;
-  fromError.classList.remove("hidden");
-}
-
-// --- Send-from addresses ---
+// --- Your addresses (read-only) ---
 
 function renderFromList(settings) {
   const list = settings.fromAddresses || [];
   if (list.length === 0) {
-    fromListEl.innerHTML = '<li class="muted">No addresses yet. Add one below.</li>';
+    fromListEl.innerHTML = '<li class="muted">No addresses yet.</li>';
     return;
   }
-
   fromListEl.innerHTML = list
-    .map((addr) => {
-      const isDefault = settings.defaultFrom && bareAddr(settings.defaultFrom) === bareAddr(addr);
-      return `
+    .map(
+      (addr) => `
         <li class="from-row">
-          <button class="star ${isDefault ? "on" : ""}" data-default="${escapeHtml(addr)}"
-                  title="${isDefault ? "Default sender" : "Make default"}"
-                  aria-label="${isDefault ? "Default sender" : "Make default"}">${isDefault ? "★" : "☆"}</button>
           <span class="from-addr">${escapeHtml(addr)}</span>
-          <button class="btn-ghost from-remove" data-remove="${escapeHtml(addr)}">Remove</button>
-        </li>`;
-    })
+        </li>`,
+    )
     .join("");
-
-  fromListEl.querySelectorAll(".star").forEach((btn) => {
-    btn.addEventListener("click", () => setDefault(btn.dataset.default));
-  });
-  fromListEl.querySelectorAll(".from-remove").forEach((btn) => {
-    btn.addEventListener("click", () => removeFrom(btn.dataset.remove));
-  });
 }
 
 async function loadSettings() {
@@ -63,44 +50,79 @@ async function loadSettings() {
   renderFromList(await res.json());
 }
 
-async function addFrom(address) {
-  fromError.classList.add("hidden");
-  const res = await fetch("/api/settings/from", {
+// --- Address reservations (admin only) ---
+
+function showOwnersError(msg) {
+  ownersError.textContent = msg;
+  ownersError.classList.remove("hidden");
+}
+
+function renderOwners(state) {
+  const users = state.users || [];
+  ownersListEl.innerHTML = users
+    .map((u) => {
+      const auto = `<span class="from-addr" title="Automatic — can't be removed">${escapeHtml(u.auto)}</span>`;
+      const extras = (u.reserved || [])
+        .map(
+          (addr) => `
+            <span class="from-addr">
+              ${escapeHtml(addr)}
+              <button class="btn-ghost owner-remove" data-user="${escapeHtml(u.username)}" data-addr="${escapeHtml(addr)}">✕</button>
+            </span>`,
+        )
+        .join("");
+      const badge = u.isAdmin ? ' <span class="muted">(admin — sees all)</span>' : "";
+      return `
+        <div class="from-row" style="flex-direction:column;align-items:flex-start;gap:4px">
+          <strong>${escapeHtml(u.username)}${badge}</strong>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">${auto}${extras}</div>
+        </div>`;
+    })
+    .join("");
+
+  ownersListEl.querySelectorAll(".owner-remove").forEach((btn) => {
+    btn.addEventListener("click", () => unassign(btn.dataset.user, btn.dataset.addr));
+  });
+}
+
+async function loadOwners() {
+  const res = await fetch("/api/owners");
+  if (!res.ok) return; // 403 for non-admins — leave the panel hidden
+  ownersCard.classList.remove("hidden");
+  renderOwners(await res.json());
+}
+
+async function assign(username, address) {
+  ownersError.classList.add("hidden");
+  const res = await fetch("/api/owners/assign", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ address }),
+    body: JSON.stringify({ username, address }),
   });
+  const data = await res.json().catch(() => ({}));
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    showFromError(err.error || "Couldn't add that address.");
+    showOwnersError(data.error || "Couldn't reserve that address.");
     return;
   }
-  renderFromList(await res.json());
-  addFromInput.value = "";
+  renderOwners(data);
+  assignUser.value = "";
+  assignAddr.value = "";
 }
 
-async function removeFrom(address) {
-  const res = await fetch("/api/settings/from/remove", {
+async function unassign(username, address) {
+  const res = await fetch("/api/owners/unassign", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ address }),
+    body: JSON.stringify({ username, address }),
   });
-  if (res.ok) renderFromList(await res.json());
+  if (res.ok) renderOwners(await res.json());
 }
 
-async function setDefault(address) {
-  const res = await fetch("/api/settings/default", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ address }),
-  });
-  if (res.ok) renderFromList(await res.json());
-}
-
-addFromForm.addEventListener("submit", (ev) => {
+assignForm.addEventListener("submit", (ev) => {
   ev.preventDefault();
-  const value = addFromInput.value.trim();
-  if (value) addFrom(value);
+  const u = assignUser.value.trim();
+  const a = assignAddr.value.trim();
+  if (u && a) assign(u, a);
 });
 
 document.getElementById("logoutBtn").addEventListener("click", async () => {
@@ -260,4 +282,5 @@ pushTestBtn.addEventListener("click", async () => {
 });
 
 loadSettings();
+loadOwners();
 initPush();

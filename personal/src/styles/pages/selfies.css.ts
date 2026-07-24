@@ -208,7 +208,11 @@ globalStyle(".lightbox-nav", {
   height: "3rem",
   fontSize: "2rem",
   "@media": {
-    "(max-width: 560px)": { width: "2.6rem", height: "2.6rem", fontSize: "1.6rem" },
+    "(max-width: 560px)": {
+      width: "2.6rem",
+      height: "2.6rem",
+      fontSize: "1.6rem"
+    },
   },
 });
 

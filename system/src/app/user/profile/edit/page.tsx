@@ -1,5 +1,4 @@
-/*
- * Copyright (c) 2026 Clove Twilight
+/* Copyright (c) 2026 Clove Twilight
  * Licensed under the ESAL-2.0 Licence.
  * See LICENCE.md in the project root for full licence information.
  */
@@ -96,7 +95,10 @@ function UserEdit() {
 
     const token = localStorage.getItem("token");
     if (!token) {
-      setMessage({ type: "error", content: "Authentication required" });
+      setMessage({
+        type: "error",
+        content: "Authentication required"
+      });
       return;
     }
 
@@ -123,7 +125,10 @@ function UserEdit() {
         throw new Error(apiErrorMessage(errorData, "Failed to update profile"));
       }
 
-      setMessage({ type: "success", content: "Profile updated successfully" });
+      setMessage({
+        type: "success",
+        content: "Profile updated successfully"
+      });
 
       // Refresh user data
       await userQuery.refetch();
@@ -145,28 +150,43 @@ function UserEdit() {
 
     // Validate passwords
     if (!currentPassword) {
-      setMessage({ type: "error", content: "Current password is required" });
+      setMessage({
+        type: "error",
+        content: "Current password is required"
+      });
       return;
     }
 
     if (!newPassword) {
-      setMessage({ type: "error", content: "New password is required" });
+      setMessage({
+        type: "error",
+        content: "New password is required"
+      });
       return;
     }
 
     if (newPassword.length < 8) {
-      setMessage({ type: "error", content: "Password must be at least 8 characters long" });
+      setMessage({
+        type: "error",
+        content: "Password must be at least 8 characters long"
+      });
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setMessage({ type: "error", content: "Passwords do not match" });
+      setMessage({
+        type: "error",
+        content: "Passwords do not match"
+      });
       return;
     }
 
     const token = localStorage.getItem("token");
     if (!token) {
-      setMessage({ type: "error", content: "Authentication required" });
+      setMessage({
+        type: "error",
+        content: "Authentication required"
+      });
       return;
     }
 
@@ -191,7 +211,10 @@ function UserEdit() {
         throw new Error(apiErrorMessage(errorData, "Failed to change password"));
       }
 
-      setMessage({ type: "success", content: "Password changed successfully" });
+      setMessage({
+        type: "success",
+        content: "Password changed successfully"
+      });
 
       // Clear password fields
       setCurrentPassword("");
@@ -213,21 +236,33 @@ function UserEdit() {
     if (!userData) return;
 
     if (!EMAIL_PATTERN.test(newEmail.trim())) {
-      setMessage({ type: "error", content: "Please enter a valid email address" });
+      setMessage({
+        type: "error",
+        content: "Please enter a valid email address"
+      });
       return;
     }
     if (newEmail.trim().toLowerCase() === (userData.email || "").toLowerCase()) {
-      setMessage({ type: "error", content: "That's already your email address" });
+      setMessage({
+        type: "error",
+        content: "That's already your email address"
+      });
       return;
     }
     if (!emailPassword) {
-      setMessage({ type: "error", content: "Enter your current password to change your email" });
+      setMessage({
+        type: "error",
+        content: "Enter your current password to change your email"
+      });
       return;
     }
 
     const token = localStorage.getItem("token");
     if (!token) {
-      setMessage({ type: "error", content: "Authentication required" });
+      setMessage({
+        type: "error",
+        content: "Authentication required"
+      });
       return;
     }
 
@@ -237,7 +272,10 @@ function UserEdit() {
     try {
       const response = await fetch(`${client.baseUrl}/plural/users/${userData.id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
         body: JSON.stringify({
           email: newEmail.trim(),
           current_password: emailPassword,

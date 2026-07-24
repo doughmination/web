@@ -28,7 +28,12 @@ const FRIEND_POLL_MS = 60000;
 const FRIENDS: Group[] = [
   {
     title: "Fiancée",
-    members: [{ name: "Aria", tier: "wife", discordId: "1305215902685597797", link: null }],
+    members: [{
+      name: "Aria",
+      tier: "wife",
+      discordId: "1305215902685597797",
+      link: null
+    }],
   },
   {
     title: "Close Friends",

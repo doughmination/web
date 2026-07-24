@@ -38,7 +38,11 @@ function normalize(entry: unknown, i: number): Item | null {
   const src = resolveSrc(raw);
   if (!src) return null;
   if (!alt) alt = caption || `Selfie ${i + 1} of Clove Twilight`;
-  return { src, alt, caption };
+  return {
+    src,
+    alt,
+    caption
+  };
 }
 
 type Status = "loading" | "ready" | "empty" | "error";

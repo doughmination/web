@@ -217,7 +217,10 @@ globalStyle(".waka-day-fill", {
   transition: "height 0.5s ease",
 });
 
-globalStyle(".waka-day-label", { fontSize: "0.66rem", color: vars.textMuted });
+globalStyle(".waka-day-label", {
+  fontSize: "0.66rem",
+  color: vars.textMuted
+});
 
 /* ranked horizontal bars (languages / projects / editors / os) */
 
@@ -273,7 +276,10 @@ globalStyle(".waka-grid2", {
   gridTemplateColumns: "1fr 1fr",
   gap: "1.1rem",
   "@media": {
-    "(max-width: 560px)": { gridTemplateColumns: "1fr", gap: 0 },
+    "(max-width: 560px)": {
+      gridTemplateColumns: "1fr",
+      gap: 0
+    },
   },
 });
 
@@ -362,7 +368,10 @@ globalStyle("details.waka-section[open] > summary.section-title::after", {
 
 /* ---- hardware spec list --------------------------------------------------- */
 
-globalStyle(".hw-item", { textDecoration: "none", color: vars.text });
+globalStyle(".hw-item", {
+  textDecoration: "none",
+  color: vars.text
+});
 
 globalStyle(".hw-intro", {
   margin: "0 0 0.9rem",
@@ -392,7 +401,11 @@ globalStyle(".hw-row dt", {
   color: vars.textMuted,
 });
 
-globalStyle(".hw-row dd", { margin: 0, fontSize: "0.88rem", color: vars.text });
+globalStyle(".hw-row dd", {
+  margin: 0,
+  fontSize: "0.88rem",
+  color: vars.text
+});
 
 /* ---- contribution heatmap (.ch-*) -----------------------------------------
    Deliberately NOT themed: --contrib-0..4 are GitHub's own green scale, so the
@@ -456,9 +469,15 @@ globalStyle(".ch-months", {
   color: "var(--ch-muted)",
 });
 
-globalStyle(".ch-months span", { whiteSpace: "nowrap", lineHeight: "14px" });
+globalStyle(".ch-months span", {
+  whiteSpace: "nowrap",
+  lineHeight: "14px"
+});
 
-globalStyle(".ch-body", { display: "flex", gap: "var(--ch-gap)" });
+globalStyle(".ch-body", {
+  display: "flex",
+  gap: "var(--ch-gap)"
+});
 
 globalStyle(".ch-weekdays", {
   display: "grid",
@@ -490,7 +509,10 @@ globalStyle(".ch-day", {
   opacity: 0,
   animation: "ch-pop 0.4s ease forwards",
   "@media": {
-    "(prefers-reduced-motion: reduce)": { animation: "none", opacity: 1 },
+    "(prefers-reduced-motion: reduce)": {
+      animation: "none",
+      opacity: 1
+    },
   },
 });
 
@@ -511,4 +533,7 @@ globalStyle(".ch-legend", {
 });
 
 /** Legend swatches are static — no pop-in animation. */
-globalStyle(".ch-legend .ch-day", { animation: "none", opacity: 1 });
+globalStyle(".ch-legend .ch-day", {
+  animation: "none",
+  opacity: 1
+});

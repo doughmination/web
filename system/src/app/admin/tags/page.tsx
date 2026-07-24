@@ -1,5 +1,4 @@
-/*
- * Copyright (c) 2026 Clove Twilight
+/* Copyright (c) 2026 Clove Twilight
  * Licensed under the ESAL-2.0 Licence.
  * See LICENCE.md in the project root for full licence information.
  */
@@ -98,12 +97,18 @@ const TagManager: React.FC = () => {
 
   const handleAddTag = async () => {
     if (!selectedMember) {
-      setMessage({ type: "error", content: "Please select a member" });
+      setMessage({
+        type: "error",
+        content: "Please select a member"
+      });
       return;
     }
 
     if (!newTag.trim()) {
-      setMessage({ type: "error", content: "Tag cannot be empty" });
+      setMessage({
+        type: "error",
+        content: "Tag cannot be empty"
+      });
       return;
     }
 
@@ -114,7 +119,10 @@ const TagManager: React.FC = () => {
       await addMemberTag(client.baseUrl, selectedMember, newTag.trim());
 
       setNewTag("");
-      setMessage({ type: "success", content: "Tag added successfully!" });
+      setMessage({
+        type: "success",
+        content: "Tag added successfully!"
+      });
       await membersQuery.refetch();
     } catch (err: unknown) {
       setMessage({
@@ -135,7 +143,10 @@ const TagManager: React.FC = () => {
     try {
       await removeMemberTag(client.baseUrl, memberName, tag);
 
-      setMessage({ type: "success", content: "Tag removed successfully!" });
+      setMessage({
+        type: "success",
+        content: "Tag removed successfully!"
+      });
       await membersQuery.refetch();
     } catch (err: unknown) {
       setMessage({
@@ -275,7 +286,10 @@ const TagManager: React.FC = () => {
                           type="button"
                           onClick={() => setNewTag(tag)}
                           className={s.chip}
-                          style={{ cursor: "pointer", border: "none" }}
+                          style={{
+                            cursor: "pointer",
+                            border: "none"
+                          }}
                         >
                           {tag}
                         </button>

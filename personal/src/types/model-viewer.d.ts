@@ -1,4 +1,4 @@
-/**
+/** types/model-viewer.d.ts
  * Ambient declaration for model-viewer's pre-bundled dist build.
  *
  * Model3D.tsx imports `@google/model-viewer/dist/model-viewer.min.js` rather

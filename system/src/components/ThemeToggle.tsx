@@ -1,5 +1,4 @@
-/*
- * Copyright (c) 2026 Clove Twilight
+/* Copyright (c) 2026 Clove Twilight
  * Licensed under the ESAL-2.0 Licence.
  * See LICENCE.md in the project root for full licence information.
  */
@@ -14,11 +13,26 @@ import * as s from "./components.css";
 const THEME_ORDER = ["cherry", "toxic", "lemon", "estrogen", "cyberpunk"] as const;
 
 const THEME_META = {
-  cyberpunk: { icon: "🥷🏻", label: "Cyberpunk" },
-  estrogen: { icon: "💊", label: "Estrogen" },
-  lemon: { icon: "🍋", label: "Lemon" },
-  toxic: { icon: "☢️", label: "Toxic" },
-  cherry: { icon: "🍒", label: "Cherry" },
+  cyberpunk: {
+    icon: "🥷🏻",
+    label: "Cyberpunk"
+  },
+  estrogen: {
+    icon: "💊",
+    label: "Estrogen"
+  },
+  lemon: {
+    icon: "🍋",
+    label: "Lemon"
+  },
+  toxic: {
+    icon: "☢️",
+    label: "Toxic"
+  },
+  cherry: {
+    icon: "🍒",
+    label: "Cherry"
+  },
 };
 
 const ThemeToggle: React.FC = () => {

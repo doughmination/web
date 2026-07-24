@@ -9,6 +9,7 @@ const composeTitle = composeForm.querySelector("h2");
 const messageLabel = composeForm.html.closest("label");
 const attachmentsInput = composeForm.attachments;
 const attachmentListEl = document.getElementById("attachmentList");
+const attachmentWarning = document.getElementById("attachmentWarning");
 const saveDraftBtn = document.getElementById("saveDraftBtn");
 const deleteDraftBtn = document.getElementById("deleteDraftBtn");
 const folderNav = document.getElementById("folderNav");
@@ -30,6 +31,8 @@ let fromOptions = { fromAddresses: [], defaultFrom: null };
 // on the server until the toast expires, so these are just visually suppressed.
 const pendingDeleteIds = new Set();
 const UNDO_MS = 6000;
+// Resend rejects emails whose total size (all attachments) tops ~40 MB.
+const RESEND_LIMIT = 40 * 1024 * 1024;
 
 function bareAddr(s) {
   if (!s) return "";
@@ -83,6 +86,74 @@ function fileToBase64(file) {
     reader.onerror = reject;
     reader.readAsDataURL(file);
   });
+}
+
+// Shrinks large photos in the browser before they're uploaded: downscale to a
+// sane max dimension and re-encode as JPEG. Keeps the result a normal, openable
+// image (unlike gzip, which would give the recipient a file they can't read).
+// Non-images, small images, and GIFs/HEIC that won't decode are left as-is.
+function compressImageFile(file, { maxDim = 2000, quality = 0.82, minBytes = 800 * 1024 } = {}) {
+  return new Promise((resolve) => {
+    if (!file.type.startsWith("image/") || file.type === "image/gif" || file.size <= minBytes) {
+      resolve(file);
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+      const width = Math.round(img.width * scale);
+      const height = Math.round(img.height * scale);
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      canvas.getContext("2d").drawImage(img, 0, 0, width, height);
+      canvas.toBlob(
+        (blob) => {
+          // If re-encoding didn't actually help, keep the original.
+          if (!blob || blob.size >= file.size) {
+            resolve(file);
+            return;
+          }
+          const name = file.name.replace(/\.[^.]+$/, "") + ".jpg";
+          resolve(new File([blob], name, { type: "image/jpeg" }));
+        },
+        "image/jpeg",
+        quality
+      );
+    };
+    img.onerror = () => {
+      // Formats the browser can't decode (often HEIC) — send them untouched.
+      URL.revokeObjectURL(url);
+      resolve(file);
+    };
+    img.src = url;
+  });
+}
+
+// Best-effort size of everything staged: uploaded refs carry a real `size`,
+// while inline-fallback items only have base64 (~4/3 of the real bytes).
+function stagedTotalBytes() {
+  return stagedAttachments.reduce((sum, a) => {
+    if (typeof a.size === "number") return sum + a.size;
+    if (typeof a.content === "string") return sum + Math.floor(a.content.length * 0.75);
+    return sum;
+  }, 0);
+}
+
+function updateAttachmentWarning() {
+  if (!attachmentWarning) return;
+  const total = stagedTotalBytes();
+  if (total > RESEND_LIMIT) {
+    attachmentWarning.textContent = `Attachments total ${fmtSize(total)} — over the 40 MB email limit, so this will likely bounce. Remove a file or split it across two emails.`;
+    attachmentWarning.classList.remove("hidden");
+  } else if (total > RESEND_LIMIT * 0.6) {
+    attachmentWarning.textContent = `Attachments total ${fmtSize(total)} — getting close to the 40 MB email limit.`;
+    attachmentWarning.classList.remove("hidden");
+  } else {
+    attachmentWarning.classList.add("hidden");
+  }
 }
 
 function pathForFolder(folder) {
@@ -185,7 +256,7 @@ function attachmentsHtml(email) {
     const items = files
       .map((a) =>
         a.id
-          ? `<li><a href="/api/emails/${email.id}/attachments/${a.id}" download="${escapeHtml(a.filename)}">${escapeHtml(a.filename)}</a> <span class="muted-inline">(${fmtSize(a.size)})</span></li>`
+          ? `<li><a class="file-download" href="/api/emails/${email.id}/attachments/${a.id}" data-url="/api/emails/${email.id}/attachments/${a.id}" data-name="${escapeHtml(a.filename)}" download="${escapeHtml(a.filename)}">${escapeHtml(a.filename)}</a> <span class="muted-inline">(${fmtSize(a.size)})</span></li>`
           : `<li>${escapeHtml(a.filename)} <span class="muted-inline">(unavailable)</span></li>`
       )
       .join("");
@@ -252,6 +323,35 @@ async function openEmail(id) {
       openLightbox(thumb.dataset.full);
     });
   });
+
+  detailEl.querySelectorAll(".file-download").forEach((link) => {
+    link.addEventListener("click", (ev) => {
+      ev.preventDefault();
+      downloadFile(link.dataset.url, link.dataset.name);
+    });
+  });
+}
+
+// iOS and installed (standalone) PWAs ignore the <a download> attribute — a tap
+// just does nothing. So fetch the bytes ourselves and trigger the save via an
+// object URL; if that's blocked, fall back to opening the file in a new tab so
+// the OS viewer's share/save sheet can take over.
+async function downloadFile(url, filename) {
+  try {
+    const res = await fetch(url, { credentials: "same-origin" });
+    if (!res.ok) throw new Error("download failed");
+    const blob = await res.blob();
+    const objUrl = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = objUrl;
+    a.download = filename || "download";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(objUrl), 10000);
+  } catch (_) {
+    window.open(url, "_blank");
+  }
 }
 
 async function openDraft(id) {
@@ -283,6 +383,7 @@ async function openDraft(id) {
 }
 
 function renderAttachmentList() {
+  updateAttachmentWarning();
   if (stagedAttachments.length === 0) {
     attachmentListEl.innerHTML = "";
     return;
@@ -300,8 +401,28 @@ function renderAttachmentList() {
 
 attachmentsInput.addEventListener("change", async () => {
   const files = Array.from(attachmentsInput.files ?? []);
-  for (const file of files) {
+  for (const rawFile of files) {
+    // Shrink big photos before doing anything else with them.
+    const file = await compressImageFile(rawFile);
     const content = await fileToBase64(file);
+    // Upload each file on its own right away, so the eventual send/draft
+    // request only carries a small reference (id) instead of every file's
+    // base64 at once. That keeps requests under the proxy's size limit — the
+    // reason attaching several files used to fail while a single one worked.
+    try {
+      const res = await fetch("/api/uploads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ filename: file.name, contentType: file.type, content }),
+      });
+      if (res.ok) {
+        stagedAttachments.push(await res.json());
+        continue;
+      }
+    } catch (_) {
+      /* fall through to inline content below */
+    }
+    // Fallback: keep the bytes inline so send still works if upload failed.
     stagedAttachments.push({
       filename: file.name,
       contentType: file.type,

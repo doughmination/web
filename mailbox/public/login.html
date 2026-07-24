@@ -1,3 +1,4 @@
+<!-- mailbox/public/login.html -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -7,40 +8,15 @@
   <link rel="icon" href="/favicon.ico" sizes="any" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="stylesheet" href="/style.css" />
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body class="login-body">
-  <form id="loginForm" class="compose login-card">
+  <div class="compose login-card">
     <h2>Sign in</h2>
-
-    <label for="username">
-      Username
-      <input id="username" name="username" type="text" autocomplete="username" placeholder="admin" required autofocus />
-    </label>
-
-    <label for="password">
-      Password
-      <input id="password" name="password" type="password" autocomplete="current-password" placeholder="password" required />
-    </label>
-
-    <!-- Honeypot: hidden from real users via CSS, off the tab order, and
-         excluded from autofill/autocomplete. Bots that fill in every field
-         they find trip this; the server rejects the login if it's non-empty. -->
-    <div class="hp-field" aria-hidden="true">
-      <label for="website">Website</label>
-      <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
-    </div>
-
-    <!-- TODO: replace with your real Turnstile site key -->
-    <div class="cf-turnstile" data-sitekey="0x4AAAAAAB08ZhSxKn5rAD3d"></div>
-
-    <p id="loginError" class="error hidden"></p>
+    <p>Use your passkey to sign in to the inbox.</p>
 
     <div class="actions">
-      <button type="submit" class="btn-accent">Sign in</button>
+      <a href="/auth/login" class="btn-accent">🔑 Sign in with SSO</a>
     </div>
-  </form>
-
-  <script src="/login.js"></script>
+  </div>
 </body>
 </html>

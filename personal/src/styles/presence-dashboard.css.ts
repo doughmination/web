@@ -154,7 +154,13 @@ export const statusPip = style({
   border: `4px solid ${vars.surface}`,
   background: vars.textFaint,
   boxSizing: "border-box",
-  "@media": { "(max-width: 640px)": { width: 20, height: 20, borderWidth: 3 } },
+  "@media": {
+    "(max-width: 640px)": {
+      width: 20,
+      height: 20,
+      borderWidth: 3
+    }
+  },
 });
 
 export const idBlock = style({
@@ -187,7 +193,10 @@ export const nameplate = style({
   maskImage: "linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.5) 45%, #000 100%)",
   WebkitMaskImage: "linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.5) 45%, #000 100%)",
   "@media": {
-    "(max-width: 640px)": { height: 62, width: "min(240px, 55%)" },
+    "(max-width: 640px)": {
+      height: 62,
+      width: "min(240px, 55%)"
+    },
   },
 });
 
@@ -204,7 +213,10 @@ export const nameplateMedia = style({
 
 /** Keeps the identity text above the nameplate art, which is pinned to the
     opposite corner but could still reach it on a narrow viewport. */
-export const aboveNameplate = style({ position: "relative", zIndex: 1 });
+export const aboveNameplate = style({
+  position: "relative",
+  zIndex: 1
+});
 
 export const nameRow = style({
   display: "flex",
@@ -235,7 +247,10 @@ export const nameLink = style({
   cursor: "pointer",
   selectors: {
     "&:hover": { textDecoration: "underline" },
-    "&:focus-visible": { outline: `2px solid ${vars.accent}`, outlineOffset: 3 },
+    "&:focus-visible": {
+      outline: `2px solid ${vars.accent}`,
+      outlineOffset: 3
+    },
   },
 });
 
@@ -252,7 +267,11 @@ export const guildTag = style({
   flexShrink: 0,
 });
 
-export const guildTagBadge = style({ width: 16, height: 16, display: "block" });
+export const guildTagBadge = style({
+  width: 16,
+  height: 16,
+  display: "block"
+});
 
 export const subRow = style({
   display: "flex",
@@ -321,9 +340,16 @@ export const statusBody = style({
   color: vars.textSoft,
 });
 
-export const customEmoji = style({ width: 18, height: 18, flexShrink: 0 });
+export const customEmoji = style({
+  width: 18,
+  height: 18,
+  flexShrink: 0
+});
 
-export const customStatusText = style({ ...ELLIPSIS, minWidth: 0 });
+export const customStatusText = style({
+  ...ELLIPSIS,
+  minWidth: 0
+});
 
 /* ---- panel grid ----------------------------------------------------------- */
 
@@ -333,7 +359,10 @@ export const grid = style({
   gap: "1rem",
   alignItems: "start",
   "@media": {
-    "(max-width: 700px)": { gridTemplateColumns: "1fr", gap: "0.75rem" },
+    "(max-width: 700px)": {
+      gridTemplateColumns: "1fr",
+      gap: "0.75rem"
+    },
   },
 });
 
@@ -382,7 +411,11 @@ export const panelToggle = style({
   transition: "color 0.15s ease",
   selectors: {
     "&:hover": { color: vars.textMuted },
-    "&:focus-visible": { outline: `2px solid ${vars.accent}`, outlineOffset: 3, borderRadius: 4 },
+    "&:focus-visible": {
+      outline: `2px solid ${vars.accent}`,
+      outlineOffset: 3,
+      borderRadius: 4
+    },
   },
 });
 
@@ -435,7 +468,10 @@ export const npRow = style({
   textDecoration: "none",
   borderRadius: 10,
   selectors: {
-    "&:focus-visible": { outline: `2px solid ${vars.accent}`, outlineOffset: 4 },
+    "&:focus-visible": {
+      outline: `2px solid ${vars.accent}`,
+      outlineOffset: 4
+    },
   },
   "@media": { "(max-width: 480px)": { gap: "0.7rem" } },
 });
@@ -447,10 +483,18 @@ export const npArt = style({
   objectFit: "cover",
   flexShrink: 0,
   boxShadow: "0 4px 16px -6px rgba(0,0,0,0.6)",
-  "@media": { "(max-width: 480px)": { width: 62, height: 62 } },
+  "@media": {
+    "(max-width: 480px)": {
+      width: 62,
+      height: 62
+    }
+  },
 });
 
-export const npBody = style({ minWidth: 0, flex: 1 });
+export const npBody = style({
+  minWidth: 0,
+  flex: 1
+});
 
 export const npTitle = style({
   fontSize: "1.05rem",
@@ -531,7 +575,10 @@ export const actRow = style({
   },
 });
 
-export const actIcWrap = style({ position: "relative", flexShrink: 0 });
+export const actIcWrap = style({
+  position: "relative",
+  flexShrink: 0
+});
 
 export const actIc = style({
   width: 46,
@@ -561,7 +608,10 @@ export const actDot = style({
   flexShrink: 0,
 });
 
-export const actBody = style({ minWidth: 0, flex: 1 });
+export const actBody = style({
+  minWidth: 0,
+  flex: 1
+});
 
 export const actKind = style({
   fontSize: "0.6rem",
@@ -642,7 +692,10 @@ export const badgeLink = style({
   color: "inherit",
   textDecoration: "none",
   selectors: {
-    "&:focus-visible": { outline: `2px solid ${vars.accent}`, outlineOffset: 2 },
+    "&:focus-visible": {
+      outline: `2px solid ${vars.accent}`,
+      outlineOffset: 2
+    },
   },
 });
 
@@ -672,11 +725,23 @@ export const conn = style({
   },
 });
 
-export const connIcon = style({ width: 15, height: 15, flexShrink: 0, display: "block" });
+export const connIcon = style({
+  width: 15,
+  height: 15,
+  flexShrink: 0,
+  display: "block"
+});
 
-export const connName = style({ ...ELLIPSIS, minWidth: 0 });
+export const connName = style({
+  ...ELLIPSIS,
+  minWidth: 0
+});
 
-export const connCheck = style({ color: vars.success, display: "inline-flex", flexShrink: 0 });
+export const connCheck = style({
+  color: vars.success,
+  display: "inline-flex",
+  flexShrink: 0
+});
 
 /* ---- bio ------------------------------------------------------------------ */
 
@@ -706,10 +771,16 @@ globalStyle(`${bio} a:hover`, { textDecoration: "underline" });
    discordMarkdown.tsx emits plain semantic tags, styled here. Note __x__ is
    UNDERLINE in Discord's dialect, not bold — <u> carries that. */
 
-globalStyle(`${bio} strong`, { fontWeight: 700, color: vars.text });
+globalStyle(`${bio} strong`, {
+  fontWeight: 700,
+  color: vars.text
+});
 globalStyle(`${bio} em`, { fontStyle: "italic" });
 globalStyle(`${bio} u`, { textDecoration: "underline" });
-globalStyle(`${bio} s`, { textDecoration: "line-through", color: vars.textDim });
+globalStyle(`${bio} s`, {
+  textDecoration: "line-through",
+  color: vars.textDim
+});
 
 globalStyle(`${bio} code`, {
   fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
@@ -726,7 +797,11 @@ globalStyle(`${bio} pre`, {
   borderRadius: 8,
   overflowX: "auto",
 });
-globalStyle(`${bio} pre code`, { background: "none", padding: 0, fontSize: "0.82em" });
+globalStyle(`${bio} pre code`, {
+  background: "none",
+  padding: 0,
+  fontSize: "0.82em"
+});
 
 globalStyle(`${bio} blockquote`, {
   margin: "0.15rem 0",
@@ -745,9 +820,15 @@ globalStyle(`${bio} h1`, { fontSize: "1.15em" });
 globalStyle(`${bio} h2`, { fontSize: "1.06em" });
 globalStyle(`${bio} h3`, { fontSize: "1em" });
 
-globalStyle(`${bio} small`, { fontSize: "0.82em", color: vars.textDim });
+globalStyle(`${bio} small`, {
+  fontSize: "0.82em",
+  color: vars.textDim
+});
 
-globalStyle(`${bio} li`, { display: "list-item", marginLeft: "1.1rem" });
+globalStyle(`${bio} li`, {
+  display: "list-item",
+  marginLeft: "1.1rem"
+});
 
 /** Spoiler: blacked out until clicked, matching Discord's behaviour. */
 export const spoiler = style({
@@ -762,7 +843,10 @@ export const spoiler = style({
       color: "inherit",
       cursor: "auto",
     },
-    "&:focus-visible": { outline: `2px solid ${vars.accent}`, outlineOffset: 2 },
+    "&:focus-visible": {
+      outline: `2px solid ${vars.accent}`,
+      outlineOffset: 2
+    },
   },
 });
 
@@ -788,13 +872,29 @@ export const wlItem = style({
 
 export const wlOwned = style({ opacity: 0.55 });
 
-export const wlIc = style({ width: 30, height: 30, borderRadius: 6, flexShrink: 0, objectFit: "cover" });
+export const wlIc = style({
+  width: 30,
+  height: 30,
+  borderRadius: 6,
+  flexShrink: 0,
+  objectFit: "cover"
+});
 
-export const wlBody = style({ minWidth: 0, flex: 1 });
+export const wlBody = style({
+  minWidth: 0,
+  flex: 1
+});
 
-export const wlName = style({ fontSize: "0.8rem", color: vars.textSoft, ...ELLIPSIS });
+export const wlName = style({
+  fontSize: "0.8rem",
+  color: vars.textSoft,
+  ...ELLIPSIS
+});
 
-export const wlType = style({ fontSize: "0.66rem", color: vars.textDim });
+export const wlType = style({
+  fontSize: "0.66rem",
+  color: vars.textDim
+});
 
 export const wlPrice = style({
   fontSize: "0.76rem",

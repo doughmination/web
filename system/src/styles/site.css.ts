@@ -1,5 +1,4 @@
-/*
- * Copyright (c) 2026 Clove Twilight
+/* Copyright (c) 2026 Clove Twilight
  * Licensed under the ESAL-2.0 Licence.
  * See LICENCE.md in the project root for full licence information.
  *
@@ -50,7 +49,10 @@ export const header = style({
   borderBottom: `1px solid color-mix(in srgb, ${vars.surface} 50%, transparent)`,
   boxShadow: `0 1px 3px color-mix(in srgb, ${vars.text} 8%, transparent)`,
   "@media": {
-    [mobile]: { height: "60px", padding: "0.5rem 1rem" },
+    [mobile]: {
+      height: "60px",
+      padding: "0.5rem 1rem"
+    },
   },
 });
 
@@ -63,7 +65,10 @@ export const container = style({
   marginRight: "auto",
   boxSizing: "border-box",
   "@media": {
-    [mobile]: { padding: "0 1rem", maxWidth: "100%" },
+    [mobile]: {
+      padding: "0 1rem",
+      maxWidth: "100%"
+    },
     [tablet]: { padding: "0 1.5rem" },
   },
 });
@@ -192,8 +197,14 @@ export const avatarContainer = style({
   border: `2px solid ${vars.surface}`,
   backgroundColor: vars.surface,
   "@media": {
-    [mobile]: { width: "3.5rem", height: "3.5rem" },
-    [tablet]: { width: "4rem", height: "4rem" },
+    [mobile]: {
+      width: "3.5rem",
+      height: "3.5rem"
+    },
+    [tablet]: {
+      width: "4rem",
+      height: "4rem"
+    },
   },
 });
 
@@ -237,7 +248,10 @@ export const frontingMember = style({
   textAlign: "center",
   flexShrink: 0,
   "@media": {
-    [mobile]: { maxWidth: "100px", minWidth: "90px" },
+    [mobile]: {
+      maxWidth: "100px",
+      minWidth: "90px"
+    },
   },
 });
 
@@ -251,7 +265,10 @@ export const frontingMemberName = style({
   maxWidth: "100%",
   color: vars.text,
   "@media": {
-    [mobile]: { fontSize: "1.25rem", marginTop: "0.5rem" },
+    [mobile]: {
+      fontSize: "1.25rem",
+      marginTop: "0.5rem"
+    },
   },
 });
 

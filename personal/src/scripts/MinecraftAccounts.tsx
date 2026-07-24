@@ -36,12 +36,30 @@ const CAPE_H = 96;
  * resolve), which is why they're listed against the contract rather than guessed.
  */
 const ROLE_META: Record<string, { label: string; accent: string }> = {
-  main: { label: "Main", accent: "sapphire" },
-  furina: { label: "Furina", accent: "sky" },
-  rose: { label: "Rose", accent: "accent" },
-  luna: { label: "Luna", accent: "teal" },
-  uzi: { label: "Uzi", accent: "accent-alt" },
-  alt: { label: "Alt", accent: "maroon" },
+  main: {
+    label: "Main",
+    accent: "sapphire"
+  },
+  furina: {
+    label: "Furina",
+    accent: "sky"
+  },
+  rose: {
+    label: "Rose",
+    accent: "accent"
+  },
+  luna: {
+    label: "Luna",
+    accent: "teal"
+  },
+  uzi: {
+    label: "Uzi",
+    accent: "accent-alt"
+  },
+  alt: {
+    label: "Alt",
+    accent: "maroon"
+  },
 };
 
 export type Cfg = { role: string; uid: string };
@@ -82,7 +100,8 @@ let skinviewPromise: Promise<Skinview3d> | null = null;
 function loadSkinview(): Promise<Skinview3d> {
   if (!skinviewPromise) {
     skinviewPromise = import("skinview3d").catch((err) => {
-      skinviewPromise = null; // let a later attempt retry
+      // let a later attempt retry
+      skinviewPromise = null;
       throw err;
     });
   }
@@ -118,11 +137,17 @@ function capeList(d: ProfileData | null): Cape[] {
   const arr = Array.isArray(c) ? c : [c];
   return arr
     .map((x): Cape | null => {
-      if (typeof x === "string") return { url: x, name: null };
+      if (typeof x === "string") return {
+        url: x,
+        name: null
+      };
       if (x && typeof x === "object") {
         const o = x as { url?: string; cape_url?: string; texture?: string; name?: string; title?: string; source?: string };
         const url = o.url || o.cape_url || o.texture || null;
-        return url ? { url, name: o.name || o.title || o.source || null } : null;
+        return url ? {
+          url,
+          name: o.name || o.title || o.source || null
+        } : null;
       }
       return null;
     })
@@ -170,7 +195,7 @@ function CopyBtn({ value }: { value: string }) {
               setCopied(true);
               setTimeout(() => setCopied(false), 1200);
             })
-            .catch(() => {});
+            .catch(() => { });
         }
       }}
     >
@@ -215,7 +240,11 @@ function Skin3D({ data }: { data: ProfileData }) {
           setLoadingMsg("No skin available");
           return;
         }
-        const viewer = new sv.SkinViewer({ canvas: canvasRef.current, width: 300, height: 400 });
+        const viewer = new sv.SkinViewer({
+          canvas: canvasRef.current,
+          width: 300,
+          height: 400
+        });
         viewer.controls.enableZoom = true;
         viewerRef.current = viewer;
         setReady(true);
@@ -260,7 +289,7 @@ function Skin3D({ data }: { data: ProfileData }) {
         /* rejected source */
       }
     };
-    img.onerror = () => {};
+    img.onerror = () => { };
     img.src = url;
     return () => {
       cancelled = true;
@@ -390,7 +419,11 @@ function AccountModal({
     return () => document.removeEventListener("keydown", onKey);
   }, [requestClose]);
 
-  const state: AcctState = { uid, cfg, data };
+  const state: AcctState = {
+    uid,
+    cfg,
+    data
+  };
   const meta = roleMeta(cfg.role);
   const accent = `var(--${meta.accent})`;
   const heroSrc = renderUrl(baseRender(state, "player"), 360, !showHat);
@@ -520,7 +553,11 @@ function AccountCard({ cfg, data, onOpen }: { cfg: Cfg; data: ProfileData; onOpe
   const uid = shortUuid(cfg.uid);
   const meta = roleMeta(cfg.role);
   const accent = `var(--${meta.accent})`;
-  const bodySrc = renderUrl(baseRender({ uid, cfg, data }, "body"), 300, false);
+  const bodySrc = renderUrl(baseRender({
+    uid,
+    cfg,
+    data
+  }, "body"), 300, false);
   const capes = capeList(data);
   return (
     <a

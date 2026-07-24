@@ -1,3 +1,4 @@
+<!-- mailbox/public/settings.html -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -23,28 +24,37 @@
     </header>
 
     <main class="settings-page">
-      <!-- Send-from addresses -->
+      <!-- Send-from addresses (read-only; managed via reservations) -->
       <section class="settings-card">
-        <h2>Send-from addresses</h2>
+        <h2>Your addresses</h2>
         <p class="settings-hint">
-          Addresses you can send as. Each domain must be verified in Resend first.
-          The starred address is the default for new messages.
+          Addresses you can send as. Everyone owns their own
+          <code>username@doughmination.win</code>; extra addresses are reserved
+          for you by an admin below.
         </p>
 
         <ul id="fromList" class="from-list">
           <li class="muted">Loading…</li>
         </ul>
+      </section>
 
-        <form id="addFromForm" class="add-from">
-          <input
-            id="addFromInput"
-            type="text"
-            placeholder="Admin &lt;admin@doughmination.uk&gt; or admin@doughmination.uk"
-            autocomplete="off"
-          />
-          <button type="submit" class="btn-accent">Add</button>
+      <!-- Address reservations (admin only) -->
+      <section class="settings-card hidden" id="ownersCard">
+        <h2>Address reservations</h2>
+        <p class="settings-hint">
+          Reserve extra addresses for a user. Each user always keeps their own
+          <code>username@doughmination.win</code>. Unreserved mail goes to the
+          catch-all owner.
+        </p>
+
+        <div id="ownersList" class="from-list"><span class="muted">Loading…</span></div>
+
+        <form id="assignForm" class="add-from">
+          <input id="assignUser" type="text" placeholder="username (e.g. clove)" autocomplete="off" />
+          <input id="assignAddr" type="text" placeholder="address or local-part (e.g. ctf)" autocomplete="off" />
+          <button type="submit" class="btn-accent">Reserve</button>
         </form>
-        <p id="fromError" class="error hidden"></p>
+        <p id="ownersError" class="error hidden"></p>
       </section>
 
       <!-- Notifications -->

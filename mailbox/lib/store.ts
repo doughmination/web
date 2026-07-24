@@ -1,15 +1,19 @@
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
+import { ownerOf } from "./owners";
 
 const DATA_DIR = process.env.DATA_DIR ?? "./data";
 const DATA_FILE = path.join(DATA_DIR, "emails.json");
 
 export type StoredAttachment = {
-  id: string; // used to fetch the raw bytes back via lib/attachments
+  // used to fetch the raw bytes back via lib/attachments
+  id: string;
   filename: string;
   contentType: string;
-  size: number; // bytes
-  contentId?: string | null; // RFC Content-ID for inline (cid:) images, if any
+  // bytes
+  size: number;
+  // RFC Content-ID for inline (cid:) images, if any
+  contentId?: string | null;
 };
 
 export type Folder = "inbox" | "sent" | "drafts";
@@ -24,11 +28,18 @@ export type StoredEmail = {
   receivedAt: string;
   attachments: StoredAttachment[];
   direction: "inbound" | "outbound";
-  status: "sent" | "draft"; // drafts live in the same table as real mail
-  messageId: string | null; // RFC Message-ID of this email, if known
-  inReplyTo: string | null; // Message-ID this email is replying to
-  references: string | null; // space-separated chain of Message-IDs
-  threadKey: string; // our own grouping key (subject + counterpart)
+  // drafts live in the same table as real mail
+  status: "sent" | "draft";
+  // RFC Message-ID of this email, if known
+  messageId: string | null;
+  // Message-ID this email is replying to
+  inReplyTo: string | null;
+  // space-separated chain of Message-IDs
+  references: string | null;
+  // our own grouping key (subject + counterpart)
+  threadKey: string;
+  // which mailbox user this message belongs to (see lib/owners)
+  owner: string;
 };
 
 // A draft doesn't have most of the threading/delivery metadata yet —
@@ -38,10 +49,13 @@ export type DraftInput = {
   subject: string;
   html: string;
   attachments: StoredAttachment[];
-  from?: string; // chosen send-from address, resolved/validated at send time
+  // chosen send-from address, resolved/validated at send time
+  from?: string;
   inReplyTo?: string | null;
   references?: string | null;
   threadKey?: string | null;
+  // the mailbox user saving the draft
+  owner: string;
 };
 
 export function folderOf(email: Pick<StoredEmail, "direction" | "status">): Folder {
@@ -55,7 +69,7 @@ export function folderOf(email: Pick<StoredEmail, "direction" | "status">): Fold
 let queue: Promise<unknown> = Promise.resolve();
 function withLock<T>(fn: () => Promise<T>): Promise<T> {
   const result = queue.then(fn, fn);
-  queue = result.catch(() => {});
+  queue = result.catch(() => { });
   return result;
 }
 
@@ -70,11 +84,20 @@ async function ensureFile() {
 // Older records predate the drafts/attachments rework, so backfill sane
 // defaults instead of forcing a migration script.
 function normalize(raw: any): StoredEmail {
-  return {
+  const base = {
     ...raw,
     attachments: Array.isArray(raw.attachments) ? raw.attachments : [],
     status: raw.status === "draft" ? "draft" : "sent",
   };
+  // Records written before ownership existed get an owner derived from the
+  // address involved: recipient for inbound, our send-from for outbound.
+  // ownerOf() always resolves (falls back to the catch-all owner).
+  if (!base.owner) {
+    base.owner = base.direction === "inbound"
+      ? ownerOf(Array.isArray(base.to) ? base.to[0] ?? "" : "")
+      : ownerOf(base.from ?? "");
+  }
+  return base;
 }
 
 async function readAll(): Promise<StoredEmail[]> {
@@ -95,16 +118,23 @@ async function writeAll(emails: StoredEmail[]) {
 export function addEmail(email: StoredEmail) {
   return withLock(async () => {
     const emails = await readAll();
-    emails.unshift(email); // newest first
+    // newest first
+    emails.unshift(email);
     await writeAll(emails);
     return email;
   });
 }
 
-export function listEmails(folder?: Folder) {
+// `owner` scopes the list to one user's mail; omit it (admins) to see all.
+export function listEmails(folder?: Folder, owner?: string) {
   return withLock(async () => {
     const emails = await readAll();
-    const filtered = folder ? emails.filter((e) => folderOf(e) === folder) : emails;
+    const key = owner?.toLowerCase();
+    const filtered = emails.filter(
+      (e) =>
+        (!folder || folderOf(e) === folder) &&
+        (!key || (e.owner || "").toLowerCase() === key),
+    );
     // Don't ship full HTML bodies to the list view
     return filtered.map(({ html, text, ...meta }) => meta);
   });
@@ -124,11 +154,16 @@ export function findByMessageId(messageId: string) {
   });
 }
 
-export function listByThreadKey(threadKey: string) {
+export function listByThreadKey(threadKey: string, owner?: string) {
   return withLock(async () => {
     const emails = await readAll();
+    const key = owner?.toLowerCase();
     return emails
-      .filter((e) => e.threadKey === threadKey)
+      .filter(
+        (e) =>
+          e.threadKey === threadKey &&
+          (!key || (e.owner || "").toLowerCase() === key),
+      )
       .sort((a, b) => a.receivedAt.localeCompare(b.receivedAt));
   });
 }
@@ -155,6 +190,7 @@ export function createDraft(input: DraftInput) {
       inReplyTo: input.inReplyTo ?? null,
       references: input.references ?? null,
       threadKey: input.threadKey ?? `draft::${crypto.randomUUID()}`,
+      owner: input.owner,
     };
     emails.unshift(draft);
     await writeAll(emails);

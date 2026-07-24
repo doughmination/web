@@ -1,5 +1,4 @@
-/*
- * Copyright (c) 2026 Clove Twilight
+/* Copyright (c) 2026 Clove Twilight
  * Licensed under the ESAL-2.0 Licence.
  * See LICENCE.md in the project root for full licence information.
  */
@@ -22,11 +21,36 @@ const AdminDash: React.FC = () => {
   );
 
   const adminPages = [
-    { path: "/admin/switch", label: "Switch Manager", icon: "🔄", desc: "Manage fronting members" },
-    { path: "/admin/mental", label: "Mental Health", icon: "🧠", desc: "Update mental state" },
-    { path: "/admin/status", label: "Status Manager", icon: "💬", desc: "Set member statuses" },
-    { path: "/admin/tags", label: "Tag Manager", icon: "🏷️", desc: "Manage member tags" },
-    { path: "/admin/pride", label: "Pride Manager", icon: "🏳️‍🌈", desc: "Set member pride identities" },
+    {
+      path: "/admin/switch",
+      label: "Switch Manager",
+      icon: "🔄",
+      desc: "Manage fronting members"
+    },
+    {
+      path: "/admin/mental",
+      label: "Mental Health",
+      icon: "🧠",
+      desc: "Update mental state"
+    },
+    {
+      path: "/admin/status",
+      label: "Status Manager",
+      icon: "💬",
+      desc: "Set member statuses"
+    },
+    {
+      path: "/admin/tags",
+      label: "Tag Manager",
+      icon: "🏷️",
+      desc: "Manage member tags"
+    },
+    {
+      path: "/admin/pride",
+      label: "Pride Manager",
+      icon: "🏳️‍🌈",
+      desc: "Set member pride identities"
+    },
     {
       path: "/admin/relationships",
       label: "Relationships",

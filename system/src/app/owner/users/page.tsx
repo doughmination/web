@@ -1,5 +1,4 @@
-/*
- * Copyright (c) 2026 Clove Twilight
+/* Copyright (c) 2026 Clove Twilight
  * Licensed under the ESAL-2.0 Licence.
  * See LICENCE.md in the project root for full licence information.
  */
@@ -85,7 +84,10 @@ const UserManager: React.FC = () => {
   const fetchUsers = useCallback(async () => {
     const token = localStorage.getItem("token");
     if (!token) {
-      setMessage({ type: "error", content: "Authentication required" });
+      setMessage({
+        type: "error",
+        content: "Authentication required"
+      });
       return;
     }
 
@@ -98,11 +100,17 @@ const UserManager: React.FC = () => {
         const data = (await response.json()) as User[];
         setUsers([...data].sort((a, b) => a.username.localeCompare(b.username)));
       } else {
-        setMessage({ type: "error", content: "Failed to fetch users" });
+        setMessage({
+          type: "error",
+          content: "Failed to fetch users"
+        });
       }
     } catch (err) {
       console.error("Error fetching users:", err);
-      setMessage({ type: "error", content: "Network error occurred" });
+      setMessage({
+        type: "error",
+        content: "Network error occurred"
+      });
     }
   }, [client]);
 
@@ -114,17 +122,26 @@ const UserManager: React.FC = () => {
     e.preventDefault();
 
     if (!newUsername.trim() || !newPassword.trim()) {
-      setMessage({ type: "error", content: "Username and password are required" });
+      setMessage({
+        type: "error",
+        content: "Username and password are required"
+      });
       return;
     }
 
     if (newPassword.length < 10) {
-      setMessage({ type: "error", content: "Password must be at least 10 characters" });
+      setMessage({
+        type: "error",
+        content: "Password must be at least 10 characters"
+      });
       return;
     }
 
     const token = localStorage.getItem("token");
-    if (!token) return setMessage({ type: "error", content: "Authentication required" });
+    if (!token) return setMessage({
+      type: "error",
+      content: "Authentication required"
+    });
 
     setSaving(true);
     setMessage(null);
@@ -151,7 +168,10 @@ const UserManager: React.FC = () => {
         throw new Error(apiErrorMessage(errorData, "Failed to create user"));
       }
 
-      setMessage({ type: "success", content: "User created successfully!" });
+      setMessage({
+        type: "success",
+        content: "User created successfully!"
+      });
       setNewUsername("");
       setNewPassword("");
       setNewDisplayName("");
@@ -186,7 +206,10 @@ const UserManager: React.FC = () => {
 
   const handleSaveUser = async (user: User) => {
     const token = localStorage.getItem("token");
-    if (!token) return setMessage({ type: "error", content: "Authentication required" });
+    if (!token) return setMessage({
+      type: "error",
+      content: "Authentication required"
+    });
 
     setSaving(true);
     setMessage(null);
@@ -216,7 +239,10 @@ const UserManager: React.FC = () => {
         throw new Error(apiErrorMessage(errorData, "Failed to update user"));
       }
 
-      setMessage({ type: "success", content: `Updated @${user.username} successfully!` });
+      setMessage({
+        type: "success",
+        content: `Updated @${user.username} successfully!`
+      });
       setEditingUserId(null);
       await fetchUsers();
     } catch (err: unknown) {
@@ -231,7 +257,10 @@ const UserManager: React.FC = () => {
 
   const handleDeleteUser = async (userId: string, username: string) => {
     if (userId === currentUserId) {
-      setMessage({ type: "error", content: "Cannot delete your own account" });
+      setMessage({
+        type: "error",
+        content: "Cannot delete your own account"
+      });
       return;
     }
 
@@ -240,7 +269,10 @@ const UserManager: React.FC = () => {
     }
 
     const token = localStorage.getItem("token");
-    if (!token) return setMessage({ type: "error", content: "Authentication required" });
+    if (!token) return setMessage({
+      type: "error",
+      content: "Authentication required"
+    });
 
     setSaving(true);
     setMessage(null);
@@ -256,7 +288,10 @@ const UserManager: React.FC = () => {
         throw new Error(apiErrorMessage(errorData, "Failed to delete user"));
       }
 
-      setMessage({ type: "success", content: "User deleted successfully!" });
+      setMessage({
+        type: "success",
+        content: "User deleted successfully!"
+      });
       await fetchUsers();
     } catch (err: unknown) {
       setMessage({

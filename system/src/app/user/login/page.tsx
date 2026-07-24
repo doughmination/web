@@ -1,5 +1,4 @@
-/*
- * Copyright (c) 2026 Clove Twilight
+/* Copyright (c) 2026 Clove Twilight
  * Licensed under the ESAL-2.0 Licence.
  * See LICENCE.md in the project root for full licence information.
  */
@@ -75,7 +74,8 @@ const Login: React.FC = () => {
           sitekey: TURNSTILE_SITE_KEY,
           callback: (token: string) => {
             setTurnstileToken(token);
-            setError(""); // Clear any previous errors
+            // Clear any previous errors
+            setError("");
           },
           "error-callback": () => {
             setError("Security verification failed. Please try again.");

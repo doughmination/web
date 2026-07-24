@@ -1,5 +1,4 @@
-/*
- * Copyright (c) 2026 Clove Twilight
+/* Copyright (c) 2026 Clove Twilight
  * Licensed under the ESAL-2.0 Licence.
  * See LICENCE.md in the project root for full licence information.
  */
@@ -47,16 +46,44 @@ const MentalHealthManager: React.FC = () => {
   }, [mentalQuery.data]);
 
   const mentalStateOptions = [
-    { value: "safe", label: "Safe", icon: "✅", className: m.stateSafe },
-    { value: "unstable", label: "Unstable", icon: "⚠️", className: m.stateUnstable },
-    { value: "idealizing", label: "Idealizing", icon: "❗", className: m.stateIdealizing },
-    { value: "self-harming", label: "Self-Harming", icon: "🚨", className: m.stateSelfHarming },
-    { value: "highly at risk", label: "Highly At Risk", icon: "⛔", className: m.stateHighRisk },
+    {
+      value: "safe",
+      label: "Safe",
+      icon: "✅",
+      className: m.stateSafe
+    },
+    {
+      value: "unstable",
+      label: "Unstable",
+      icon: "⚠️",
+      className: m.stateUnstable
+    },
+    {
+      value: "idealizing",
+      label: "Idealizing",
+      icon: "❗",
+      className: m.stateIdealizing
+    },
+    {
+      value: "self-harming",
+      label: "Self-Harming",
+      icon: "🚨",
+      className: m.stateSelfHarming
+    },
+    {
+      value: "highly at risk",
+      label: "Highly At Risk",
+      icon: "⛔",
+      className: m.stateHighRisk
+    },
   ];
 
   const handleUpdateMentalState = async () => {
     if (!selectedMentalState) {
-      setMessage({ type: "error", content: "Please select a mental state level." });
+      setMessage({
+        type: "error",
+        content: "Please select a mental state level."
+      });
       return;
     }
 
@@ -68,7 +95,10 @@ const MentalHealthManager: React.FC = () => {
         level: selectedMentalState,
         notes: mentalStateNotes.trim() || undefined,
       });
-      setMessage({ type: "success", content: "Mental state updated successfully." });
+      setMessage({
+        type: "success",
+        content: "Mental state updated successfully."
+      });
     } catch (error: unknown) {
       console.error("Mental state update error:", error);
       setMessage({

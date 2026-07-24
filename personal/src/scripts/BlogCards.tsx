@@ -24,9 +24,16 @@ function parseSlug(slug: string): Parsed | null {
   if (!m) return null;
   const [, dd, mm, yyyy, name] = m;
   const day = parseInt(dd, 10);
-  const month = parseInt(mm, 10); // 1-indexed
+  // 1-indexed
+  const month = parseInt(mm, 10);
   const year = parseInt(yyyy, 10);
-  return { day, month, year, name, timestamp: new Date(year, month - 1, day).getTime() };
+  return {
+    day,
+    month,
+    year,
+    name,
+    timestamp: new Date(year, month - 1, day).getTime()
+  };
 }
 
 function formatDate({ day, month, year }: Parsed): string {
@@ -64,10 +71,16 @@ export default function BlogCards() {
           return;
         }
         const cards = (posts as Post[])
-          .map((post) => ({ post, parsed: parseSlug(post.slug) }))
+          .map((post) => ({
+            post,
+            parsed: parseSlug(post.slug)
+          }))
           .filter((x): x is { post: Post; parsed: Parsed } => x.parsed !== null)
           .sort((a, b) => b.parsed.timestamp - a.parsed.timestamp);
-        setState(cards.length ? { status: "ready", cards } : { status: "empty" });
+        setState(cards.length ? {
+          status: "ready",
+          cards
+        } : { status: "empty" });
       })
       .catch(() => {
         if (!cancelled) setState({ status: "error" });

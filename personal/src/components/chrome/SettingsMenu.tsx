@@ -95,7 +95,8 @@ export default function SettingsMenu() {
     const next = !getCatHiddenSnapshot();
     if (window.ctpSetCatHidden) window.ctpSetCatHidden(next);
     else window.localStorage.setItem("onekoHidden", next ? "1" : "0");
-    window.dispatchEvent(new Event(CAT_HIDDEN_EVENT)); // re-read via the store
+    // re-read via the store
+    window.dispatchEvent(new Event(CAT_HIDDEN_EVENT));
   }, []);
 
   // Keep <meta theme-color> in sync (data-flavor is already set pre-paint).
@@ -107,7 +108,8 @@ export default function SettingsMenu() {
     document.documentElement.setAttribute("data-flavor", next);
     window.localStorage.setItem("ctpFlavor", next);
     setThemeColor(next);
-    window.dispatchEvent(new Event(FLAVOR_EVENT)); // re-read via the store
+    // re-read via the store
+    window.dispatchEvent(new Event(FLAVOR_EVENT));
   }, []);
 
   // Reflect the bg-music play state (core.ts owns the <audio>).
@@ -159,7 +161,8 @@ export default function SettingsMenu() {
         onClick={(e) => {
           e.stopPropagation();
           setOpen((o) => {
-            if (o) setThemesOpen(false); // collapsing the bar closes the picker too
+            // collapsing the bar closes the picker too
+            if (o) setThemesOpen(false);
             return !o;
           });
         }}

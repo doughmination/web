@@ -38,7 +38,10 @@ globalStyle(".presence-stage", {
   width: "100%",
   boxSizing: "border-box",
   "@media": {
-    "(max-width: 480px)": { padding: 10, justifyContent: "flex-start" },
+    "(max-width: 480px)": {
+      padding: 10,
+      justifyContent: "flex-start"
+    },
   },
 });
 
@@ -48,7 +51,11 @@ globalStyle(".presence-intro", {
   "@media": { "(max-width: 480px)": { maxWidth: "100%" } },
 });
 
-globalStyle(".presence-intro h1", { margin: 0, fontSize: "1.8rem", color: vars.accent });
+globalStyle(".presence-intro h1", {
+  margin: 0,
+  fontSize: "1.8rem",
+  color: vars.accent
+});
 
 globalStyle(".presence-intro p", {
   margin: "0.3rem 0 0",

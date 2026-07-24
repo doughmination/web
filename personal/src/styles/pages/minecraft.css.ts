@@ -55,7 +55,10 @@ globalStyle(".mc-role", {
   color: vars.bg,
 });
 
-globalStyle(".mc-body", { height: 150, width: "auto" });
+globalStyle(".mc-body", {
+  height: 150,
+  width: "auto"
+});
 
 globalStyle(".mc-name", {
   fontWeight: 600,
@@ -64,7 +67,10 @@ globalStyle(".mc-name", {
   wordBreak: "break-word",
 });
 
-globalStyle(".mc-cape", { fontSize: "0.72rem", color: vars.textMuted });
+globalStyle(".mc-cape", {
+  fontSize: "0.72rem",
+  color: vars.textMuted
+});
 
 /* ---- detail modal --------------------------------------------------------- */
 
@@ -84,7 +90,10 @@ globalStyle(".mc-overlay", {
   transition: "opacity 0.16s ease",
 });
 
-globalStyle(".mc-overlay.is-open", { opacity: 1, pointerEvents: "auto" });
+globalStyle(".mc-overlay.is-open", {
+  opacity: 1,
+  pointerEvents: "auto"
+});
 
 globalStyle(".mc-dialog", {
   position: "relative",
@@ -127,7 +136,11 @@ globalStyle(".mc-d-head", {
   marginBottom: "1rem",
 });
 
-globalStyle(".mc-hero", { height: 190, width: "auto", flex: "none" });
+globalStyle(".mc-hero", {
+  height: 190,
+  width: "auto",
+  flex: "none"
+});
 
 globalStyle(".mc-d-title", {
   display: "flex",
@@ -136,7 +149,11 @@ globalStyle(".mc-d-title", {
   minWidth: 0,
 });
 
-globalStyle(".mc-skull", { width: 52, height: 52, flex: "none" });
+globalStyle(".mc-skull", {
+  width: 52,
+  height: 52,
+  flex: "none"
+});
 
 globalStyle(".mc-d-name", {
   fontSize: "1.3rem",
@@ -346,7 +363,11 @@ globalStyle(".mc-copy:hover", { color: vars.accentAlt });
 
 /* ---- textures ------------------------------------------------------------- */
 
-globalStyle(".mc-tex", { display: "flex", gap: "0.75rem", marginBottom: "1rem" });
+globalStyle(".mc-tex", {
+  display: "flex",
+  gap: "0.75rem",
+  marginBottom: "1rem"
+});
 
 globalStyle(".mc-tex figure", {
   margin: 0,
@@ -364,9 +385,15 @@ globalStyle(".mc-tex img, .mc-tex canvas", {
   border: `1px solid ${vars.surfaceHi}`,
 });
 
-globalStyle(".mc-cape-cv", { width: 60, height: 96 });
+globalStyle(".mc-cape-cv", {
+  width: 60,
+  height: 96
+});
 
-globalStyle(".mc-tex figcaption", { fontSize: "0.7rem", color: vars.textMuted });
+globalStyle(".mc-tex figcaption", {
+  fontSize: "0.7rem",
+  color: vars.textMuted
+});
 
 globalStyle(".mc-section-t", {
   fontSize: "0.8rem",

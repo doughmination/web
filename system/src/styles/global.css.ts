@@ -1,5 +1,4 @@
-/*
- * Copyright (c) 2026 Clove Twilight
+/* Copyright (c) 2026 Clove Twilight
  * Licensed under the ESAL-2.0 Licence.
  * See LICENCE.md in the project root for full licence information.
  *
@@ -79,9 +78,18 @@ globalStyle("a", {
   textDecoration: "none",
 });
 
-globalStyle("h1", { fontSize: "2.5rem", fontWeight: 700 });
-globalStyle("h2", { fontSize: "2rem", fontWeight: 600 });
-globalStyle("h3", { fontSize: "1.75rem", fontWeight: 600 });
+globalStyle("h1", {
+  fontSize: "2.5rem",
+  fontWeight: 700
+});
+globalStyle("h2", {
+  fontSize: "2rem",
+  fontWeight: 600
+});
+globalStyle("h3", {
+  fontSize: "1.75rem",
+  fontWeight: 600
+});
 
 globalStyle(
   "button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible",

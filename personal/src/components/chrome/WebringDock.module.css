@@ -1,3 +1,5 @@
+/* personal/src/components/chrome/WebringDock.module.css */
+
 .dock {
   position: fixed;
   left: 4rem; /* sits just after the settings button in the corner */

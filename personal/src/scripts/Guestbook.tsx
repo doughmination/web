@@ -103,7 +103,10 @@ export default function Guestbook({ turnstileKey }: Props) {
     event.preventDefault();
 
     if (!name.trim() || !message.trim()) {
-      setStatus({ text: "Name and message are both required.", kind: "err" });
+      setStatus({
+        text: "Name and message are both required.",
+        kind: "err"
+      });
       return;
     }
 
@@ -111,7 +114,11 @@ export default function Guestbook({ turnstileKey }: Props) {
     // drop — fake success, never hit the API. The wrapper doesn't forward url2,
     // so the trap has to be sprung here.
     if (hpRef.current?.value) {
-      setStatus({ text: "Thanks for signing!", kind: "ok", icon: HeartFill });
+      setStatus({
+        text: "Thanks for signing!",
+        kind: "ok",
+        icon: HeartFill
+      });
       setName("");
       setWebsite("");
       setMessage("");
@@ -122,7 +129,10 @@ export default function Guestbook({ turnstileKey }: Props) {
     if (turnstileKey) {
       token = turnstileToken();
       if (!token) {
-        setStatus({ text: "Please complete the captcha first.", kind: "err" });
+        setStatus({
+          text: "Please complete the captcha first.",
+          kind: "err"
+        });
         return;
       }
     }
@@ -136,7 +146,11 @@ export default function Guestbook({ turnstileKey }: Props) {
         turnstileToken: token,
       });
 
-      setStatus({ text: "Thanks for signing!", kind: "ok", icon: HeartFill });
+      setStatus({
+        text: "Thanks for signing!",
+        kind: "ok",
+        icon: HeartFill
+      });
       setName("");
       setWebsite("");
       setMessage("");
@@ -150,7 +164,10 @@ export default function Guestbook({ turnstileKey }: Props) {
         err instanceof Error && err.message
           ? err.message
           : "Something went wrong. Try again.";
-      setStatus({ text, kind: "err" });
+      setStatus({
+        text,
+        kind: "err"
+      });
     }
   }
 

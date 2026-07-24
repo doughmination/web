@@ -38,7 +38,11 @@ function emptyWeekFrom(sunday: Date): Week {
   for (let i = 0; i < dayCount; i++) {
     const d = new Date(sunday);
     d.setUTCDate(d.getUTCDate() + i);
-    week.push({ sources: {}, contributions: 0, date: d.toISOString().slice(0, 10) });
+    week.push({
+      sources: {},
+      contributions: 0,
+      date: d.toISOString().slice(0, 10)
+    });
   }
   return week;
 }
@@ -98,7 +102,11 @@ function Heatmap({
         let total = 0;
         weeks.forEach((w) => w.forEach((d) => (total += d.contributions)));
         const since = weeks.length ? weeks[0][0].date : null;
-        setState({ weeks, total, since });
+        setState({
+          weeks,
+          total,
+          since
+        });
       })
       .catch((err) => {
         if (err?.name !== "AbortError") setState("error");
@@ -250,7 +258,11 @@ function asDays(json: WakaJson | null): WeekDay[] {
       dt && !isNaN(dt.getTime())
         ? dt.toLocaleDateString(undefined, { weekday: "short" })
         : label.slice(0, 3) || "?";
-    out.push({ label, short, total: seconds });
+    out.push({
+      label,
+      short,
+      total: seconds
+    });
   }
   return out;
 }
@@ -316,7 +328,10 @@ function Bars({ items }: { items: CatItem[] }) {
             <span className="waka-bar-track">
               <span
                 className="waka-bar-fill"
-                style={{ width: `${pct}%`, background: d.color || undefined }}
+                style={{
+                  width: `${pct}%`,
+                  background: d.color || undefined
+                }}
               />
             </span>
             <span className="waka-bar-val">{valueLabel(d, hasSeconds)}</span>
@@ -328,7 +343,8 @@ function Bars({ items }: { items: CatItem[] }) {
 }
 
 function BarSection({ id, title, state }: { id: string; title: string; state: Section<CatItem> }) {
-  if (state === null) return null; // still loading -> keep hidden (matches the old JS)
+  // still loading -> keep hidden (matches the old JS)
+  if (state === null) return null;
   return (
     <details className="waka-section" id={id}>
       <summary className="section-title">{title}</summary>

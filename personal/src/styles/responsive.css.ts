@@ -39,7 +39,11 @@ globalStyle(".hub-header h1", {
 
 globalStyle(".pfp", {
   "@media": {
-    [NARROW_OR_SHORT]: { width: 72, height: 72, marginBottom: "0.5rem" },
+    [NARROW_OR_SHORT]: {
+      width: 72,
+      height: 72,
+      marginBottom: "0.5rem"
+    },
   },
 });
 
@@ -85,12 +89,27 @@ globalStyle(
 
 globalStyle(
   ".hub, body:has(.dev-info) .hub, body:has(.project-grid) .hub, body:has(.friend-grid) .hub",
-  { "@media": { [MOBILE]: { order: 2, width: "100%", maxWidth: "100%" } } },
+  {
+    "@media": {
+      [MOBILE]: {
+        order: 2,
+        width: "100%",
+        maxWidth: "100%"
+      }
+    }
+  },
 );
 
 /** Page nav becomes a centred, wrapping group instead of a fixed column. */
 globalStyle(".nav", {
-  "@media": { [MOBILE]: { order: 3, position: "static", inset: "auto", width: "100%" } },
+  "@media": {
+    [MOBILE]: {
+      order: 3,
+      position: "static",
+      inset: "auto",
+      width: "100%"
+    }
+  },
 });
 
 globalStyle(".nav-links", {
@@ -131,7 +150,10 @@ globalStyle(".section + .section", {
 globalStyle(".waka-bar-row", {
   "@media": {
     [MOBILE]: { gridTemplateColumns: "5rem 1fr auto" },
-    "(max-width: 380px)": { gridTemplateColumns: "4rem 1fr auto", gap: "0.4rem" },
+    "(max-width: 380px)": {
+      gridTemplateColumns: "4rem 1fr auto",
+      gap: "0.4rem"
+    },
   },
 });
 
@@ -146,5 +168,10 @@ globalStyle(".project-grid", {
 });
 
 globalStyle(".project-card-img", {
-  "@media": { "(max-width: 380px)": { width: 48, height: 48 } },
+  "@media": {
+    "(max-width: 380px)": {
+      width: 48,
+      height: 48
+    }
+  },
 });

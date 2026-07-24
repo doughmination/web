@@ -1,5 +1,4 @@
-/*
- * Copyright (c) 2026 Clove Twilight
+/* Copyright (c) 2026 Clove Twilight
  * Licensed under the ESAL-2.0 Licence.
  * See LICENCE.md in the project root for full licence information.
  */
@@ -78,7 +77,11 @@ const PrideManager: React.FC = () => {
   ) => {
     setMessage(null);
     try {
-      await setPride.mutateAsync({ identifier, identity, action });
+      await setPride.mutateAsync({
+        identifier,
+        identity,
+        action
+      });
       await membersQuery.refetch();
       setMessage({
         type: "success",
@@ -193,7 +196,10 @@ const PrideManager: React.FC = () => {
                       type="button"
                       onClick={() => runChange(selected.name ?? "", flag.label, "add")}
                       className={s.chip}
-                      style={{ cursor: "pointer", border: "none" }}
+                      style={{
+                        cursor: "pointer",
+                        border: "none"
+                      }}
                       disabled={setPride.isPending}
                     >
                       <PrideSwatch label={flag.label} />

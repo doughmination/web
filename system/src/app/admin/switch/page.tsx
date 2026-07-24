@@ -1,5 +1,4 @@
-/*
- * Copyright (c) 2026 Clove Twilight
+/* Copyright (c) 2026 Clove Twilight
  * Licensed under the ESAL-2.0 Licence.
  * See LICENCE.md in the project root for full licence information.
  */
@@ -77,7 +76,10 @@ const SwitchManager: React.FC = () => {
 
   const handleApplySwitch = async () => {
     if (selectedMembers.size === 0) {
-      setMessage({ type: "error", content: "Please select at least one member" });
+      setMessage({
+        type: "error",
+        content: "Please select at least one member"
+      });
       return;
     }
 

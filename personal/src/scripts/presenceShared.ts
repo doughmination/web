@@ -74,7 +74,10 @@ export function clamp(n: number, lo: number, hi: number) {
 export function fmtSinceDate(iso: string): string {
   const d = new Date(iso);
   if (isNaN(d.getTime())) return "";
-  return d.toLocaleDateString(undefined, { month: "short", year: "numeric" });
+  return d.toLocaleDateString(undefined, {
+    month: "short",
+    year: "numeric"
+  });
 }
 
 export function intToHex(n: number): string {
@@ -173,9 +176,18 @@ export const BADGE_FLAGS: [number, string, string][] = [
 
 /** Platform pips in the sub-row. Components now, not `bi` glyph names. */
 export const PLATFORM_ICONS: Record<string, { Ic: Icon; label: string }> = {
-  desktop: { Ic: Laptop, label: "Desktop" },
-  mobile: { Ic: Phone, label: "Mobile" },
-  web: { Ic: Globe, label: "Web" },
+  desktop: {
+    Ic: Laptop,
+    label: "Desktop"
+  },
+  mobile: {
+    Ic: Phone,
+    label: "Mobile"
+  },
+  web: {
+    Ic: Globe,
+    label: "Web"
+  },
 };
 
 export const CONNECTION_URLS: Record<string, (n: string, id?: string) => string> = {
@@ -238,7 +250,11 @@ export const WL_TYPE_LABEL: Record<string, string> = {
 };
 
 const CURRENCY_SYMBOL: Record<string, string> = {
-  gbp: "£", usd: "$", eur: "€", aud: "A$", cad: "C$",
+  gbp: "£",
+  usd: "$",
+  eur: "€",
+  aud: "A$",
+  cad: "C$",
 };
 
 export function fmtPrice(p: Dict | undefined): string | null {
@@ -295,7 +311,12 @@ export function mapSelfHostToPresence(j: SelfJson, fallbackId: string | null): D
           : null,
       primary_guild:
         clan && clan.tag
-          ? { tag: clan.tag, identity_enabled: true, badge: clan.badge, identity_guild_id: clan.guild_id }
+          ? {
+            tag: clan.tag,
+            identity_enabled: true,
+            badge: clan.badge,
+            identity_guild_id: clan.guild_id
+          }
           : null,
       display_name_styles: u.display_name_styles || null,
       public_flags: u.public_flags || 0,
@@ -339,7 +360,10 @@ export function usePresenceFeed(
     const presence = livePresence ?? record.presence;
     return {
       success: true,
-      data: { ...record, presence } as Dict,
+      data: {
+        ...record,
+        presence
+      } as Dict,
     };
   }, [record, livePresence]);
 }
@@ -358,7 +382,7 @@ export function usePresenceFeed(
 export function useTicker(active: boolean): number {
   const subscribe = useCallback(
     (onChange: () => void) => {
-      if (!active) return () => {};
+      if (!active) return () => { };
       const id = setInterval(onChange, 1000);
       const onVis = () => { if (!document.hidden) onChange(); };
       document.addEventListener("visibilitychange", onVis);
@@ -387,7 +411,7 @@ export function useTicker(active: boolean): number {
  */
 export function useReducedMotion(): boolean {
   const subscribe = useCallback((onChange: () => void) => {
-    if (typeof window === "undefined" || !window.matchMedia) return () => {};
+    if (typeof window === "undefined" || !window.matchMedia) return () => { };
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     mq.addEventListener("change", onChange);
     return () => mq.removeEventListener("change", onChange);
@@ -442,7 +466,11 @@ function getThemePalette(): { r: number; g: number; b: number }[] {
     const v = cs.getPropertyValue("--" + name).trim();
     if (v.startsWith("#")) {
       const [r, gg, b] = hexToRgb(v);
-      pal.push({ r, g: gg, b });
+      pal.push({
+        r,
+        g: gg,
+        b
+      });
     }
   }
   return pal;
@@ -478,7 +506,10 @@ export function useAlbumAccent(url: string | null | undefined): string | null {
     url: null,
     accent: null,
   });
-  const setAccent = (accent: string | null) => setGot({ url: url ?? null, accent });
+  const setAccent = (accent: string | null) => setGot({
+    url: url ?? null,
+    accent
+  });
 
   useEffect(() => {
     if (!url) return;

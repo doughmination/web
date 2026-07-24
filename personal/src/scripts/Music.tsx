@@ -97,7 +97,10 @@ function parseLRC(text: string): Synced[] {
     }
     if (!stamps.length) return;
     const words = line.slice(last).trim();
-    stamps.forEach((t) => out.push({ t, text: words }));
+    stamps.forEach((t) => out.push({
+      t,
+      text: words
+    }));
   });
   out.sort((a, b) => a.t - b.t);
   return out;
@@ -115,11 +118,23 @@ function normalizeLyrics(rec: {
   };
 }
 function lyricsView(data: Lyrics | null): LyricsView {
-  if (!data) return { kind: "note", msg: "No lyrics found for this one." };
+  if (!data) return {
+    kind: "note",
+    msg: "No lyrics found for this one."
+  };
   if (data.instrumental) return { kind: "instrumental" };
-  if (data.synced.length) return { kind: "synced", lines: data.synced };
-  if (data.plain) return { kind: "plain", lines: data.plain.split(/\r?\n/) };
-  return { kind: "note", msg: "No lyrics found for this one." };
+  if (data.synced.length) return {
+    kind: "synced",
+    lines: data.synced
+  };
+  if (data.plain) return {
+    kind: "plain",
+    lines: data.plain.split(/\r?\n/)
+  };
+  return {
+    kind: "note",
+    msg: "No lyrics found for this one."
+  };
 }
 
 // ---- LRCLIB ---------------------------------------------------------------
@@ -138,7 +153,10 @@ async function lrclibGet(params: Record<string, string>) {
   return null;
 }
 async function lrclibSearch(track_name: string, artist_name: string) {
-  const qs = new URLSearchParams({ track_name, artist_name }).toString();
+  const qs = new URLSearchParams({
+    track_name,
+    artist_name
+  }).toString();
   for (const host of LRCLIB_HOSTS) {
     try {
       const res = await fetch(`${host}/api/search?${qs}`);
@@ -226,7 +244,10 @@ function artCacheSet(name: string, url: string) {
   try {
     window.localStorage.setItem(
       ART_CACHE_PREFIX + name.toLowerCase(),
-      JSON.stringify({ url: url || "", ts: Date.now() }),
+      JSON.stringify({
+        url: url || "",
+        ts: Date.now()
+      }),
     );
   } catch {
     /* skip */
@@ -282,7 +303,10 @@ async function artistImg(name: string): Promise<string> {
 // ===========================================================================
 export default function Music() {
   const [track, setTrack] = useState<Track | null>(null);
-  const [ly, setLy] = useState<LyricsView>({ kind: "note", msg: "Waiting for a track…" });
+  const [ly, setLy] = useState<LyricsView>({
+    kind: "note",
+    msg: "Waiting for a track…"
+  });
   const [locked, setLocked] = useState(true);
   const [recent, setRecent] = useState<RecentItem[] | { note: string } | null>(null);
   const [top, setTop] = useState<TopArtist[] | null>(null);
@@ -307,7 +331,10 @@ export default function Music() {
     if (!box || !el) return;
     const top = el.offsetTop - box.clientHeight / 2 + el.clientHeight / 2;
     selfScrollRef.current = true;
-    box.scrollTo({ top, behavior: smooth && !reduceMotion.current ? "smooth" : "auto" });
+    box.scrollTo({
+      top,
+      behavior: smooth && !reduceMotion.current ? "smooth" : "auto"
+    });
     setTimeout(() => (selfScrollRef.current = false), smooth && !reduceMotion.current ? 600 : 50);
   }, []);
 
@@ -317,7 +344,10 @@ export default function Music() {
     activeLineRef.current = -1;
     setLocked(true);
     if (!t) {
-      setLy({ kind: "note", msg: "No track playing." });
+      setLy({
+        kind: "note",
+        msg: "No track playing."
+      });
       return;
     }
     const key = trackKey(t);
@@ -454,7 +484,10 @@ export default function Music() {
   const loadTop = useCallback(async () => {
     if (!LFM_OK) return;
     try {
-      const data = await lfm("user.gettopartists", { period: "7day", limit: "8" });
+      const data = await lfm("user.gettopartists", {
+        period: "7day",
+        limit: "8"
+      });
       const arr = data?.topartists?.artist || [];
       if (!arr.length) return;
       const list: TopArtist[] = arr.map((a: { name: string; url: string; playcount: string }) => ({
@@ -465,7 +498,10 @@ export default function Music() {
       setTop(list);
       list.forEach((a) => {
         artistImg(a.name).then((url) => {
-          if (url) setTopImg((m) => ({ ...m, [a.name]: url }));
+          if (url) setTopImg((m) => ({
+            ...m,
+            [a.name]: url
+          }));
         });
       });
     } catch {
@@ -491,11 +527,11 @@ export default function Music() {
     onPresence(
       livePresence
         ? {
-            listening_to_spotify: livePresence.listening_to_spotify,
-            spotify: livePresence.spotify
-              ? Object.fromEntries(Object.entries(livePresence.spotify))
-              : undefined,
-          }
+          listening_to_spotify: livePresence.listening_to_spotify,
+          spotify: livePresence.spotify
+            ? Object.fromEntries(Object.entries(livePresence.spotify))
+            : undefined,
+        }
         : null,
     );
   }, [livePresence, onPresence]);
@@ -566,7 +602,11 @@ export default function Music() {
       <a
         className="mdc"
         id="dc-link"
-        {...(track?.url ? { href: track.url, target: "_blank", rel: "noopener" } : {})}
+        {...(track?.url ? {
+          href: track.url,
+          target: "_blank",
+          rel: "noopener"
+        } : {})}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -633,8 +673,7 @@ export default function Music() {
         </button>
       </div>
       <div
-        className={`lyrics ${
-          ly.kind === "loading"
+        className={`lyrics ${ly.kind === "loading"
             ? "is-loading"
             : ly.kind === "instrumental"
               ? "is-instrumental"
@@ -643,7 +682,7 @@ export default function Music() {
                 : ly.kind === "plain"
                   ? "is-plain"
                   : "is-empty"
-        }`}
+          }`}
         id="lyrics"
         ref={lyricsBoxRef}
         onWheel={onUserScroll}

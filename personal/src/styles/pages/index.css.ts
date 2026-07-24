@@ -99,7 +99,10 @@ globalStyle(".about-source .bi", { fontSize: "1.05rem" });
 globalStyle(".fronting-card", STATUS_CARD);
 globalStyle(".fronting-card[hidden]", { display: "none" });
 
-globalStyle(".fr-head", { ...CARD_HEAD, marginBottom: "0.7rem" });
+globalStyle(".fr-head", {
+  ...CARD_HEAD,
+  marginBottom: "0.7rem"
+});
 
 globalKeyframes("fr-pulse", {
   "0%": { boxShadow: "0 0 0 0 rgba(166, 227, 161, 0.5)" },
@@ -167,7 +170,10 @@ globalStyle(".fr-name", {
   textOverflow: "ellipsis",
 });
 
-globalStyle(".fr-pronouns", { fontSize: "0.74rem", color: vars.textMuted });
+globalStyle(".fr-pronouns", {
+  fontSize: "0.74rem",
+  color: vars.textMuted
+});
 
 globalStyle(".fr-empty", {
   fontSize: "0.82rem",
@@ -217,7 +223,10 @@ globalStyle(
 globalStyle(".devices-card", STATUS_CARD);
 globalStyle(".devices-card[hidden]", { display: "none" });
 
-globalStyle(".dev-head", { ...CARD_HEAD, marginBottom: "0.7rem" });
+globalStyle(".dev-head", {
+  ...CARD_HEAD,
+  marginBottom: "0.7rem"
+});
 
 /** Little battery glyph drawn with borders, so it needs no asset. */
 globalStyle(".dev-icon", {
@@ -374,9 +383,15 @@ globalStyle(".dev-empty", {
 globalStyle(".location-card", STATUS_CARD);
 globalStyle(".location-card[hidden]", { display: "none" });
 
-globalStyle(".loc-head", { ...CARD_HEAD, marginBottom: "0.55rem" });
+globalStyle(".loc-head", {
+  ...CARD_HEAD,
+  marginBottom: "0.55rem"
+});
 
-globalStyle(".loc-head .bi", { color: vars.accent, fontSize: "0.85rem" });
+globalStyle(".loc-head .bi", {
+  color: vars.accent,
+  fontSize: "0.85rem"
+});
 
 globalStyle(".loc-body", {
   display: "flex",
@@ -400,7 +415,10 @@ globalStyle(".loc-cap", {
   gap: "0.5rem",
 });
 
-globalStyle(".loc-place", { fontWeight: 600, color: vars.text });
+globalStyle(".loc-place", {
+  fontWeight: 600,
+  color: vars.text
+});
 
 globalStyle(".loc-link", {
   color: vars.sky,

@@ -112,11 +112,14 @@ export default function Devices() {
   const list = !data
     ? []
     : Object.keys(data)
-        .map((key) => {
-          const record = data[key];
-          return { ...record, device: record.device || key };
-        })
-        .filter((d) => realText(d.device) !== "");
+      .map((key) => {
+        const record = data[key];
+        return {
+          ...record,
+          device: record.device || key
+        };
+      })
+      .filter((d) => realText(d.device) !== "");
 
   list.sort((a, b) => {
     const la = clampLevel(a.level);

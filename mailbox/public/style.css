@@ -1,3 +1,5 @@
+/* mailbox/public/style.css */
+
 :root {
   /* Catppuccin Mocha */
   --base: #1e1e2e;
@@ -383,6 +385,15 @@ a.btn-danger {
 }
 
 .error.hidden {
+  display: none;
+}
+
+.warn {
+  color: var(--yellow, #e5c890);
+  font-size: 0.85rem;
+}
+
+.warn.hidden {
   display: none;
 }
 

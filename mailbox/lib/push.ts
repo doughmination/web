@@ -34,7 +34,7 @@ export type PushPayload = { title: string; body: string; url?: string; tag?: str
 let queue: Promise<unknown> = Promise.resolve();
 function withLock<T>(fn: () => Promise<T>): Promise<T> {
   const result = queue.then(fn, fn);
-  queue = result.catch(() => {});
+  queue = result.catch(() => { });
   return result;
 }
 
@@ -93,7 +93,10 @@ export function subscriptionCount(): Promise<number> {
 // Fans a payload out to every registered device. Subscriptions the push
 // service reports as gone (404/410) are pruned so the file doesn't rot.
 export async function sendToAll(payload: PushPayload): Promise<{ sent: number; pruned: number }> {
-  if (!ensureVapid()) return { sent: 0, pruned: 0 };
+  if (!ensureVapid()) return {
+    sent: 0,
+    pruned: 0
+  };
 
   const subs = await listSubscriptions();
   const data = JSON.stringify(payload);
@@ -117,5 +120,8 @@ export async function sendToAll(payload: PushPayload): Promise<{ sent: number; p
   );
 
   for (const endpoint of dead) await removeSubscription(endpoint);
-  return { sent, pruned: dead.length };
+  return {
+    sent,
+    pruned: dead.length
+  };
 }

@@ -1,5 +1,4 @@
-/*
- * Copyright (c) 2026 Clove Twilight
+/* Copyright (c) 2026 Clove Twilight
  * Licensed under the ESAL-2.0 Licence.
  * See LICENCE.md in the project root for full licence information.
  */
@@ -89,25 +88,41 @@ export default function HomePage() {
 
   const { loggedIn, isAdmin, isOwner, currentUser } = useMemo(() => {
     if (!token) {
-      return { loggedIn: false, isAdmin: false, isOwner: false, currentUser: null as UserData | null };
+      return {
+        loggedIn: false,
+        isAdmin: false,
+        isOwner: false,
+        currentUser: null as UserData | null
+      };
     }
     if (isMock) {
       return {
         loggedIn: true,
         isAdmin: token === "mock-admin",
         isOwner: token === "mock-owner",
-        currentUser: { username: "mock-user", display_name: "Mock User" } as UserData,
+        currentUser: {
+          username: "mock-user",
+          display_name: "Mock User"
+        } as UserData,
       };
     }
     const u = userInfoQuery.data;
     if (!u) {
-      return { loggedIn: false, isAdmin: false, isOwner: false, currentUser: null as UserData | null };
+      return {
+        loggedIn: false,
+        isAdmin: false,
+        isOwner: false,
+        currentUser: null as UserData | null
+      };
     }
     return {
       loggedIn: true,
       isAdmin: !!u.is_admin,
       isOwner: !!u.is_owner,
-      currentUser: { username: u.username, display_name: u.display_name ?? undefined } as UserData,
+      currentUser: {
+        username: u.username,
+        display_name: u.display_name ?? undefined
+      } as UserData,
     };
   }, [token, isMock, userInfoQuery.data]);
 

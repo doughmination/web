@@ -1,5 +1,4 @@
-/*
- * Copyright (c) 2026 Clove Twilight
+/* Copyright (c) 2026 Clove Twilight
  * Licensed under the ESAL-2.0 Licence.
  * See LICENCE.md in the project root for full licence information.
  */
@@ -93,11 +92,18 @@ const RelationshipMap: React.FC = () => {
         ) : nodes.length === 0 ? (
           <p className={s.emptyNote}>No relationships to show yet</p>
         ) : (
-          <div style={{ width: "100%", overflowX: "auto" }}>
+          <div style={{
+            width: "100%",
+            overflowX: "auto"
+          }}>
             <svg
               viewBox={`0 0 ${SIZE} ${SIZE}`}
               width="100%"
-              style={{ maxWidth: `${SIZE}px`, margin: "0 auto", display: "block" }}
+              style={{
+                maxWidth: `${SIZE}px`,
+                margin: "0 auto",
+                display: "block"
+              }}
               role="img"
               aria-label="Relationship map"
             >

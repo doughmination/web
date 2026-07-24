@@ -24,21 +24,32 @@ import {
   persistInboundAttachments,
 } from "./lib/attachments";
 import {
-  verifyCredentials,
   createSession,
   isValidSession,
+  sessionUser,
   destroySession,
-  ADMIN_DISPLAY_NAME,
+  savePending,
+  takePending,
 } from "./lib/auth";
 import {
-  bareAddress,
-  getSettings,
-  resolveFrom,
-  getMyAddresses,
-  addFromAddress,
-  removeFromAddress,
-  setDefaultFrom,
-} from "./lib/settings";
+  initOidc,
+  buildAuthUrl,
+  completeLogin,
+  endSessionUrl,
+} from "./lib/oidc";
+import {
+  isAdmin,
+  ensureUser,
+  addressesFor,
+  allAddresses,
+  ownerForRecipients,
+  canAccessOwner,
+  resolveFromFor,
+  dashboardState,
+  assignAddress,
+  unassignAddress,
+} from "./lib/owners";
+import { bareAddress } from "./lib/settings";
 import {
   pushConfigured,
   vapidPublicKey,
@@ -92,35 +103,8 @@ const webhookSecret = process.env.RESEND_WEBHOOK_SECRET ?? "";
 // Last-resort fallback only (settings.json is the real source of from-addresses).
 // SEND_FROM may be a comma/newline list now, so take the first entry.
 const sendFrom = (process.env.SEND_FROM ?? "").split(/[,\n]/)[0]?.trim() ?? "";
-const turnstileSecret = process.env.TURNSILE_SECRET ?? "";
-
-// Verifies a Cloudflare Turnstile token against Cloudflare's siteverify
-// endpoint. Fails closed: no secret configured or no token supplied both
-// result in a rejected login rather than silently skipping the check.
-async function verifyTurnstile(token: unknown, remoteIp: string | undefined): Promise<boolean> {
-  if (!turnstileSecret) {
-    console.error("TURNSILE_SECRET is not set — refusing all logins.");
-    return false;
-  }
-  if (typeof token !== "string" || !token) return false;
-
-  const form = new URLSearchParams();
-  form.set("secret", turnstileSecret);
-  form.set("response", token);
-  if (remoteIp) form.set("remoteip", remoteIp);
-
-  try {
-    const res = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
-      method: "POST",
-      body: form,
-    });
-    const data = (await res.json()) as { success?: boolean };
-    return data.success === true;
-  } catch (err) {
-    console.error("Turnstile verification request failed", err);
-    return false;
-  }
-}
+// Cookies are only marked Secure in production (behind the TLS proxy).
+const cookieSecure = process.env.COOKIE_SECURE === "true";
 
 // --- Threading helpers ---
 // bareAddress lives in lib/settings so the address-matching logic is shared.
@@ -145,24 +129,24 @@ function computeThreadKey(subject: string, from: string, to: string[], myAddress
   return `${cleanSubject}::${counterpart}`;
 }
 
-// Picks which of our addresses a reply/forward should come from: the caller's
-// explicit choice if it's allowlisted, otherwise whichever of our addresses the
-// original message involved, otherwise the configured default.
-async function pickReplyFrom(original: StoredEmail, requested?: string | null): Promise<string> {
-  const settings = await getSettings();
-  const inList = (addr: string | undefined | null) =>
-    settings.fromAddresses.find((a) => bareAddress(a) === bareAddress(addr));
+// Picks which of the acting user's addresses a reply/forward comes from: their
+// explicit choice if they own it, otherwise whichever of their addresses the
+// original message involved, otherwise their first address.
+function pickReplyFrom(user: string, original: StoredEmail, requested?: string | null): string {
+  const owned = addressesFor(user);
+  const inOwned = (addr: string | undefined | null) =>
+    owned.find((a) => bareAddress(a) === bareAddress(addr));
 
   if (requested) {
-    const match = inList(requested);
+    const match = inOwned(requested);
     if (match) return match;
   }
   const targets = original.direction === "inbound" ? original.to : [original.from];
   for (const t of targets) {
-    const match = inList(t);
+    const match = inOwned(t);
     if (match) return match;
   }
-  return settings.defaultFrom ?? settings.fromAddresses[0] ?? sendFrom;
+  return owned[0] ?? sendFrom;
 }
 
 function buildReferences(original: { references: string | null; messageId: string | null }): string {
@@ -196,14 +180,18 @@ function inlineCidImages(email: StoredEmail): ServableEmail {
   }
 
   if (!email.html || !email.html.includes("cid:") || byContentId.size === 0) {
-    return { ...email, attachments };
+    return {
+      ...email,
+      attachments
+    };
   }
 
   const usedIds = new Set<string>();
   const html = email.html.replace(/cid:([^"'\s>)]+)/gi, (whole, rawId: string) => {
     const key = rawId.replace(/^<|>$/g, "").trim().toLowerCase();
     const match = byContentId.get(key);
-    if (!match) return whole; // unknown cid — leave as-is (shows a broken image)
+    // unknown cid — leave as-is (shows a broken image)
+    if (!match) return whole;
     usedIds.add(match.id);
     return `/api/emails/${email.id}/attachments/${match.id}?inline=1`;
   });
@@ -211,11 +199,16 @@ function inlineCidImages(email: StoredEmail): ServableEmail {
   return {
     ...email,
     html,
-    attachments: attachments.map((a) => (usedIds.has(a.id) ? { ...a, inline: true } : a)),
+    attachments: attachments.map((a) => (usedIds.has(a.id) ? {
+      ...a,
+      inline: true
+    } : a)),
   };
 }
 
-const app = new Hono();
+// `user` is the logged-in username, set by the auth gate for every protected
+// route so handlers can scope data to (or authorise against) the right person.
+const app = new Hono<{ Variables: { user: string } }>();
 
 // --- Auth gate ---
 // Everything requires a valid session except: the webhook (Resend
@@ -223,13 +216,13 @@ const app = new Hono();
 const PUBLIC_PATHS = new Set([
   "/login",
   "/login.html",
-  "/login-test",
-  "/login-test.html",
   "/login.js",
   "/style.css",
   "/favicon.ico",
   "/apple-touch-icon.png",
-  "/api/login",
+  // PocketID (OIDC) sign-in start + redirect target.
+  "/auth/login",
+  "/auth/callback",
   // Service worker + manifest must be fetchable for PWA install / push to
   // register cleanly; neither exposes anything sensitive.
   "/sw.js",
@@ -243,11 +236,13 @@ app.use("/*", async (c, next) => {
   }
 
   const token = getCookie(c, "session");
-  if (!isValidSession(token)) {
+  const user = sessionUser(token);
+  if (!user) {
     if (path.startsWith("/api/")) return c.json({ error: "Unauthorized" }, 401);
     return c.redirect("/login");
   }
 
+  c.set("user", user);
   return next();
 });
 
@@ -255,9 +250,55 @@ app.get("/login", async (c) => {
   return c.html(await Bun.file("./public/login.html").text());
 });
 
-// Temporary — Proton Pass detector bisection. Remove once autofill is fixed.
-app.get("/login-test", async (c) => {
-  return c.html(await Bun.file("./public/login-test.html").text());
+// --- PocketID (OIDC) login ---
+app.get("/auth/login", async (c) => {
+  try {
+    const from = c.req.query("from") || "/inbox";
+    const { url, pending } = await buildAuthUrl(from);
+    const id = savePending(pending);
+    setCookie(c, "login", id, {
+      httpOnly: true,
+      sameSite: "Lax",
+      secure: cookieSecure,
+      path: "/",
+      maxAge: 600,
+    });
+    return c.redirect(url);
+  } catch (err) {
+    console.error("OIDC login start failed", err);
+    return c.text("Login is temporarily unavailable.", 500);
+  }
+});
+
+app.get("/auth/callback", async (c) => {
+  const code = c.req.query("code");
+  const stateParam = c.req.query("state");
+  const err = c.req.query("error");
+  if (err) return c.text(`Login failed: ${err}`, 401);
+
+  const pending = takePending(getCookie(c, "login"));
+  deleteCookie(c, "login", { path: "/" });
+
+  if (!pending || !code || !stateParam || stateParam !== pending.state) {
+    return c.redirect("/login");
+  }
+
+  try {
+    const { username } = await completeLogin(code, pending);
+    ensureUser(username); // guarantees they own username@domain
+    const token = createSession(username);
+    setCookie(c, "session", token, {
+      httpOnly: true,
+      sameSite: "Lax",
+      secure: cookieSecure,
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7,
+    });
+    return c.redirect(pending.returnTo);
+  } catch (e) {
+    console.error("OIDC callback error", e);
+    return c.text("Login failed.", 401);
+  }
 });
 
 // These are client-side "routes" — the SPA in public/app.js reads the path
@@ -269,45 +310,22 @@ app.get("/sent", async (c) => c.html(await Bun.file("./public/index.html").text(
 app.get("/drafts", async (c) => c.html(await Bun.file("./public/index.html").text()));
 app.get("/settings", async (c) => c.html(await Bun.file("./public/settings.html").text()));
 
-app.post("/api/login", async (c) => {
-  const body = await c.req.json().catch(() => null);
-
-  // Honeypot: invisible to real users, so anything filling it in is
-  // automation. Fail the same way as bad credentials — don't let a bot
-  // distinguish "caught by honeypot" from "wrong password".
-  if (body?.website) {
-    return c.json({ error: "Incorrect username or password" }, 401);
-  }
-
-  const remoteIp = c.req.header("cf-connecting-ip") ?? c.req.header("x-forwarded-for") ?? undefined;
-  const turnstileOk = await verifyTurnstile(body?.turnstileToken, remoteIp);
-  if (!turnstileOk) {
-    return c.json({ error: "Verification failed. Please try again." }, 401);
-  }
-
-  if (!body?.username || !body?.password || !verifyCredentials(body.username, body.password)) {
-    return c.json({ error: "Incorrect username or password" }, 401);
-  }
-
-  const token = createSession();
-  setCookie(c, "session", token, {
-    httpOnly: true,
-    sameSite: "Lax",
-    secure: process.env.COOKIE_SECURE === "true",
-    path: "/",
-    maxAge: 60 * 60 * 24 * 7,
-  });
-
-  return c.json({ ok: true });
-});
-
 app.post("/api/logout", async (c) => {
   destroySession(getCookie(c, "session"));
   deleteCookie(c, "session", { path: "/" });
-  return c.json({ ok: true });
+  // Frontend may redirect here to also end the PocketID SSO session.
+  return c.json({ ok: true, endSession: endSessionUrl() });
 });
 
-app.get("/api/me", (c) => c.json({ displayName: ADMIN_DISPLAY_NAME }));
+app.get("/api/me", (c) => {
+  const user = c.get("user");
+  return c.json({
+    username: user,
+    displayName: user,
+    isAdmin: isAdmin(user),
+    addresses: addressesFor(user),
+  });
+});
 
 // --- Static frontend ---
 app.use("/*", serveStatic({ root: "./public" }));
@@ -333,7 +351,10 @@ app.post("/webhook/inbound", async (c) => {
   }
 
   if (event.type !== "email.received") {
-    return c.json({ ok: true, ignored: event.type });
+    return c.json({
+      ok: true,
+      ignored: event.type
+    });
   }
 
   const emailId = event.data.email_id;
@@ -350,7 +371,8 @@ app.post("/webhook/inbound", async (c) => {
   const inReplyTo = full.headers?.["in-reply-to"] ?? null;
   const references = full.headers?.["references"] ?? null;
   const attachments = await persistInboundAttachments(full.attachments ?? []);
-  const myAddresses = await getMyAddresses();
+  const myAddresses = allAddresses().map(bareAddress);
+  const owner = ownerForRecipients(to);
 
   await addEmail({
     id: full.id,
@@ -367,6 +389,7 @@ app.post("/webhook/inbound", async (c) => {
     inReplyTo,
     references,
     threadKey: computeThreadKey(subject, full.from, to, myAddresses),
+    owner,
   });
 
   // Best-effort push. Never let a notification error fail the webhook —
@@ -387,15 +410,19 @@ app.post("/webhook/inbound", async (c) => {
 
 // --- API for the frontend ---
 app.get("/api/emails", async (c) => {
+  const user = c.get("user");
   const folder = parseFolder(c.req.query("folder"));
-  const emails = await listEmails(folder);
+  // Admins see every mailbox; everyone else only their own.
+  const emails = await listEmails(folder, isAdmin(user) ? undefined : user);
   return c.json(emails);
 });
 
 // --- Attachment download ---
 app.get("/api/emails/:id/attachments/:attachmentId", async (c) => {
   const email = await getEmail(c.req.param("id"));
-  if (!email) return c.json({ error: "Not found" }, 404);
+  if (!email || !canAccessOwner(c.get("user"), email.owner)) {
+    return c.json({ error: "Not found" }, 404);
+  }
 
   const attachmentId = c.req.param("attachmentId");
   const meta = email.attachments.find((a) => a.id === attachmentId);
@@ -419,25 +446,53 @@ app.get("/api/emails/:id/attachments/:attachmentId", async (c) => {
 
 app.get("/api/emails/:id", async (c) => {
   const email = await getEmail(c.req.param("id"));
-  if (!email) return c.json({ error: "Not found" }, 404);
+  if (!email || !canAccessOwner(c.get("user"), email.owner)) {
+    return c.json({ error: "Not found" }, 404);
+  }
   return c.json(inlineCidImages(email));
 });
 
 // --- Delete a single message (works in any folder) ---
 app.delete("/api/emails/:id", async (c) => {
-  const removed = await deleteEmail(c.req.param("id"));
-  if (!removed) return c.json({ error: "Not found" }, 404);
-  await purgeAttachmentFiles([removed]);
+  const email = await getEmail(c.req.param("id"));
+  if (!email || !canAccessOwner(c.get("user"), email.owner)) {
+    return c.json({ error: "Not found" }, 404);
+  }
+  const removed = await deleteEmail(email.id);
+  if (removed) await purgeAttachmentFiles([removed]);
   return c.json({ ok: true });
 });
 
 // --- Delete an entire conversation at once ---
 app.delete("/api/emails/:id/thread", async (c) => {
   const original = await getEmail(c.req.param("id"));
-  if (!original) return c.json({ error: "Not found" }, 404);
+  if (!original || !canAccessOwner(c.get("user"), original.owner)) {
+    return c.json({ error: "Not found" }, 404);
+  }
   const removed = await deleteByThreadKey(original.threadKey);
   await purgeAttachmentFiles(removed);
-  return c.json({ ok: true, count: removed.length });
+  return c.json({
+    ok: true,
+    count: removed.length
+  });
+});
+
+// --- Single-file upload ---
+// The compose form uploads each attachment here as it's picked, then sends
+// only the returned id on submit. This keeps the eventual /api/send body tiny
+// (references, not megabytes of base64), so several/large attachments no longer
+// blow past the request-size limit on the proxy in front of us.
+app.post("/api/uploads", async (c) => {
+  const body = await c.req.json().catch(() => null);
+  if (!body?.content || typeof body.content !== "string") {
+    return c.json({ error: "content is required" }, 400);
+  }
+  const stored = await saveAttachment(
+    typeof body.filename === "string" ? body.filename : "attachment",
+    typeof body.contentType === "string" ? body.contentType : "application/octet-stream",
+    body.content
+  );
+  return c.json(stored);
 });
 
 app.post("/api/send", async (c) => {
@@ -446,8 +501,12 @@ app.post("/api/send", async (c) => {
     return c.json({ error: "to, subject, and html are required" }, 400);
   }
 
-  const from = await resolveFrom(body.from);
-  const stored = await persistUploads(body.attachments);
+  const user = c.get("user");
+  const from = resolveFromFor(user, body.from);
+  if (!from) return c.json({ error: "You have no send-from address." }, 400);
+  // resolveAttachments accepts both pre-uploaded refs (id only) and, as a
+  // fallback, inline base64 — so this works whether or not the upload step ran.
+  const stored = await resolveAttachments(body.attachments);
   const resendAttachments = await toResendAttachments(stored);
 
   const { data, error } = await resend.emails.send({
@@ -461,7 +520,7 @@ app.post("/api/send", async (c) => {
   if (error) return c.json({ error: error.message }, 400);
 
   const to = [body.to];
-  const myAddresses = await getMyAddresses();
+  const myAddresses = allAddresses().map(bareAddress);
   await addEmail({
     id: data.id,
     from,
@@ -477,6 +536,7 @@ app.post("/api/send", async (c) => {
     inReplyTo: null,
     references: null,
     threadKey: computeThreadKey(body.subject, from, to, myAddresses),
+    owner: user,
   });
 
   return c.json(data);
@@ -486,8 +546,11 @@ app.post("/api/send", async (c) => {
 // In-Reply-To / References, and groups the reply with the original
 // in our own UI via threadKey ---
 app.post("/api/emails/:id/reply", async (c) => {
+  const user = c.get("user");
   const original = await getEmail(c.req.param("id"));
-  if (!original) return c.json({ error: "Not found" }, 404);
+  if (!original || !canAccessOwner(user, original.owner)) {
+    return c.json({ error: "Not found" }, 404);
+  }
 
   const body = await c.req.json().catch(() => null);
   if (!body?.html) return c.json({ error: "html is required" }, 400);
@@ -503,8 +566,8 @@ app.post("/api/emails/:id/reply", async (c) => {
     headers["References"] = buildReferences(original);
   }
 
-  const from = await pickReplyFrom(original, body.from);
-  const stored = await persistUploads(body.attachments);
+  const from = pickReplyFrom(user, original, body.from);
+  const stored = await resolveAttachments(body.attachments);
   const resendAttachments = await toResendAttachments(stored);
 
   const { data, error } = await resend.emails.send({
@@ -533,6 +596,7 @@ app.post("/api/emails/:id/reply", async (c) => {
     inReplyTo: original.messageId,
     references: headers["References"] ?? null,
     threadKey: original.threadKey,
+    owner: original.owner, // reply belongs to the same mailbox as the thread
   });
 
   return c.json(data);
@@ -542,13 +606,16 @@ app.post("/api/emails/:id/reply", async (c) => {
 // original body + attachments are preserved exactly; for something we
 // sent ourselves, just re-send the stored HTML to a new recipient ---
 app.post("/api/emails/:id/forward", async (c) => {
+  const user = c.get("user");
   const original = await getEmail(c.req.param("id"));
-  if (!original) return c.json({ error: "Not found" }, 404);
+  if (!original || !canAccessOwner(user, original.owner)) {
+    return c.json({ error: "Not found" }, 404);
+  }
 
   const body = await c.req.json().catch(() => null);
   if (!body?.to) return c.json({ error: "to is required" }, 400);
 
-  const from = await pickReplyFrom(original, body.from);
+  const from = pickReplyFrom(user, original, body.from);
 
   if (original.direction === "inbound") {
     const { data, error } = await resend.emails.receiving.forward({
@@ -572,9 +639,12 @@ app.post("/api/emails/:id/forward", async (c) => {
 
 // --- Full conversation for the detail view ---
 app.get("/api/emails/:id/thread", async (c) => {
+  const user = c.get("user");
   const original = await getEmail(c.req.param("id"));
-  if (!original) return c.json({ error: "Not found" }, 404);
-  const thread = await listByThreadKey(original.threadKey);
+  if (!original || !canAccessOwner(user, original.owner)) {
+    return c.json({ error: "Not found" }, 404);
+  }
+  const thread = await listByThreadKey(original.threadKey, isAdmin(user) ? undefined : user);
   return c.json(thread.map(inlineCidImages));
 });
 
@@ -594,14 +664,22 @@ app.post("/api/drafts", async (c) => {
     html: body.html ?? "",
     from: typeof body.from === "string" ? body.from : undefined,
     attachments: stored,
+    owner: c.get("user"),
   });
 
   return c.json(draft);
 });
 
 app.put("/api/drafts/:id", async (c) => {
+  const user = c.get("user");
   const body = await c.req.json().catch(() => null);
   if (!body) return c.json({ error: "Invalid body" }, 400);
+
+  // Only the owner (or an admin) may edit a draft.
+  const existing = await getEmail(c.req.param("id"));
+  if (!existing || existing.status !== "draft" || !canAccessOwner(user, existing.owner)) {
+    return c.json({ error: "Not found" }, 404);
+  }
 
   const stored = await resolveAttachments(body.attachments);
   const draft = await updateDraft(c.req.param("id"), {
@@ -610,6 +688,7 @@ app.put("/api/drafts/:id", async (c) => {
     html: body.html ?? "",
     from: typeof body.from === "string" ? body.from : undefined,
     attachments: stored,
+    owner: existing.owner,
   });
 
   if (!draft) return c.json({ error: "Not found" }, 404);
@@ -618,20 +697,25 @@ app.put("/api/drafts/:id", async (c) => {
 
 app.delete("/api/drafts/:id", async (c) => {
   const draft = await getEmail(c.req.param("id"));
-  if (!draft || draft.status !== "draft") return c.json({ error: "Not found" }, 404);
+  if (!draft || draft.status !== "draft" || !canAccessOwner(c.get("user"), draft.owner)) {
+    return c.json({ error: "Not found" }, 404);
+  }
   await deleteDraft(draft.id);
   await purgeAttachmentFiles([draft]);
   return c.json({ ok: true });
 });
 
 app.post("/api/drafts/:id/send", async (c) => {
+  const user = c.get("user");
   const draft = await getEmail(c.req.param("id"));
-  if (!draft || draft.status !== "draft") return c.json({ error: "Not found" }, 404);
+  if (!draft || draft.status !== "draft" || !canAccessOwner(user, draft.owner)) {
+    return c.json({ error: "Not found" }, 404);
+  }
   if (!draft.to.length || !draft.subject || !draft.html) {
     return c.json({ error: "to, subject, and html are required" }, 400);
   }
 
-  const from = await resolveFrom(draft.from || undefined);
+  const from = resolveFromFor(draft.owner, draft.from || undefined);
   const resendAttachments = await toResendAttachments(draft.attachments);
 
   const { data, error } = await resend.emails.send({
@@ -644,7 +728,7 @@ app.post("/api/drafts/:id/send", async (c) => {
 
   if (error) return c.json({ error: error.message }, 400);
 
-  const myAddresses = await getMyAddresses();
+  const myAddresses = allAddresses().map(bareAddress);
   await deleteDraft(draft.id);
   await addEmail({
     id: data.id,
@@ -661,44 +745,47 @@ app.post("/api/drafts/:id/send", async (c) => {
     inReplyTo: null,
     references: null,
     threadKey: computeThreadKey(draft.subject, from, draft.to, myAddresses),
+    owner: draft.owner,
   });
 
   return c.json(data);
 });
 
-// --- Settings API: manage the send-from address list ---
-app.get("/api/settings", async (c) => c.json(await getSettings()));
+// --- Settings API ---
+// Send-from addresses are now derived from ownership (owners.json), so this is
+// read-only: it just reports which addresses the current user may send as.
+app.get("/api/settings", (c) => {
+  const addrs = addressesFor(c.get("user"));
+  return c.json({ fromAddresses: addrs, defaultFrom: addrs[0] ?? null });
+});
 
-app.post("/api/settings/from", async (c) => {
+// --- Ownership management (admin only) ---
+// Powers the dashboard panel where an admin reserves addresses for users.
+app.get("/api/owners", (c) => {
+  if (!isAdmin(c.get("user"))) return c.json({ error: "Forbidden" }, 403);
+  return c.json(dashboardState());
+});
+
+app.post("/api/owners/assign", async (c) => {
+  if (!isAdmin(c.get("user"))) return c.json({ error: "Forbidden" }, 403);
   const body = await c.req.json().catch(() => null);
-  if (!body?.address || typeof body.address !== "string") {
-    return c.json({ error: "address is required" }, 400);
+  if (!body?.username || !body?.address) {
+    return c.json({ error: "username and address are required" }, 400);
   }
   try {
-    return c.json(await addFromAddress(body.address));
+    return c.json(assignAddress(String(body.username), String(body.address)));
   } catch (err) {
     return c.json({ error: (err as Error).message }, 400);
   }
 });
 
-app.post("/api/settings/from/remove", async (c) => {
+app.post("/api/owners/unassign", async (c) => {
+  if (!isAdmin(c.get("user"))) return c.json({ error: "Forbidden" }, 403);
   const body = await c.req.json().catch(() => null);
-  if (!body?.address || typeof body.address !== "string") {
-    return c.json({ error: "address is required" }, 400);
+  if (!body?.username || !body?.address) {
+    return c.json({ error: "username and address are required" }, 400);
   }
-  return c.json(await removeFromAddress(body.address));
-});
-
-app.post("/api/settings/default", async (c) => {
-  const body = await c.req.json().catch(() => null);
-  if (!body?.address || typeof body.address !== "string") {
-    return c.json({ error: "address is required" }, 400);
-  }
-  try {
-    return c.json(await setDefaultFrom(body.address));
-  } catch (err) {
-    return c.json({ error: (err as Error).message }, 400);
-  }
+  return c.json(unassignAddress(String(body.username), String(body.address)));
 });
 
 // --- Web Push API ---
@@ -742,6 +829,9 @@ app.post("/api/push/test", async (c) => {
   });
   return c.json(result);
 });
+
+// Fail fast if PocketID isn't reachable / configured, rather than only at login.
+await initOidc();
 
 const port = process.env.MAIL_PORT ? Number(process.env.MAIL_PORT) : 3000;
 console.log(`Listening on http://localhost:${port}`);

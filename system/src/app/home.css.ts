@@ -1,5 +1,4 @@
-/*
- * Copyright (c) 2026 Clove Twilight
+/* Copyright (c) 2026 Clove Twilight
  * Licensed under the ESAL-2.0 Licence.
  * See LICENCE.md in the project root for full licence information.
  *
@@ -115,8 +114,14 @@ export const mobileMenuBtn = style({
   },
 });
 
-export const icon24 = style({ width: "1.5rem", height: "1.5rem" });
-export const icon20 = style({ width: "1.25rem", height: "1.25rem" });
+export const icon24 = style({
+  width: "1.5rem",
+  height: "1.5rem"
+});
+export const icon20 = style({
+  width: "1.25rem",
+  height: "1.25rem"
+});
 
 /* Mobile menu */
 export const mobileOverlay = style({
@@ -213,7 +218,10 @@ export const main = style({
   padding: "1rem 0.5rem 0",
   flexGrow: 1,
   "@media": {
-    "screen and (min-width: 640px)": { paddingLeft: "1rem", paddingRight: "1rem" },
+    "screen and (min-width: 640px)": {
+      paddingLeft: "1rem",
+      paddingRight: "1rem"
+    },
   },
 });
 
@@ -476,7 +484,10 @@ export const cardCenter = style({
   gap: "0.125rem",
 });
 
-export const relativeInline = style({ position: "relative", display: "inline-block" });
+export const relativeInline = style({
+  position: "relative",
+  display: "inline-block"
+});
 
 /* Empty state */
 export const emptyState = style({

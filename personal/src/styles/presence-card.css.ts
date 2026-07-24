@@ -117,11 +117,26 @@ globalStyle(".pc-status", {
  * matches the .pc-stream-thumb ring and the .pc-stream dot further down.
  */
 const STATUS_COLOURS = {
-  online: { dot: vars.success, text: vars.success },
-  idle: { dot: vars.warning, text: vars.warning },
-  dnd: { dot: vars.danger, text: vars.danger },
-  offline: { dot: vars.textFaint, text: vars.textDim },
-  streaming: { dot: vars.accentAlt, text: vars.accentAlt },
+  online: {
+    dot: vars.success,
+    text: vars.success
+  },
+  idle: {
+    dot: vars.warning,
+    text: vars.warning
+  },
+  dnd: {
+    dot: vars.danger,
+    text: vars.danger
+  },
+  offline: {
+    dot: vars.textFaint,
+    text: vars.textDim
+  },
+  streaming: {
+    dot: vars.accentAlt,
+    text: vars.accentAlt
+  },
 } as const;
 
 for (const [status, { dot, text }] of Object.entries(STATUS_COLOURS)) {
@@ -280,7 +295,10 @@ globalStyle(".pc-row-ic.pc-dot", {
 });
 
 /** Activity kind recolours (and reshapes) the dot. */
-globalStyle(".pc-dev .pc-row-ic.pc-dot", { background: vars.info, borderRadius: 2 });
+globalStyle(".pc-dev .pc-row-ic.pc-dot", {
+  background: vars.info,
+  borderRadius: 2
+});
 globalStyle(".pc-game .pc-row-ic.pc-dot", { background: vars.success });
 globalStyle(".pc-stream .pc-row-ic.pc-dot", { background: vars.accentAlt });
 
@@ -309,11 +327,24 @@ globalStyle(".pc-custom::before, .pc-custom::after", {
   pointerEvents: "none",
 });
 
-globalStyle(".pc-custom::before", { width: 9, height: 9, top: -5, left: 12 });
-globalStyle(".pc-custom::after", { width: 5, height: 5, top: -11, left: 9 });
+globalStyle(".pc-custom::before", {
+  width: 9,
+  height: 9,
+  top: -5,
+  left: 12
+});
+globalStyle(".pc-custom::after", {
+  width: 5,
+  height: 5,
+  top: -11,
+  left: 9
+});
 
 /** It's a bubble, not a link — cancel the .pc-row hover treatment. */
-globalStyle(".pc-custom:hover", { transform: "none", borderColor: "transparent" });
+globalStyle(".pc-custom:hover", {
+  transform: "none",
+  borderColor: "transparent"
+});
 
 globalStyle(".pc-emoji", {
   width: 18,
@@ -408,7 +439,11 @@ globalStyle(".pc-tag", {
 
 globalStyle(".pc-tag[hidden]", { display: "none" });
 
-globalStyle(".pc-tag-badge", { width: 14, height: 14, display: "block" });
+globalStyle(".pc-tag-badge", {
+  width: 14,
+  height: 14,
+  display: "block"
+});
 
 /** Username + active-platform indicators. */
 globalStyle(".pc-sub-row", {
@@ -452,7 +487,10 @@ globalStyle(".pc-meta", {
 
 globalStyle(".pc-meta[hidden]", { display: "none" });
 
-globalStyle(".pc-pin", { fontSize: "0.7rem", lineHeight: 1 });
+globalStyle(".pc-pin", {
+  fontSize: "0.7rem",
+  lineHeight: 1
+});
 
 /** Stacked rows — activity rows that carry buttons underneath. */
 globalStyle(".pc-row--stack", {
@@ -478,7 +516,10 @@ globalStyle(".pc-ic-wrap", {
   height: 38,
 });
 
-globalStyle(".pc-ic-wrap .pc-row-ic-img", { width: 38, height: 38 });
+globalStyle(".pc-ic-wrap .pc-row-ic-img", {
+  width: 38,
+  height: 38
+});
 
 globalStyle(".pc-ic-badge", {
   position: "absolute",
@@ -527,9 +568,16 @@ globalStyle(".pc-badges", {
 
 globalStyle(".pc-badges:empty", { display: "none" });
 
-globalStyle(".pc-badge", { width: 16, height: 16, display: "block" });
+globalStyle(".pc-badge", {
+  width: 16,
+  height: 16,
+  display: "block"
+});
 
-globalStyle(".pc-badge-link", { display: "inline-flex", lineHeight: 0 });
+globalStyle(".pc-badge-link", {
+  display: "inline-flex",
+  lineHeight: 0
+});
 
 /* ---- wishlist star + panel ------------------------------------------------ */
 
@@ -546,7 +594,10 @@ globalStyle(".pc-star", {
   transition: "color 0.15s ease, transform 0.15s ease",
 });
 
-globalStyle(".pc-star:hover", { color: vars.accent, transform: "scale(1.12)" });
+globalStyle(".pc-star:hover", {
+  color: vars.accent,
+  transform: "scale(1.12)"
+});
 
 /** `on` is set by PresenceCard.tsx when the panel is open. */
 globalStyle(".pc-star.on", { color: vars.warning });
@@ -767,7 +818,10 @@ globalStyle("a.pc-conn:hover", {
   background: vars.surfaceHigher,
 });
 
-globalStyle(".pc-conn-check", { color: vars.success, fontWeight: 700 });
+globalStyle(".pc-conn-check", {
+  color: vars.success,
+  fontWeight: 700
+});
 
 /** Connection brand logos. Moved here from pages/music.css, which renders no
     presence card — see the note in music.css.ts. */
@@ -835,7 +889,11 @@ globalStyle(".pc-nitro", {
   cursor: "default",
 });
 
-globalStyle(".pc-boost", { fontSize: "0.62rem", lineHeight: 1, cursor: "default" });
+globalStyle(".pc-boost", {
+  fontSize: "0.62rem",
+  lineHeight: 1,
+  cursor: "default"
+});
 
 /* ---- /discord page stage --------------------------------------------------
    MOVED. `.presence-stage` / `.presence-intro` now live in stage.css.ts, and
@@ -847,7 +905,10 @@ globalStyle(".pc-boost", { fontSize: "0.62rem", lineHeight: 1, cursor: "default"
 /* ---- mini card (/cool-people) --------------------------------------------- */
 
 /** Connection icons shrink in the mini card. */
-globalStyle(".presence-card.is-mini .pc-conn-ic", { width: 13, height: 13 });
+globalStyle(".presence-card.is-mini .pc-conn-ic", {
+  width: 13,
+  height: 13
+});
 
 globalStyle(".presence-card.is-mini svg.pc-conn-ic", {
   width: 13,
@@ -859,10 +920,16 @@ globalStyle(".presence-card.is-mini svg.pc-conn-ic", {
    discordMarkdown.tsx emits plain semantic tags; these style them at mini-card
    scale. __x__ is UNDERLINE in Discord's dialect, not bold — <u> carries that. */
 
-globalStyle(".pc-bio strong", { fontWeight: 700, color: vars.text });
+globalStyle(".pc-bio strong", {
+  fontWeight: 700,
+  color: vars.text
+});
 globalStyle(".pc-bio em", { fontStyle: "italic" });
 globalStyle(".pc-bio u", { textDecoration: "underline" });
-globalStyle(".pc-bio s", { textDecoration: "line-through", color: vars.textDim });
+globalStyle(".pc-bio s", {
+  textDecoration: "line-through",
+  color: vars.textDim
+});
 
 globalStyle(".pc-bio code", {
   fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
@@ -879,7 +946,11 @@ globalStyle(".pc-bio pre", {
   borderRadius: 6,
   overflowX: "auto",
 });
-globalStyle(".pc-bio pre code", { background: "none", padding: 0, fontSize: "0.85em" });
+globalStyle(".pc-bio pre code", {
+  background: "none",
+  padding: 0,
+  fontSize: "0.85em"
+});
 
 globalStyle(".pc-bio blockquote", {
   margin: "0.1rem 0",
@@ -896,8 +967,14 @@ globalStyle(".pc-bio h1, .pc-bio h2, .pc-bio h3", {
   lineHeight: 1.2,
 });
 
-globalStyle(".pc-bio small", { fontSize: "0.85em", color: vars.textDim });
-globalStyle(".pc-bio li", { display: "list-item", marginLeft: "0.9rem" });
+globalStyle(".pc-bio small", {
+  fontSize: "0.85em",
+  color: vars.textDim
+});
+globalStyle(".pc-bio li", {
+  display: "list-item",
+  marginLeft: "0.9rem"
+});
 
 /** Spoiler: blacked out until clicked, as Discord does. */
 globalStyle(".pc-spoiler", {
