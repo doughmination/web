@@ -63,9 +63,11 @@ const Callback: React.FC = () => {
       <div className={s.card}>
         <h2 className={s.heading}>Sign-in failed</h2>
         <div className={s.errorBox}>{error}</div>
-        <Link href="/user/login" className={s.submitBtn} style={{ textAlign: "center" }}>
-          Back to sign in
-        </Link>
+        <div className={s.actions}>
+          <Link href="/user/login" className={s.submitBtn}>
+            Back to sign in
+          </Link>
+        </div>
       </div>
     );
   }

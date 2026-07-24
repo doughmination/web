@@ -157,7 +157,7 @@ const UserManager: React.FC = () => {
 
       setMessage({
         type: "success",
-        content: "User created. They can sign in once they authenticate with PocketID under this username."
+        content: "User created. They can sign in once they authenticate with SSO under this username."
       });
       setNewUsername("");
       setNewDisplayName("");
@@ -361,7 +361,7 @@ const UserManager: React.FC = () => {
                     disabled={saving}
                   />
                   <p className={s.helpText}>
-                    Optional contact address. Sign-in is handled by PocketID — this account links to
+                    Optional contact address. Sign-in is handled by SSO — this account links to
                     the person the first time they log in under this username.
                   </p>
                 </div>
@@ -535,7 +535,7 @@ const UserManager: React.FC = () => {
                             />
                             <p className={s.helpText}>
                               {isOwner
-                                ? "Contact address only — sign-in email is managed in PocketID."
+                                ? "Contact address only — sign-in email is managed by your SSO provider."
                                 : "Only the owner can change someone else's email. Your own is on your profile page."}
                             </p>
                           </div>

@@ -33,22 +33,24 @@ const Login: React.FC = () => {
   return (
     <div className={s.card}>
       <h2 className={s.heading}>Sign in</h2>
-      <p className={s.subtitle}>Use your PocketID account to continue.</p>
+      <p className={s.subtitle}>Use your SSO account to continue.</p>
 
       {error && <div className={s.errorBox}>{error}</div>}
 
-      <button
-        type="button"
-        className={s.submitBtn}
-        onClick={handleLogin}
-        disabled={redirecting}
-      >
-        {redirecting ? "Redirecting to PocketID…" : "Sign in with PocketID"}
-      </button>
+      <div className={s.actions}>
+        <button
+          type="button"
+          className={s.submitBtn}
+          onClick={handleLogin}
+          disabled={redirecting}
+        >
+          {redirecting ? "Redirecting to SSO…" : "🔑 Sign in with SSO"}
+        </button>
 
-      <p className={s.mutedNote}>
-        You&apos;ll be taken to PocketID to sign in, then brought right back here.
-      </p>
+        <p className={s.mutedNote}>
+          You&apos;ll be taken to your SSO provider to sign in, then brought right back here.
+        </p>
+      </div>
     </div>
   );
 };

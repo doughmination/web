@@ -185,8 +185,8 @@ function UserEdit() {
         {/* Sign-in note */}
         <Alert>
           <AlertDescription>
-            Sign-in is handled by PocketID. Your username and password are managed there — this page
-            only controls your display profile.
+            Sign-in is handled by SSO. Your username and password are managed by your SSO provider —
+            this page only controls your display profile.
           </AlertDescription>
         </Alert>
 
@@ -272,7 +272,7 @@ function UserEdit() {
                   autoComplete="email"
                 />
                 <p className={s.helpText}>
-                  Optional contact address. Sign-in email lives in PocketID, not here.
+                  Optional contact address. Sign-in email lives with your SSO provider, not here.
                 </p>
               </div>
 

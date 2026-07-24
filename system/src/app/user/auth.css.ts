@@ -116,9 +116,14 @@ export const mutedNote = style({
 });
 
 export const submitBtn = style({
+  display: "block",
+  width: "100%",
+  boxSizing: "border-box",
+  textAlign: "center",
+  textDecoration: "none",
   backgroundColor: vars.info,
   color: vars.bg,
-  padding: "0.5rem",
+  padding: "0.625rem 0.75rem",
   borderRadius: "0.25rem",
   border: "none",
   cursor: "pointer",
@@ -129,6 +134,13 @@ export const submitBtn = style({
     backgroundColor: `color-mix(in srgb, ${vars.info} 50%, ${vars.bg})`,
     cursor: "not-allowed",
   },
+});
+
+/** Vertical stack for standalone actions (e.g. the SSO sign-in button). */
+export const actions = style({
+  display: "flex",
+  flexDirection: "column",
+  gap: "0.75rem",
 });
 
 export const bottomNote = style({
