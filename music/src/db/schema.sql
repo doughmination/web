@@ -7,12 +7,14 @@ CREATE TABLE IF NOT EXISTS users (
   oidc_sub    text UNIQUE NOT NULL,
   email       text,
   name        text,
+  username    text,
   avatar_url  text,
   created_at  timestamptz NOT NULL DEFAULT now()
 );
 
 -- Added after initial release; safe on existing databases.
 ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url text;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS username text;
 
 CREATE TABLE IF NOT EXISTS songs (
   id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -24,9 +26,13 @@ CREATE TABLE IF NOT EXISTS songs (
   mime        text,
   duration_s  int,
   size_bytes  bigint,
+  explicit    boolean NOT NULL DEFAULT false,
   uploaded_by uuid REFERENCES users (id) ON DELETE SET NULL,
   created_at  timestamptz NOT NULL DEFAULT now()
 );
+
+-- Added after initial release; safe on existing databases.
+ALTER TABLE songs ADD COLUMN IF NOT EXISTS explicit boolean NOT NULL DEFAULT false;
 
 CREATE INDEX IF NOT EXISTS songs_title_idx  ON songs (lower(title));
 CREATE INDEX IF NOT EXISTS songs_artist_idx ON songs (lower(artist));

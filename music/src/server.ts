@@ -6,6 +6,7 @@ import { serveStatic } from "hono/bun";
 import { config } from "./config.ts";
 import {
   loadUser,
+  isAdmin,
   type AppEnv,
 } from "./auth/middleware.ts";
 import { ensureMediaDirs } from "./lib/media.ts";
@@ -31,6 +32,7 @@ app.get("/api/me", (c) => {
       email: user.email,
       name: user.name,
       avatarUrl: user.avatar_url,
+      isAdmin: isAdmin(user),
     },
   });
 });

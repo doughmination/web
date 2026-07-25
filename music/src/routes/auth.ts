@@ -84,13 +84,15 @@ authRoutes.get("/callback", async (c) => {
 
   // Upsert the user by their PocketID subject, pulling their profile picture.
   const name = claims.name ?? claims.preferred_username ?? null;
+  const username = claims.preferred_username ?? null;
   const avatar = claims.picture ?? null;
   const rows = await sql<User[]>`
-    INSERT INTO users (oidc_sub, email, name, avatar_url)
-    VALUES (${claims.sub}, ${claims.email ?? null}, ${name}, ${avatar})
+    INSERT INTO users (oidc_sub, email, name, username, avatar_url)
+    VALUES (${claims.sub}, ${claims.email ?? null}, ${name}, ${username}, ${avatar})
     ON CONFLICT (oidc_sub) DO UPDATE
       SET email      = EXCLUDED.email,
           name       = EXCLUDED.name,
+          username   = EXCLUDED.username,
           avatar_url = EXCLUDED.avatar_url
     RETURNING *
   `;

@@ -4,11 +4,21 @@
 import type { Context, Next } from "hono";
 import { getCookie } from "hono/cookie";
 
+import { config } from "../config.ts";
 import { sql, type User } from "../db/index.ts";
 import {
   cookieNames,
   readSession,
 } from "./session.ts";
+
+// Admin = username or email listed in MUSIC_ADMINS.
+export function isAdmin(user: User | null): boolean {
+  if (!user) return false;
+  const ids = [user.username, user.email]
+    .filter((v): v is string => Boolean(v))
+    .map((v) => v.toLowerCase());
+  return ids.some((id) => config.admins.includes(id));
+}
 
 // Typed vars available on the context after this middleware runs.
 export type AppEnv = {

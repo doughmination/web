@@ -30,11 +30,65 @@ const state = {
   visibleSongs: [] as Song[],
 };
 
+let lastSave = 0;
 player.onChange = () => {
   renderPlayerBar();
   syncLyrics();
+  const now = Date.now();
+  if (now - lastSave > 2000) {
+    lastSave = now;
+    saveNowPlaying();
+  }
 };
 player.onError = (msg) => flash(msg);
+
+// Persist / restore the current session so a forced reload can resume.
+const NOW_PLAYING_KEY = "music:nowplaying";
+
+function saveNowPlaying(): void {
+  try {
+    const snap = player.snapshot();
+    if (snap) localStorage.setItem(NOW_PLAYING_KEY, JSON.stringify(snap));
+  } catch {
+    /* ignore */
+  }
+}
+
+function restoreNowPlaying(): void {
+  try {
+    const raw = localStorage.getItem(NOW_PLAYING_KEY);
+    if (!raw) return;
+    const snap = JSON.parse(raw) as {
+      ids: string[];
+      index: number;
+      position: number;
+    };
+    const byId = new Map(state.songs.map((s) => [s.id, s]));
+    const songs = snap.ids
+      .map((id) => byId.get(id))
+      .filter((s): s is Song => Boolean(s));
+    if (!songs.length) return;
+    const targetId = snap.ids[snap.index];
+    const idx = targetId ? songs.findIndex((s) => s.id === targetId) : 0;
+    player.restore(songs, idx >= 0 ? idx : 0, snap.position || 0);
+  } catch {
+    /* ignore */
+  }
+}
+
+window.addEventListener("pagehide", saveNowPlaying);
+window.addEventListener("beforeunload", saveNowPlaying);
+
+// "Hide explicit" preference (public-friendly), persisted locally.
+let hideExplicit = false;
+try {
+  hideExplicit = localStorage.getItem("music:hideExplicit") === "1";
+} catch {
+  /* ignore */
+}
+function filterExplicit<T extends { explicit: boolean }>(songs: T[]): T[] {
+  return hideExplicit ? songs.filter((s) => !s.explicit) : songs;
+}
 
 // Space toggles play/pause anywhere except when typing in a field.
 document.addEventListener("keydown", (e) => {
@@ -55,7 +109,9 @@ async function boot(): Promise<void> {
     return;
   }
   await Promise.all([loadSongs(), loadPlaylists()]);
+  restoreNowPlaying();
   render();
+  startVisualizer();
 }
 
 async function loadSongs(): Promise<void> {
@@ -203,20 +259,39 @@ async function renderMain(): Promise<void> {
 }
 
 function renderLibrary(el: HTMLElement): void {
-  state.visibleSongs = state.songs;
+  const shown = filterExplicit(state.songs);
+  state.visibleSongs = shown;
   el.innerHTML = `
     <header class="main-head">
       <h2>Library</h2>
-      <input id="search" class="search" placeholder="Search title or artist" />
+      <div class="head-actions">
+        <label class="check-inline">
+          <input type="checkbox" id="hide-explicit" ${hideExplicit ? "checked" : ""} />
+          Hide explicit
+        </label>
+        <input id="search" class="search" placeholder="Search title or artist" />
+      </div>
     </header>
-    <div id="songlist">${songTableHtml(state.songs)}</div>
+    <div id="songlist">${songTableHtml(shown)}</div>
   `;
 
   wireSongList();
 
+  document.getElementById("hide-explicit")?.addEventListener("change", (e) => {
+    hideExplicit = (e.target as HTMLInputElement).checked;
+    try {
+      localStorage.setItem("music:hideExplicit", hideExplicit ? "1" : "0");
+    } catch {
+      /* ignore */
+    }
+    renderMain();
+  });
+
   const search = document.getElementById("search") as HTMLInputElement | null;
   search?.addEventListener("input", async () => {
-    const rows = await api.listSongs(search.value.trim() || undefined);
+    const rows = filterExplicit(
+      await api.listSongs(search.value.trim() || undefined),
+    );
     state.visibleSongs = rows;
     const list = document.getElementById("songlist");
     if (list) {
@@ -256,6 +331,10 @@ function openUploadModal(): void {
         <label class="field">
           <span>Album <em>(optional)</em></span>
           <input name="album" placeholder="optional" />
+        </label>
+        <label class="check-row">
+          <input type="checkbox" name="explicit" value="true" />
+          <span>Explicit content</span>
         </label>
         <div class="field">
           <span>Cover image <em>(optional)</em></span>
@@ -367,6 +446,92 @@ function openUploadModal(): void {
   });
 }
 
+// Admin-only: fix metadata / apply the explicit tag on any song.
+function openEditModal(song: Song): void {
+  const overlay = document.createElement("div");
+  overlay.className = "modal-overlay";
+  overlay.innerHTML = `
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h2>Edit details</h2>
+        <button class="icon-btn" id="modal-close" title="Close"><i class="bi bi-x-lg"></i></button>
+      </div>
+      <form id="edit" class="upload-card">
+        <label class="field">
+          <span>Song name <em>(required)</em></span>
+          <input name="title" value="${escapeHtml(song.title)}" required />
+        </label>
+        <label class="field">
+          <span>Artist <em>(required)</em></span>
+          <input name="artist" value="${escapeHtml(song.artist)}" required />
+        </label>
+        <label class="field">
+          <span>Album <em>(optional)</em></span>
+          <input name="album" value="${escapeHtml(song.album ?? "")}" />
+        </label>
+        <label class="check-row">
+          <input type="checkbox" name="explicit" value="true" ${song.explicit ? "checked" : ""} />
+          <span>Explicit content</span>
+        </label>
+        <div class="field">
+          <span>Replace cover <em>(optional)</em></span>
+          <label class="file-chip">
+            <i class="bi bi-image"></i>
+            <span id="cover-name">Choose image</span>
+            <input type="file" name="cover" accept="image/*" hidden />
+          </label>
+        </div>
+        <button class="btn btn-primary" type="submit">Save</button>
+        <span id="edit-status" class="upload-status"></span>
+      </form>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const close = () => {
+    overlay.remove();
+    document.removeEventListener("keydown", onEsc);
+  };
+  const onEsc = (e: KeyboardEvent) => {
+    if (e.key === "Escape") close();
+  };
+  document.addEventListener("keydown", onEsc);
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) close();
+  });
+  overlay.querySelector("#modal-close")?.addEventListener("click", close);
+
+  const coverInput = overlay.querySelector('input[name="cover"]') as HTMLInputElement;
+  const coverName = overlay.querySelector("#cover-name") as HTMLElement;
+  coverInput.addEventListener("change", () => {
+    coverName.textContent = coverInput.files?.[0]?.name ?? "Choose image";
+  });
+
+  // Ensure explicit is always sent (unchecked box would otherwise be omitted).
+  const form = overlay.querySelector("#edit") as HTMLFormElement;
+  const status = overlay.querySelector("#edit-status");
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = form.querySelector("button")!;
+    btn.textContent = "Saving...";
+    btn.setAttribute("disabled", "true");
+    if (status) status.textContent = "";
+    const fd = new FormData(form);
+    fd.set("explicit", form.querySelector<HTMLInputElement>('[name="explicit"]')?.checked ? "true" : "false");
+    try {
+      const updated = await api.updateSong(song.id, fd);
+      await loadSongs();
+      renderMain();
+      close();
+      flash(`Updated "${updated.title}".`);
+    } catch (err) {
+      if (status) status.textContent = `Save failed: ${(err as Error).message}`;
+      btn.textContent = "Save";
+      btn.removeAttribute("disabled");
+    }
+  });
+}
+
 // Small transient toast.
 function flash(msg: string): void {
   const el = document.createElement("div");
@@ -424,7 +589,8 @@ async function renderBrowse(el: HTMLElement): Promise<void> {
 
 async function renderPlaylistView(el: HTMLElement, id: string): Promise<void> {
   const pl = await api.getPlaylist(id);
-  state.visibleSongs = pl.songs;
+  const shownSongs = filterExplicit(pl.songs);
+  state.visibleSongs = shownSongs;
 
   const ownerControls = pl.isOwner
     ? `
@@ -446,7 +612,7 @@ async function renderPlaylistView(el: HTMLElement, id: string): Promise<void> {
       }</h2>
       <div class="head-actions">${ownerControls}</div>
     </header>
-    <div id="songlist">${songTableHtml(pl.songs, pl.isOwner ? id : undefined)}</div>
+    <div id="songlist">${songTableHtml(shownSongs, pl.isOwner ? id : undefined)}</div>
   `;
 
   wireSongList(pl.isOwner ? id : undefined);
@@ -491,20 +657,27 @@ function songTableHtml(songs: Song[], editablePlaylistId?: string): string {
         ? `<button class="icon-btn" data-remove="${s.id}" title="Remove"><i class="bi bi-x-lg"></i></button>`
         : `<button class="icon-btn" data-add="${s.id}" title="Add to playlist"><i class="bi bi-plus-lg"></i></button>`;
 
+      const edit = state.me?.isAdmin
+        ? `<button class="icon-btn" data-edit="${s.id}" title="Edit details"><i class="bi bi-pencil-fill"></i></button>`
+        : "";
       const del =
         s.uploadedBy && s.uploadedBy === state.me?.id
           ? `<button class="icon-btn" data-del="${s.id}" title="Delete song"><i class="bi bi-trash-fill"></i></button>`
           : "";
 
+      const badge = s.explicit
+        ? `<span class="tag-e" title="Explicit">E</span>`
+        : "";
+
       return `
         <div class="song" data-index="${i}">
           ${cover}
           <div class="song-meta">
-            <span class="song-title">${escapeHtml(s.title)}</span>
+            <span class="song-title">${escapeHtml(s.title)}${badge}</span>
             <span class="song-artist">${escapeHtml(s.artist)}</span>
           </div>
           <span class="song-dur">${s.durationS ? formatTime(s.durationS) : ""}</span>
-          <div class="song-actions">${action}${del}</div>
+          <div class="song-actions">${action}${edit}${del}</div>
         </div>`;
     })
     .join("");
@@ -544,6 +717,15 @@ function wireSongList(editablePlaylistId?: string): void {
       if (!editablePlaylistId) return;
       await api.removeFromPlaylist(editablePlaylistId, (btn as HTMLElement).dataset.remove!);
       renderMain();
+    });
+  });
+
+  document.querySelectorAll("[data-edit]").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const id = (btn as HTMLElement).dataset.edit!;
+      const song = state.visibleSongs.find((s) => s.id === id);
+      if (song) openEditModal(song);
     });
   });
 
@@ -598,6 +780,7 @@ function renderPlayerBar(): void {
 
 function mountPlayerBar(el: HTMLElement, song: Song): void {
   el.innerHTML = `
+    <canvas class="pb-viz" id="pb-viz"></canvas>
     <div class="pb-song">
       ${
         song.coverUrl
@@ -708,6 +891,35 @@ function updatePlayerBar(): void {
   el.querySelector("#lyrics-btn")?.classList.toggle("on", lyricsState.open);
 
   updateVolumeIcon();
+}
+
+// Frequency-bar visualizer painted behind the player bar while a track plays.
+function startVisualizer(): void {
+  const draw = () => {
+    const canvas = document.getElementById("pb-viz") as HTMLCanvasElement | null;
+    const analyser = player.getAnalyser();
+    if (canvas && analyser) {
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        const w = (canvas.width = canvas.clientWidth);
+        const h = (canvas.height = canvas.clientHeight);
+        ctx.clearRect(0, 0, w, h);
+        if (player.playing) {
+          const data = new Uint8Array(analyser.frequencyBinCount);
+          analyser.getByteFrequencyData(data);
+          const n = Math.min(analyser.frequencyBinCount, 56);
+          const bw = w / n;
+          ctx.fillStyle = "rgba(108, 140, 255, 0.30)";
+          for (let i = 0; i < n; i++) {
+            const bh = (data[i]! / 255) * h;
+            ctx.fillRect(i * bw, h - bh, bw * 0.66, bh);
+          }
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  };
+  requestAnimationFrame(draw);
 }
 
 function updateVolumeIcon(): void {

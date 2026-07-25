@@ -28,6 +28,8 @@ export class Player {
   private queue: Song[] = []; // playback order (shuffled or not)
   private index = -1;
   private prefs: Prefs = loadPrefs();
+  private ctx: AudioContext | null = null;
+  private analyser: AnalyserNode | null = null;
   // iOS ignores HTMLMediaElement.volume (hardware-controlled). Detect so the
   // UI can hide the volume slider there.
   readonly volumeSupported = !isIOS();
@@ -170,8 +172,71 @@ export class Player {
     this.onChange?.();
   }
 
+  // Web Audio analyser for the visualizer. Exposed for the canvas draw loop.
+  getAnalyser(): AnalyserNode | null {
+    return this.analyser;
+  }
+
+  // Snapshot of the current session, for resume-after-reload.
+  snapshot(): { ids: string[]; index: number; position: number } | null {
+    if (!this.current) return null;
+    return {
+      ids: this.queue.map((s) => s.id),
+      index: this.index,
+      position: this.audio.currentTime || 0,
+    };
+  }
+
+  // Load a saved queue WITHOUT autoplaying; seek once metadata is ready.
+  restore(songs: Song[], index: number, position: number): void {
+    if (!songs.length) return;
+    this.queue = songs;
+    this.index = Math.min(Math.max(index, 0), songs.length - 1);
+    const song = this.current;
+    if (!song) return;
+    this.audio.src = song.streamUrl;
+    this.audio.load();
+    const onMeta = () => {
+      try {
+        this.audio.currentTime = position;
+      } catch {
+        /* ignore */
+      }
+      this.audio.removeEventListener("loadedmetadata", onMeta);
+      this.onChange?.();
+    };
+    this.audio.addEventListener("loadedmetadata", onMeta);
+    this.onChange?.();
+  }
+
+  // Build the Web Audio graph once (source -> analyser -> speakers). Wrapped so
+  // any failure leaves plain <audio> playback untouched.
+  private setupGraph(): void {
+    if (this.ctx) return;
+    try {
+      const Ctx =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext })
+          .webkitAudioContext;
+      const ctx = new Ctx();
+      const src = ctx.createMediaElementSource(this.audio);
+      const analyser = ctx.createAnalyser();
+      analyser.fftSize = 128;
+      analyser.smoothingTimeConstant = 0.8;
+      src.connect(analyser);
+      analyser.connect(ctx.destination);
+      this.ctx = ctx;
+      this.analyser = analyser;
+    } catch {
+      this.ctx = null;
+      this.analyser = null;
+    }
+  }
+
   // Play and surface any autoplay/permission error (mainly for iOS).
   private tryPlay(): void {
+    this.setupGraph();
+    void this.ctx?.resume();
     const p = this.audio.play();
     if (p && typeof p.catch === "function") {
       p.catch((err: unknown) => {

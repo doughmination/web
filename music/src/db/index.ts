@@ -15,6 +15,7 @@ export type User = {
   oidc_sub: string;
   email: string | null;
   name: string | null;
+  username: string | null;
   avatar_url: string | null;
   created_at: Date;
 };
@@ -29,6 +30,7 @@ export type Song = {
   mime: string | null;
   duration_s: number | null;
   size_bytes: string; // bigint comes back as string
+  explicit: boolean;
   uploaded_by: string | null;
   created_at: Date;
 };

@@ -131,6 +131,7 @@ playlistRoutes.get("/:id", async (c) => {
       artist: s.artist,
       album: s.album,
       durationS: s.duration_s,
+      explicit: s.explicit,
       coverUrl: s.cover_path ? `/api/songs/${s.id}/cover` : null,
       streamUrl: `/api/songs/${s.id}/stream`,
     })),

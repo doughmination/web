@@ -357,6 +357,21 @@ button {
   margin: auto;
 }
 
+/* Keep bar contents above the visualizer canvas */
+.playerbar > * {
+  position: relative;
+  z-index: 1;
+}
+
+.pb-viz {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
 .pb-song {
   display: flex;
   align-items: center;
@@ -610,6 +625,42 @@ button {
 
 .file-chip:hover {
   border-color: var(--accent);
+}
+
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.check-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+/* Explicit "E" badge next to a track title */
+.tag-e {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.05rem;
+  height: 1.05rem;
+  margin-left: 0.4rem;
+  padding: 0 0.2rem;
+  border-radius: 3px;
+  background: var(--muted);
+  color: var(--bg);
+  font-size: 0.62rem;
+  font-weight: 800;
+  vertical-align: middle;
+  line-height: 1;
 }
 
 /* --- browse grid --- */

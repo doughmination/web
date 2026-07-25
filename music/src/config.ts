@@ -41,4 +41,11 @@ export const config = {
 
   mediaDir: optional("MUSIC_MEDIA_DIR", "./data/media"),
   maxUploadBytes: Number(optional("MUSIC_MAX_UPLOAD_MB", "200")) * 1024 * 1024,
+
+  // Comma-separated admin identifiers (PocketID username or email) that may
+  // edit/fix any song in the shared library, e.g. "clove" or "me@example.com".
+  admins: optional("MUSIC_ADMINS", "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean),
 } as const;

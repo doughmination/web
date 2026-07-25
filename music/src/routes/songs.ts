@@ -7,10 +7,12 @@ import { config } from "../config.ts";
 import { sql, type Song } from "../db/index.ts";
 import {
   requireAuth,
+  isAdmin,
   type AppEnv,
 } from "../auth/middleware.ts";
 import { rateLimit } from "../lib/ratelimit.ts";
 import { getLyrics } from "../lib/lyrics.ts";
+import { redis } from "../redis.ts";
 import {
   ensureMediaDirs,
   extractTags,
@@ -72,6 +74,7 @@ songRoutes.post(
   }
 
   const album = str(form.get("album")) ?? tags.album;
+  const explicit = str(form.get("explicit")) === "true";
   const filePath = await saveAudio(bytes, file.name);
 
   // Cover priority: uploaded cover field, else embedded art.
@@ -88,10 +91,11 @@ songRoutes.post(
   const rows = await sql<Song[]>`
     INSERT INTO songs
       (title, artist, album, cover_path, file_path, mime, duration_s,
-       size_bytes, uploaded_by)
+       size_bytes, explicit, uploaded_by)
     VALUES
       (${title}, ${artist}, ${album ?? null}, ${coverPath}, ${filePath},
-       ${file.type || null}, ${tags.durationS}, ${file.size}, ${user.id})
+       ${file.type || null}, ${tags.durationS}, ${file.size}, ${explicit},
+       ${user.id})
     RETURNING *
   `;
   return c.json(toPublicSong(rows[0]!), 201);
@@ -173,6 +177,55 @@ songRoutes.get("/:id/cover", requireAuth, async (c) => {
   });
 });
 
+// Admin-only edit: fix metadata / apply the explicit tag on ANY song after
+// upload. Multipart so the cover can optionally be replaced.
+songRoutes.patch("/:id", requireAuth, async (c) => {
+  if (!isAdmin(c.get("user"))) {
+    return c.json({ error: "forbidden" }, 403);
+  }
+  const song = await getSong(c.req.param("id")!);
+  if (!song) return c.json({ error: "not_found" }, 404);
+
+  const form = await c.req.formData();
+  const title = (str(form.get("title")) ?? song.title).trim();
+  const artist = (str(form.get("artist")) ?? song.artist).trim();
+  if (!title || !artist) {
+    return c.json({ error: "title_and_artist_required" }, 400);
+  }
+
+  // album: present-but-empty clears it; absent keeps existing.
+  const albumField = form.get("album");
+  const album = albumField !== null ? str(albumField) : song.album;
+
+  // explicit: only change if the field was sent.
+  const explicitField = form.get("explicit");
+  const explicit =
+    explicitField !== null ? str(explicitField) === "true" : song.explicit;
+
+  let coverPath = song.cover_path;
+  const coverFile = form.get("cover");
+  if (coverFile instanceof File && coverFile.size > 0) {
+    await ensureMediaDirs();
+    const cbytes = new Uint8Array(await coverFile.arrayBuffer());
+    const ext = coverFile.type.split("/")[1] ?? "jpg";
+    coverPath = await saveCover(cbytes, ext);
+    if (song.cover_path) {
+      await unlink(resolveMedia(song.cover_path)).catch(() => {});
+    }
+  }
+
+  const rows = await sql<Song[]>`
+    UPDATE songs
+    SET title = ${title}, artist = ${artist}, album = ${album},
+        explicit = ${explicit}, cover_path = ${coverPath}
+    WHERE id = ${song.id}
+    RETURNING *
+  `;
+  // Metadata may have changed -> drop cached lyrics so they refetch.
+  await redis.del(`music:lyrics:${song.id}`).catch(() => {});
+  return c.json(toPublicSong(rows[0]!));
+});
+
 // Only the uploader may delete.
 songRoutes.delete("/:id", requireAuth, async (c) => {
   const user = c.get("user")!;
@@ -209,6 +262,7 @@ function toPublicSong(s: Song) {
     artist: s.artist,
     album: s.album,
     durationS: s.duration_s,
+    explicit: s.explicit,
     hasCover: Boolean(s.cover_path),
     coverUrl: s.cover_path ? `/api/songs/${s.id}/cover` : null,
     streamUrl: `/api/songs/${s.id}/stream`,

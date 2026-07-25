@@ -6,6 +6,7 @@ export type Song = {
   artist: string;
   album: string | null;
   durationS: number | null;
+  explicit: boolean;
   coverUrl: string | null;
   streamUrl: string;
   uploadedBy: string | null;
@@ -37,6 +38,7 @@ export type Me = {
   email: string | null;
   name: string | null;
   avatarUrl: string | null;
+  isAdmin: boolean;
 };
 
 export type SyncedLine = { t: number; text: string };
@@ -72,6 +74,12 @@ export const api = {
 
   uploadSong(form: FormData): Promise<Song> {
     return fetch("/api/songs", { method: "POST", body: form }).then(json<Song>);
+  },
+
+  updateSong(id: string, form: FormData): Promise<Song> {
+    return fetch(`/api/songs/${id}`, { method: "PATCH", body: form }).then(
+      json<Song>,
+    );
   },
 
   deleteSong(id: string): Promise<Response> {
