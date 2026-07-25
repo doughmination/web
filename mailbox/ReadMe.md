@@ -7,3 +7,30 @@ This is a hono project for my emails.
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=plastic&logo=typescript&logoColor=white)
 ![Hono](https://img.shields.io/badge/Hono-E36002?style=plastic&logo=hono&logoColor=white)
 ![Resend](https://img.shields.io/badge/Resend-000000?style=plastic&logo=resend&logoColor=white)
+![Postgres](https://img.shields.io/badge/Postgres-4169E1?style=plastic&logo=postgresql&logoColor=white)
+
+## Storage
+
+State lives in Postgres (emails, attachments, settings, ownership config, and
+push subscriptions). Set `DATABASE_URL` to your connection string, e.g.:
+
+```
+DATABASE_URL=postgres://user:pass@host:5432/mailbox
+```
+
+Tables are created automatically on boot (`initDb()` in `lib/db.ts`).
+
+### Migrating from the old JSON storage
+
+Earlier versions stored everything as JSON files on a data volume
+(`emails.json`, `settings.json`, `owners.json`, `subscriptions.json`) plus loose
+attachment files. To import that data into Postgres, run the one-time migration
+against the old data directory before switching over:
+
+```
+DATABASE_URL=postgres://user:pass@host:5432/mailbox DATA_DIR=./data \
+  bun run migrate
+```
+
+It's safe to re-run: existing email rows are left untouched, while settings and
+ownership are re-imported from the files.

@@ -5,7 +5,9 @@
   "private": true,
   "scripts": {
     "dev": "bun --hot server.ts",
-    "start": "bun run server.ts"
+    "start": "bun run server.ts",
+    "migrate": "bun run scripts/migrate-json-to-pg.ts",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/bun": "^1.3.14",

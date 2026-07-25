@@ -48,7 +48,9 @@ import {
   dashboardState,
   assignAddress,
   unassignAddress,
+  initOwners,
 } from "./lib/owners";
+import { initDb } from "./lib/db";
 import { bareAddress } from "./lib/settings";
 import {
   pushConfigured,
@@ -829,6 +831,11 @@ app.post("/api/push/test", async (c) => {
   });
   return c.json(result);
 });
+
+// Create tables if needed and hydrate the ownership cache from Postgres before
+// we start serving, so the first request already has schema and config ready.
+await initDb();
+await initOwners();
 
 // Fail fast if PocketID isn't reachable / configured, rather than only at login.
 await initOidc();

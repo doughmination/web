@@ -1,12 +1,8 @@
-import { mkdir } from "node:fs/promises";
-import path from "node:path";
-
-const DATA_DIR = process.env.DATA_DIR ?? "./data";
-const SETTINGS_FILE = path.join(DATA_DIR, "settings.json");
+import { sql, asJson } from "./db";
 
 // User-managed configuration. Right now that's just the list of addresses the
-// account is allowed to send as, plus which one is the default. It lives next
-// to emails.json so it rides along on the same persistent volume.
+// account is allowed to send as, plus which one is the default. It used to live
+// in settings.json next to the mail; it's now a single row in Postgres.
 export type Settings = {
   // "Name <addr@domain>" or bare "addr@domain"
   fromAddresses: string[];
@@ -35,15 +31,6 @@ export function parseAddressList(raw: string | undefined | null): string[] {
     .filter(Boolean);
 }
 
-// Same single-writer lock discipline as the email store, so two concurrent
-// settings writes can't interleave read-modify-write cycles.
-let queue: Promise<unknown> = Promise.resolve();
-function withLock<T>(fn: () => Promise<T>): Promise<T> {
-  const result = queue.then(fn, fn);
-  queue = result.catch(() => { });
-  return result;
-}
-
 function dedupe(list: string[]): string[] {
   const seen = new Set<string>();
   const out: string[] = [];
@@ -62,7 +49,7 @@ function seedFromEnv(): Settings {
   const seeded = dedupe(parseAddressList(process.env.SEND_FROM));
   return {
     fromAddresses: seeded,
-    defaultFrom: seeded[0] ?? null
+    defaultFrom: seeded[0] ?? null,
   };
 }
 
@@ -82,77 +69,90 @@ function normalize(raw: unknown): Settings {
 
   return {
     fromAddresses,
-    defaultFrom
+    defaultFrom,
   };
 }
 
-async function ensureFile(): Promise<void> {
-  await mkdir(DATA_DIR, { recursive: true });
-  const file = Bun.file(SETTINGS_FILE);
-  if (!(await file.exists())) {
-    await Bun.write(SETTINGS_FILE, JSON.stringify(seedFromEnv(), null, 2));
-  }
+// Guarantees the single settings row exists, seeding it from the env on first
+// creation. Runs on the given connection so mutations can lock the fresh row.
+async function ensureRow(conn: typeof sql): Promise<void> {
+  const seed = seedFromEnv();
+  await conn`
+    INSERT INTO settings (id, from_addresses, default_from)
+    VALUES (1, ${JSON.stringify(seed.fromAddresses)}::jsonb, ${seed.defaultFrom})
+    ON CONFLICT (id) DO NOTHING
+  `;
 }
 
-async function read(): Promise<Settings> {
-  await ensureFile();
-  try {
-    return normalize(JSON.parse(await Bun.file(SETTINGS_FILE).text()));
-  } catch {
-    return seedFromEnv();
-  }
+type SettingsRow = { from_addresses: unknown; default_from: string | null };
+
+function rowToSettings(row: SettingsRow | undefined): Settings {
+  if (!row) return seedFromEnv();
+  return normalize({
+    fromAddresses: asJson<string[]>(row.from_addresses, []),
+    defaultFrom: row.default_from,
+  });
 }
 
-async function write(s: Settings): Promise<void> {
-  await Bun.write(SETTINGS_FILE, JSON.stringify(s, null, 2));
+export async function getSettings(): Promise<Settings> {
+  await ensureRow(sql);
+  const rows = (await sql`SELECT from_addresses, default_from FROM settings WHERE id = 1`) as SettingsRow[];
+  return rowToSettings(rows[0]);
 }
 
-export function getSettings(): Promise<Settings> {
-  return withLock(read);
+// Read-modify-write under a row lock so two concurrent settings edits can't
+// clobber each other (the old file store used an in-process queue for this).
+async function mutate(fn: (s: Settings) => void): Promise<Settings> {
+  return sql.begin(async (tx) => {
+    await ensureRow(tx);
+    const rows = (await tx`
+      SELECT from_addresses, default_from FROM settings WHERE id = 1 FOR UPDATE
+    `) as SettingsRow[];
+    const s = rowToSettings(rows[0]);
+    fn(s);
+    await tx`
+      UPDATE settings
+      SET from_addresses = ${JSON.stringify(s.fromAddresses)}::jsonb,
+          default_from   = ${s.defaultFrom}
+      WHERE id = 1
+    `;
+    return s;
+  });
 }
 
 export function addFromAddress(address: string): Promise<Settings> {
-  return withLock(async () => {
-    const clean = address.trim();
-    if (!isValidAddress(clean)) throw new Error("Invalid email address");
-    const s = await read();
+  const clean = address.trim();
+  if (!isValidAddress(clean)) return Promise.reject(new Error("Invalid email address"));
+  return mutate((s) => {
     if (!s.fromAddresses.some((a) => bareAddress(a) === bareAddress(clean))) {
       s.fromAddresses.push(clean);
     }
     if (!s.defaultFrom) s.defaultFrom = s.fromAddresses[0] ?? null;
-    await write(s);
-    return s;
   });
 }
 
 export function removeFromAddress(address: string): Promise<Settings> {
-  return withLock(async () => {
-    const s = await read();
-    const key = bareAddress(address);
+  const key = bareAddress(address);
+  return mutate((s) => {
     s.fromAddresses = s.fromAddresses.filter((a) => bareAddress(a) !== key);
     if (s.defaultFrom && bareAddress(s.defaultFrom) === key) {
       s.defaultFrom = s.fromAddresses[0] ?? null;
     }
-    await write(s);
-    return s;
   });
 }
 
 export function setDefaultFrom(address: string): Promise<Settings> {
-  return withLock(async () => {
-    const s = await read();
+  return mutate((s) => {
     const match = s.fromAddresses.find((a) => bareAddress(a) === bareAddress(address));
     if (!match) throw new Error("Address is not in the list");
     s.defaultFrom = match;
-    await write(s);
-    return s;
   });
 }
 
 // The address a message should actually be sent from: honour the caller's
 // choice if it's allowlisted, else fall back to the default, else the env seed.
 export async function resolveFrom(requested?: string | null): Promise<string> {
-  const s = await read();
+  const s = await getSettings();
   if (requested) {
     const match = s.fromAddresses.find((a) => bareAddress(a) === bareAddress(requested));
     if (match) return match;
@@ -165,7 +165,7 @@ export async function resolveFrom(requested?: string | null): Promise<string> {
 // Every bare address that counts as "us", so threading can pick out the other
 // party in a conversation regardless of which of our addresses was involved.
 export async function getMyAddresses(): Promise<string[]> {
-  const s = await read();
+  const s = await getSettings();
   const set = new Set<string>();
   for (const a of [...s.fromAddresses, ...parseAddressList(process.env.SEND_FROM)]) {
     const bare = bareAddress(a);

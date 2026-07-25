@@ -6,55 +6,32 @@
  * (admin@, ctf@, …) for a user from the dashboard. Admins see everything; mail
  * to an unreserved address falls to the catch-all owner so nothing is lost.
  *
- * State lives in a writable file on the data volume (owners.json), seeded once
- * from the copy committed in the repo, so dashboard edits persist across
- * restarts without a redeploy.
+ * State now lives in a single Postgres row (owners_config), seeded once from
+ * the copy committed in the repo (owners.json). It's cached in memory so all
+ * the query helpers can stay synchronous the way callers expect; mutations
+ * update the cache immediately and persist to Postgres in the background.
  */
 
 import path from "node:path";
-import {
-  readFileSync,
-  existsSync,
-  mkdirSync,
-  writeFileSync,
-} from "node:fs";
+import { readFileSync } from "node:fs";
+import { sql, asJson } from "./db";
 import { bareAddress } from "./settings";
 
-const DATA_DIR   = process.env.DATA_DIR ?? "./data";
-const STORE_FILE = path.join(DATA_DIR, "owners.json");
-const SEED_FILE  = path.join(import.meta.dir, "..", "owners.json");
+const SEED_FILE = path.join(import.meta.dir, "..", "owners.json");
 
 interface OwnersConfig {
-  domain:   string;
-  admins:   string[];
+  domain: string;
+  admins: string[];
   catchAll: string;
   // Extra addresses reserved per user, *beyond* their automatic username@domain.
-  owners:   Record<string, string[]>;
+  owners: Record<string, string[]>;
 }
 
 // --------------------
 // Load / persist
 // --------------------
 
-function loadRaw(): OwnersConfig {
-  try {
-    if (existsSync(STORE_FILE)) {
-      return JSON.parse(readFileSync(STORE_FILE, "utf8")) as OwnersConfig;
-    }
-  } catch (err) {
-    console.error("owners.json (data) unreadable, reseeding:", err);
-  }
-  const seed = JSON.parse(readFileSync(SEED_FILE, "utf8")) as OwnersConfig;
-  try {
-    mkdirSync(DATA_DIR, { recursive: true });
-    writeFileSync(STORE_FILE, JSON.stringify(seed, null, 2));
-  } catch (err) {
-    console.error("Could not seed owners.json into data dir:", err);
-  }
-  return seed;
-}
-
-function normalize(raw: OwnersConfig): OwnersConfig {
+function normalize(raw: Partial<OwnersConfig>): OwnersConfig {
   const domain = (raw.domain || "").toLowerCase();
   const owners: Record<string, string[]> = {};
   for (const [user, entries] of Object.entries(raw.owners || {})) {
@@ -64,21 +41,84 @@ function normalize(raw: OwnersConfig): OwnersConfig {
   }
   return {
     domain,
-    admins:   (raw.admins || []).map((a) => a.toLowerCase()),
+    admins: (raw.admins || []).map((a) => a.toLowerCase()),
     catchAll: (raw.catchAll || "").toLowerCase(),
     owners,
   };
 }
 
+// The repo-committed defaults, used to seed the DB row the first time and as a
+// last-resort fallback if the cache is read before init/DB is reachable.
+function loadSeed(): OwnersConfig {
+  try {
+    return normalize(JSON.parse(readFileSync(SEED_FILE, "utf8")) as OwnersConfig);
+  } catch (err) {
+    console.error("owners.json seed unreadable:", err);
+    return normalize({});
+  }
+}
+
 let cfg: OwnersConfig | null = null;
 
 function state(): OwnersConfig {
-  if (!cfg) cfg = normalize(loadRaw());
+  // Synchronous fallback so the query helpers work even if they're somehow
+  // called before initOwners(); initOwners() replaces this with the DB row.
+  if (!cfg) cfg = loadSeed();
   return cfg;
 }
 
+// Persist the current cache to Postgres. Fire-and-forget through a queue so
+// concurrent admin edits serialize and a failure just logs rather than throws
+// out of the synchronous mutators.
+let persistQueue: Promise<unknown> = Promise.resolve();
+function persist(): void {
+  persistQueue = persistQueue
+    .then(async () => {
+      const s = state();
+      await sql`
+        INSERT INTO owners_config (id, domain, admins, catch_all, owners)
+        VALUES (
+          1, ${s.domain}, ${JSON.stringify(s.admins)}::jsonb,
+          ${s.catchAll}, ${JSON.stringify(s.owners)}::jsonb
+        )
+        ON CONFLICT (id) DO UPDATE SET
+          domain    = EXCLUDED.domain,
+          admins    = EXCLUDED.admins,
+          catch_all = EXCLUDED.catch_all,
+          owners    = EXCLUDED.owners
+      `;
+    })
+    .catch((err) => console.error("Failed to persist owners config:", err));
+}
+
 function save(): void {
-  writeFileSync(STORE_FILE, JSON.stringify(state(), null, 2));
+  persist();
+}
+
+// Hydrate the cache from Postgres at startup, seeding the row from owners.json
+// on first run. Call this once before the server starts handling requests.
+export async function initOwners(): Promise<void> {
+  const seed = loadSeed();
+  await sql`
+    INSERT INTO owners_config (id, domain, admins, catch_all, owners)
+    VALUES (
+      1, ${seed.domain}, ${JSON.stringify(seed.admins)}::jsonb,
+      ${seed.catchAll}, ${JSON.stringify(seed.owners)}::jsonb
+    )
+    ON CONFLICT (id) DO NOTHING
+  `;
+  const rows = (await sql`
+    SELECT domain, admins, catch_all, owners FROM owners_config WHERE id = 1
+  `) as Array<{ domain: string; admins: unknown; catch_all: string; owners: unknown }>;
+  const row = rows[0];
+  if (row) {
+    cfg = normalize({
+      domain: row.domain,
+      admins: asJson<string[]>(row.admins, []),
+      catchAll: row.catch_all,
+      owners: asJson<Record<string, string[]>>(row.owners, {}),
+    });
+  }
 }
 
 // --------------------
@@ -228,26 +268,26 @@ export function unassignAddress(username: string, address: string): OwnersState 
 }
 
 export interface OwnersUser {
-  username:  string;
-  isAdmin:   boolean;
-  auto:      string;
-  reserved:  string[];
+  username: string;
+  isAdmin: boolean;
+  auto: string;
+  reserved: string[];
   addresses: string[];
 }
 export interface OwnersState {
-  domain:   string;
+  domain: string;
   catchAll: string;
-  users:    OwnersUser[];
+  users: OwnersUser[];
 }
 
 /** Everything the dashboard needs to render the ownership table. */
 export function dashboardState(): OwnersState {
   const s = state();
   const users = knownUsers().map((u) => ({
-    username:  u,
-    isAdmin:   s.admins.includes(u),
-    auto:      autoAddress(u),
-    reserved:  (s.owners[u] ?? []).map(expand),
+    username: u,
+    isAdmin: s.admins.includes(u),
+    auto: autoAddress(u),
+    reserved: (s.owners[u] ?? []).map(expand),
     addresses: addressesFor(u),
   }));
   return { domain: s.domain, catchAll: s.catchAll, users };

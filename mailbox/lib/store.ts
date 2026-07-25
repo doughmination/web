@@ -1,9 +1,4 @@
-import { mkdir } from "node:fs/promises";
-import path from "node:path";
-import { ownerOf } from "./owners";
-
-const DATA_DIR = process.env.DATA_DIR ?? "./data";
-const DATA_FILE = path.join(DATA_DIR, "emails.json");
+import { sql, asJson } from "./db";
 
 export type StoredAttachment = {
   // used to fetch the raw bytes back via lib/attachments
@@ -63,194 +58,274 @@ export function folderOf(email: Pick<StoredEmail, "direction" | "status">): Fold
   return email.direction === "inbound" ? "inbox" : "sent";
 }
 
-// Bun is single-threaded, but two concurrent webhook deliveries could still
-// interleave their read-modify-write cycles. This chains every write onto
-// the same promise so they run one at a time, in order.
-let queue: Promise<unknown> = Promise.resolve();
-function withLock<T>(fn: () => Promise<T>): Promise<T> {
-  const result = queue.then(fn, fn);
-  queue = result.catch(() => { });
-  return result;
-}
+// The attachment metadata for an email, aggregated as jsonb so a single query
+// hands back a whole email plus its files. Bytes are deliberately excluded.
+// A fresh fragment per call avoids reusing one Query object across statements.
+const attachmentsJson = () => sql`
+  COALESCE((
+    SELECT jsonb_agg(jsonb_build_object(
+      'id',          a.id,
+      'filename',    a.filename,
+      'contentType', a.content_type,
+      'size',        a.size,
+      'contentId',   a.content_id
+    ) ORDER BY a.seq)
+    FROM attachments a
+    WHERE a.email_id = e.id
+  ), '[]'::jsonb)
+`;
 
-async function ensureFile() {
-  await mkdir(DATA_DIR, { recursive: true });
-  const file = Bun.file(DATA_FILE);
-  if (!(await file.exists())) {
-    await Bun.write(DATA_FILE, "[]");
-  }
-}
+type EmailRow = {
+  id: string;
+  from_addr: string;
+  to_addrs: unknown;
+  subject: string;
+  html: string | null;
+  body_text: string | null;
+  received_at: string;
+  direction: string;
+  status: string;
+  message_id: string | null;
+  in_reply_to: string | null;
+  refs: string | null;
+  thread_key: string;
+  owner: string;
+  attachments: unknown;
+};
 
-// Older records predate the drafts/attachments rework, so backfill sane
-// defaults instead of forcing a migration script.
-function normalize(raw: any): StoredEmail {
-  const base = {
-    ...raw,
-    attachments: Array.isArray(raw.attachments) ? raw.attachments : [],
-    status: raw.status === "draft" ? "draft" : "sent",
+function rowToEmail(row: EmailRow): StoredEmail {
+  return {
+    id: row.id,
+    from: row.from_addr,
+    to: asJson<string[]>(row.to_addrs, []),
+    subject: row.subject,
+    html: row.html ?? null,
+    text: row.body_text ?? null,
+    receivedAt: row.received_at,
+    attachments: asJson<StoredAttachment[]>(row.attachments, []),
+    direction: row.direction === "inbound" ? "inbound" : "outbound",
+    status: row.status === "draft" ? "draft" : "sent",
+    messageId: row.message_id ?? null,
+    inReplyTo: row.in_reply_to ?? null,
+    references: row.refs ?? null,
+    threadKey: row.thread_key,
+    owner: row.owner,
   };
-  // Records written before ownership existed get an owner derived from the
-  // address involved: recipient for inbound, our send-from for outbound.
-  // ownerOf() always resolves (falls back to the catch-all owner).
-  if (!base.owner) {
-    base.owner = base.direction === "inbound"
-      ? ownerOf(Array.isArray(base.to) ? base.to[0] ?? "" : "")
-      : ownerOf(base.from ?? "");
-  }
-  return base;
 }
 
-async function readAll(): Promise<StoredEmail[]> {
-  await ensureFile();
-  const text = await Bun.file(DATA_FILE).text();
-  try {
-    const parsed = JSON.parse(text);
-    return Array.isArray(parsed) ? parsed.map(normalize) : [];
-  } catch {
-    return [];
+// Point a set of already-persisted attachment rows at their email. Called after
+// the email row exists (attachments are uploaded/persisted beforehand with a
+// NULL email_id). Runs on the given connection so it can join a transaction.
+async function linkAttachments(conn: typeof sql, emailId: string, attachments: StoredAttachment[]) {
+  for (const att of attachments) {
+    if (!att.id) continue;
+    await conn`UPDATE attachments SET email_id = ${emailId} WHERE id = ${att.id}`;
   }
 }
 
-async function writeAll(emails: StoredEmail[]) {
-  await Bun.write(DATA_FILE, JSON.stringify(emails, null, 2));
-}
-
-export function addEmail(email: StoredEmail) {
-  return withLock(async () => {
-    const emails = await readAll();
-    // newest first
-    emails.unshift(email);
-    await writeAll(emails);
-    return email;
+export async function addEmail(email: StoredEmail): Promise<StoredEmail> {
+  await sql.begin(async (tx) => {
+    await tx`
+      INSERT INTO emails (
+        id, from_addr, to_addrs, subject, html, body_text, received_at,
+        direction, status, message_id, in_reply_to, refs, thread_key, owner
+      ) VALUES (
+        ${email.id}, ${email.from}, ${JSON.stringify(email.to ?? [])}::jsonb,
+        ${email.subject ?? ""}, ${email.html}, ${email.text}, ${email.receivedAt},
+        ${email.direction}, ${email.status}, ${email.messageId}, ${email.inReplyTo},
+        ${email.references}, ${email.threadKey}, ${email.owner ?? ""}
+      )
+      ON CONFLICT (id) DO NOTHING
+    `;
+    await linkAttachments(tx, email.id, email.attachments ?? []);
   });
+  return email;
 }
 
 // `owner` scopes the list to one user's mail; omit it (admins) to see all.
-export function listEmails(folder?: Folder, owner?: string) {
-  return withLock(async () => {
-    const emails = await readAll();
-    const key = owner?.toLowerCase();
-    const filtered = emails.filter(
-      (e) =>
-        (!folder || folderOf(e) === folder) &&
-        (!key || (e.owner || "").toLowerCase() === key),
-    );
-    // Don't ship full HTML bodies to the list view
-    return filtered.map(({ html, text, ...meta }) => meta);
+export async function listEmails(folder?: Folder, owner?: string) {
+  const key = owner?.toLowerCase() ?? null;
+
+  // Map a logical folder to its (status, direction) predicate.
+  const rows = (await sql`
+    SELECT
+      e.id, e.from_addr, e.to_addrs, e.subject, e.received_at, e.direction,
+      e.status, e.message_id, e.in_reply_to, e.refs, e.thread_key, e.owner,
+      ${attachmentsJson()} AS attachments
+    FROM emails e
+    WHERE
+      (${folder ?? null}::text IS NULL OR (
+        (${folder ?? null}::text = 'drafts' AND e.status = 'draft') OR
+        (${folder ?? null}::text = 'inbox'  AND e.status <> 'draft' AND e.direction = 'inbound') OR
+        (${folder ?? null}::text = 'sent'   AND e.status <> 'draft' AND e.direction = 'outbound')
+      ))
+      AND (${key}::text IS NULL OR LOWER(e.owner) = ${key})
+    ORDER BY e.seq DESC
+  `) as EmailRow[];
+
+  // Don't ship full HTML bodies to the list view (they aren't even selected).
+  return rows.map((row) => {
+    const { html, text, ...meta } = rowToEmail({ ...row, html: null, body_text: null });
+    return meta;
   });
 }
 
-export function getEmail(id: string) {
-  return withLock(async () => {
-    const emails = await readAll();
-    return emails.find((e) => e.id === id) ?? null;
-  });
+export async function getEmail(id: string): Promise<StoredEmail | null> {
+  const rows = (await sql`
+    SELECT
+      e.id, e.from_addr, e.to_addrs, e.subject, e.html, e.body_text, e.received_at,
+      e.direction, e.status, e.message_id, e.in_reply_to, e.refs, e.thread_key, e.owner,
+      ${attachmentsJson()} AS attachments
+    FROM emails e
+    WHERE e.id = ${id}
+    LIMIT 1
+  `) as EmailRow[];
+  return rows[0] ? rowToEmail(rows[0]) : null;
 }
 
-export function findByMessageId(messageId: string) {
-  return withLock(async () => {
-    const emails = await readAll();
-    return emails.find((e) => e.messageId === messageId) ?? null;
-  });
+export async function findByMessageId(messageId: string): Promise<StoredEmail | null> {
+  const rows = (await sql`
+    SELECT
+      e.id, e.from_addr, e.to_addrs, e.subject, e.html, e.body_text, e.received_at,
+      e.direction, e.status, e.message_id, e.in_reply_to, e.refs, e.thread_key, e.owner,
+      ${attachmentsJson()} AS attachments
+    FROM emails e
+    WHERE e.message_id = ${messageId}
+    LIMIT 1
+  `) as EmailRow[];
+  return rows[0] ? rowToEmail(rows[0]) : null;
 }
 
-export function listByThreadKey(threadKey: string, owner?: string) {
-  return withLock(async () => {
-    const emails = await readAll();
-    const key = owner?.toLowerCase();
-    return emails
-      .filter(
-        (e) =>
-          e.threadKey === threadKey &&
-          (!key || (e.owner || "").toLowerCase() === key),
-      )
-      .sort((a, b) => a.receivedAt.localeCompare(b.receivedAt));
-  });
+export async function listByThreadKey(threadKey: string, owner?: string): Promise<StoredEmail[]> {
+  const key = owner?.toLowerCase() ?? null;
+  const rows = (await sql`
+    SELECT
+      e.id, e.from_addr, e.to_addrs, e.subject, e.html, e.body_text, e.received_at,
+      e.direction, e.status, e.message_id, e.in_reply_to, e.refs, e.thread_key, e.owner,
+      ${attachmentsJson()} AS attachments
+    FROM emails e
+    WHERE e.thread_key = ${threadKey}
+      AND (${key}::text IS NULL OR LOWER(e.owner) = ${key})
+    ORDER BY e.received_at ASC
+  `) as EmailRow[];
+  return rows.map(rowToEmail);
 }
 
 // --- Drafts ---
 // Drafts are ordinary StoredEmail rows with status "draft" and
 // direction "outbound"; they're excluded from threads until sent.
 
-export function createDraft(input: DraftInput) {
-  return withLock(async () => {
-    const emails = await readAll();
-    const draft: StoredEmail = {
-      id: crypto.randomUUID(),
-      from: input.from ?? "",
+export async function createDraft(input: DraftInput): Promise<StoredEmail> {
+  const draft: StoredEmail = {
+    id: crypto.randomUUID(),
+    from: input.from ?? "",
+    to: input.to,
+    subject: input.subject,
+    html: input.html,
+    text: null,
+    receivedAt: new Date().toISOString(),
+    attachments: input.attachments,
+    direction: "outbound",
+    status: "draft",
+    messageId: null,
+    inReplyTo: input.inReplyTo ?? null,
+    references: input.references ?? null,
+    threadKey: input.threadKey ?? `draft::${crypto.randomUUID()}`,
+    owner: input.owner,
+  };
+  await addEmail(draft);
+  return draft;
+}
+
+export async function updateDraft(id: string, input: DraftInput): Promise<StoredEmail | null> {
+  return sql.begin(async (tx) => {
+    const existing = (await tx`
+      SELECT id, from_addr, thread_key, owner, in_reply_to, refs
+      FROM emails WHERE id = ${id} AND status = 'draft' LIMIT 1
+    `) as Array<{
+      from_addr: string;
+      thread_key: string;
+      owner: string;
+      in_reply_to: string | null;
+      refs: string | null;
+    }>;
+    const prev = existing[0];
+    if (!prev) return null;
+
+    const from = input.from ?? prev.from_addr;
+    const receivedAt = new Date().toISOString();
+    await tx`
+      UPDATE emails SET
+        to_addrs    = ${JSON.stringify(input.to ?? [])}::jsonb,
+        subject     = ${input.subject},
+        html        = ${input.html},
+        from_addr   = ${from},
+        received_at = ${receivedAt}
+      WHERE id = ${id}
+    `;
+
+    // Reconcile attachments: drop rows that were on the draft but aren't in the
+    // new set (freeing their bytes), then link whatever's in the new set.
+    const current = (await tx`SELECT id FROM attachments WHERE email_id = ${id}`) as Array<{
+      id: string;
+    }>;
+    const keep = new Set(input.attachments.map((a) => a.id).filter(Boolean));
+    for (const row of current) {
+      if (!keep.has(row.id)) {
+        await tx`DELETE FROM attachments WHERE id = ${row.id}`;
+      }
+    }
+    await linkAttachments(tx, id, input.attachments);
+
+    return {
+      id,
+      from,
       to: input.to,
       subject: input.subject,
       html: input.html,
       text: null,
-      receivedAt: new Date().toISOString(),
+      receivedAt,
       attachments: input.attachments,
       direction: "outbound",
       status: "draft",
       messageId: null,
-      inReplyTo: input.inReplyTo ?? null,
-      references: input.references ?? null,
-      threadKey: input.threadKey ?? `draft::${crypto.randomUUID()}`,
-      owner: input.owner,
-    };
-    emails.unshift(draft);
-    await writeAll(emails);
-    return draft;
+      inReplyTo: prev.in_reply_to ?? null,
+      references: prev.refs ?? null,
+      threadKey: prev.thread_key,
+      owner: prev.owner,
+    } satisfies StoredEmail;
   });
 }
 
-export function updateDraft(id: string, input: DraftInput) {
-  return withLock(async () => {
-    const emails = await readAll();
-    const idx = emails.findIndex((e) => e.id === id && e.status === "draft");
-    if (idx === -1) return null;
-    const existing = emails[idx]!;
-    const updated: StoredEmail = {
-      ...existing,
-      to: input.to,
-      subject: input.subject,
-      html: input.html,
-      attachments: input.attachments,
-      from: input.from ?? existing.from,
-      receivedAt: new Date().toISOString(),
-    };
-    emails[idx] = updated;
-    await writeAll(emails);
-    return updated;
-  });
-}
-
-export function deleteDraft(id: string) {
-  return withLock(async () => {
-    const emails = await readAll();
-    const idx = emails.findIndex((e) => e.id === id && e.status === "draft");
-    if (idx === -1) return false;
-    emails.splice(idx, 1);
-    await writeAll(emails);
-    return true;
-  });
+export async function deleteDraft(id: string): Promise<boolean> {
+  const rows = (await sql`
+    DELETE FROM emails WHERE id = ${id} AND status = 'draft' RETURNING id
+  `) as Array<{ id: string }>;
+  return rows.length > 0;
 }
 
 // --- General deletion ---
 // Unlike deleteDraft, these remove any row regardless of status and hand the
-// removed record(s) back so the caller can clean up attachment files on disk.
+// removed record(s) back so the caller can clean up (attachment rows cascade
+// away automatically via the FK, but the caller still gets the metadata).
 
-export function deleteEmail(id: string) {
-  return withLock(async () => {
-    const emails = await readAll();
-    const idx = emails.findIndex((e) => e.id === id);
-    if (idx === -1) return null;
-    const [removed] = emails.splice(idx, 1);
-    await writeAll(emails);
-    return removed ?? null;
-  });
+export async function deleteEmail(id: string): Promise<StoredEmail | null> {
+  const email = await getEmail(id);
+  if (!email) return null;
+  await sql`DELETE FROM emails WHERE id = ${id}`;
+  return email;
 }
 
-export function deleteByThreadKey(threadKey: string) {
-  return withLock(async () => {
-    const emails = await readAll();
-    const removed = emails.filter((e) => e.threadKey === threadKey);
-    if (removed.length === 0) return [];
-    await writeAll(emails.filter((e) => e.threadKey !== threadKey));
-    return removed;
-  });
+export async function deleteByThreadKey(threadKey: string): Promise<StoredEmail[]> {
+  const rows = (await sql`
+    SELECT
+      e.id, e.from_addr, e.to_addrs, e.subject, e.html, e.body_text, e.received_at,
+      e.direction, e.status, e.message_id, e.in_reply_to, e.refs, e.thread_key, e.owner,
+      ${attachmentsJson()} AS attachments
+    FROM emails e
+    WHERE e.thread_key = ${threadKey}
+  `) as EmailRow[];
+  if (rows.length === 0) return [];
+  await sql`DELETE FROM emails WHERE thread_key = ${threadKey}`;
+  return rows.map(rowToEmail);
 }

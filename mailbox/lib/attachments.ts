@@ -1,38 +1,51 @@
-import { mkdir } from "node:fs/promises";
-import path from "node:path";
+import { sql, asBytes } from "./db";
 import type { StoredAttachment } from "./store";
 
-const DATA_DIR = process.env.DATA_DIR ?? "./data";
-const ATTACHMENTS_DIR = path.join(DATA_DIR, "attachments");
+/*
+ * Attachment bytes now live in Postgres (the `attachments.bytes` bytea column)
+ * rather than as loose files on a data volume. Rows are created up front — when
+ * a person uploads a file while composing, or when an inbound webhook is
+ * processed — with a NULL email_id, then linked to their email once it's saved
+ * (see lib/store: addEmail / createDraft / updateDraft).
+ */
 
-async function ensureDir() {
-  await mkdir(ATTACHMENTS_DIR, { recursive: true });
-}
-
-function filePath(attachmentId: string): string {
-  return path.join(ATTACHMENTS_DIR, attachmentId);
-}
-
-// Saves base64-encoded content to disk and returns the metadata that gets
-// stored on the email record. Used both for files a person attaches when
-// composing and for attachments pulled off an inbound webhook payload.
+// Saves raw content and returns the metadata that gets stored on the email
+// record. Used both for files a person attaches when composing and for
+// attachments pulled off an inbound webhook payload.
 export async function saveAttachment(
   filename: string,
   contentType: string,
   base64Content: string,
-  contentId?: string | null
+  contentId?: string | null,
 ): Promise<StoredAttachment> {
-  await ensureDir();
   const id = crypto.randomUUID();
   const bytes = Buffer.from(base64Content, "base64");
-  await Bun.write(filePath(id), bytes);
-  return {
-    id,
-    filename: filename || "attachment",
-    contentType: contentType || "application/octet-stream",
-    size: bytes.length,
-    contentId: normalizeContentId(contentId),
-  };
+  const cid = normalizeContentId(contentId);
+  const name = filename || "attachment";
+  const type = contentType || "application/octet-stream";
+  await sql`
+    INSERT INTO attachments (id, email_id, filename, content_type, size, content_id, bytes)
+    VALUES (${id}, NULL, ${name}, ${type}, ${bytes.length}, ${cid}, ${bytes})
+  `;
+  return { id, filename: name, contentType: type, size: bytes.length, contentId: cid };
+}
+
+// A metadata-only attachment: we know its name/type but the webhook gave us no
+// bytes to store. It still gets a row (so it can be listed on the email) but
+// with a NULL body, so downloads 404 just like before.
+async function saveAttachmentMeta(
+  filename: string,
+  contentType: string,
+  contentId: string | null,
+): Promise<StoredAttachment> {
+  const id = crypto.randomUUID();
+  const name = filename || "attachment";
+  const type = contentType || "application/octet-stream";
+  await sql`
+    INSERT INTO attachments (id, email_id, filename, content_type, size, content_id, bytes)
+    VALUES (${id}, NULL, ${name}, ${type}, 0, ${contentId}, NULL)
+  `;
+  return { id, filename: name, contentType: type, size: 0, contentId };
 }
 
 // A Content-ID header value is conventionally wrapped in angle brackets
@@ -45,28 +58,28 @@ export function normalizeContentId(raw: unknown): string | null {
 }
 
 export async function readAttachment(attachmentId: string): Promise<Uint8Array | null> {
-  const file = Bun.file(filePath(attachmentId));
-  if (!(await file.exists())) return null;
-  return new Uint8Array(await file.arrayBuffer());
+  if (!attachmentId) return null;
+  const rows = await sql`SELECT bytes FROM attachments WHERE id = ${attachmentId}`;
+  const row = rows[0];
+  if (!row) return null;
+  return asBytes(row.bytes);
 }
 
 export async function deleteAttachment(attachmentId: string): Promise<void> {
-  const file = Bun.file(filePath(attachmentId));
-  if (await file.exists()) {
-    await file.delete();
-  }
+  if (!attachmentId) return;
+  await sql`DELETE FROM attachments WHERE id = ${attachmentId}`;
 }
 
 // Round-trips a stored attachment back into the shape Resend's send() API
 // expects (base64 content alongside the filename).
 export async function toResendAttachment(
-  att: StoredAttachment
+  att: StoredAttachment,
 ): Promise<{ filename: string; content: string } | null> {
   const bytes = await readAttachment(att.id);
   if (!bytes) return null;
   return {
     filename: att.filename,
-    content: Buffer.from(bytes).toString("base64")
+    content: Buffer.from(bytes).toString("base64"),
   };
 }
 
@@ -95,21 +108,19 @@ export async function persistInboundAttachments(attachments: unknown): Promise<S
     // the HTML body. Field name varies across Resend API versions.
     const contentId = normalizeContentId(
       (typeof a.contentId === "string" && a.contentId) ||
-      (typeof a.content_id === "string" && a.content_id) ||
-      (typeof a.cid === "string" && a.cid) ||
-      null
+        (typeof a.content_id === "string" && a.content_id) ||
+        (typeof a.cid === "string" && a.cid) ||
+        null,
     );
 
     if (!content) {
-      // No inline bytes available from the webhook — skip persisting to
-      // disk but keep the metadata so the UI can still show the filename.
-      results.push({
-        id: "",
-        filename,
-        contentType,
-        size: 0,
-        contentId
-      });
+      // No inline bytes available from the webhook — keep the metadata so the
+      // UI can still show the filename, but there's nothing to download.
+      try {
+        results.push(await saveAttachmentMeta(filename, contentType, contentId));
+      } catch (err) {
+        console.error("Failed to persist inbound attachment metadata", filename, err);
+      }
       continue;
     }
 
