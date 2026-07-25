@@ -14,16 +14,29 @@ export type Song = {
 export type Playlist = {
   id: string;
   name: string;
+  isPublic: boolean;
 };
 
 export type PlaylistDetail = Playlist & {
+  isOwner: boolean;
+  ownerName: string | null;
+  ownerAvatar: string | null;
   songs: Song[];
+};
+
+export type PublicPlaylist = {
+  id: string;
+  name: string;
+  ownerName: string | null;
+  ownerAvatar: string | null;
+  songCount: number;
 };
 
 export type Me = {
   id: string;
   email: string | null;
   name: string | null;
+  avatarUrl: string | null;
 };
 
 async function json<T>(res: Response): Promise<T> {
@@ -71,6 +84,22 @@ export const api = {
 
   getPlaylist(id: string): Promise<PlaylistDetail> {
     return fetch(`/api/playlists/${id}`).then(json<PlaylistDetail>);
+  },
+
+  searchPublicPlaylists(query?: string): Promise<PublicPlaylist[]> {
+    const qs = query ? `?q=${encodeURIComponent(query)}` : "";
+    return fetch(`/api/playlists/public${qs}`).then(json<PublicPlaylist[]>);
+  },
+
+  updatePlaylist(
+    id: string,
+    patch: { name?: string; isPublic?: boolean },
+  ): Promise<Playlist> {
+    return fetch(`/api/playlists/${id}`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(patch),
+    }).then(json<Playlist>);
   },
 
   deletePlaylist(id: string): Promise<Response> {

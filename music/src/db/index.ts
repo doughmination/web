@@ -15,6 +15,7 @@ export type User = {
   oidc_sub: string;
   email: string | null;
   name: string | null;
+  avatar_url: string | null;
   created_at: Date;
 };
 
@@ -36,5 +37,6 @@ export type Playlist = {
   id: string;
   user_id: string;
   name: string;
+  is_public: boolean;
   created_at: Date;
 };

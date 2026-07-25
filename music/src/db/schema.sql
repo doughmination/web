@@ -7,8 +7,12 @@ CREATE TABLE IF NOT EXISTS users (
   oidc_sub    text UNIQUE NOT NULL,
   email       text,
   name        text,
+  avatar_url  text,
   created_at  timestamptz NOT NULL DEFAULT now()
 );
+
+-- Added after initial release; safe on existing databases.
+ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url text;
 
 CREATE TABLE IF NOT EXISTS songs (
   id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -31,10 +35,15 @@ CREATE TABLE IF NOT EXISTS playlists (
   id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id     uuid NOT NULL REFERENCES users (id) ON DELETE CASCADE,
   name        text NOT NULL,
+  is_public   boolean NOT NULL DEFAULT false,
   created_at  timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE INDEX IF NOT EXISTS playlists_user_idx ON playlists (user_id);
+-- Added after initial release; safe on existing databases.
+ALTER TABLE playlists ADD COLUMN IF NOT EXISTS is_public boolean NOT NULL DEFAULT false;
+
+CREATE INDEX IF NOT EXISTS playlists_user_idx   ON playlists (user_id);
+CREATE INDEX IF NOT EXISTS playlists_public_idx ON playlists (is_public) WHERE is_public;
 
 CREATE TABLE IF NOT EXISTS playlist_songs (
   playlist_id uuid NOT NULL REFERENCES playlists (id) ON DELETE CASCADE,

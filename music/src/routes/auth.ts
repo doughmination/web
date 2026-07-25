@@ -82,14 +82,16 @@ authRoutes.get("/callback", async (c) => {
     return c.json({ error: "oidc_exchange_failed" }, 401);
   }
 
-  // Upsert the user by their PocketID subject.
+  // Upsert the user by their PocketID subject, pulling their profile picture.
   const name = claims.name ?? claims.preferred_username ?? null;
+  const avatar = claims.picture ?? null;
   const rows = await sql<User[]>`
-    INSERT INTO users (oidc_sub, email, name)
-    VALUES (${claims.sub}, ${claims.email ?? null}, ${name})
+    INSERT INTO users (oidc_sub, email, name, avatar_url)
+    VALUES (${claims.sub}, ${claims.email ?? null}, ${name}, ${avatar})
     ON CONFLICT (oidc_sub) DO UPDATE
-      SET email = EXCLUDED.email,
-          name  = EXCLUDED.name
+      SET email      = EXCLUDED.email,
+          name       = EXCLUDED.name,
+          avatar_url = EXCLUDED.avatar_url
     RETURNING *
   `;
   const user = rows[0]!;

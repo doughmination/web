@@ -84,6 +84,7 @@ export type IdClaims = {
   email?: string;
   name?: string;
   preferred_username?: string;
+  picture?: string;
   nonce?: string;
 };
 
