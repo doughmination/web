@@ -46,9 +46,11 @@ songRoutes.get("/:id", requireAuth, async (c) => {
 });
 
 // Upload. title + artist required; cover + rest optional; tags auto-read.
+// Admins skip the rate limit so they can bulk-import a library.
+const uploadLimit = rateLimit({ name: "upload", limit: 60, windowSec: 60 });
 songRoutes.post(
   "/",
-  rateLimit({ name: "upload", limit: 30, windowSec: 60 }),
+  (c, next) => (isAdmin(c.get("user")) ? next() : uploadLimit(c, next)),
   requireAuth,
   async (c) => {
   await ensureMediaDirs();
@@ -73,7 +75,10 @@ songRoutes.post(
     return c.json({ error: "title_and_artist_required" }, 400);
   }
 
-  const album = str(form.get("album")) ?? tags.album;
+  // If the album field is present (even empty) honour it; empty => no album.
+  // Only fall back to the file's embedded album tag when the field is absent.
+  const albumField = form.get("album");
+  const album = albumField !== null ? str(albumField) : tags.album;
   const explicit = str(form.get("explicit")) === "true";
   const filePath = await saveAudio(bytes, file.name);
 

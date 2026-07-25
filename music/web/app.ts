@@ -312,42 +312,13 @@ function openUploadModal(): void {
         <h2>Upload</h2>
         <button class="icon-btn" id="modal-close" title="Close"><i class="bi bi-x-lg"></i></button>
       </div>
-      <form id="upload" class="upload-card">
-        <div class="dropzone" id="dropzone" tabindex="0" role="button"
-             aria-label="Add audio file">
-          <i class="bi bi-cloud-arrow-up dz-icon"></i>
-          <span class="dz-text">Drag an audio file here, or <span class="dz-link">browse</span></span>
-          <span class="dz-file" id="dz-file"></span>
-          <input type="file" name="file" accept="audio/*" hidden />
-        </div>
-        <label class="field">
-          <span>Song name <em>(required)</em></span>
-          <input name="title" placeholder="e.g. Everlong" required />
-        </label>
-        <label class="field">
-          <span>Artist <em>(required)</em></span>
-          <input name="artist" placeholder="e.g. Foo Fighters" required />
-        </label>
-        <label class="field">
-          <span>Album <em>(optional)</em></span>
-          <input name="album" placeholder="optional" />
-        </label>
-        <label class="check-row">
-          <input type="checkbox" name="explicit" value="true" />
-          <span>Explicit content</span>
-        </label>
-        <div class="field">
-          <span>Cover image <em>(optional)</em></span>
-          <label class="file-chip">
-            <i class="bi bi-image"></i>
-            <span id="cover-name">Choose image</span>
-            <input type="file" name="cover" accept="image/*" hidden />
-          </label>
-        </div>
-        <p class="hint">Title, artist and album auto-fill from the file's tags. Tweak anything before uploading.</p>
-        <button class="btn btn-primary" type="submit">Upload</button>
-        <span id="upload-status" class="upload-status"></span>
-      </form>
+      <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Add audio files">
+        <i class="bi bi-cloud-arrow-up dz-icon"></i>
+        <span class="dz-text">Drag audio files here, or <span class="dz-link">browse</span></span>
+        <span class="dz-hint">One song lets you edit details; multiple upload in bulk.</span>
+        <input type="file" accept="audio/*" multiple hidden />
+      </div>
+      <div id="upload-body"></div>
     </div>
   `;
   document.body.appendChild(overlay);
@@ -365,25 +336,15 @@ function openUploadModal(): void {
   });
   overlay.querySelector("#modal-close")?.addEventListener("click", close);
 
-  const form = overlay.querySelector("#upload") as HTMLFormElement;
-  const status = overlay.querySelector("#upload-status");
   const dropzone = overlay.querySelector("#dropzone") as HTMLElement;
-  const fileInput = overlay.querySelector('input[name="file"]') as HTMLInputElement;
-  const dzFile = overlay.querySelector("#dz-file") as HTMLElement;
-  const titleInput = overlay.querySelector('input[name="title"]') as HTMLInputElement;
-  const artistInput = overlay.querySelector('input[name="artist"]') as HTMLInputElement;
-  const albumInput = overlay.querySelector('input[name="album"]') as HTMLInputElement;
-  const coverInput = overlay.querySelector('input[name="cover"]') as HTMLInputElement;
-  const coverName = overlay.querySelector("#cover-name") as HTMLElement;
+  const fileInput = overlay.querySelector('input[type="file"]') as HTMLInputElement;
+  const body = overlay.querySelector("#upload-body") as HTMLElement;
 
-  // Auto-fill the text fields from the picked file's embedded tags.
-  const handleFile = async (file: File) => {
-    dzFile.textContent = file.name;
-    dropzone.classList.add("has-file");
-    const tags = await readTags(file);
-    if (tags.title) titleInput.value = tags.title;
-    if (tags.artist) artistInput.value = tags.artist;
-    if (tags.album) albumInput.value = tags.album;
+  const onFiles = (files: FileList | File[] | null | undefined) => {
+    const list = files ? Array.from(files) : [];
+    if (list.length === 0) return;
+    if (list.length === 1) renderSingle(list[0]!);
+    else renderBatch(list);
   };
 
   dropzone.addEventListener("click", () => fileInput.click());
@@ -393,11 +354,7 @@ function openUploadModal(): void {
       fileInput.click();
     }
   });
-  fileInput.addEventListener("change", () => {
-    const f = fileInput.files?.[0];
-    if (f) void handleFile(f);
-  });
-
+  fileInput.addEventListener("change", () => onFiles(fileInput.files));
   ["dragenter", "dragover"].forEach((ev) =>
     dropzone.addEventListener(ev, (e) => {
       e.preventDefault();
@@ -410,40 +367,151 @@ function openUploadModal(): void {
   dropzone.addEventListener("drop", (e) => {
     e.preventDefault();
     dropzone.classList.remove("drag");
-    const file = (e as DragEvent).dataTransfer?.files?.[0];
-    if (!file) return;
-    const dt = new DataTransfer();
-    dt.items.add(file);
-    fileInput.files = dt.files;
-    void handleFile(file);
+    onFiles((e as DragEvent).dataTransfer?.files);
   });
 
-  coverInput.addEventListener("change", () => {
-    coverName.textContent = coverInput.files?.[0]?.name ?? "Choose image";
-  });
+  // --- single file: prefilled, editable form ---
+  function renderSingle(file: File): void {
+    body.innerHTML = `
+      <form id="upload" class="upload-card">
+        <p class="dz-file">${escapeHtml(file.name)}</p>
+        <label class="field"><span>Song name <em>(required)</em></span>
+          <input name="title" required /></label>
+        <label class="field"><span>Artist <em>(required)</em></span>
+          <input name="artist" required /></label>
+        <label class="field"><span>Album <em>(optional)</em></span>
+          <input name="album" /></label>
+        <label class="check-row"><input type="checkbox" name="explicit" value="true" /> <span>Explicit content</span></label>
+        <div class="field"><span>Cover image <em>(optional)</em></span>
+          <label class="file-chip"><i class="bi bi-image"></i>
+            <span id="cover-name">Choose image</span>
+            <input type="file" name="cover" accept="image/*" hidden /></label>
+        </div>
+        <button class="btn btn-primary" type="submit">Upload</button>
+        <span id="upload-status" class="upload-status"></span>
+      </form>
+    `;
+    const form = body.querySelector("#upload") as HTMLFormElement;
+    const status = body.querySelector("#upload-status");
+    const titleInput = form.querySelector('[name="title"]') as HTMLInputElement;
+    const artistInput = form.querySelector('[name="artist"]') as HTMLInputElement;
+    const albumInput = form.querySelector('[name="album"]') as HTMLInputElement;
+    const coverInput = form.querySelector('[name="cover"]') as HTMLInputElement;
+    const coverName = form.querySelector("#cover-name") as HTMLElement;
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    if (!fileInput.files?.[0]) {
-      if (status) status.textContent = "Choose an audio file first.";
-      return;
-    }
-    const btn = form.querySelector("button")!;
-    btn.textContent = "Uploading...";
-    btn.setAttribute("disabled", "true");
-    if (status) status.textContent = "";
-    try {
-      const song = await api.uploadSong(new FormData(form));
+    void readTags(file).then((tags) => {
+      if (tags.title) titleInput.value = tags.title;
+      if (tags.artist) artistInput.value = tags.artist;
+      if (tags.album) albumInput.value = tags.album;
+    });
+    coverInput.addEventListener("change", () => {
+      coverName.textContent = coverInput.files?.[0]?.name ?? "Choose image";
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      fd.set("file", file);
+      const btn = form.querySelector("button")!;
+      btn.textContent = "Uploading...";
+      btn.setAttribute("disabled", "true");
+      try {
+        const song = await api.uploadSong(fd);
+        await loadSongs();
+        if (state.view.kind === "library") renderMain();
+        close();
+        flash(`Added "${song.title}" by ${song.artist}.`);
+      } catch (err) {
+        if (status) status.textContent = `Upload failed: ${(err as Error).message}`;
+        btn.textContent = "Upload";
+        btn.removeAttribute("disabled");
+      }
+    });
+  }
+
+  // --- many files: resilient sequential bulk upload ---
+  function renderBatch(files: File[]): void {
+    body.innerHTML = `
+      <label class="check-row"><input type="checkbox" id="b-explicit" /> <span>Mark all explicit</span></label>
+      <ul class="batch" id="batch">
+        ${files
+          .map(
+            (f, i) => `<li class="b-row"><span class="b-name">${escapeHtml(f.name)}</span>
+              <span class="b-stat" id="b-${i}">queued</span></li>`,
+          )
+          .join("")}
+      </ul>
+      <button class="btn btn-primary" id="b-start">Upload ${files.length} songs</button>
+      <span id="b-summary" class="upload-status"></span>
+    `;
+    const startBtn = body.querySelector("#b-start") as HTMLButtonElement;
+    const summary = body.querySelector("#b-summary") as HTMLElement;
+
+    startBtn.addEventListener("click", async () => {
+      startBtn.disabled = true;
+      const explicitAll = (body.querySelector("#b-explicit") as HTMLInputElement).checked;
+      let ok = 0;
+      let fail = 0;
+      const failed: string[] = [];
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i]!;
+        const stat = body.querySelector(`#b-${i}`) as HTMLElement;
+        stat.textContent = "uploading…";
+        stat.className = "b-stat";
+
+        const tags = await readTags(file).catch(() => ({}) as Awaited<ReturnType<typeof readTags>>);
+        const fd = new FormData();
+        fd.set("file", file);
+        fd.set("title", tags.title ?? file.name.replace(/\.[^.]+$/, ""));
+        fd.set("artist", tags.artist ?? "Unknown Artist");
+        fd.set("album", ""); // bulk: leave album blank (tags are unreliable)
+        if (explicitAll) fd.set("explicit", "true");
+
+        const success = await uploadWithRetry(fd, 2);
+        if (success) {
+          ok++;
+          stat.textContent = "✓";
+          stat.classList.add("ok");
+        } else {
+          fail++;
+          failed.push(file.name);
+          stat.textContent = "failed";
+          stat.classList.add("err");
+        }
+        summary.textContent = `${ok} uploaded, ${fail} failed, ${files.length - ok - fail} left`;
+        await sleep(120);
+      }
+
       await loadSongs();
       if (state.view.kind === "library") renderMain();
-      close();
-      flash(`Added "${song.title}" by ${song.artist}.`);
-    } catch (err) {
-      if (status) status.textContent = `Upload failed: ${(err as Error).message}`;
-      btn.textContent = "Upload";
-      btn.removeAttribute("disabled");
+      summary.textContent = `Done — ${ok} uploaded${fail ? `, ${fail} failed` : ""}.`;
+      if (failed.length) console.warn("Failed uploads:", failed);
+    });
+  }
+}
+
+// Upload one file, retrying transient NetworkErrors (not HTTP errors).
+async function uploadWithRetry(fd: FormData, retries: number): Promise<boolean> {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch("/api/songs", { method: "POST", body: fd });
+      if (res.ok) return true;
+      if (res.status === 429 && attempt < retries) {
+        await sleep(2000); // rate limited: back off and retry
+        continue;
+      }
+      return false; // other HTTP error (e.g. 400 missing tags) — skip
+    } catch {
+      if (attempt === retries) return false; // network error — give up
+      await sleep(600 * (attempt + 1));
     }
-  });
+  }
+  return false;
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((r) => setTimeout(r, ms));
 }
 
 // Admin-only: fix metadata / apply the explicit tag on any song.

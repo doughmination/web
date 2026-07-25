@@ -611,6 +611,62 @@ button {
   color: var(--text);
 }
 
+.dz-hint {
+  font-size: 0.78rem;
+  color: var(--muted);
+  opacity: 0.8;
+}
+
+#upload-body {
+  margin-top: 1rem;
+}
+
+/* --- bulk upload list --- */
+
+.batch {
+  list-style: none;
+  margin: 0.5rem 0 1rem;
+  padding: 0;
+  max-height: 320px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.b-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.4rem 0.65rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.85rem;
+}
+
+.b-row:last-child {
+  border-bottom: none;
+}
+
+.b-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.b-stat {
+  flex-shrink: 0;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.b-stat.ok {
+  color: #78c88c;
+}
+
+.b-stat.err {
+  color: var(--danger);
+}
+
 .file-chip {
   display: inline-flex;
   align-items: center;
