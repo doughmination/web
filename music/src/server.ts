@@ -42,6 +42,7 @@ app.route("/api/playlists", playlistRoutes);
 // Serve bundled frontend assets (built by `bun build` into ./dist).
 app.use("/app.js", serveStatic({ path: "./dist/app.js" }));
 app.use("/styles.css", serveStatic({ path: "./web/styles.css" }));
+app.use("/favicon.png", serveStatic({ path: "./public/favicon.png" }));
 
 // SPA fallback: any non-API route returns index.html.
 app.get("*", serveStatic({ path: "./web/index.html" }));
