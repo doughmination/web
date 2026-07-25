@@ -28,16 +28,34 @@ export class Player {
   private queue: Song[] = []; // playback order (shuffled or not)
   private index = -1;
   private prefs: Prefs = loadPrefs();
+  // iOS ignores HTMLMediaElement.volume (hardware-controlled). Detect so the
+  // UI can hide the volume slider there.
+  readonly volumeSupported = !isIOS();
 
   onChange: (() => void) | null = null;
+  onError: ((msg: string) => void) | null = null;
 
   constructor() {
     this.audio.volume = this.prefs.volume;
+    // iOS needs these: inline playback + the element attached to the document.
+    this.audio.preload = "metadata";
+    this.audio.setAttribute("playsinline", "");
+    this.audio.setAttribute("webkit-playsinline", "");
+    this.audio.setAttribute("controlsList", "nodownload");
+    if (typeof document !== "undefined") {
+      this.audio.style.display = "none";
+      document.body.appendChild(this.audio);
+    }
+
     this.audio.addEventListener("ended", () => this.onEnded());
     this.audio.addEventListener("timeupdate", () => this.onChange?.());
     this.audio.addEventListener("play", () => this.onChange?.());
     this.audio.addEventListener("pause", () => this.onChange?.());
     this.audio.addEventListener("volumechange", () => this.onChange?.());
+    this.audio.addEventListener("error", () => {
+      const err = this.audio.error;
+      if (err) this.onError?.(`Audio error (code ${err.code})`);
+    });
   }
 
   get current(): Song | null {
@@ -83,7 +101,7 @@ export class Player {
   }
 
   toggle(): void {
-    if (this.audio.paused) void this.audio.play();
+    if (this.audio.paused) this.tryPlay();
     else this.audio.pause();
   }
 
@@ -136,7 +154,7 @@ export class Player {
   private onEnded(): void {
     if (this.prefs.repeat === "one") {
       this.audio.currentTime = 0;
-      void this.audio.play();
+      this.tryPlay();
       return;
     }
     this.next();
@@ -147,8 +165,20 @@ export class Player {
     if (!song) return;
     this.audio.src = song.streamUrl;
     this.audio.volume = this.prefs.volume;
-    void this.audio.play();
+    this.audio.load(); // iOS: explicit load before play
+    this.tryPlay();
     this.onChange?.();
+  }
+
+  // Play and surface any autoplay/permission error (mainly for iOS).
+  private tryPlay(): void {
+    const p = this.audio.play();
+    if (p && typeof p.catch === "function") {
+      p.catch((err: unknown) => {
+        const name = (err as { name?: string })?.name ?? "Error";
+        this.onError?.(`Can't play (${name})`);
+      });
+    }
   }
 
   private save(): void {
@@ -158,6 +188,16 @@ export class Player {
       /* ignore */
     }
   }
+}
+
+function isIOS(): boolean {
+  if (typeof navigator === "undefined") return false;
+  const ua = navigator.userAgent;
+  // iPhone/iPod/iPad, plus iPadOS 13+ which reports as Mac with touch.
+  return (
+    /iP(hone|od|ad)/.test(ua) ||
+    (ua.includes("Macintosh") && "ontouchend" in document)
+  );
 }
 
 function shuffleArray<T>(arr: T[]): T[] {

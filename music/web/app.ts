@@ -31,8 +31,20 @@ const state = {
 
 player.onChange = () => {
   renderPlayerBar();
+  updateLyricsControls();
   syncLyrics();
 };
+player.onError = (msg) => flash(msg);
+
+// Space toggles play/pause anywhere except when typing in a field.
+document.addEventListener("keydown", (e) => {
+  if (e.code !== "Space" && e.key !== " ") return;
+  const t = e.target as HTMLElement | null;
+  const tag = t?.tagName;
+  if (tag === "INPUT" || tag === "TEXTAREA" || t?.isContentEditable) return;
+  e.preventDefault(); // stop page scroll + focused-button double toggle
+  player.toggle();
+});
 
 // --- boot -----------------------------------------------------------------
 
@@ -58,8 +70,10 @@ async function loadPlaylists(): Promise<void> {
 
 function render(): void {
   root.innerHTML = `
+    <button class="hamburger" id="hamburger" aria-label="Menu"><i class="bi bi-list"></i></button>
     <div class="layout">
       <aside class="sidebar" id="sidebar"></aside>
+      <div class="scrim" id="scrim"></div>
       <main class="main" id="main"></main>
     </div>
     <div class="playerbar" id="playerbar"></div>
@@ -67,6 +81,21 @@ function render(): void {
   renderSidebar();
   renderMain();
   renderPlayerBar();
+
+  const sidebar = document.getElementById("sidebar");
+  const scrim = document.getElementById("scrim");
+  const closeDrawer = () => {
+    sidebar?.classList.remove("open");
+    scrim?.classList.remove("show");
+  };
+  document.getElementById("hamburger")?.addEventListener("click", () => {
+    sidebar?.classList.toggle("open");
+    scrim?.classList.toggle("show");
+  });
+  scrim?.addEventListener("click", closeDrawer);
+  sidebar
+    ?.querySelectorAll("[data-view],[data-playlist],#upload-btn")
+    .forEach((b) => b.addEventListener("click", closeDrawer));
 }
 
 function renderLogin(): void {
@@ -382,9 +411,18 @@ function songTableHtml(songs: Song[], editablePlaylistId?: string): string {
 
   const rows = songs
     .map((s, i) => {
-      const cover = s.coverUrl
+      const art = s.coverUrl
         ? `<img class="cover" src="${s.coverUrl}" alt="" />`
         : `<div class="cover cover-empty"><i class="bi bi-music-note-beamed"></i></div>`;
+
+      // Spotify-style: cover doubles as the play button on hover.
+      const cover = `
+        <div class="song-cover">
+          ${art}
+          <button class="cover-play" data-play="${i}" title="Play">
+            <i class="bi bi-play-fill"></i>
+          </button>
+        </div>`;
 
       const action = editablePlaylistId
         ? `<button class="icon-btn" data-remove="${s.id}" title="Remove"><i class="bi bi-x-lg"></i></button>`
@@ -396,7 +434,7 @@ function songTableHtml(songs: Song[], editablePlaylistId?: string): string {
           : "";
 
       return `
-        <div class="song" data-play="${i}">
+        <div class="song" data-index="${i}">
           ${cover}
           <div class="song-meta">
             <span class="song-title">${escapeHtml(s.title)}</span>
@@ -412,11 +450,19 @@ function songTableHtml(songs: Song[], editablePlaylistId?: string): string {
 }
 
 function wireSongList(editablePlaylistId?: string): void {
-  document.querySelectorAll("[data-play]").forEach((row) => {
-    row.addEventListener("click", (e) => {
+  // Play from the cover's hover button (no more whole-row misclicks).
+  document.querySelectorAll(".cover-play").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      player.playQueue(state.visibleSongs, Number((btn as HTMLElement).dataset.play));
+    });
+  });
+
+  // Double-clicking the row also plays, Spotify-style.
+  document.querySelectorAll(".song").forEach((row) => {
+    row.addEventListener("dblclick", (e) => {
       if ((e.target as HTMLElement).closest(".song-actions")) return;
-      const i = Number((row as HTMLElement).dataset.play);
-      player.playQueue(state.visibleSongs, i);
+      player.playQueue(state.visibleSongs, Number((row as HTMLElement).dataset.index));
     });
   });
 
@@ -518,11 +564,15 @@ function mountPlayerBar(el: HTMLElement, song: Song): void {
 
     <div class="pb-right">
       <button class="icon-btn" id="lyrics-btn" title="Lyrics"><i class="bi bi-card-text"></i></button>
-      <div class="pb-volume">
+      ${
+        player.volumeSupported
+          ? `<div class="pb-volume">
         <button class="icon-btn" id="mute" title="Mute"><i class="bi bi-volume-up-fill"></i></button>
         <input type="range" id="volume" min="0" max="1" step="0.01"
                value="${player.volume}" style="--pct:${player.volume * 100}%" />
-      </div>
+      </div>`
+          : ""
+      }
     </div>
   `;
 
@@ -646,11 +696,26 @@ function renderLyricsOverlay(): void {
         <span class="ly-title">${song ? escapeHtml(song.title) : "—"}</span>
         <span class="ly-artist">${song ? escapeHtml(song.artist) : ""}</span>
       </div>
-      <button class="icon-btn" id="ly-close" title="Close"><i class="bi bi-x-lg"></i></button>
+      <div class="ly-actions">
+        <button class="icon-btn" id="ly-prev" title="Previous"><i class="bi bi-skip-start-fill"></i></button>
+        <button class="icon-btn play" id="ly-toggle" title="Play/pause"><i class="bi bi-play-fill"></i></button>
+        <button class="icon-btn" id="ly-next" title="Next"><i class="bi bi-skip-end-fill"></i></button>
+        <button class="icon-btn" id="ly-close" title="Close"><i class="bi bi-x-lg"></i></button>
+      </div>
     </div>
     <div class="ly-body" id="ly-body"><p class="ly-note">Finding lyrics…</p></div>
   `;
+  ov.querySelector("#ly-prev")?.addEventListener("click", () => player.prev());
+  ov.querySelector("#ly-toggle")?.addEventListener("click", () => player.toggle());
+  ov.querySelector("#ly-next")?.addEventListener("click", () => player.next());
   ov.querySelector("#ly-close")?.addEventListener("click", toggleLyrics);
+  updateLyricsControls();
+}
+
+// Keep the lyrics-panel play/pause icon in sync with playback.
+function updateLyricsControls(): void {
+  const icon = document.querySelector("#ly-toggle i");
+  if (icon) icon.className = player.playing ? "bi bi-pause-fill" : "bi bi-play-fill";
 }
 
 async function loadLyricsForCurrent(): Promise<void> {
