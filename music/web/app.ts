@@ -112,7 +112,7 @@ function renderSidebar(): void {
 
     <div class="section-head">
       <span>Playlists</span>
-      <button class="icon-btn" id="new-playlist" title="New playlist">+</button>
+      <button class="icon-btn" id="new-playlist" title="New playlist"><i class="bi bi-plus-lg"></i></button>
     </div>
     <ul class="playlists">${items}</ul>
 
@@ -351,15 +351,15 @@ function songTableHtml(songs: Song[], editablePlaylistId?: string): string {
     .map((s, i) => {
       const cover = s.coverUrl
         ? `<img class="cover" src="${s.coverUrl}" alt="" />`
-        : `<div class="cover cover-empty">♪</div>`;
+        : `<div class="cover cover-empty"><i class="bi bi-music-note-beamed"></i></div>`;
 
       const action = editablePlaylistId
-        ? `<button class="icon-btn" data-remove="${s.id}" title="Remove">✕</button>`
-        : `<button class="icon-btn" data-add="${s.id}" title="Add to playlist">+</button>`;
+        ? `<button class="icon-btn" data-remove="${s.id}" title="Remove"><i class="bi bi-x-lg"></i></button>`
+        : `<button class="icon-btn" data-add="${s.id}" title="Add to playlist"><i class="bi bi-plus-lg"></i></button>`;
 
       const del =
         s.uploadedBy && s.uploadedBy === state.me?.id
-          ? `<button class="icon-btn" data-del="${s.id}" title="Delete song">🗑</button>`
+          ? `<button class="icon-btn" data-del="${s.id}" title="Delete song"><i class="bi bi-trash-fill"></i></button>`
           : "";
 
       return `
@@ -430,6 +430,12 @@ async function pickPlaylist(): Promise<string | null> {
 
 // --- player bar ------------------------------------------------------------
 
+let pbSongId: string | null = null;
+let seeking = false; // true while the user drags the seek slider
+
+// Rebuild the bar only when the track changes; otherwise just update the
+// dynamic bits. Re-rendering on every timeupdate would kill slider dragging
+// (which is why volume/seek felt broken).
 function renderPlayerBar(): void {
   const el = document.getElementById("playerbar");
   if (!el) return;
@@ -437,20 +443,24 @@ function renderPlayerBar(): void {
   const song = player.current;
   if (!song) {
     el.innerHTML = `<div class="pb-empty">Nothing playing</div>`;
+    pbSongId = null;
     return;
   }
 
-  const { current, duration } = player.progress;
-  const pct = duration ? (current / duration) * 100 : 0;
-  const repeatIcon = player.repeat === "one" ? "🔂" : "🔁";
-  const volPct = player.volume * 100;
+  if (song.id !== pbSongId || !el.querySelector(".pb-controls")) {
+    mountPlayerBar(el, song);
+    pbSongId = song.id;
+  }
+  updatePlayerBar();
+}
 
+function mountPlayerBar(el: HTMLElement, song: Song): void {
   el.innerHTML = `
     <div class="pb-song">
       ${
         song.coverUrl
           ? `<img class="cover" src="${song.coverUrl}" alt="" />`
-          : `<div class="cover cover-empty">♪</div>`
+          : `<div class="cover cover-empty"><i class="bi bi-music-note-beamed"></i></div>`
       }
       <div class="song-meta">
         <span class="song-title">${escapeHtml(song.title)}</span>
@@ -460,39 +470,105 @@ function renderPlayerBar(): void {
 
     <div class="pb-controls">
       <div class="pb-buttons">
-        <button class="icon-btn ${player.shuffle ? "on" : ""}" id="shuffle" title="Shuffle">🔀</button>
-        <button class="icon-btn" id="prev" title="Previous">⏮</button>
-        <button class="icon-btn play" id="toggle">${player.playing ? "⏸" : "▶"}</button>
-        <button class="icon-btn" id="next" title="Next">⏭</button>
-        <button class="icon-btn ${player.repeat !== "off" ? "on" : ""}" id="repeat"
-                title="Repeat: ${player.repeat}">${repeatIcon}</button>
+        <button class="icon-btn" id="shuffle" title="Shuffle"><i class="bi bi-shuffle"></i></button>
+        <button class="icon-btn" id="prev" title="Previous"><i class="bi bi-skip-start-fill"></i></button>
+        <button class="icon-btn play" id="toggle"><i class="bi bi-play-fill"></i></button>
+        <button class="icon-btn" id="next" title="Next"><i class="bi bi-skip-end-fill"></i></button>
+        <button class="icon-btn" id="repeat" title="Repeat"><i class="bi bi-repeat"></i></button>
       </div>
       <div class="pb-seek">
-        <span>${formatTime(current)}</span>
-        <input type="range" id="seek" min="0" max="${duration || 0}"
-               value="${current}" step="0.1" style="--pct:${pct}%" />
-        <span>${formatTime(duration)}</span>
+        <span class="pb-cur">0:00</span>
+        <input type="range" id="seek" min="0" max="0" value="0" step="0.1" style="--pct:0%" />
+        <span class="pb-dur">0:00</span>
       </div>
     </div>
 
     <div class="pb-volume">
-      <span title="Volume">🔊</span>
+      <button class="icon-btn" id="mute" title="Mute"><i class="bi bi-volume-up-fill"></i></button>
       <input type="range" id="volume" min="0" max="1" step="0.01"
-             value="${player.volume}" style="--pct:${volPct}%" />
+             value="${player.volume}" style="--pct:${player.volume * 100}%" />
     </div>
   `;
 
-  document.getElementById("toggle")?.addEventListener("click", () => player.toggle());
-  document.getElementById("next")?.addEventListener("click", () => player.next());
-  document.getElementById("prev")?.addEventListener("click", () => player.prev());
-  document.getElementById("shuffle")?.addEventListener("click", () => player.toggleShuffle());
-  document.getElementById("repeat")?.addEventListener("click", () => player.cycleRepeat());
+  el.querySelector("#toggle")?.addEventListener("click", () => player.toggle());
+  el.querySelector("#next")?.addEventListener("click", () => player.next());
+  el.querySelector("#prev")?.addEventListener("click", () => player.prev());
+  el.querySelector("#shuffle")?.addEventListener("click", () => player.toggleShuffle());
+  el.querySelector("#repeat")?.addEventListener("click", () => player.cycleRepeat());
 
-  const seek = document.getElementById("seek") as HTMLInputElement | null;
-  seek?.addEventListener("input", () => player.seek(Number(seek.value)));
+  const seek = el.querySelector("#seek") as HTMLInputElement | null;
+  seek?.addEventListener("input", () => {
+    seeking = true;
+    const max = Number(seek.max) || 1;
+    seek.style.setProperty("--pct", `${(Number(seek.value) / max) * 100}%`);
+  });
+  seek?.addEventListener("change", () => {
+    player.seek(Number(seek.value));
+    seeking = false;
+  });
 
-  const vol = document.getElementById("volume") as HTMLInputElement | null;
-  vol?.addEventListener("input", () => player.setVolume(Number(vol.value)));
+  const vol = el.querySelector("#volume") as HTMLInputElement | null;
+  vol?.addEventListener("input", () => {
+    player.setVolume(Number(vol.value));
+    vol.style.setProperty("--pct", `${Number(vol.value) * 100}%`);
+    updateVolumeIcon();
+  });
+
+  el.querySelector("#mute")?.addEventListener("click", () => {
+    const next = player.volume > 0 ? 0 : 1;
+    player.setVolume(next);
+    if (vol) {
+      vol.value = String(next);
+      vol.style.setProperty("--pct", `${next * 100}%`);
+    }
+    updateVolumeIcon();
+  });
+}
+
+// Update only the changing pieces — never rebuild (keeps sliders draggable).
+function updatePlayerBar(): void {
+  const el = document.getElementById("playerbar");
+  if (!el) return;
+
+  const toggle = el.querySelector("#toggle i");
+  if (toggle) toggle.className = player.playing ? "bi bi-pause-fill" : "bi bi-play-fill";
+
+  el.querySelector("#shuffle")?.classList.toggle("on", player.shuffle);
+
+  const repeatBtn = el.querySelector("#repeat");
+  const repeatIcon = el.querySelector("#repeat i");
+  if (repeatBtn && repeatIcon) {
+    repeatBtn.classList.toggle("on", player.repeat !== "off");
+    repeatIcon.className = player.repeat === "one" ? "bi bi-repeat-1" : "bi bi-repeat";
+    (repeatBtn as HTMLElement).title = `Repeat: ${player.repeat}`;
+  }
+
+  const { current, duration } = player.progress;
+  const cur = el.querySelector(".pb-cur");
+  const dur = el.querySelector(".pb-dur");
+  if (cur) cur.textContent = formatTime(current);
+  if (dur) dur.textContent = formatTime(duration);
+
+  const seek = el.querySelector("#seek") as HTMLInputElement | null;
+  if (seek && !seeking) {
+    seek.max = String(duration || 0);
+    seek.value = String(current);
+    seek.style.setProperty("--pct", `${duration ? (current / duration) * 100 : 0}%`);
+  }
+
+  updateVolumeIcon();
+}
+
+function updateVolumeIcon(): void {
+  const icon = document.querySelector("#mute i");
+  if (!icon) return;
+  const v = player.volume;
+  icon.className =
+    v === 0
+      ? "bi bi-volume-mute-fill"
+      : v < 0.5
+        ? "bi bi-volume-down-fill"
+        : "bi bi-volume-up-fill";
 }
 
 // --- utils -----------------------------------------------------------------

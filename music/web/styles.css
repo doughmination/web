@@ -311,7 +311,7 @@ button {
   display: flex;
   align-items: center;
   padding: 0 1.5rem;
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
 .pb-empty {
@@ -323,15 +323,25 @@ button {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  width: 240px;
+  width: 220px;
+  flex-shrink: 0;
 }
 
 .pb-controls {
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.4rem;
+}
+
+.pb-buttons .icon-btn i {
+  font-size: 1.1rem;
+}
+
+.pb-buttons .play i {
+  font-size: 1.15rem;
 }
 
 .pb-buttons {
@@ -548,8 +558,14 @@ button {
 .pb-volume {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  width: 140px;
+  gap: 0.4rem;
+  width: 130px;
+  flex-shrink: 0;
+  justify-content: flex-end;
+}
+
+.pb-volume .icon-btn {
+  flex-shrink: 0;
 }
 
 .pb-volume input[type="range"] {
