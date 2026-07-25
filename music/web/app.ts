@@ -12,6 +12,7 @@ import {
   Player,
   formatTime,
 } from "./player.ts";
+import { readTags } from "./metadata.ts";
 
 const root = document.getElementById("app")!;
 const player = new Player();
@@ -237,10 +238,13 @@ function openUploadModal(): void {
         <button class="icon-btn" id="modal-close" title="Close"><i class="bi bi-x-lg"></i></button>
       </div>
       <form id="upload" class="upload-card">
-        <label class="field">
-          <span>Audio file</span>
-          <input type="file" name="file" accept="audio/*" required />
-        </label>
+        <div class="dropzone" id="dropzone" tabindex="0" role="button"
+             aria-label="Add audio file">
+          <i class="bi bi-cloud-arrow-up dz-icon"></i>
+          <span class="dz-text">Drag an audio file here, or <span class="dz-link">browse</span></span>
+          <span class="dz-file" id="dz-file"></span>
+          <input type="file" name="file" accept="audio/*" hidden />
+        </div>
         <label class="field">
           <span>Song name <em>(required)</em></span>
           <input name="title" placeholder="e.g. Everlong" required />
@@ -253,14 +257,15 @@ function openUploadModal(): void {
           <span>Album <em>(optional)</em></span>
           <input name="album" placeholder="optional" />
         </label>
-        <label class="field">
+        <div class="field">
           <span>Cover image <em>(optional)</em></span>
-          <input type="file" name="cover" accept="image/*" />
-        </label>
-        <p class="hint">
-          Title, artist, album and cover auto-fill from the file's tags if
-          present. Anything you type here wins.
-        </p>
+          <label class="file-chip">
+            <i class="bi bi-image"></i>
+            <span id="cover-name">Choose image</span>
+            <input type="file" name="cover" accept="image/*" hidden />
+          </label>
+        </div>
+        <p class="hint">Title, artist and album auto-fill from the file's tags. Tweak anything before uploading.</p>
         <button class="btn btn-primary" type="submit">Upload</button>
         <span id="upload-status" class="upload-status"></span>
       </form>
@@ -283,8 +288,67 @@ function openUploadModal(): void {
 
   const form = overlay.querySelector("#upload") as HTMLFormElement;
   const status = overlay.querySelector("#upload-status");
+  const dropzone = overlay.querySelector("#dropzone") as HTMLElement;
+  const fileInput = overlay.querySelector('input[name="file"]') as HTMLInputElement;
+  const dzFile = overlay.querySelector("#dz-file") as HTMLElement;
+  const titleInput = overlay.querySelector('input[name="title"]') as HTMLInputElement;
+  const artistInput = overlay.querySelector('input[name="artist"]') as HTMLInputElement;
+  const albumInput = overlay.querySelector('input[name="album"]') as HTMLInputElement;
+  const coverInput = overlay.querySelector('input[name="cover"]') as HTMLInputElement;
+  const coverName = overlay.querySelector("#cover-name") as HTMLElement;
+
+  // Auto-fill the text fields from the picked file's embedded tags.
+  const handleFile = async (file: File) => {
+    dzFile.textContent = file.name;
+    dropzone.classList.add("has-file");
+    const tags = await readTags(file);
+    if (tags.title) titleInput.value = tags.title;
+    if (tags.artist) artistInput.value = tags.artist;
+    if (tags.album) albumInput.value = tags.album;
+  };
+
+  dropzone.addEventListener("click", () => fileInput.click());
+  dropzone.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      fileInput.click();
+    }
+  });
+  fileInput.addEventListener("change", () => {
+    const f = fileInput.files?.[0];
+    if (f) void handleFile(f);
+  });
+
+  ["dragenter", "dragover"].forEach((ev) =>
+    dropzone.addEventListener(ev, (e) => {
+      e.preventDefault();
+      dropzone.classList.add("drag");
+    }),
+  );
+  ["dragleave", "dragend"].forEach((ev) =>
+    dropzone.addEventListener(ev, () => dropzone.classList.remove("drag")),
+  );
+  dropzone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    dropzone.classList.remove("drag");
+    const file = (e as DragEvent).dataTransfer?.files?.[0];
+    if (!file) return;
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    fileInput.files = dt.files;
+    void handleFile(file);
+  });
+
+  coverInput.addEventListener("change", () => {
+    coverName.textContent = coverInput.files?.[0]?.name ?? "Choose image";
+  });
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    if (!fileInput.files?.[0]) {
+      if (status) status.textContent = "Choose an audio file first.";
+      return;
+    }
     const btn = form.querySelector("button")!;
     btn.textContent = "Uploading...";
     btn.setAttribute("disabled", "true");
