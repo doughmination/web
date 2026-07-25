@@ -1,21 +1,14 @@
-// Sessions are opaque random ids stored in Redis (server-side, revocable).
-// The cookie only holds the id, so logout truly kills the session and we can
-// force-logout every session for a user.
-//
-// The short-lived OIDC handshake values (state / nonce / PKCE verifier) stay
-// as self-contained signed cookies (jose) — they don't need Redis.
-
-import {
-  SignJWT,
-  jwtVerify,
-} from "jose";
+// Everything auth-related lives in Redis, so there's no session secret:
+//  - Sessions are opaque random ids -> userId (server-side, revocable).
+//  - The OIDC login handshake (state / nonce / PKCE verifier) is stashed under
+//    a random id for the ~minute between /login and /callback.
+// The cookie only ever holds an opaque id; nothing signed, nothing to leak.
 
 import { config } from "../config.ts";
 import { redis } from "../redis.ts";
 
-const key = new TextEncoder().encode(config.sessionSecret);
-
 const SESSION_TTL_SEC = 60 * 60 * 24 * 30; // 30 days, sliding
+const HANDSHAKE_TTL_SEC = 600; // 10 minutes
 
 function sessKey(id: string): string {
   return `music:sess:${id}`;
@@ -23,6 +16,10 @@ function sessKey(id: string): string {
 
 function userSetKey(userId: string): string {
   return `music:usess:${userId}`;
+}
+
+function handshakeKey(id: string): string {
+  return `music:oidc:${id}`;
 }
 
 function randomId(bytes = 32): string {
@@ -75,31 +72,40 @@ export async function destroyAllSessions(userId: string): Promise<void> {
   await m.exec();
 }
 
-// --- short-lived signed cookies (OIDC handshake) --------------------------
+// --- OIDC login handshake -------------------------------------------------
 
-export async function signShortLived(value: string): Promise<string> {
-  return await new SignJWT({ v: value })
-    .setProtectedHeader({ alg: "HS256" })
-    .setIssuedAt()
-    .setExpirationTime("10m")
-    .sign(key);
+export type Handshake = {
+  state: string;
+  nonce: string;
+  verifier: string;
+};
+
+export async function saveHandshake(data: Handshake): Promise<string> {
+  const id = randomId();
+  await redis.set(
+    handshakeKey(id),
+    JSON.stringify(data),
+    "EX",
+    HANDSHAKE_TTL_SEC,
+  );
+  return id;
 }
 
-export async function readShortLived(token: string): Promise<string | null> {
+// One-shot read: fetch and delete atomically so a handshake can't be replayed.
+export async function takeHandshake(id: string): Promise<Handshake | null> {
   try {
-    const { payload } = await jwtVerify(token, key);
-    const v = payload.v;
-    return typeof v === "string" ? v : null;
+    const raw = await redis.getdel(handshakeKey(id));
+    return raw ? (JSON.parse(raw) as Handshake) : null;
   } catch {
     return null;
   }
 }
 
+// --- cookies --------------------------------------------------------------
+
 export const cookieNames = {
   session: "ms_session",
-  state: "ms_oidc_state",
-  nonce: "ms_oidc_nonce",
-  verifier: "ms_oidc_verifier",
+  handshake: "ms_oidc",
 } as const;
 
 export const secureCookieOpts = {

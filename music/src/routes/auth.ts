@@ -25,9 +25,9 @@ import {
   createSession,
   destroyAllSessions,
   destroySession,
-  readShortLived,
+  saveHandshake,
   secureCookieOpts,
-  signShortLived,
+  takeHandshake,
 } from "../auth/session.ts";
 
 export const authRoutes = new Hono<AppEnv>();
@@ -40,15 +40,9 @@ authRoutes.get("/login", loginLimit, async (c) => {
   const verifier = randomString(48);
   const challenge = await pkceChallenge(verifier);
 
-  // Stash state/nonce/verifier in short-lived signed cookies.
-  setCookie(c, cookieNames.state, await signShortLived(state), secureCookieOpts);
-  setCookie(c, cookieNames.nonce, await signShortLived(nonce), secureCookieOpts);
-  setCookie(
-    c,
-    cookieNames.verifier,
-    await signShortLived(verifier),
-    secureCookieOpts,
-  );
+  // Stash the handshake in Redis; the cookie only holds its opaque id.
+  const handshakeId = await saveHandshake({ state, nonce, verifier });
+  setCookie(c, cookieNames.handshake, handshakeId, secureCookieOpts);
 
   const url = await buildAuthUrl({
     state,
@@ -62,24 +56,17 @@ authRoutes.get("/callback", async (c) => {
   const code = c.req.query("code");
   const returnedState = c.req.query("state");
 
-  const stateCookie = getCookie(c, cookieNames.state);
-  const nonceCookie = getCookie(c, cookieNames.nonce);
-  const verifierCookie = getCookie(c, cookieNames.verifier);
+  const handshakeId = getCookie(c, cookieNames.handshake);
+  deleteCookie(c, cookieNames.handshake, secureCookieOpts);
 
-  // Clear the temporary cookies no matter what happens next.
-  deleteCookie(c, cookieNames.state, secureCookieOpts);
-  deleteCookie(c, cookieNames.nonce, secureCookieOpts);
-  deleteCookie(c, cookieNames.verifier, secureCookieOpts);
-
-  if (!code || !returnedState || !stateCookie || !verifierCookie) {
+  if (!code || !returnedState || !handshakeId) {
     return c.json({ error: "invalid_callback" }, 400);
   }
 
-  const expectedState = await readShortLived(stateCookie);
-  const nonce = nonceCookie ? await readShortLived(nonceCookie) : null;
-  const verifier = await readShortLived(verifierCookie);
+  // One-shot read (deleted on fetch) so a handshake can't be replayed.
+  const hs = await takeHandshake(handshakeId);
 
-  if (!expectedState || expectedState !== returnedState || !verifier || !nonce) {
+  if (!hs || hs.state !== returnedState) {
     return c.json({ error: "state_mismatch" }, 400);
   }
 
@@ -87,8 +74,8 @@ authRoutes.get("/callback", async (c) => {
   try {
     claims = await exchangeCode({
       code,
-      verifier,
-      expectedNonce: nonce,
+      verifier: hs.verifier,
+      expectedNonce: hs.nonce,
     });
   } catch (err) {
     console.error("OIDC exchange error:", err);

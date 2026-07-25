@@ -34,3 +34,26 @@ DATABASE_URL=postgres://user:pass@host:5432/mailbox DATA_DIR=./data \
 
 It's safe to re-run: existing email rows are left untouched, while settings and
 ownership are re-imported from the files.
+
+### In the monorepo (external `infra` Postgres)
+
+The `inbox` service in the root `compose.yml` joins the external `infra` network
+and reads `DATABASE_URL` from the shared dotenvx `.env`, so it reaches the `db`
+container by hostname. One-time setup:
+
+```
+# 1. Create the dedicated role + database (as a superuser):
+docker exec -i db psql -U spawn-db -d spawn-db < mailbox/scripts/create-db.sql
+
+# 2. Set DATABASE_URL in the root .env (see ../.env.example), re-encrypt.
+
+# 3. Import the old JSON data from the mail-data volume into Postgres,
+#    using the built image so it has both the volume and the network:
+docker compose run --rm inbox dotenvx run -- bun run migrate
+
+# 4. Bring the service up on Postgres:
+docker compose up -d --build inbox
+```
+
+After the import verifies, the old JSON files on the `mail-data` volume are no
+longer read (only `owners.json` remains as a seed fallback) and can be archived.
