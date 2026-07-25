@@ -31,7 +31,6 @@ const state = {
 
 player.onChange = () => {
   renderPlayerBar();
-  updateLyricsControls();
   syncLyrics();
 };
 player.onError = (msg) => flash(msg);
@@ -556,24 +555,22 @@ function mountPlayerBar(el: HTMLElement, song: Song): void {
         <button class="icon-btn" id="repeat" title="Repeat"><i class="bi bi-repeat"></i></button>
       </div>
       <div class="pb-seek">
+        <button class="icon-btn pb-lyrics" id="lyrics-btn" title="Lyrics"><i class="bi bi-card-text"></i></button>
         <span class="pb-cur">0:00</span>
         <input type="range" id="seek" min="0" max="0" value="0" step="0.1" style="--pct:0%" />
         <span class="pb-dur">0:00</span>
       </div>
     </div>
 
-    <div class="pb-right">
-      <button class="icon-btn" id="lyrics-btn" title="Lyrics"><i class="bi bi-card-text"></i></button>
-      ${
-        player.volumeSupported
-          ? `<div class="pb-volume">
-        <button class="icon-btn" id="mute" title="Mute"><i class="bi bi-volume-up-fill"></i></button>
-        <input type="range" id="volume" min="0" max="1" step="0.01"
-               value="${player.volume}" style="--pct:${player.volume * 100}%" />
-      </div>`
-          : ""
-      }
-    </div>
+    ${
+      player.volumeSupported
+        ? `<div class="pb-volume">
+      <button class="icon-btn" id="mute" title="Mute"><i class="bi bi-volume-up-fill"></i></button>
+      <input type="range" id="volume" min="0" max="1" step="0.01"
+             value="${player.volume}" style="--pct:${player.volume * 100}%" />
+    </div>`
+        : ""
+    }
   `;
 
   el.querySelector("#toggle")?.addEventListener("click", () => player.toggle());
@@ -696,26 +693,11 @@ function renderLyricsOverlay(): void {
         <span class="ly-title">${song ? escapeHtml(song.title) : "—"}</span>
         <span class="ly-artist">${song ? escapeHtml(song.artist) : ""}</span>
       </div>
-      <div class="ly-actions">
-        <button class="icon-btn" id="ly-prev" title="Previous"><i class="bi bi-skip-start-fill"></i></button>
-        <button class="icon-btn play" id="ly-toggle" title="Play/pause"><i class="bi bi-play-fill"></i></button>
-        <button class="icon-btn" id="ly-next" title="Next"><i class="bi bi-skip-end-fill"></i></button>
-        <button class="icon-btn" id="ly-close" title="Close"><i class="bi bi-x-lg"></i></button>
-      </div>
+      <button class="icon-btn" id="ly-close" title="Close"><i class="bi bi-x-lg"></i></button>
     </div>
     <div class="ly-body" id="ly-body"><p class="ly-note">Finding lyrics…</p></div>
   `;
-  ov.querySelector("#ly-prev")?.addEventListener("click", () => player.prev());
-  ov.querySelector("#ly-toggle")?.addEventListener("click", () => player.toggle());
-  ov.querySelector("#ly-next")?.addEventListener("click", () => player.next());
   ov.querySelector("#ly-close")?.addEventListener("click", toggleLyrics);
-  updateLyricsControls();
-}
-
-// Keep the lyrics-panel play/pause icon in sync with playback.
-function updateLyricsControls(): void {
-  const icon = document.querySelector("#ly-toggle i");
-  if (icon) icon.className = player.playing ? "bi bi-pause-fill" : "bi bi-play-fill";
 }
 
 async function loadLyricsForCurrent(): Promise<void> {
