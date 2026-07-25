@@ -10,6 +10,7 @@ import {
   type AppEnv,
 } from "../auth/middleware.ts";
 import { rateLimit } from "../lib/ratelimit.ts";
+import { getLyrics } from "../lib/lyrics.ts";
 import {
   ensureMediaDirs,
   extractTags,
@@ -140,6 +141,20 @@ songRoutes.get("/:id/stream", requireAuth, async (c) => {
       "accept-ranges": "bytes",
     },
   });
+});
+
+songRoutes.get("/:id/lyrics", requireAuth, async (c) => {
+  const song = await getSong(c.req.param("id")!);
+  if (!song) return c.json({ error: "not_found" }, 404);
+
+  const lyrics = await getLyrics({
+    id: song.id,
+    title: song.title,
+    artist: song.artist,
+    album: song.album,
+    durationS: song.duration_s,
+  });
+  return c.json(lyrics);
 });
 
 songRoutes.get("/:id/cover", requireAuth, async (c) => {

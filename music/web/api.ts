@@ -39,6 +39,14 @@ export type Me = {
   avatarUrl: string | null;
 };
 
+export type SyncedLine = { t: number; text: string };
+
+export type Lyrics = {
+  instrumental: boolean;
+  synced: SyncedLine[];
+  plain: string | null;
+};
+
 async function json<T>(res: Response): Promise<T> {
   if (!res.ok) {
     throw new Error(`${res.status} ${res.statusText}`);
@@ -68,6 +76,10 @@ export const api = {
 
   deleteSong(id: string): Promise<Response> {
     return fetch(`/api/songs/${id}`, { method: "DELETE" });
+  },
+
+  getLyrics(songId: string): Promise<Lyrics> {
+    return fetch(`/api/songs/${songId}/lyrics`).then(json<Lyrics>);
   },
 
   listPlaylists(): Promise<Playlist[]> {

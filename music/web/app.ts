@@ -6,6 +6,7 @@ import {
   type Song,
   type Playlist,
   type Me,
+  type Lyrics,
 } from "./api.ts";
 import {
   Player,
@@ -17,7 +18,6 @@ const player = new Player();
 
 type View =
   | { kind: "library" }
-  | { kind: "upload" }
   | { kind: "browse" }
   | { kind: "playlist"; id: string };
 
@@ -29,7 +29,10 @@ const state = {
   visibleSongs: [] as Song[],
 };
 
-player.onChange = renderPlayerBar;
+player.onChange = () => {
+  renderPlayerBar();
+  syncLyrics();
+};
 
 // --- boot -----------------------------------------------------------------
 
@@ -107,7 +110,9 @@ function renderSidebar(): void {
   el.innerHTML = `
     <div class="brand">Music</div>
     ${nav("library", "Library")}
-    ${nav("upload", "Upload")}
+    <button class="nav-link" id="upload-btn">
+      <i class="bi bi-cloud-arrow-up"></i> Upload
+    </button>
     ${nav("browse", "Browse shared")}
 
     <div class="section-head">
@@ -127,14 +132,13 @@ function renderSidebar(): void {
 
   el.querySelectorAll("[data-view]").forEach((btn) => {
     btn.addEventListener("click", () => {
-      const kind = (btn as HTMLElement).dataset.view as
-        | "library"
-        | "upload"
-        | "browse";
+      const kind = (btn as HTMLElement).dataset.view as "library" | "browse";
       state.view = { kind };
       render();
     });
   });
+
+  document.getElementById("upload-btn")?.addEventListener("click", openUploadModal);
 
   el.querySelectorAll("[data-playlist]").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -165,7 +169,6 @@ async function renderMain(): Promise<void> {
   if (!el) return;
 
   if (state.view.kind === "library") renderLibrary(el);
-  else if (state.view.kind === "upload") renderUpload(el);
   else if (state.view.kind === "browse") await renderBrowse(el);
   else await renderPlaylistView(el, state.view.id);
 }
@@ -194,44 +197,65 @@ function renderLibrary(el: HTMLElement): void {
   });
 }
 
-// --- dedicated upload view -------------------------------------------------
+// --- upload modal ----------------------------------------------------------
 
-function renderUpload(el: HTMLElement): void {
-  el.innerHTML = `
-    <header class="main-head"><h2>Upload</h2></header>
-    <form id="upload" class="upload-card">
-      <label class="field">
-        <span>Audio file</span>
-        <input type="file" name="file" accept="audio/*" required />
-      </label>
-      <label class="field">
-        <span>Song name <em>(required)</em></span>
-        <input name="title" placeholder="e.g. Everlong" required />
-      </label>
-      <label class="field">
-        <span>Artist <em>(required)</em></span>
-        <input name="artist" placeholder="e.g. Foo Fighters" required />
-      </label>
-      <label class="field">
-        <span>Album <em>(optional)</em></span>
-        <input name="album" placeholder="optional" />
-      </label>
-      <label class="field">
-        <span>Cover image <em>(optional)</em></span>
-        <input type="file" name="cover" accept="image/*" />
-      </label>
-      <p class="hint">
-        Title, artist, album and cover auto-fill from the file's tags if present.
-        Anything you type here wins.
-      </p>
-      <button class="btn btn-primary" type="submit">Upload</button>
-      <span id="upload-status" class="upload-status"></span>
-    </form>
+function openUploadModal(): void {
+  const overlay = document.createElement("div");
+  overlay.className = "modal-overlay";
+  overlay.innerHTML = `
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h2>Upload</h2>
+        <button class="icon-btn" id="modal-close" title="Close"><i class="bi bi-x-lg"></i></button>
+      </div>
+      <form id="upload" class="upload-card">
+        <label class="field">
+          <span>Audio file</span>
+          <input type="file" name="file" accept="audio/*" required />
+        </label>
+        <label class="field">
+          <span>Song name <em>(required)</em></span>
+          <input name="title" placeholder="e.g. Everlong" required />
+        </label>
+        <label class="field">
+          <span>Artist <em>(required)</em></span>
+          <input name="artist" placeholder="e.g. Foo Fighters" required />
+        </label>
+        <label class="field">
+          <span>Album <em>(optional)</em></span>
+          <input name="album" placeholder="optional" />
+        </label>
+        <label class="field">
+          <span>Cover image <em>(optional)</em></span>
+          <input type="file" name="cover" accept="image/*" />
+        </label>
+        <p class="hint">
+          Title, artist, album and cover auto-fill from the file's tags if
+          present. Anything you type here wins.
+        </p>
+        <button class="btn btn-primary" type="submit">Upload</button>
+        <span id="upload-status" class="upload-status"></span>
+      </form>
+    </div>
   `;
+  document.body.appendChild(overlay);
 
-  const form = document.getElementById("upload") as HTMLFormElement | null;
-  const status = document.getElementById("upload-status");
-  form?.addEventListener("submit", async (e) => {
+  const close = () => {
+    overlay.remove();
+    document.removeEventListener("keydown", onEsc);
+  };
+  const onEsc = (e: KeyboardEvent) => {
+    if (e.key === "Escape") close();
+  };
+  document.addEventListener("keydown", onEsc);
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) close();
+  });
+  overlay.querySelector("#modal-close")?.addEventListener("click", close);
+
+  const form = overlay.querySelector("#upload") as HTMLFormElement;
+  const status = overlay.querySelector("#upload-status");
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const btn = form.querySelector("button")!;
     btn.textContent = "Uploading...";
@@ -239,16 +263,25 @@ function renderUpload(el: HTMLElement): void {
     if (status) status.textContent = "";
     try {
       const song = await api.uploadSong(new FormData(form));
-      form.reset();
       await loadSongs();
-      if (status) status.textContent = `Added "${song.title}" by ${song.artist}.`;
+      if (state.view.kind === "library") renderMain();
+      close();
+      flash(`Added "${song.title}" by ${song.artist}.`);
     } catch (err) {
       if (status) status.textContent = `Upload failed: ${(err as Error).message}`;
-    } finally {
       btn.textContent = "Upload";
       btn.removeAttribute("disabled");
     }
   });
+}
+
+// Small transient toast.
+function flash(msg: string): void {
+  const el = document.createElement("div");
+  el.className = "toast";
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 3000);
 }
 
 // --- browse shared playlists ----------------------------------------------
@@ -483,10 +516,13 @@ function mountPlayerBar(el: HTMLElement, song: Song): void {
       </div>
     </div>
 
-    <div class="pb-volume">
-      <button class="icon-btn" id="mute" title="Mute"><i class="bi bi-volume-up-fill"></i></button>
-      <input type="range" id="volume" min="0" max="1" step="0.01"
-             value="${player.volume}" style="--pct:${player.volume * 100}%" />
+    <div class="pb-right">
+      <button class="icon-btn" id="lyrics-btn" title="Lyrics"><i class="bi bi-card-text"></i></button>
+      <div class="pb-volume">
+        <button class="icon-btn" id="mute" title="Mute"><i class="bi bi-volume-up-fill"></i></button>
+        <input type="range" id="volume" min="0" max="1" step="0.01"
+               value="${player.volume}" style="--pct:${player.volume * 100}%" />
+      </div>
     </div>
   `;
 
@@ -523,6 +559,8 @@ function mountPlayerBar(el: HTMLElement, song: Song): void {
     }
     updateVolumeIcon();
   });
+
+  el.querySelector("#lyrics-btn")?.addEventListener("click", toggleLyrics);
 }
 
 // Update only the changing pieces — never rebuild (keeps sliders draggable).
@@ -556,6 +594,8 @@ function updatePlayerBar(): void {
     seek.style.setProperty("--pct", `${duration ? (current / duration) * 100 : 0}%`);
   }
 
+  el.querySelector("#lyrics-btn")?.classList.toggle("on", lyricsState.open);
+
   updateVolumeIcon();
 }
 
@@ -569,6 +609,137 @@ function updateVolumeIcon(): void {
       : v < 0.5
         ? "bi bi-volume-down-fill"
         : "bi bi-volume-up-fill";
+}
+
+// --- lyrics ----------------------------------------------------------------
+
+const lyricsState = {
+  open: false,
+  songId: null as string | null,
+  data: null as Lyrics | null,
+  active: -1,
+};
+
+function toggleLyrics(): void {
+  lyricsState.open = !lyricsState.open;
+  if (lyricsState.open) {
+    renderLyricsOverlay();
+    void loadLyricsForCurrent();
+  } else {
+    document.getElementById("lyrics-overlay")?.remove();
+  }
+  document.getElementById("lyrics-btn")?.classList.toggle("on", lyricsState.open);
+}
+
+function renderLyricsOverlay(): void {
+  let ov = document.getElementById("lyrics-overlay");
+  if (!ov) {
+    ov = document.createElement("div");
+    ov.id = "lyrics-overlay";
+    ov.className = "lyrics-overlay";
+    document.body.appendChild(ov);
+  }
+  const song = player.current;
+  ov.innerHTML = `
+    <div class="ly-head">
+      <div class="ly-song">
+        <span class="ly-title">${song ? escapeHtml(song.title) : "—"}</span>
+        <span class="ly-artist">${song ? escapeHtml(song.artist) : ""}</span>
+      </div>
+      <button class="icon-btn" id="ly-close" title="Close"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="ly-body" id="ly-body"><p class="ly-note">Finding lyrics…</p></div>
+  `;
+  ov.querySelector("#ly-close")?.addEventListener("click", toggleLyrics);
+}
+
+async function loadLyricsForCurrent(): Promise<void> {
+  const song = player.current;
+  const body = document.getElementById("ly-body");
+  if (!song) {
+    if (body) body.innerHTML = `<p class="ly-note">Play a song to see lyrics.</p>`;
+    return;
+  }
+  lyricsState.songId = song.id;
+  lyricsState.data = null;
+  lyricsState.active = -1;
+  try {
+    lyricsState.data = await api.getLyrics(song.id);
+  } catch {
+    lyricsState.data = null;
+  }
+  // Bail if the user closed the panel or skipped tracks while we fetched.
+  if (!lyricsState.open || player.current?.id !== song.id) return;
+  renderLyricsBody();
+}
+
+function renderLyricsBody(): void {
+  const body = document.getElementById("ly-body");
+  if (!body) return;
+  const d = lyricsState.data;
+
+  if (!d || (!d.synced.length && !d.plain && !d.instrumental)) {
+    body.className = "ly-body";
+    body.innerHTML = `<p class="ly-note">No lyrics found for this one.</p>`;
+    return;
+  }
+  if (d.instrumental) {
+    body.className = "ly-body";
+    body.innerHTML = `<p class="ly-note"><i class="bi bi-music-note-beamed"></i> Instrumental</p>`;
+    return;
+  }
+  if (d.synced.length) {
+    body.className = "ly-body is-synced";
+    body.innerHTML = d.synced
+      .map((l, i) => `<p class="ly-line" data-i="${i}">${escapeHtml(l.text || " ")}</p>`)
+      .join("");
+    return;
+  }
+  body.className = "ly-body";
+  body.innerHTML = (d.plain ?? "")
+    .split(/\r?\n/)
+    .map((l) => `<p class="ly-line ly-static">${escapeHtml(l || " ")}</p>`)
+    .join("");
+}
+
+// Called on every player tick: highlight + center the active synced line.
+function syncLyrics(): void {
+  if (!lyricsState.open) return;
+  const song = player.current;
+  if (!song) return;
+
+  if (song.id !== lyricsState.songId) {
+    renderLyricsOverlay();
+    void loadLyricsForCurrent();
+    return;
+  }
+
+  const d = lyricsState.data;
+  if (!d || !d.synced.length) return;
+
+  const posMs = player.progress.current * 1000;
+  let i = -1;
+  for (let k = 0; k < d.synced.length; k++) {
+    if (d.synced[k]!.t <= posMs) i = k;
+    else break;
+  }
+  if (i === lyricsState.active) return;
+
+  const body = document.getElementById("ly-body");
+  if (!body) return;
+  const kids = body.children;
+  if (lyricsState.active >= 0 && kids[lyricsState.active]) {
+    kids[lyricsState.active]!.classList.remove("is-active");
+  }
+  lyricsState.active = i;
+  const cur = kids[i] as HTMLElement | undefined;
+  if (cur) {
+    cur.classList.add("is-active");
+    body.scrollTo({
+      top: cur.offsetTop - body.clientHeight / 2 + cur.clientHeight / 2,
+      behavior: "smooth",
+    });
+  }
 }
 
 // --- utils -----------------------------------------------------------------

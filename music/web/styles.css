@@ -587,3 +587,139 @@ button {
   border-radius: 50%;
   background: var(--text);
 }
+
+.pb-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+/* --- modal --- */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 1rem;
+}
+
+.modal {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  width: 100%;
+  max-width: 440px;
+  padding: 1.25rem 1.5rem 1.5rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.modal-head h2 {
+  margin: 0;
+}
+
+.modal .upload-card {
+  background: transparent;
+  border: none;
+  padding: 0;
+  max-width: none;
+}
+
+/* --- toast --- */
+
+.toast {
+  position: fixed;
+  bottom: 104px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius);
+  z-index: 60;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* --- lyrics overlay --- */
+
+.lyrics-overlay {
+  position: fixed;
+  inset: 0 0 88px 0;
+  background: rgba(14, 15, 19, 0.97);
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 2rem;
+}
+
+.ly-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.ly-song {
+  display: flex;
+  flex-direction: column;
+}
+
+.ly-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.ly-artist {
+  color: var(--muted);
+}
+
+.ly-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem 0;
+  text-align: center;
+  scroll-behavior: smooth;
+}
+
+.ly-line {
+  font-size: 1.5rem;
+  line-height: 1.5;
+  margin: 0.4rem 0;
+  color: var(--muted);
+  transition: color 0.2s, transform 0.2s;
+}
+
+.ly-body.is-synced .ly-line {
+  opacity: 0.55;
+}
+
+.ly-body.is-synced .ly-line.is-active {
+  color: var(--text);
+  opacity: 1;
+  transform: scale(1.04);
+  font-weight: 700;
+}
+
+.ly-static {
+  font-size: 1.1rem;
+  color: var(--text);
+}
+
+.ly-note {
+  color: var(--muted);
+  text-align: center;
+  margin-top: 2rem;
+}
