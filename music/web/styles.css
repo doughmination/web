@@ -357,10 +357,12 @@ button {
   margin: auto;
 }
 
-/* Keep bar contents above the visualizer canvas */
-.playerbar > * {
+/* Visualizer overlaid on the now-playing album cover */
+.pb-cover {
   position: relative;
-  z-index: 1;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
 }
 
 .pb-viz {
@@ -368,7 +370,7 @@ button {
   inset: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;
+  border-radius: 6px;
   pointer-events: none;
 }
 

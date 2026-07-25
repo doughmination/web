@@ -780,13 +780,15 @@ function renderPlayerBar(): void {
 
 function mountPlayerBar(el: HTMLElement, song: Song): void {
   el.innerHTML = `
-    <canvas class="pb-viz" id="pb-viz"></canvas>
     <div class="pb-song">
-      ${
-        song.coverUrl
-          ? `<img class="cover" src="${song.coverUrl}" alt="" />`
-          : `<div class="cover cover-empty"><i class="bi bi-music-note-beamed"></i></div>`
-      }
+      <div class="pb-cover">
+        ${
+          song.coverUrl
+            ? `<img class="cover" src="${song.coverUrl}" alt="" />`
+            : `<div class="cover cover-empty"><i class="bi bi-music-note-beamed"></i></div>`
+        }
+        <canvas class="pb-viz" id="pb-viz"></canvas>
+      </div>
       <div class="song-meta">
         <span class="song-title">${escapeHtml(song.title)}</span>
         <span class="song-artist">${escapeHtml(song.artist)}</span>
@@ -905,14 +907,19 @@ function startVisualizer(): void {
         const h = (canvas.height = canvas.clientHeight);
         ctx.clearRect(0, 0, w, h);
         if (player.playing) {
-          const data = new Uint8Array(analyser.frequencyBinCount);
+          const bins = analyser.frequencyBinCount;
+          const data = new Uint8Array(bins);
           analyser.getByteFrequencyData(data);
-          const n = Math.min(analyser.frequencyBinCount, 56);
+          // Dim the art a touch so the bars read on top of it.
+          ctx.fillStyle = "rgba(0, 0, 0, 0.32)";
+          ctx.fillRect(0, 0, w, h);
+          const n = 14;
           const bw = w / n;
-          ctx.fillStyle = "rgba(108, 140, 255, 0.30)";
+          ctx.fillStyle = "rgba(120, 200, 140, 0.95)"; // green equalizer
           for (let i = 0; i < n; i++) {
-            const bh = (data[i]! / 255) * h;
-            ctx.fillRect(i * bw, h - bh, bw * 0.66, bh);
+            const idx = Math.floor((i / n) * bins);
+            const bh = Math.max(2, (data[idx]! / 255) * h);
+            ctx.fillRect(i * bw + bw * 0.18, h - bh, bw * 0.64, bh);
           }
         }
       }
