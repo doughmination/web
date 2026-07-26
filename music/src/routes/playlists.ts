@@ -16,6 +16,7 @@ import {
   type AppEnv,
 } from "../auth/middleware.ts";
 import { ensureMediaDirs, resolveMedia, saveCover } from "../lib/media.ts";
+import { normalizeTitle, tightTitleKey, diceCoefficient } from "../lib/text.ts";
 
 export const playlistRoutes = new Hono<AppEnv>();
 
@@ -36,7 +37,6 @@ playlistRoutes.get("/", async (c) => {
 // "/:id" so "public" isn't captured as an id.
 playlistRoutes.get("/public", async (c) => {
   const q = c.req.query("q")?.trim();
-  const like = q ? `%${q.toLowerCase()}%` : null;
 
   const rows = await sql<
     Array<{
@@ -59,17 +59,33 @@ playlistRoutes.get("/public", async (c) => {
     FROM playlists p
     JOIN users u ON u.id = p.user_id
     WHERE p.is_public
-      AND (
-        ${like}::text IS NULL
-        OR lower(p.name) LIKE ${like}
-        OR lower(coalesce(u.name, '')) LIKE ${like}
-      )
     ORDER BY p.name ASC
-    LIMIT 100
   `;
 
+  // Same fuzzy tradeoff as songs/artists: score in-process rather than a
+  // DB-side prefilter, so "1800" still finds "1-800"-style playlist names.
+  let matched: typeof rows[number][] = [...rows];
+  if (q) {
+    const normQ = normalizeTitle(q);
+    const tightQ = tightTitleKey(q);
+    matched = rows
+      .map((r) => {
+        const normName = normalizeTitle(r.name);
+        const nameScore =
+          tightTitleKey(r.name) === tightQ || normName.includes(normQ)
+            ? 1
+            : diceCoefficient(normQ, normName);
+        const normOwner = normalizeTitle(r.owner_name ?? "");
+        const ownerScore = normOwner.includes(normQ) ? 1 : diceCoefficient(normQ, normOwner);
+        return { row: r, score: Math.max(nameScore, ownerScore) };
+      })
+      .filter((r) => r.score >= 0.35)
+      .sort((a, b) => b.score - a.score)
+      .map((r) => r.row);
+  }
+
   return c.json(
-    rows.map((r) => ({
+    matched.slice(0, 100).map((r) => ({
       id: r.id,
       name: r.name,
       ownerName: r.owner_name,

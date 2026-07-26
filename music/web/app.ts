@@ -277,13 +277,7 @@ function renderSidebar(): void {
     });
   });
 
-  document.getElementById("new-playlist")?.addEventListener("click", async () => {
-    const name = prompt("Playlist name?");
-    if (!name?.trim()) return;
-    await api.createPlaylist(name.trim());
-    await loadPlaylists();
-    renderSidebar();
-  });
+  document.getElementById("new-playlist")?.addEventListener("click", openCreatePlaylistModal);
 
   document.getElementById("logout")?.addEventListener("click", async () => {
     const res = await api.logout();
@@ -348,6 +342,120 @@ function renderLibrary(el: HTMLElement): void {
       list.innerHTML = songTableHtml(rows);
       wireSongList();
     }
+  });
+}
+
+// --- playlist modals ---------------------------------------------------------
+
+function openCreatePlaylistModal(): void {
+  const overlay = document.createElement("div");
+  overlay.className = "modal-overlay";
+  overlay.innerHTML = `
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h2>New playlist</h2>
+        <button class="icon-btn" id="modal-close" title="Close"><i class="bi bi-x-lg"></i></button>
+      </div>
+      <form id="playlist-form" class="upload-card">
+        <label class="field"><span>Name <em>(required)</em></span>
+          <input name="name" required autofocus /></label>
+        <button class="btn btn-primary" type="submit">Create</button>
+        <span id="playlist-status" class="upload-status"></span>
+      </form>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const close = () => {
+    overlay.remove();
+    document.removeEventListener("keydown", onEsc);
+  };
+  const onEsc = (e: KeyboardEvent) => {
+    if (e.key === "Escape") close();
+  };
+  document.addEventListener("keydown", onEsc);
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) close();
+  });
+  overlay.querySelector("#modal-close")?.addEventListener("click", close);
+
+  const form = overlay.querySelector("#playlist-form") as HTMLFormElement;
+  const status = overlay.querySelector("#playlist-status") as HTMLElement;
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const name = (form.querySelector('[name="name"]') as HTMLInputElement).value.trim();
+    if (!name) return;
+    const btn = form.querySelector("button")!;
+    btn.textContent = "Creating...";
+    btn.setAttribute("disabled", "true");
+    try {
+      await api.createPlaylist(name);
+      close();
+      await loadPlaylists();
+      renderSidebar();
+    } catch (err) {
+      status.textContent = `Something went wrong: ${(err as Error).message}`;
+      btn.textContent = "Create";
+      btn.removeAttribute("disabled");
+    }
+  });
+}
+
+// Fuzzy-filterable picker for "add this song to a playlist", replacing the
+// old numbered prompt(). Reuses the same dice-coefficient scoring as the
+// server-side artist/song search so a fast typo-tolerant filter doesn't need
+// its own separate matching logic.
+function openPlaylistPickerModal(playlists: Playlist[]): Promise<string | null> {
+  return new Promise((resolve) => {
+    const overlay = document.createElement("div");
+    overlay.className = "modal-overlay";
+    overlay.innerHTML = `
+      <div class="modal" role="dialog" aria-modal="true">
+        <div class="modal-head">
+          <h2>Add to playlist</h2>
+          <button class="icon-btn" id="modal-close" title="Close"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <input id="playlist-filter" class="search" placeholder="Filter playlists" autofocus />
+        <ul class="playlist-picker" id="playlist-picker-list"></ul>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    let resolved = false;
+    const finish = (id: string | null) => {
+      if (resolved) return;
+      resolved = true;
+      overlay.remove();
+      document.removeEventListener("keydown", onEsc);
+      resolve(id);
+    };
+    const onEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") finish(null);
+    };
+    document.addEventListener("keydown", onEsc);
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) finish(null);
+    });
+    overlay.querySelector("#modal-close")?.addEventListener("click", () => finish(null));
+
+    const list = overlay.querySelector("#playlist-picker-list") as HTMLElement;
+    const filterInput = overlay.querySelector("#playlist-filter") as HTMLInputElement;
+
+    const draw = (query: string) => {
+      const matches = fuzzyFilter(playlists, query, (p) => p.name);
+      list.innerHTML = matches
+        .map(
+          (p) =>
+            `<li><button type="button" class="playlist-pick" data-id="${p.id}">${escapeHtml(p.name)}</button></li>`,
+        )
+        .join("") || `<li class="empty">No playlists match.</li>`;
+      list.querySelectorAll("[data-id]").forEach((btn) => {
+        btn.addEventListener("click", () => finish((btn as HTMLElement).dataset.id!));
+      });
+    };
+    draw("");
+    filterInput.addEventListener("input", () => draw(filterInput.value));
   });
 }
 
@@ -876,6 +984,12 @@ function openArtistEditModal(artist: ArtistDetail): void {
         <h2>Edit artist</h2>
         <button class="icon-btn" id="modal-close" title="Close"><i class="bi bi-x-lg"></i></button>
       </div>
+      <div class="avatar-upload">
+        ${avatarHtml(artist.avatarUrl, artist.name, "lg")}
+        <label class="btn" for="artist-avatar-input">Change photo</label>
+        <input type="file" id="artist-avatar-input" accept="image/*" hidden />
+        <span id="artist-avatar-status" class="upload-status"></span>
+      </div>
       <form id="artist-edit" class="upload-card">
         <label class="field"><span>Name <em>(required)</em></span>
           <input name="name" value="${escapeHtml(artist.name)}" required /></label>
@@ -900,6 +1014,24 @@ function openArtistEditModal(artist: ArtistDetail): void {
     if (e.target === overlay) close();
   });
   overlay.querySelector("#modal-close")?.addEventListener("click", close);
+
+  const avatarInput = overlay.querySelector("#artist-avatar-input") as HTMLInputElement;
+  const avatarStatus = overlay.querySelector("#artist-avatar-status") as HTMLElement;
+  avatarInput.addEventListener("change", async () => {
+    const file = avatarInput.files?.[0];
+    if (!file) return;
+    avatarStatus.textContent = "Uploading...";
+    try {
+      const updated = await api.uploadArtistAvatar(artist.id, file);
+      artist.avatarUrl = updated.avatarUrl;
+      const preview = overlay.querySelector(".avatar-upload .avatar") as HTMLElement | null;
+      if (preview) preview.outerHTML = avatarHtml(updated.avatarUrl, artist.name, "lg");
+      avatarStatus.textContent = "";
+      if (state.view.kind === "artist") renderMain();
+    } catch (err) {
+      avatarStatus.textContent = `Upload failed: ${(err as Error).message}`;
+    }
+  });
 
   const form = overlay.querySelector("#artist-edit") as HTMLFormElement;
   const status = overlay.querySelector("#artist-edit-status") as HTMLElement;
@@ -1137,8 +1269,22 @@ async function renderPlaylistView(el: HTMLElement, id: string): Promise<void> {
         "sm",
       )} ${escapeHtml(pl.ownerName ?? "unknown")}</span>`;
 
+  const coverHtml = pl.coverUrl
+    ? `<img class="playlist-cover" src="${pl.coverUrl}" alt="" />`
+    : `<div class="playlist-cover playlist-cover-empty"><i class="bi bi-music-note-list"></i></div>`;
+
+  const coverControls = pl.isOwner
+    ? `<label class="btn btn-sm" for="playlist-cover-input">Change cover</label>
+       <input type="file" id="playlist-cover-input" accept="image/*" hidden />`
+    : "";
+
   el.innerHTML = `
     <header class="main-head">
+      <div class="playlist-head-cover">
+        ${coverHtml}
+        ${coverControls}
+        <span id="playlist-cover-status" class="upload-status"></span>
+      </div>
       <h2>${escapeHtml(pl.name)} ${
         pl.isPublic ? `<span class="pl-badge">shared</span>` : ""
       }</h2>
@@ -1162,6 +1308,21 @@ async function renderPlaylistView(el: HTMLElement, id: string): Promise<void> {
     state.view = { kind: "library" };
     await loadPlaylists();
     render();
+  });
+
+  const coverInput = document.getElementById("playlist-cover-input") as HTMLInputElement | null;
+  coverInput?.addEventListener("change", async () => {
+    const file = coverInput.files?.[0];
+    if (!file) return;
+    const status = document.getElementById("playlist-cover-status");
+    if (status) status.textContent = "Uploading...";
+    try {
+      await api.uploadPlaylistCover(id, file);
+      await loadPlaylists();
+      render();
+    } catch (err) {
+      if (status) status.textContent = `Upload failed: ${(err as Error).message}`;
+    }
   });
 }
 
@@ -1286,13 +1447,60 @@ function wireSongList(editablePlaylistId?: string): void {
 async function pickPlaylist(): Promise<string | null> {
   const mine = state.playlists;
   if (mine.length === 0) {
-    alert("Create a playlist first.");
+    flash("Create a playlist first.");
     return null;
   }
-  const names = mine.map((p, i) => `${i + 1}. ${p.name}`).join("\n");
-  const choice = prompt(`Add to which playlist?\n${names}`);
-  if (!choice) return null;
-  return mine[Number(choice) - 1]?.id ?? null;
+  return openPlaylistPickerModal(mine);
+}
+
+// Simple fuzzy filter for small in-memory lists (playlists, etc). Exact
+// substring matches always win; otherwise falls back to a bigram
+// dice-coefficient so "1800" still finds "1-800"-style names, and small
+// typos don't come back empty.
+function fuzzyFilter<T>(items: T[], query: string, key: (item: T) => string): T[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return items;
+  const normQ = q.replace(/[^a-z0-9]+/g, " ").trim();
+  const tightQ = q.replace(/[^a-z0-9]+/g, "");
+
+  return items
+    .map((item) => {
+      const raw = key(item).toLowerCase();
+      const norm = raw.replace(/[^a-z0-9]+/g, " ").trim();
+      const tight = raw.replace(/[^a-z0-9]+/g, "");
+      const score =
+        tight === tightQ || norm.includes(normQ) ? 1 : diceCoefficient(normQ, norm);
+      return { item, score };
+    })
+    .filter((r) => r.score >= 0.35)
+    .sort((a, b) => b.score - a.score)
+    .map((r) => r.item);
+}
+
+// Sørensen–Dice coefficient over character bigrams, mirrored from the
+// server's lib/text.ts (kept tiny + dependency-free for client-side use).
+function diceCoefficient(a: string, b: string): number {
+  if (a === b) return 1;
+  if (a.length < 2 || b.length < 2) return 0;
+  const bigrams = (s: string): Map<string, number> => {
+    const map = new Map<string, number>();
+    for (let i = 0; i < s.length - 1; i++) {
+      const gram = s.slice(i, i + 2);
+      map.set(gram, (map.get(gram) ?? 0) + 1);
+    }
+    return map;
+  };
+  const aGrams = bigrams(a);
+  const bGrams = bigrams(b);
+  let intersection = 0;
+  for (const [gram, count] of aGrams) {
+    const other = bGrams.get(gram);
+    if (other) intersection += Math.min(count, other);
+  }
+  const total =
+    [...aGrams.values()].reduce((s, n) => s + n, 0) +
+    [...bGrams.values()].reduce((s, n) => s + n, 0);
+  return total === 0 ? 0 : (2 * intersection) / total;
 }
 
 // --- player bar ------------------------------------------------------------

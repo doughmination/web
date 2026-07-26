@@ -12,7 +12,12 @@ import {
 } from "../auth/middleware.ts";
 import { rateLimit } from "../lib/ratelimit.ts";
 import { getLyrics } from "../lib/lyrics.ts";
-import { normalizeTitle } from "../lib/text.ts";
+import {
+  normalizeTitle,
+  normalizeArtistName,
+  tightTitleKey,
+  diceCoefficient,
+} from "../lib/text.ts";
 import { findAndFlagDuplicates } from "../lib/duplicates.ts";
 import { redis } from "../redis.ts";
 import {
@@ -27,18 +32,34 @@ export const songRoutes = new Hono<AppEnv>();
 
 // Everyone authenticated sees the whole shared library.
 songRoutes.get("/", requireAuth, async (c) => {
-  const q = c.req.query("q");
-  const rows = q
-    ? await sql<Song[]>`
-        SELECT * FROM songs
-        WHERE lower(title)  LIKE ${"%" + q.toLowerCase() + "%"}
-           OR lower(artist) LIKE ${"%" + q.toLowerCase() + "%"}
-        ORDER BY created_at DESC
-      `
-    : await sql<Song[]>`
-        SELECT * FROM songs ORDER BY created_at DESC
-      `;
-  return c.json(rows.map(toPublicSong));
+  const q = c.req.query("q")?.trim();
+  const rows = await sql<Song[]>`SELECT * FROM songs ORDER BY created_at DESC`;
+  if (!q) return c.json(rows.map(toPublicSong));
+
+  // Personal-scale library: score every song in-process rather than a DB-side
+  // fuzzy prefilter (same tradeoff as artists.ts / lib/duplicates.ts). Tight
+  // keys mean "1800" and "1-800" match each other; dice-coefficient covers
+  // typos and partial matches on top of that.
+  const normQ = normalizeTitle(q);
+  const tightQ = tightTitleKey(q);
+  const artistQ = normalizeArtistName(q);
+
+  const scored = rows
+    .map((song) => {
+      const normTitle = normalizeTitle(song.title);
+      const normArtist = normalizeArtistName(song.artist);
+      const titleScore =
+        tightTitleKey(song.title) === tightQ || (normQ && normTitle.includes(normQ))
+          ? 1
+          : diceCoefficient(normQ, normTitle);
+      const artistScore =
+        artistQ && normArtist.includes(artistQ) ? 1 : diceCoefficient(artistQ, normArtist);
+      return { song, score: Math.max(titleScore, artistScore) };
+    })
+    .filter((r) => r.score >= 0.35)
+    .sort((a, b) => b.score - a.score);
+
+  return c.json(scored.map((r) => toPublicSong(r.song)));
 });
 
 songRoutes.get("/:id", requireAuth, async (c) => {
