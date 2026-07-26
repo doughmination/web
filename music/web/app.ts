@@ -209,8 +209,8 @@ function renderSidebar(): void {
     <div class="sidebar-foot">
       ${avatarHtml(state.me?.avatarUrl ?? null, state.me?.name ?? null, "sm")}
       <span class="me-name">${escapeHtml(
-        state.me?.name ?? state.me?.email ?? "You",
-      )}</span>
+    state.me?.name ?? state.me?.email ?? "You",
+  )}</span>
       <button class="link" id="logout">Log out</button>
     </div>
   `;
@@ -435,11 +435,11 @@ function openUploadModal(): void {
       <label class="check-row"><input type="checkbox" id="b-explicit" /> <span>Mark all explicit</span></label>
       <ul class="batch" id="batch">
         ${files
-          .map(
-            (f, i) => `<li class="b-row"><span class="b-name">${escapeHtml(f.name)}</span>
+        .map(
+          (f, i) => `<li class="b-row"><span class="b-name">${escapeHtml(f.name)}</span>
               <span class="b-stat" id="b-${i}">queued</span></li>`,
-          )
-          .join("")}
+        )
+        .join("")}
       </ul>
       <button class="btn btn-primary" id="b-start">Upload ${files.length} songs</button>
       <span id="b-summary" class="upload-status"></span>
@@ -450,11 +450,14 @@ function openUploadModal(): void {
     startBtn.addEventListener("click", async () => {
       startBtn.disabled = true;
       const explicitAll = (body.querySelector("#b-explicit") as HTMLInputElement).checked;
+      const CONCURRENCY = 10;
       let ok = 0;
       let fail = 0;
+      let done = 0;
+      let next = 0;
       const failed: string[] = [];
 
-      for (let i = 0; i < files.length; i++) {
+      const uploadOne = async (i: number) => {
         const file = files[i]!;
         const stat = body.querySelector(`#b-${i}`) as HTMLElement;
         stat.textContent = "uploading…";
@@ -469,6 +472,7 @@ function openUploadModal(): void {
         if (explicitAll) fd.set("explicit", "true");
 
         const success = await uploadWithRetry(fd, 2);
+        done++;
         if (success) {
           ok++;
           stat.textContent = "✓";
@@ -479,9 +483,19 @@ function openUploadModal(): void {
           stat.textContent = "failed";
           stat.classList.add("err");
         }
-        summary.textContent = `${ok} uploaded, ${fail} failed, ${files.length - ok - fail} left`;
-        await sleep(120);
-      }
+        summary.textContent = `${ok} uploaded, ${fail} failed, ${files.length - done} left`;
+      };
+
+      // Worker pool: each worker pulls the next file as it finishes one, so up
+      // to CONCURRENCY uploads run at a time (small files don't wait on big ones).
+      const worker = async () => {
+        while (next < files.length) {
+          await uploadOne(next++);
+        }
+      };
+      await Promise.all(
+        Array.from({ length: Math.min(CONCURRENCY, files.length) }, worker),
+      );
 
       await loadSongs();
       if (state.view.kind === "library") renderMain();
@@ -625,19 +639,19 @@ async function renderBrowse(el: HTMLElement): Promise<void> {
     const rows = await api.searchPublicPlaylists(q);
     results.innerHTML = rows.length
       ? `<div class="pl-grid">${rows
-          .map(
-            (p) => `
+        .map(
+          (p) => `
         <button class="pl-card" data-open="${p.id}">
           ${avatarHtml(p.ownerAvatar, p.ownerName)}
           <div class="pl-card-meta">
             <span class="pl-card-name">${escapeHtml(p.name)}</span>
             <span class="pl-card-sub">${escapeHtml(
-              p.ownerName ?? "unknown",
-            )} · ${p.songCount} song${p.songCount === 1 ? "" : "s"}</span>
+            p.ownerName ?? "unknown",
+          )} · ${p.songCount} song${p.songCount === 1 ? "" : "s"}</span>
           </div>
         </button>`,
-          )
-          .join("")}</div>`
+        )
+        .join("")}</div>`
       : `<p class="empty">No shared playlists found.</p>`;
 
     results.querySelectorAll("[data-open]").forEach((b) => {
@@ -668,16 +682,15 @@ async function renderPlaylistView(el: HTMLElement, id: string): Promise<void> {
       </label>
       <button class="btn" id="del-playlist">Delete</button>`
     : `<span class="owner-tag">${avatarHtml(
-        pl.ownerAvatar,
-        pl.ownerName,
-        "sm",
-      )} ${escapeHtml(pl.ownerName ?? "unknown")}</span>`;
+      pl.ownerAvatar,
+      pl.ownerName,
+      "sm",
+    )} ${escapeHtml(pl.ownerName ?? "unknown")}</span>`;
 
   el.innerHTML = `
     <header class="main-head">
-      <h2>${escapeHtml(pl.name)} ${
-        pl.isPublic ? `<span class="pl-badge">shared</span>` : ""
-      }</h2>
+      <h2>${escapeHtml(pl.name)} ${pl.isPublic ? `<span class="pl-badge">shared</span>` : ""
+    }</h2>
       <div class="head-actions">${ownerControls}</div>
     </header>
     <div id="songlist">${songTableHtml(shownSongs, pl.isOwner ? id : undefined)}</div>
@@ -850,11 +863,10 @@ function mountPlayerBar(el: HTMLElement, song: Song): void {
   el.innerHTML = `
     <div class="pb-song">
       <div class="pb-cover">
-        ${
-          song.coverUrl
-            ? `<img class="cover" src="${song.coverUrl}" alt="" />`
-            : `<div class="cover cover-empty"><i class="bi bi-music-note-beamed"></i></div>`
-        }
+        ${song.coverUrl
+      ? `<img class="cover" src="${song.coverUrl}" alt="" />`
+      : `<div class="cover cover-empty"><i class="bi bi-music-note-beamed"></i></div>`
+    }
         <canvas class="pb-viz" id="pb-viz"></canvas>
       </div>
       <div class="song-meta">
@@ -879,14 +891,13 @@ function mountPlayerBar(el: HTMLElement, song: Song): void {
       </div>
     </div>
 
-    ${
-      player.volumeSupported
-        ? `<div class="pb-volume">
+    ${player.volumeSupported
+      ? `<div class="pb-volume">
       <button class="icon-btn" id="mute" title="Mute"><i class="bi bi-volume-up-fill"></i></button>
       <input type="range" id="volume" min="0" max="1" step="0.01"
              value="${player.volume}" style="--pct:${player.volume * 100}%" />
     </div>`
-        : ""
+      : ""
     }
   `;
 
