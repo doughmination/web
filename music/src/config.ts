@@ -1,10 +1,4 @@
-// Central config. Reads env once, fails fast if something required is missing.
-//
-// Vars shared across the monorepo's dotenvx .env are UNPREFIXED (OIDC_ISSUER,
-// REDIS_URL). Vars that must differ per app are MUSIC_-prefixed so they don't
-// collide with the mailbox's values. The OIDC redirect is derived from
-// MUSIC_APP_URL, and there's no session secret (sessions + the OIDC handshake
-// both live in Redis).
+
 
 function required(name: string): string {
   const v = process.env[name];
@@ -37,6 +31,11 @@ export const config = {
     clientSecret: required("MUSIC_OIDC_CLIENT_SECRET"),
     redirectUri: `${appUrl}/api/auth/callback`, // derived, not a separate var
     scope: "openid profile email",
+  },
+  
+  pocketId: {
+    apiKey: optional("MUSIC_POCKETID_API_KEY", ""),
+    pollIntervalMs: Number(optional("MUSIC_POCKETID_POLL_MS", "60000")),
   },
 
   mediaDir: optional("MUSIC_MEDIA_DIR", "./data/media"),

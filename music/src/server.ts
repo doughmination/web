@@ -10,6 +10,7 @@ import {
   type AppEnv,
 } from "./auth/middleware.ts";
 import { ensureMediaDirs } from "./lib/media.ts";
+import { startPocketIdGuard } from "./lib/pocketid-guard.ts";
 import { authRoutes } from "./routes/auth.ts";
 import { songRoutes } from "./routes/songs.ts";
 import { playlistRoutes } from "./routes/playlists.ts";
@@ -17,6 +18,7 @@ import { artistRoutes } from "./routes/artists.ts";
 import { duplicateRoutes } from "./routes/duplicates.ts";
 
 await ensureMediaDirs();
+startPocketIdGuard();
 
 const app = new Hono<AppEnv>();
 
