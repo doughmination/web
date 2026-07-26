@@ -847,7 +847,7 @@ async function renderArtists(el: HTMLElement): Promise<void> {
           .map(
             (a) => `
         <button class="pl-card" data-open="${a.id}">
-          ${avatarHtml(null, a.name)}
+          ${avatarHtml(a.avatarUrl, a.name)}
           <div class="pl-card-meta">
             <span class="pl-card-name">${escapeHtml(a.name)}</span>
             <span class="pl-card-sub">${a.songCount} song${a.songCount === 1 ? "" : "s"}</span>
@@ -885,7 +885,10 @@ async function renderArtistView(el: HTMLElement, id: string): Promise<void> {
 
   el.innerHTML = `
     <header class="main-head">
-      <h2>${escapeHtml(artist.name)}</h2>
+      <div class="main-head-title">
+        ${avatarHtml(artist.avatarUrl, artist.name, "lg")}
+        <h2>${escapeHtml(artist.name)}</h2>
+      </div>
       <div class="head-actions">${editBtn}</div>
     </header>
     ${artist.bio ? `<p class="artist-bio">${escapeHtml(artist.bio)}</p>` : ""}
@@ -1280,14 +1283,16 @@ async function renderPlaylistView(el: HTMLElement, id: string): Promise<void> {
 
   el.innerHTML = `
     <header class="main-head">
-      <div class="playlist-head-cover">
-        ${coverHtml}
-        ${coverControls}
-        <span id="playlist-cover-status" class="upload-status"></span>
+      <div class="main-head-title">
+        <div class="playlist-head-cover">
+          ${coverHtml}
+          ${coverControls}
+          <span id="playlist-cover-status" class="upload-status"></span>
+        </div>
+        <h2>${escapeHtml(pl.name)} ${
+          pl.isPublic ? `<span class="pl-badge">shared</span>` : ""
+        }</h2>
       </div>
-      <h2>${escapeHtml(pl.name)} ${
-        pl.isPublic ? `<span class="pl-badge">shared</span>` : ""
-      }</h2>
       <div class="head-actions">${ownerControls}</div>
     </header>
     <div id="songlist">${songTableHtml(shownSongs, pl.isOwner ? id : undefined)}</div>
