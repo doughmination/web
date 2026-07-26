@@ -41,6 +41,53 @@ export type Me = {
   isAdmin: boolean;
 };
 
+export type Artist = {
+  id: string;
+  name: string;
+  bio: string | null;
+  songCount: number;
+  createdAt: string;
+};
+
+export type ArtistSong = Song & { role: string };
+
+export type ArtistDetail = Artist & {
+  songs: ArtistSong[];
+};
+
+export type LinkRequest = {
+  id: string;
+  songId: string;
+  songTitle: string;
+  songArtist: string;
+  artistId: string;
+  artistName: string;
+  role: string;
+  requestedByName: string | null;
+  status: string;
+  createdAt: string;
+};
+
+export type DuplicateSongSide = {
+  id: string | null;
+  title: string;
+  artist: string;
+  album: string | null;
+  durationS: number | null;
+  coverUrl: string | null;
+  streamUrl: string | null;
+};
+
+export type DuplicateReview = {
+  id: string;
+  score: number;
+  reasons: string[];
+  status: string;
+  createdAt: string;
+  newSong: DuplicateSongSide;
+  existingSong: DuplicateSongSide;
+};
+
 export type SyncedLine = { t: number; text: string };
 
 export type Lyrics = {
@@ -138,5 +185,90 @@ export const api = {
     return fetch(`/api/playlists/${playlistId}/songs/${songId}`, {
       method: "DELETE",
     });
+  },
+
+  // --- artists -----------------------------------------------------------
+
+  searchArtists(query?: string): Promise<Artist[]> {
+    const qs = query ? `?q=${encodeURIComponent(query)}` : "";
+    return fetch(`/api/artists${qs}`).then(json<Artist[]>);
+  },
+
+  getArtist(id: string): Promise<ArtistDetail> {
+    return fetch(`/api/artists/${id}`).then(json<ArtistDetail>);
+  },
+
+  // Not a generic throw-on-error call: an "artist already exists" response
+  // is an expected outcome the caller needs to react to (offer to link to
+  // the existing page instead), not an exceptional failure.
+  async createArtist(
+    name: string,
+    bio?: string,
+  ): Promise<
+    { ok: true; artist: Artist } | { ok: false; status: number; existing: Artist | null }
+  > {
+    const res = await fetch("/api/artists", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ name, bio }),
+    });
+    const data = (await res.json().catch(() => ({}))) as {
+      artist?: Artist;
+    };
+    if (res.ok) return { ok: true, artist: data as unknown as Artist };
+    return { ok: false, status: res.status, existing: data.artist ?? null };
+  },
+
+  updateArtist(id: string, patch: { name?: string; bio?: string }): Promise<Artist> {
+    return fetch(`/api/artists/${id}`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(patch),
+    }).then(json<Artist>);
+  },
+
+  mergeArtists(sourceId: string, targetId: string): Promise<Artist> {
+    return fetch("/api/artists/merge", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ sourceId, targetId }),
+    }).then(json<Artist>);
+  },
+
+  async requestArtistLink(
+    artistId: string,
+    songId: string,
+    role?: string,
+  ): Promise<{ ok: boolean; status: number }> {
+    const res = await fetch(`/api/artists/${artistId}/link-requests`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ songId, role }),
+    });
+    return { ok: res.ok, status: res.status };
+  },
+
+  listLinkRequests(status = "pending"): Promise<LinkRequest[]> {
+    return fetch(`/api/artists/link-requests?status=${status}`).then(
+      json<LinkRequest[]>,
+    );
+  },
+
+  decideLinkRequest(id: string, action: "approve" | "reject"): Promise<Response> {
+    return fetch(`/api/artists/link-requests/${id}/${action}`, {
+      method: "POST",
+    });
+  },
+
+  // --- duplicate review (admin) -------------------------------------------
+
+  listDuplicates(status = "pending"): Promise<DuplicateReview[]> {
+    return fetch(`/api/duplicates?status=${status}`).then(
+      json<DuplicateReview[]>,
+    );
+  },
+
+  decideDuplicate(id: string, action: "duplicate" | "different"): Promise<Response> {
+    return fetch(`/api/duplicates/${id}/${action}`, { method: "POST" });
   },
 };

@@ -42,6 +42,19 @@ export const config = {
   mediaDir: optional("MUSIC_MEDIA_DIR", "./data/media"),
   maxUploadBytes: Number(optional("MUSIC_MAX_UPLOAD_MB", "200")) * 1024 * 1024,
 
+  // Duplicate detection: a candidate scoring >= threshold is sent to the
+  // admin review queue (see lib/duplicates.ts). Score is a sum of signal
+  // weights, not a percentage, so the threshold is tuned against those
+  // weights rather than 0-100.
+  duplicateReviewThreshold: Number(
+    optional("MUSIC_DUPLICATE_THRESHOLD", "55"),
+  ),
+  // Recordings within this many seconds of each other count as a duration
+  // match signal.
+  duplicateDurationToleranceS: Number(
+    optional("MUSIC_DUPLICATE_DURATION_TOLERANCE_S", "2"),
+  ),
+
   // Comma-separated admin identifiers (PocketID username or email) that may
   // edit/fix any song in the shared library, e.g. "clove" or "me@example.com".
   admins: optional("MUSIC_ADMINS", "")

@@ -975,6 +975,83 @@ button {
   display: none;
 }
 
+/* --- artist pages --- */
+
+.artist-bio {
+  color: var(--muted);
+  margin: -0.25rem 0 1rem;
+  max-width: 60ch;
+}
+
+/* --- duplicate review + artist link requests --- */
+
+.dupe-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel);
+  margin-bottom: 0.75rem;
+}
+
+.dupe-score {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+}
+
+.dupe-compare {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dupe-compare > i {
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.dupe-side {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.dupe-side .song-artist,
+.dupe-side .song-dur {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.dupe-reasons {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.dupe-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+.req-row {
+  align-items: center;
+}
+
+.req-by {
+  display: block;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
 /* --- responsive --- */
 
 @media (max-width: 768px) {
@@ -1074,6 +1151,25 @@ button {
 
   .modal {
     max-width: 100%;
+  }
+
+  .dupe-compare {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dupe-compare > i {
+    align-self: center;
+    transform: rotate(90deg);
+  }
+
+  .req-row {
+    flex-wrap: wrap;
+  }
+
+  .req-row .dupe-actions {
+    width: 100%;
+    justify-content: flex-start;
   }
 }
 

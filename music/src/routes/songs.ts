@@ -12,6 +12,8 @@ import {
 } from "../auth/middleware.ts";
 import { rateLimit } from "../lib/ratelimit.ts";
 import { getLyrics } from "../lib/lyrics.ts";
+import { normalizeTitle } from "../lib/text.ts";
+import { findAndFlagDuplicates } from "../lib/duplicates.ts";
 import { redis } from "../redis.ts";
 import {
   ensureMediaDirs,
@@ -96,14 +98,23 @@ songRoutes.post(
   const rows = await sql<Song[]>`
     INSERT INTO songs
       (title, artist, album, cover_path, file_path, mime, duration_s,
-       size_bytes, explicit, uploaded_by)
+       size_bytes, explicit, normalized_title, uploaded_by)
     VALUES
       (${title}, ${artist}, ${album ?? null}, ${coverPath}, ${filePath},
        ${file.type || null}, ${tags.durationS}, ${file.size}, ${explicit},
-       ${user.id})
+       ${normalizeTitle(title)}, ${user.id})
     RETURNING *
   `;
-  return c.json(toPublicSong(rows[0]!), 201);
+  const song = rows[0]!;
+
+  // Best-effort: a possible duplicate must never block or fail the upload
+  // itself. It only ever files a candidate into the admin review queue —
+  // see lib/duplicates.ts.
+  findAndFlagDuplicates(song).catch((err) =>
+    console.error("duplicate detection failed:", err),
+  );
+
+  return c.json(toPublicSong(song), 201);
 });
 
 // Audio streaming with HTTP Range support (seek/scrub).

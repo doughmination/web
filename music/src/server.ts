@@ -13,6 +13,8 @@ import { ensureMediaDirs } from "./lib/media.ts";
 import { authRoutes } from "./routes/auth.ts";
 import { songRoutes } from "./routes/songs.ts";
 import { playlistRoutes } from "./routes/playlists.ts";
+import { artistRoutes } from "./routes/artists.ts";
+import { duplicateRoutes } from "./routes/duplicates.ts";
 
 await ensureMediaDirs();
 
@@ -40,6 +42,8 @@ app.get("/api/me", (c) => {
 app.route("/api/auth", authRoutes);
 app.route("/api/songs", songRoutes);
 app.route("/api/playlists", playlistRoutes);
+app.route("/api/artists", artistRoutes);
+app.route("/api/duplicates", duplicateRoutes);
 
 // Serve bundled frontend assets (built by `bun build` into ./dist).
 app.use("/app.js", serveStatic({ path: "./dist/app.js" }));
