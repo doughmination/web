@@ -19,7 +19,7 @@ const GUILDS: GuildCfg[] = [
   },
   {
     name: "Girls",
-    invite: "TransRights",
+    invite: "K8qaKYBy6J",
     role: "mod"
   },
   {
