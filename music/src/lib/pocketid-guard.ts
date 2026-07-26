@@ -12,8 +12,8 @@ interface PocketIdUserPage {
   data: PocketIdUser[];
 }
 
-async function fetchDisabledUserIds(): Promise<string[]> {
-  const disabledIds: string[] = [];
+async function fetchAllUsers(): Promise<PocketIdUser[]> {
+  const users: PocketIdUser[] = [];
   const limit = 100;
   let page = 1;
 
@@ -26,27 +26,31 @@ async function fetchDisabledUserIds(): Promise<string[]> {
       headers: { "X-API-KEY": config.pocketId.apiKey },
     });
     if (!res.ok) {
+      const body = await res.text().catch(() => "<unreadable body>");
       throw new Error(
-        `PocketID user list request failed: ${res.status} ${res.statusText}`,
+        `PocketID user list request failed: ${res.status} ${res.statusText} — ${body.slice(0, 300)}`,
       );
     }
 
     const body = (await res.json()) as PocketIdUserPage;
-    for (const u of body.data) {
-      if (u.disabled) disabledIds.push(u.id);
-    }
+    users.push(...body.data);
 
     if (body.data.length < limit) break; // last page
     page++;
   }
 
-  return disabledIds;
+  return users;
 }
 
 export async function pollDisabledUsers(): Promise<void> {
   if (!config.pocketId.apiKey) return;
 
-  const disabledIds = await fetchDisabledUserIds();
+  const allUsers = await fetchAllUsers();
+  const disabledIds = allUsers.filter((u) => u.disabled).map((u) => u.id);
+
+  console.log(
+    `pocketid-guard: checked ${allUsers.length} PocketID user(s), ${disabledIds.length} disabled`,
+  );
   if (disabledIds.length === 0) return;
 
   const rows = await sql<{ id: string }[]>`
@@ -70,9 +74,21 @@ export function startPocketIdGuard(): void {
     return;
   }
 
+  const maskedKey =
+    config.pocketId.apiKey.length > 4
+      ? `${"*".repeat(config.pocketId.apiKey.length - 4)}${config.pocketId.apiKey.slice(-4)}`
+      : "****";
+  console.log(
+    `pocketid-guard: starting, polling ${config.oidc.issuer}/api/users every ${config.pocketId.pollIntervalMs}ms (key ${maskedKey})`,
+  );
+
   const run = () => {
     pollDisabledUsers().catch((err) => {
-      console.error("pocketid-guard: poll failed", err);
+      // Log the full error, not just the message — auth/network failures
+      // (401, DNS, TLS, wrong issuer URL) all need to be visible here,
+      // since a silent failure here is exactly what this file exists to
+      // avoid for user sessions.
+      console.error("pocketid-guard: poll failed:", err);
     });
   };
 
