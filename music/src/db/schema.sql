@@ -86,6 +86,11 @@ CREATE TABLE IF NOT EXISTS artists (
   created_at      timestamptz NOT NULL DEFAULT now()
 );
 
+-- Added after initial release; safe on existing databases (same gap that
+-- bit playlists.cover_path above — CREATE TABLE IF NOT EXISTS is a no-op
+-- once the table already exists, so this needs its own ALTER).
+ALTER TABLE artists ADD COLUMN IF NOT EXISTS avatar_path text;
+
 -- Hard safety net against exact-duplicate artist pages. Near-duplicates
 -- (different spellings that normalise differently) aren't caught here —
 -- that's what search-before-create in the UI and admin merge are for.
