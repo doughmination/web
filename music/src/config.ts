@@ -1,5 +1,3 @@
-
-
 function required(name: string): string {
   const v = process.env[name];
   if (!v) {
@@ -32,10 +30,26 @@ export const config = {
     redirectUri: `${appUrl}/api/auth/callback`, // derived, not a separate var
     scope: "openid profile email",
   },
-  
+
+  // PocketID has no outbound webhooks (as of writing), so disabling a user
+  // there doesn't reach this app on its own. If MUSIC_POCKETID_API_KEY is
+  // set, a background poller checks PocketID's user list on this interval
+  // and kills local sessions for anyone it finds disabled. See
+  // lib/pocketid-guard.ts. Leave the API key unset to disable this feature.
   pocketId: {
     apiKey: optional("MUSIC_POCKETID_API_KEY", ""),
     pollIntervalMs: Number(optional("MUSIC_POCKETID_POLL_MS", "60000")),
+  },
+
+  // Last.fm scrobbling. api_key/sharedSecret are ONE app-level credential
+  // pair (register once at last.fm/api/account/create) — not per-user.
+  // Each user then does a "Connect Last.fm" handshake (see routes/lastfm.ts)
+  // that exchanges a short-lived token for their own session key, which is
+  // what actually gets stored per-user (users.lastfm_session_key). Leave
+  // MUSIC_LASTFM_API_KEY unset to hide the feature entirely.
+  lastfm: {
+    apiKey: optional("MUSIC_LASTFM_API_KEY", ""),
+    sharedSecret: optional("MUSIC_LASTFM_SHARED_SECRET", ""),
   },
 
   mediaDir: optional("MUSIC_MEDIA_DIR", "./data/media"),

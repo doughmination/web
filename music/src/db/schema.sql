@@ -15,6 +15,12 @@ CREATE TABLE IF NOT EXISTS users (
 -- Added after initial release; safe on existing databases.
 ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url text;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS username text;
+-- Last.fm "Connect account" handshake result (see routes/lastfm.ts). The
+-- session key is a long-lived credential from auth.getSession, not a
+-- password — revocable from either side (user disconnects here, or revokes
+-- the app from their Last.fm account settings).
+ALTER TABLE users ADD COLUMN IF NOT EXISTS lastfm_session_key text;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS lastfm_username text;
 
 CREATE TABLE IF NOT EXISTS songs (
   id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),

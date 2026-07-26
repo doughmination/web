@@ -28,7 +28,8 @@ type View =
   | { kind: "artists" }
   | { kind: "artist"; id: string }
   | { kind: "duplicates" }
-  | { kind: "linkRequests" };
+  | { kind: "linkRequests" }
+  | { kind: "settings" };
 
 const state = {
   me: null as Me | null,
@@ -43,6 +44,7 @@ let lastSave = 0;
 player.onChange = () => {
   renderPlayerBar();
   syncLyrics();
+  checkScrobbleThreshold();
   const now = Date.now();
   if (now - lastSave > 2000) {
     lastSave = now;
@@ -50,6 +52,52 @@ player.onChange = () => {
   }
 };
 player.onError = (msg) => flash(msg);
+
+// --- Last.fm scrobbling -----------------------------------------------------
+// Last.fm's own rules: send "now playing" as soon as a track starts, then
+// scrobble once the lesser of (half the track's duration, 4 minutes) has
+// elapsed — and never for tracks under 30s. See lib/lastfm.ts server-side.
+
+let scrobbleTrack: { song: Song; startedAt: number; scrobbled: boolean } | null = null;
+
+function onTrackStarted(song: Song): void {
+  scrobbleTrack = { song, startedAt: Math.floor(Date.now() / 1000), scrobbled: false };
+  if (!state.me?.lastfmConnected) return;
+  api
+    .lastfmNowPlaying({
+      title: song.title,
+      artist: song.artist,
+      album: song.album,
+      durationS: song.durationS,
+    })
+    .catch(() => {
+      /* best-effort — never blocks playback */
+    });
+}
+player.onTrackChange = onTrackStarted;
+
+function checkScrobbleThreshold(): void {
+  if (!scrobbleTrack || scrobbleTrack.scrobbled || !state.me?.lastfmConnected) return;
+  const { current, duration } = player.progress;
+  if (!duration || duration < 30) return; // Last.fm: no scrobbling under 30s
+
+  const threshold = Math.min(duration / 2, 4 * 60);
+  if (current < threshold) return;
+
+  scrobbleTrack.scrobbled = true; // mark before the request settles, not after
+  const { song, startedAt } = scrobbleTrack;
+  api
+    .lastfmScrobble({
+      title: song.title,
+      artist: song.artist,
+      album: song.album,
+      durationS: song.durationS,
+      startedAt,
+    })
+    .catch(() => {
+      /* best-effort */
+    });
+}
 
 // Persist / restore the current session so a forced reload can resume.
 const NOW_PLAYING_KEY = "music:nowplaying";
@@ -120,8 +168,26 @@ async function boot(): Promise<void> {
   await Promise.all([loadSongs(), loadPlaylists()]);
   if (state.me.isAdmin) await refreshAdminCounts();
   restoreNowPlaying();
+  handleLastfmRedirect();
   render();
   startVisualizer();
+}
+
+// After the Last.fm "Connect" handshake, the backend redirects back here
+// with ?lastfm=connected|error. Surface that, land on Settings, and drop
+// the param so a refresh doesn't re-show the toast.
+function handleLastfmRedirect(): void {
+  const params = new URLSearchParams(window.location.search);
+  const result = params.get("lastfm");
+  if (!result) return;
+
+  state.view = { kind: "settings" };
+  if (result === "connected") flash("Last.fm connected.");
+  else if (result === "error") flash("Couldn't connect Last.fm. Try again?");
+
+  params.delete("lastfm");
+  const qs = params.toString();
+  history.replaceState(null, "", window.location.pathname + (qs ? `?${qs}` : ""));
 }
 
 async function loadSongs(): Promise<void> {
@@ -251,6 +317,7 @@ function renderSidebar(): void {
       <span class="me-name">${escapeHtml(
         state.me?.name ?? state.me?.email ?? "You",
       )}</span>
+      <button class="icon-btn" data-view="settings" title="Settings"><i class="bi bi-gear"></i></button>
       <button class="link" id="logout">Log out</button>
     </div>
   `;
@@ -262,7 +329,8 @@ function renderSidebar(): void {
         | "browse"
         | "artists"
         | "duplicates"
-        | "linkRequests";
+        | "linkRequests"
+        | "settings";
       state.view = { kind };
       render();
     });
@@ -299,6 +367,7 @@ async function renderMain(): Promise<void> {
   else if (view.kind === "artist") await renderArtistView(el, view.id);
   else if (view.kind === "duplicates") await renderDuplicates(el);
   else if (view.kind === "linkRequests") await renderLinkRequests(el);
+  else if (view.kind === "settings") await renderSettings(el);
   else await renderPlaylistView(el, view.id);
 }
 
@@ -1327,6 +1396,47 @@ async function renderPlaylistView(el: HTMLElement, id: string): Promise<void> {
       render();
     } catch (err) {
       if (status) status.textContent = `Upload failed: ${(err as Error).message}`;
+    }
+  });
+}
+
+// --- settings ----------------------------------------------------------
+
+async function renderSettings(el: HTMLElement): Promise<void> {
+  const status = await api.lastfmStatus();
+
+  el.innerHTML = `
+    <header class="main-head">
+      <h2>Settings</h2>
+    </header>
+
+    <section class="settings-section">
+      <h3>Last.fm</h3>
+      ${
+        !status.configured
+          ? `<p class="empty">Last.fm scrobbling isn't set up on this server yet.</p>`
+          : status.connected
+            ? `
+              <p>Connected as <strong>${escapeHtml(status.username ?? "")}</strong>.
+                 Plays get scrobbled automatically.</p>
+              <button class="btn" id="lastfm-disconnect">Disconnect</button>
+            `
+            : `
+              <p>Connect your Last.fm account to scrobble what you play here.</p>
+              <a class="btn btn-primary" href="${api.lastfmConnectUrl()}">Connect Last.fm</a>
+            `
+      }
+      <span id="lastfm-status" class="upload-status"></span>
+    </section>
+  `;
+
+  document.getElementById("lastfm-disconnect")?.addEventListener("click", async () => {
+    const s = document.getElementById("lastfm-status");
+    try {
+      await api.lastfmDisconnect();
+      await renderSettings(el);
+    } catch (err) {
+      if (s) s.textContent = `Something went wrong: ${(err as Error).message}`;
     }
   });
 }

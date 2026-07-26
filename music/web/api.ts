@@ -41,6 +41,14 @@ export type Me = {
   name: string | null;
   avatarUrl: string | null;
   isAdmin: boolean;
+  lastfmConnected: boolean;
+  lastfmUsername: string | null;
+};
+
+export type LastfmStatus = {
+  configured: boolean;
+  connected: boolean;
+  username: string | null;
 };
 
 export type Artist = {
@@ -291,5 +299,48 @@ export const api = {
 
   decideDuplicate(id: string, action: "duplicate" | "different"): Promise<Response> {
     return fetch(`/api/duplicates/${id}/${action}`, { method: "POST" });
+  },
+
+  // --- Last.fm -------------------------------------------------------------
+
+  lastfmStatus(): Promise<LastfmStatus> {
+    return fetch("/api/lastfm/status").then(json<LastfmStatus>);
+  },
+
+  // Not fetched — Last.fm's own auth page needs a real browser navigation,
+  // not an XHR/fetch redirect.
+  lastfmConnectUrl(): string {
+    return "/api/lastfm/connect";
+  },
+
+  lastfmDisconnect(): Promise<Response> {
+    return fetch("/api/lastfm/disconnect", { method: "POST" });
+  },
+
+  lastfmNowPlaying(track: {
+    title: string;
+    artist: string;
+    album?: string | null;
+    durationS?: number | null;
+  }): Promise<Response> {
+    return fetch("/api/lastfm/now-playing", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(track),
+    });
+  },
+
+  lastfmScrobble(track: {
+    title: string;
+    artist: string;
+    album?: string | null;
+    durationS?: number | null;
+    startedAt: number;
+  }): Promise<Response> {
+    return fetch("/api/lastfm/scrobble", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(track),
+    });
   },
 };

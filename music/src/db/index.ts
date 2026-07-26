@@ -17,6 +17,8 @@ export type User = {
   name: string | null;
   username: string | null;
   avatar_url: string | null;
+  lastfm_session_key: string | null;
+  lastfm_username: string | null;
   created_at: Date;
 };
 

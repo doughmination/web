@@ -16,6 +16,7 @@ import { songRoutes } from "./routes/songs.ts";
 import { playlistRoutes } from "./routes/playlists.ts";
 import { artistRoutes } from "./routes/artists.ts";
 import { duplicateRoutes } from "./routes/duplicates.ts";
+import { lastfmRoutes } from "./routes/lastfm.ts";
 
 await ensureMediaDirs();
 startPocketIdGuard();
@@ -37,6 +38,8 @@ app.get("/api/me", (c) => {
       name: user.name,
       avatarUrl: user.avatar_url,
       isAdmin: isAdmin(user),
+      lastfmConnected: Boolean(user.lastfm_session_key),
+      lastfmUsername: user.lastfm_username,
     },
   });
 });
@@ -46,6 +49,7 @@ app.route("/api/songs", songRoutes);
 app.route("/api/playlists", playlistRoutes);
 app.route("/api/artists", artistRoutes);
 app.route("/api/duplicates", duplicateRoutes);
+app.route("/api/lastfm", lastfmRoutes);
 
 // Serve bundled frontend assets (built by `bun build` into ./dist).
 app.use("/app.js", serveStatic({ path: "./dist/app.js" }));

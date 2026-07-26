@@ -1067,6 +1067,25 @@ button {
   max-width: 60ch;
 }
 
+/* --- settings --- */
+
+.settings-section {
+  max-width: 480px;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel);
+}
+
+.settings-section h3 {
+  margin: 0 0 0.5rem;
+}
+
+.settings-section p {
+  color: var(--muted);
+  margin: 0 0 0.75rem;
+}
+
 /* --- duplicate review + artist link requests --- */
 
 .dupe-row {

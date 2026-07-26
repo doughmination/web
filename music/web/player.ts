@@ -28,6 +28,7 @@ export class Player {
   private queue: Song[] = []; // playback order (shuffled or not)
   private originalOrder: Song[] = []; // order as given to playQueue, never shuffled
   private index = -1;
+  private lastTrackChangeId: string | null = null;
   private prefs: Prefs = loadPrefs();
   private ctx: AudioContext | null = null;
   private analyser: AnalyserNode | null = null;
@@ -37,6 +38,11 @@ export class Player {
 
   onChange: (() => void) | null = null;
   onError: ((msg: string) => void) | null = null;
+  // Fires whenever playback moves to a genuinely different track (skip,
+  // auto-advance, initial play) — NOT on restore() after a page reload,
+  // since that's resuming a track already "started" in a previous session.
+  // Used for Last.fm scrobbling; see app.ts.
+  onTrackChange: ((song: Song) => void) | null = null;
 
   constructor() {
     this.audio.volume = this.prefs.volume;
@@ -160,6 +166,8 @@ export class Player {
     if (this.prefs.repeat === "one") {
       this.audio.currentTime = 0;
       this.tryPlay();
+      const song = this.current;
+      if (song) this.onTrackChange?.(song); // same track, but a fresh listen
       return;
     }
     this.next();
@@ -188,11 +196,16 @@ export class Player {
   private load(): void {
     const song = this.current;
     if (!song) return;
+    const changed = song.id !== this.lastTrackChangeId;
     this.audio.src = song.streamUrl;
     this.audio.volume = this.prefs.volume;
     this.audio.load(); // iOS: explicit load before play
     this.tryPlay();
     this.onChange?.();
+    if (changed) {
+      this.lastTrackChangeId = song.id;
+      this.onTrackChange?.(song);
+    }
   }
 
   // Web Audio analyser for the visualizer. Exposed for the canvas draw loop.
