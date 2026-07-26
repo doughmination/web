@@ -16,6 +16,7 @@ export type Playlist = {
   id: string;
   name: string;
   isPublic: boolean;
+  coverUrl: string | null;
 };
 
 export type PlaylistDetail = Playlist & {
@@ -30,6 +31,7 @@ export type PublicPlaylist = {
   name: string;
   ownerName: string | null;
   ownerAvatar: string | null;
+  coverUrl: string | null;
   songCount: number;
 };
 
@@ -45,6 +47,7 @@ export type Artist = {
   id: string;
   name: string;
   bio: string | null;
+  avatarUrl: string | null;
   songCount: number;
   createdAt: string;
 };
@@ -173,6 +176,15 @@ export const api = {
     return fetch(`/api/playlists/${id}`, { method: "DELETE" });
   },
 
+  uploadPlaylistCover(id: string, file: File): Promise<Playlist> {
+    const fd = new FormData();
+    fd.set("cover", file);
+    return fetch(`/api/playlists/${id}/cover`, {
+      method: "POST",
+      body: fd,
+    }).then(json<Playlist>);
+  },
+
   addToPlaylist(playlistId: string, songId: string): Promise<Response> {
     return fetch(`/api/playlists/${playlistId}/songs`, {
       method: "POST",
@@ -224,6 +236,15 @@ export const api = {
       method: "PATCH",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(patch),
+    }).then(json<Artist>);
+  },
+
+  uploadArtistAvatar(id: string, file: File): Promise<Artist> {
+    const fd = new FormData();
+    fd.set("avatar", file);
+    return fetch(`/api/artists/${id}/avatar`, {
+      method: "POST",
+      body: fd,
     }).then(json<Artist>);
   },
 

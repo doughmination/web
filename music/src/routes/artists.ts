@@ -5,6 +5,7 @@
 // link a song. See schema.sql for the full rationale.
 
 import { Hono } from "hono";
+import { stat, unlink } from "node:fs/promises";
 
 import {
   sql,
@@ -19,6 +20,7 @@ import {
   type AppEnv,
 } from "../auth/middleware.ts";
 import { normalizeArtistName, diceCoefficient } from "../lib/text.ts";
+import { ensureMediaDirs, resolveMedia, saveCover } from "../lib/media.ts";
 
 export const artistRoutes = new Hono<AppEnv>();
 
@@ -186,6 +188,51 @@ artistRoutes.get("/:id", async (c) => {
       role: s.role,
     })),
   });
+});
+
+artistRoutes.get("/:id/avatar", async (c) => {
+  const artist = (
+    await sql<Artist[]>`SELECT * FROM artists WHERE id = ${c.req.param("id")!}`
+  )[0];
+  if (!artist?.avatar_path) return c.json({ error: "not_found" }, 404);
+
+  const abs = resolveMedia(artist.avatar_path);
+  const info = await stat(abs).catch(() => null);
+  if (!info) return c.json({ error: "not_found" }, 404);
+
+  return new Response(Bun.file(abs).stream(), {
+    headers: {
+      "content-type": "image/*",
+      "cache-control": "public, max-age=86400",
+    },
+  });
+});
+
+// Admin-only, mirroring the rest of "editing an existing page".
+artistRoutes.post("/:id/avatar", async (c) => {
+  if (!isAdmin(c.get("user"))) return c.json({ error: "forbidden" }, 403);
+  const id = c.req.param("id")!;
+  const artist = (await sql<Artist[]>`SELECT * FROM artists WHERE id = ${id}`)[0];
+  if (!artist) return c.json({ error: "not_found" }, 404);
+
+  const form = await c.req.formData();
+  const file = form.get("avatar");
+  if (!(file instanceof File) || file.size === 0) {
+    return c.json({ error: "avatar_required" }, 400);
+  }
+
+  await ensureMediaDirs();
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  const ext = file.type.split("/")[1] ?? "jpg";
+  const avatarPath = await saveCover(bytes, ext);
+
+  const rows = await sql<Artist[]>`
+    UPDATE artists SET avatar_path = ${avatarPath} WHERE id = ${id} RETURNING *
+  `;
+  if (artist.avatar_path) {
+    await unlink(resolveMedia(artist.avatar_path)).catch(() => {});
+  }
+  return c.json(toPublicArtist({ ...rows[0]!, song_count: String(await songCount(id)) }));
 });
 
 // Create a brand new artist page. Blocked only on an exact normalised-name
@@ -362,6 +409,7 @@ function toPublicArtist(a: Artist & { song_count: string }) {
     id: a.id,
     name: a.name,
     bio: a.bio,
+    avatarUrl: a.avatar_path ? `/api/artists/${a.id}/avatar` : null,
     songCount: Number(a.song_count),
     createdAt: a.created_at,
   };

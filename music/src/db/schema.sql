@@ -56,6 +56,7 @@ CREATE TABLE IF NOT EXISTS playlists (
 
 -- Added after initial release; safe on existing databases.
 ALTER TABLE playlists ADD COLUMN IF NOT EXISTS is_public boolean NOT NULL DEFAULT false;
+ALTER TABLE playlists ADD COLUMN IF NOT EXISTS cover_path text;
 
 CREATE INDEX IF NOT EXISTS playlists_user_idx   ON playlists (user_id);
 CREATE INDEX IF NOT EXISTS playlists_public_idx ON playlists (is_public) WHERE is_public;
@@ -80,6 +81,7 @@ CREATE TABLE IF NOT EXISTS artists (
   name            text NOT NULL,
   normalized_name text NOT NULL,
   bio             text,
+  avatar_path     text,
   created_by      uuid REFERENCES users (id) ON DELETE SET NULL,
   created_at      timestamptz NOT NULL DEFAULT now()
 );

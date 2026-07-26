@@ -26,6 +26,7 @@ function loadPrefs(): Prefs {
 export class Player {
   private audio = new Audio();
   private queue: Song[] = []; // playback order (shuffled or not)
+  private originalOrder: Song[] = []; // order as given to playQueue, never shuffled
   private index = -1;
   private prefs: Prefs = loadPrefs();
   private ctx: AudioContext | null = null;
@@ -90,6 +91,7 @@ export class Player {
   // Start a fresh queue. `startAt` indexes into `songs` as given; if shuffle is
   // on, that song plays first and the rest are shuffled after it.
   playQueue(songs: Song[], startAt = 0): void {
+    this.originalOrder = songs.slice();
     if (this.prefs.shuffle) {
       const first = songs[startAt];
       const rest = songs.filter((_, i) => i !== startAt);
@@ -142,6 +144,7 @@ export class Player {
   toggleShuffle(): void {
     this.prefs.shuffle = !this.prefs.shuffle;
     this.save();
+    this.reshuffleQueue();
     this.onChange?.();
   }
 
@@ -160,6 +163,26 @@ export class Player {
       return;
     }
     this.next();
+  }
+
+  // Re-derives the playback queue for the current shuffle preference. The
+  // song that's currently playing stays right where it is (nothing skips or
+  // restarts) — only the order of the *other* songs changes. This is what
+  // was missing before: toggling the shuffle button used to only affect the
+  // *next* playQueue() call, so it looked like shuffle "did nothing" if you
+  // toggled it mid-playback.
+  private reshuffleQueue(): void {
+    const current = this.current;
+    if (!current || this.originalOrder.length === 0) return;
+
+    if (this.prefs.shuffle) {
+      const rest = this.originalOrder.filter((s) => s.id !== current.id);
+      this.queue = [current, ...shuffleArray(rest)];
+    } else {
+      this.queue = this.originalOrder.slice();
+    }
+    const idx = this.queue.findIndex((s) => s.id === current.id);
+    this.index = idx >= 0 ? idx : 0;
   }
 
   private load(): void {
@@ -191,6 +214,7 @@ export class Player {
   restore(songs: Song[], index: number, position: number): void {
     if (!songs.length) return;
     this.queue = songs;
+    this.originalOrder = songs.slice();
     this.index = Math.min(Math.max(index, 0), songs.length - 1);
     const song = this.current;
     if (!song) return;

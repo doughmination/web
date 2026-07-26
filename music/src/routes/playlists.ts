@@ -4,6 +4,7 @@
 
 import { Hono } from "hono";
 import type { Context } from "hono";
+import { stat, unlink } from "node:fs/promises";
 
 import {
   sql,
@@ -14,6 +15,7 @@ import {
   requireAuth,
   type AppEnv,
 } from "../auth/middleware.ts";
+import { ensureMediaDirs, resolveMedia, saveCover } from "../lib/media.ts";
 
 export const playlistRoutes = new Hono<AppEnv>();
 
@@ -42,6 +44,7 @@ playlistRoutes.get("/public", async (c) => {
       name: string;
       owner_name: string | null;
       owner_avatar: string | null;
+      cover_path: string | null;
       song_count: string;
     }>
   >`
@@ -50,6 +53,7 @@ playlistRoutes.get("/public", async (c) => {
       p.name,
       u.name       AS owner_name,
       u.avatar_url AS owner_avatar,
+      p.cover_path,
       (SELECT count(*) FROM playlist_songs ps WHERE ps.playlist_id = p.id)
         AS song_count
     FROM playlists p
@@ -70,6 +74,7 @@ playlistRoutes.get("/public", async (c) => {
       name: r.name,
       ownerName: r.owner_name,
       ownerAvatar: r.owner_avatar,
+      coverUrl: r.cover_path ? `/api/playlists/${r.id}/cover` : null,
       songCount: Number(r.song_count),
     })),
   );
@@ -122,6 +127,7 @@ playlistRoutes.get("/:id", async (c) => {
     id: pl.id,
     name: pl.name,
     isPublic: pl.is_public,
+    coverUrl: pl.cover_path ? `/api/playlists/${pl.id}/cover` : null,
     isOwner,
     ownerName: pl.owner_name,
     ownerAvatar: pl.owner_avatar,
@@ -168,6 +174,54 @@ playlistRoutes.delete("/:id", async (c) => {
   return c.json({ ok: true });
 });
 
+// Cover image. Viewable by anyone who can view the playlist itself
+// (owner, or anyone if it's public); replacing it is owner-only.
+playlistRoutes.get("/:id/cover", async (c) => {
+  const user = c.get("user")!;
+  const pl = (
+    await sql<Playlist[]>`SELECT * FROM playlists WHERE id = ${c.req.param("id")!}`
+  )[0];
+  if (!pl?.cover_path) return c.json({ error: "not_found" }, 404);
+  if (pl.user_id !== user.id && !pl.is_public) {
+    return c.json({ error: "not_found" }, 404);
+  }
+
+  const abs = resolveMedia(pl.cover_path);
+  const info = await stat(abs).catch(() => null);
+  if (!info) return c.json({ error: "not_found" }, 404);
+
+  return new Response(Bun.file(abs).stream(), {
+    headers: {
+      "content-type": "image/*",
+      "cache-control": "public, max-age=86400",
+    },
+  });
+});
+
+playlistRoutes.post("/:id/cover", async (c) => {
+  const pl = await owned(c);
+  if (!pl) return c.json({ error: "not_found" }, 404);
+
+  const form = await c.req.formData();
+  const file = form.get("cover");
+  if (!(file instanceof File) || file.size === 0) {
+    return c.json({ error: "cover_required" }, 400);
+  }
+
+  await ensureMediaDirs();
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  const ext = file.type.split("/")[1] ?? "jpg";
+  const coverPath = await saveCover(bytes, ext);
+
+  const rows = await sql<Playlist[]>`
+    UPDATE playlists SET cover_path = ${coverPath} WHERE id = ${pl.id} RETURNING *
+  `;
+  if (pl.cover_path) {
+    await unlink(resolveMedia(pl.cover_path)).catch(() => {});
+  }
+  return c.json(toPublicPlaylist(rows[0]!));
+});
+
 playlistRoutes.post("/:id/songs", async (c) => {
   const pl = await owned(c);
   if (!pl) return c.json({ error: "not_found" }, 404);
@@ -211,6 +265,7 @@ function toPublicPlaylist(p: Playlist) {
     id: p.id,
     name: p.name,
     isPublic: p.is_public,
+    coverUrl: p.cover_path ? `/api/playlists/${p.id}/cover` : null,
   };
 }
 

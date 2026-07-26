@@ -5,7 +5,7 @@ import { config } from "../config.ts";
 // Single shared connection pool for the whole app.
 export const sql = postgres(config.databaseUrl, {
   max: 10,
-  onnotice: () => { }, // silence NOTICE spam
+  onnotice: () => {}, // silence NOTICE spam
 });
 
 // Row types mirror the schema in schema.sql.
@@ -41,6 +41,7 @@ export type Playlist = {
   user_id: string;
   name: string;
   is_public: boolean;
+  cover_path: string | null;
   created_at: Date;
 };
 
@@ -49,6 +50,7 @@ export type Artist = {
   name: string;
   normalized_name: string;
   bio: string | null;
+  avatar_path: string | null;
   created_by: string | null;
   created_at: Date;
 };
