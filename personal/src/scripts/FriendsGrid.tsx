@@ -45,12 +45,6 @@ const FRIENDS: Group[] = [
         link: "https://a.stupid.cat"
       },
       {
-        name: "Lilly",
-        tier: "closer",
-        discordId: "908055723659898902",
-        link: null
-      },
-      {
         name: "Ria",
         tier: "close",
         discordId: "1513506390088618145",
@@ -83,12 +77,6 @@ const FRIENDS: Group[] = [
         name: "N",
         tier: "friend",
         discordId: "639399972407869450",
-        link: null
-      },
-      {
-        name: "Lylla",
-        tier: "friend",
-        discordId: "1009889543878611016",
         link: null
       },
       {
