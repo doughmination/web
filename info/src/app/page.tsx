@@ -22,9 +22,19 @@ const POCKETID = "https://doughmination.xyz";
 // Add / change your sites here. That's the only part you touch.
 const SITES = [
   {
-    title: "Clove Stupid cat",
+    title: "Doughmination Gay",
     desc: "My personal website",
-    href: "https://c.stupid.cat",
+    href: "https://doughmination.gay",
+  },
+  {
+    title: "ImLesbian.fyi",
+    desc: "A queer redirect subdomain service.",
+    href: "https://imlesbian.fyi",
+  },
+  {
+    title: "Doughmination Music",
+    desc: "My music app and collection",
+    href: "https://doughmination.me",
   },
   {
     title: "Doughmination Mail",
@@ -45,7 +55,7 @@ const SITES = [
 
 const ME = {
   name: "doughmination.info",
-  tagline: "A little map to everything I make.",
+  tagline: "A little map to everything I make and run.",
 };
 // ─────────────────────────────────────────────────────────
 
