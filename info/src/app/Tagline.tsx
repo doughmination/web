@@ -6,12 +6,16 @@ import { useEffect, useState } from "react";
 
 import { tagline, cursor } from "@styles/home.css";
 
-// Edit me: first line is the real tagline, the rest are for fun.
 const lines = [
   "A little map to everything I make and run.",
-  "A little map to everything I make and (occasionally) break.",
+  "My home of unstable little stupidity.",
   "Basically a linktree with root access.",
   "Powered by caffeine and questionable commit messages.",
+  "Home-rolled infra held together by duct tape and prayers.",
+  "Fifty percent documentation, fifty percent pure hope.",
+  "A monument to architecture that works on my machine.",
+  "Where code goes to run until it segfaults.",
+  "Too many containers, not enough monster."
 ];
 
 const typeMs = 45;
