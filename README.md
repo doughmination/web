@@ -15,7 +15,7 @@
 | Info | Main link hub | <a href="https://doughmination.info">doughmination.info</a> |
 | Personal | Personal homepage and central site | <a href="https://doughmination.gay">doughmination.gay</a> |
 | Fonts | Comic Code font archive | <a href="https://fonts.doughmination.co.uk">fonts.doughmination.co.uk</a> |
-| System | Doughmination System API and frontend | <a href="https://doughmination.co.uk">doughmination.co.uk</a> |
+| System | Doughmination System Frontend | <a href="https://doughmination.co.uk">doughmination.co.uk</a> |
 | Mailbox | Email mailbox | <a href="https://doughmination.tech">doughmination.tech</a> |
 
 ## Tech Stack
