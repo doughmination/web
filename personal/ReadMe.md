@@ -1,6 +1,8 @@
 # Personal
 
-![](https://doughmination.gay/assets/favicon.png?width=30)
+<div align="center">
+    <img src="https://doughmination.gay/assets/favicon.png" alt="favicon" width="150" />
+</div>
 
 This is my <a href=https://doughmination.gay>doughmination.gay</a> website, a personal project allowing me to mess with different frameworks.
 
