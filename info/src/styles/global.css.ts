@@ -2,27 +2,49 @@
 
 import {
   globalStyle,
+  globalFontFace,
   assignVars,
 } from "@vanilla-extract/css";
 
 import {
   vars,
-  lightValues,
   darkValues,
 } from "./theme.css";
 
-// Dark mode trans is the identity, so dark is the default; light only kicks in
-// for people who explicitly prefer it.
-globalStyle(":root", {
-  vars: assignVars(vars, darkValues),
+// Comic Code — the shared face across every site, served from the same CDN the
+// personal site uses. Four cuts (regular / italic / medium / bold). Declared
+// explicitly (no loop): the Turbopack vanilla-extract plugin can't instrument a
+// top-level loop in a .css.ts, which breaks file-scope setup for the whole graph.
+globalFontFace("Comic Code", {
+  src: "url('https://fonts.doughmination.co.uk/ComicCode-Regular_2022-05-24-151938_hsmz.woff2') format('woff2'), url('https://fonts.doughmination.co.uk/ComicCode-Regular_2022-05-24-151938_hsmz.woff') format('woff')",
+  fontWeight: 400,
+  fontStyle: "normal",
+  fontDisplay: "swap",
+});
+globalFontFace("Comic Code", {
+  src: "url('https://fonts.doughmination.co.uk/ComicCode-Italic_2022-05-24-151939_rdtu.woff2') format('woff2'), url('https://fonts.doughmination.co.uk/ComicCode-Italic_2022-05-24-151939_rdtu.woff') format('woff')",
+  fontWeight: 400,
+  fontStyle: "italic",
+  fontDisplay: "swap",
+});
+globalFontFace("Comic Code", {
+  src: "url('https://fonts.doughmination.co.uk/ComicCode-Medium_2022-05-24-151941_ugqm.woff2') format('woff2'), url('https://fonts.doughmination.co.uk/ComicCode-Medium_2022-05-24-151941_ugqm.woff') format('woff')",
+  fontWeight: 500,
+  fontStyle: "normal",
+  fontDisplay: "swap",
+});
+globalFontFace("Comic Code", {
+  src: "url('https://fonts.doughmination.co.uk/ComicCode-Bold_2022-05-24-152309_zqkm.woff2') format('woff2'), url('https://fonts.doughmination.co.uk/ComicCode-Bold_2022-05-24-152309_zqkm.woff') format('woff')",
+  fontWeight: 700,
+  fontStyle: "normal",
+  fontDisplay: "swap",
 });
 
+// Dark mode trans is the identity. Light mode has been dropped so the palette is
+// uniform across every site — dark is the single look.
 globalStyle(":root", {
-  "@media": {
-    "(prefers-color-scheme: light)": {
-      vars: assignVars(vars, lightValues),
-    },
-  },
+  vars: assignVars(vars, darkValues),
+  colorScheme: "dark",
 });
 
 // Minimal reset.

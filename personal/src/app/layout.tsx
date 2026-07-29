@@ -9,9 +9,8 @@ import Providers from "./providers";
 import SettingsMenu from "@components/chrome/SettingsMenu";
 import WebringDock from "@components/chrome/WebringDock";
 import SiteChrome from "@components/chrome/SiteChrome";
-import { DEFAULT_THEME, themeBootScript } from "@lib/themes";
-// Palettes now live in TypeScript. Importing for side effects emits the
-// html[data-flavor="…"] blocks at build time; see src/styles/themes.css.ts.
+// One fixed palette. Importing for side effects emits the :root token block at
+// build time; see src/styles/themes.css.ts.
 import "@styles/themes.css";
 // Global rules migrated from public/css to Vanilla Extract, one file at a time.
 // Import order here IS the cascade order, so keep it matching main.css.
@@ -88,11 +87,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f5c2e7",
+  themeColor: "#f5a9b8",
 };
-
-// Pre-paint theme boot: set data-flavor before first paint to avoid a flash.
-// Generated from the theme registry so the valid-flavor list can't drift.
 
 export default function RootLayout({
   children,
@@ -100,10 +96,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    // THEME_BOOT rewrites data-flavor from localStorage before hydration, so the
-    // <html> attrs intentionally differ from the server render when a non-default
-    // flavor is saved. suppressHydrationWarning marks that as expected.
-    <html lang="en" data-flavor={DEFAULT_THEME} suppressHydrationWarning>
+    <html lang="en">
       <head>
         {/* Warm up the API origins the client JS fetches on load */}
         <link rel="preconnect" href="https://doughmination.uk" crossOrigin="" />
@@ -115,7 +108,6 @@ export default function RootLayout({
             discovered once Next's CSS chunk has parsed. */}
         <link rel="preconnect" href="https://fonts.doughmination.co.uk" crossOrigin="" />
         <link rel="dns-prefetch" href="https://fonts.doughmination.co.uk" />
-        <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
       </head>
       <body>
         {/* Persistent nav shell — core.ts populates .nav-links from nav.json */}

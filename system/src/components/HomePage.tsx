@@ -16,7 +16,6 @@ import {
   useConnectionStatus,
   type PluralMember,
 } from "@doughmination/react-api";
-import ThemeToggle from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { cn, normalizeColor, readableOnDark } from "@/lib/utils";
 import * as site from "@/styles/site.css";
@@ -244,7 +243,6 @@ export default function HomePage() {
                 </span>
               </div>
             )}
-            <ThemeToggle />
             {loggedIn ? (
               <>
                 {isOwner && (

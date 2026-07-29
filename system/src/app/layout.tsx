@@ -59,19 +59,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
-  themeColor: "#8b5cf6",
+  themeColor: "#0a0b10",
 };
-
-// Apply the saved theme before first paint to avoid a flash of the default flavor
-const themeInitScript = `
-try {
-  var t = localStorage.getItem('theme');
-  var valid = ['cherry', 'toxic', 'lemon', 'estrogen', 'cyberpunk'];
-  document.documentElement.setAttribute('data-flavor', valid.indexOf(t) !== -1 ? t : 'cherry');
-} catch (e) {
-  document.documentElement.setAttribute('data-flavor', 'cherry');
-}
-`;
 
 export default function RootLayout({
   children,
@@ -79,9 +68,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-flavor="cherry" data-scroll-behavior="smooth" suppressHydrationWarning>
+    <html lang="en" data-scroll-behavior="smooth">
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <link
+          rel="preconnect"
+          href="https://fonts.doughmination.co.uk"
+          crossOrigin=""
+        />
       </head>
       <body>
         <Providers>

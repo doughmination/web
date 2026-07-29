@@ -1,41 +1,54 @@
 /* styles/theme.css.ts */
 
-import { createThemeContract } from "@vanilla-extract/css";
+import { createGlobalThemeContract } from "@vanilla-extract/css";
 
 // The shape of the design system. Values are filled per-theme below.
-export const vars = createThemeContract({
-  color: {
-    bg: null,
-    surface: null,
-    surfaceHover: null,
-    text: null,
-    muted: null,
-    border: null,
-    accent: null,
+//
+// Uses createGlobalThemeContract (literal var names derived from the token path,
+// e.g. color.bg -> --color-bg) rather than createThemeContract. The latter
+// auto-generates file-scoped identifiers, which calls getFileScope — and the
+// unstable Turbopack vanilla-extract integration fails to set a scope for this
+// imported leaf module, throwing "Styles were unable to be assigned to a file".
+// Providing explicit names sidesteps that entirely (this is what the system app
+// does, which is why it compiles under Turbopack and this file previously didn't).
+export const vars = createGlobalThemeContract(
+  {
+    color: {
+      bg: null,
+      surface: null,
+      surfaceHover: null,
+      text: null,
+      muted: null,
+      border: null,
+      accent: null,
+    },
+    font: {
+      sans: null,
+      mono: null,
+    },
+    space: {
+      xs: null,
+      sm: null,
+      md: null,
+      lg: null,
+      xl: null,
+    },
+    radius: {
+      md: null,
+      lg: null,
+      full: null,
+    },
   },
-  font: {
-    sans: null,
-    mono: null,
-  },
-  space: {
-    xs: null,
-    sm: null,
-    md: null,
-    lg: null,
-    xl: null,
-  },
-  radius: {
-    md: null,
-    lg: null,
-    full: null,
-  },
-});
+  (_value, path) => path.join("-"),
+);
 
 // Tokens shared across every theme (only color changes with dark mode).
 const shared = {
   font: {
-    sans: "var(--font-geist-sans), system-ui, sans-serif",
-    mono: "var(--font-geist-mono), ui-monospace, monospace",
+    // Comic Code everywhere — matches the personal site. Loaded via
+    // @font-face in global.css.ts from the shared CDN.
+    sans: "'Comic Code', ui-monospace, monospace",
+    mono: "'Comic Code', ui-monospace, monospace",
   },
   space: {
     xs: "0.5rem",

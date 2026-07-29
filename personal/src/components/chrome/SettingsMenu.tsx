@@ -7,18 +7,15 @@
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Gear, PlayFill, PauseFill, EyeFill, EyeSlashFill } from "react-bootstrap-icons";
 import styles from "./SettingsMenu.module.css";
-import { DEFAULT_THEME, THEMES, THEME_IDS, themeById, type Theme } from "@lib/themes";
 
 /**
- * The bottom-left settings button (theme / cat / music), click-to-expand.
+ * The bottom-left settings button (cat / music), click-to-expand.
  *
- * Theme switching is owned here in React. The cat-collection modal and the
- * background-music <audio> still live in core.ts; this component drives them
- * through the small window hooks core.ts exposes (window.toggleCatPicker,
- * window.ctpBgm).
+ * The theme switcher was removed — the site now uses one fixed palette. The
+ * cat-collection modal and the background-music <audio> still live in core.ts;
+ * this component drives them through the small window hooks core.ts exposes
+ * (window.toggleCatPicker, window.ctpBgm).
  */
-
-type Flavor = string;
 
 declare global {
   interface Window {
@@ -33,7 +30,6 @@ declare global {
   }
 }
 
-const FLAVOR_EVENT = "ctpflavorchange";
 const CAT_HIDDEN_EVENT = "ctpcathiddenchange";
 
 // Cat visibility is external state (localStorage "onekoHidden"), owned by
@@ -50,45 +46,11 @@ function getCatHiddenSnapshot(): boolean {
   return window.localStorage.getItem("onekoHidden") === "1";
 }
 
-// The active flavor is external state (localStorage), read via useSyncExternalStore
-// so there's no setState-in-effect and SSR stays consistent.
-function subscribeFlavor(cb: () => void) {
-  window.addEventListener(FLAVOR_EVENT, cb);
-  window.addEventListener("storage", cb);
-  return () => {
-    window.removeEventListener(FLAVOR_EVENT, cb);
-    window.removeEventListener("storage", cb);
-  };
-}
-function getFlavorSnapshot(): Flavor {
-  const f = window.localStorage.getItem("ctpFlavor");
-  return THEME_IDS.includes(f ?? "") ? (f as Flavor) : DEFAULT_THEME;
-}
-
-function setThemeColor(flavor: Flavor) {
-  const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute("content", themeById(flavor).dot);
-}
-
-/**
- * A theme's icon, or a flat chip of its accent colour when it has none — so a
- * newly registered theme renders sensibly before anyone draws artwork for it.
- */
-function ThemeSwatch({ theme, className }: { theme: Theme; className: string }) {
-  if (!theme.icon) {
-    return <span className={className} style={{ background: theme.dot }} aria-hidden="true" />;
-  }
-  // eslint-disable-next-line @next/next/no-img-element
-  return <img className={className} src={theme.icon} alt="" aria-hidden="true" />;
-}
-
 export default function SettingsMenu() {
   const [open, setOpen] = useState(false);
-  const [themesOpen, setThemesOpen] = useState(false);
   const [paused, setPaused] = useState(true);
   const barRef = useRef<HTMLDivElement>(null);
 
-  const flavor = useSyncExternalStore(subscribeFlavor, getFlavorSnapshot, () => "cherry" as Flavor);
   const catHidden = useSyncExternalStore(subscribeCatHidden, getCatHiddenSnapshot, () => false);
 
   const toggleCat = useCallback(() => {
@@ -97,19 +59,6 @@ export default function SettingsMenu() {
     else window.localStorage.setItem("onekoHidden", next ? "1" : "0");
     // re-read via the store
     window.dispatchEvent(new Event(CAT_HIDDEN_EVENT));
-  }, []);
-
-  // Keep <meta theme-color> in sync (data-flavor is already set pre-paint).
-  useEffect(() => {
-    setThemeColor(flavor);
-  }, [flavor]);
-
-  const pickFlavor = useCallback((next: Flavor) => {
-    document.documentElement.setAttribute("data-flavor", next);
-    window.localStorage.setItem("ctpFlavor", next);
-    setThemeColor(next);
-    // re-read via the store
-    window.dispatchEvent(new Event(FLAVOR_EVENT));
   }, []);
 
   // Reflect the bg-music play state (core.ts owns the <audio>).
@@ -130,16 +79,10 @@ export default function SettingsMenu() {
     const onClick = (e: MouseEvent) => {
       if (barRef.current && !barRef.current.contains(e.target as Node)) {
         setOpen(false);
-        setThemesOpen(false);
       }
     };
-    // Escape backs out one layer at a time: picker first, then the whole bar.
     const onKey = (e: KeyboardEvent) => {
-      if (e.key !== "Escape") return;
-      setThemesOpen((wasOpen) => {
-        if (!wasOpen) setOpen(false);
-        return false;
-      });
+      if (e.key === "Escape") setOpen(false);
     };
     document.addEventListener("click", onClick);
     document.addEventListener("keydown", onKey);
@@ -160,11 +103,7 @@ export default function SettingsMenu() {
         title="Settings"
         onClick={(e) => {
           e.stopPropagation();
-          setOpen((o) => {
-            // collapsing the bar closes the picker too
-            if (o) setThemesOpen(false);
-            return !o;
-          });
+          setOpen((o) => !o);
         }}
       >
         <Gear size={22} />
@@ -172,20 +111,6 @@ export default function SettingsMenu() {
 
       {open && (
         <div className={styles.items}>
-          <button
-            type="button"
-            className={styles.btn}
-            aria-haspopup="true"
-            aria-expanded={themesOpen}
-            title={`Theme: ${themeById(flavor).label}`}
-            onClick={(e) => {
-              e.stopPropagation();
-              setThemesOpen((t) => !t);
-            }}
-          >
-            <ThemeSwatch theme={themeById(flavor)} className={styles.themeIcon} />
-          </button>
-
           <button
             type="button"
             className={styles.btn}
@@ -216,31 +141,6 @@ export default function SettingsMenu() {
           >
             {paused ? <PlayFill size={22} /> : <PauseFill size={22} />}
           </button>
-        </div>
-      )}
-
-      {/* Sibling of .items, not a child of it — .items is a ~44px flex column,
-          which gave this an unresolvable shrink-to-fit containing block and
-          collapsed the grid to a sliver. Anchored to .bar instead. */}
-      {open && themesOpen && (
-        <div className={styles.themePicker} role="listbox" aria-label="Site theme">
-          {THEMES.map((t) => {
-            const active = t.id === flavor;
-            return (
-              <button
-                key={t.id}
-                type="button"
-                role="option"
-                aria-selected={active}
-                className={`${styles.themeOption}${active ? " " + styles.themeActive : ""}`}
-                title={t.label}
-                onClick={() => pickFlavor(t.id)}
-              >
-                <ThemeSwatch theme={t} className={styles.themeSwatch} />
-                <span className={styles.themeName}>{t.label}</span>
-              </button>
-            );
-          })}
         </div>
       )}
     </div>

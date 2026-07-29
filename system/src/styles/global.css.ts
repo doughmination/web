@@ -107,27 +107,27 @@ globalStyle("h3", { "@media": { "screen and (max-width: 640px)": { fontSize: "1.
 /* ============================================================================
    SCROLLBAR STYLING — THEME AWARE
    ============================================================================ */
-globalStyle("html[data-flavor] ::-webkit-scrollbar", {
+globalStyle("html ::-webkit-scrollbar", {
   width: "12px",
   height: "12px",
 });
-globalStyle("html[data-flavor] ::-webkit-scrollbar-track", {
+globalStyle("html ::-webkit-scrollbar-track", {
   background: vars.bgRaised,
   borderRadius: "6px",
 });
-globalStyle("html[data-flavor] ::-webkit-scrollbar-thumb", {
+globalStyle("html ::-webkit-scrollbar-thumb", {
   background: vars.accent,
   borderRadius: "6px",
   border: `2px solid ${vars.bgRaised}`,
   transition: "background-color 0.2s ease",
 });
-globalStyle("html[data-flavor] ::-webkit-scrollbar-thumb:hover", {
+globalStyle("html ::-webkit-scrollbar-thumb:hover", {
   background: vars.accentAlt,
 });
-globalStyle("html[data-flavor] ::-webkit-scrollbar-thumb:active", {
+globalStyle("html ::-webkit-scrollbar-thumb:active", {
   background: vars.lavender,
 });
-globalStyle("html[data-flavor]", {
+globalStyle("html", {
   scrollbarWidth: "thin",
   scrollbarColor: `${vars.accent} ${vars.bgRaised}`,
 });
