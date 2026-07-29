@@ -1,9 +1,8 @@
 # Web
 <div align="center">
     <img src="https://doughmination.gay/assets/favicon.png" alt="favicon" width="150" />
+    This is the monorepo for all of Clove's websites.
 </div>
-
-This is the monorepo for all of Clove's websites.
 
 ## Sites/Layout
 ### Info
