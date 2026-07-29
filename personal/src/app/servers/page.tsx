@@ -14,25 +14,25 @@ export const metadata: Metadata = {
     "Discord servers Clove Twilight is part of — live member counts via Doughmination Restful.",
   keywords: [
     "Clove Twilight",
-    "c.stupid.cat",
+    "doughmination.gay",
     "Discord",
     "servers",
     "guilds",
     "Doughmination",
     "Restful",
   ],
-  alternates: { canonical: "https://c.stupid.cat/servers" },
+  alternates: { canonical: "https://doughmination.gay/servers" },
   openGraph: {
     type: "website",
-    siteName: "c.stupid.cat",
+    siteName: "doughmination.gay",
     title: "Servers | Clove Twilight",
     description:
       "Discord servers Clove Twilight is part of — live member counts via Doughmination Restful.",
-    url: "https://c.stupid.cat/servers",
+    url: "https://doughmination.gay/servers",
     locale: "en_GB",
     images: [
       {
-        url: "https://c.stupid.cat/assets/favicon/favicon.png",
+        url: "https://doughmination.gay/assets/favicon/favicon.png",
         alt: "Clove Twilight logo",
       },
     ],

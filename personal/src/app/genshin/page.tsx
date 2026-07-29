@@ -12,25 +12,25 @@ export const metadata: Metadata = {
     "A little gallery of 3D renders of Genshin Impact characters Clove finds cute — spin them around.",
   keywords: [
     "Clove Twilight",
-    "c.stupid.cat",
+    "doughmination.gay",
     "Genshin Impact",
     "3D models",
     "Furina",
     "Hu Tao",
     "Lumine",
   ],
-  alternates: { canonical: "https://c.stupid.cat/genshin" },
+  alternates: { canonical: "https://doughmination.gay/genshin" },
   openGraph: {
     type: "website",
-    siteName: "c.stupid.cat",
+    siteName: "doughmination.gay",
     title: "Genshin — Clove Twilight",
     description:
       "A little gallery of 3D renders of Genshin Impact characters Clove finds cute.",
-    url: "https://c.stupid.cat/genshin",
+    url: "https://doughmination.gay/genshin",
     locale: "en_GB",
     images: [
       {
-        url: "https://c.stupid.cat/assets/favicon/favicon.png",
+        url: "https://doughmination.gay/assets/favicon/favicon.png",
         alt: "Clove Twilight logo",
       },
     ],

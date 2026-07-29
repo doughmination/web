@@ -4,7 +4,7 @@
     <xsl:template match="/"> 
         <html> 
             <head> 
-                <title>c.stupid.cat Sitemap</title> 
+                <title>doughmination.gay Sitemap</title> 
                 <style>
                     @font-face {
                         font-family: 'Comic Code';
@@ -77,7 +77,7 @@
             </head> 
             <body> 
                 <div class="container"> 
-                    <h1>🌙 c.stupid.cat Sitemap</h1> 
+                    <h1>🌙 doughmination.gay Sitemap</h1> 
                     <p class="subtitle">A map of everything on the site.</p> 
                     <xsl:for-each select="s:urlset/s:url"> 
                         <div class="card"> 

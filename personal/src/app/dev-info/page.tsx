@@ -13,25 +13,25 @@ export const metadata: Metadata = {
     "What Clove Twilight has been coding lately — a live contribution heatmap and WakaTime coding stats.",
   keywords: [
     "Clove Twilight",
-    "c.stupid.cat",
+    "doughmination.gay",
     "dev info",
     "coding stats",
     "WakaTime",
     "contributions",
     "developer",
   ],
-  alternates: { canonical: "https://c.stupid.cat/dev-info" },
+  alternates: { canonical: "https://doughmination.gay/dev-info" },
   openGraph: {
     type: "website",
-    siteName: "c.stupid.cat",
+    siteName: "doughmination.gay",
     title: "Clove Twilight",
     description:
       "What Clove Twilight has been coding lately — a live contribution heatmap and WakaTime coding stats.",
-    url: "https://c.stupid.cat/dev-info",
+    url: "https://doughmination.gay/dev-info",
     locale: "en_GB",
     images: [
       {
-        url: "https://c.stupid.cat/assets/favicon/favicon.png",
+        url: "https://doughmination.gay/assets/favicon/favicon.png",
         alt: "Clove Twilight logo",
       },
     ],

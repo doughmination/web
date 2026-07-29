@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # ============================================================
-# Dockerfile for the c.stupid.cat rewrite (Next.js + Bun).
+# Dockerfile for the doughmination.gay rewrite (Next.js + Bun).
 # Multi-stage build → lean standalone runtime, served on :5002.
 #   docker build -t c-stupid-cat .
 #   docker run -p 5002:5002 c-stupid-cat

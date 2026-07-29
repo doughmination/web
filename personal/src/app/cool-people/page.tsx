@@ -13,24 +13,24 @@ export const metadata: Metadata = {
     "Cool people Clove Twilight knows — friends, mutuals, and creators worth checking out, with links to their sites.",
   keywords: [
     "Clove Twilight",
-    "c.stupid.cat",
+    "doughmination.gay",
     "friends",
     "cool people",
     "mutuals",
     "links",
   ],
-  alternates: { canonical: "https://c.stupid.cat/cool-people" },
+  alternates: { canonical: "https://doughmination.gay/cool-people" },
   openGraph: {
     type: "website",
-    siteName: "c.stupid.cat",
+    siteName: "doughmination.gay",
     title: "Clove Twilight",
     description:
       "Cool people Clove Twilight knows — friends, mutuals, and creators worth checking out, with links to their sites.",
-    url: "https://c.stupid.cat/cool-people",
+    url: "https://doughmination.gay/cool-people",
     locale: "en_GB",
     images: [
       {
-        url: "https://c.stupid.cat/assets/favicon/favicon.png",
+        url: "https://doughmination.gay/assets/favicon/favicon.png",
         alt: "Clove Twilight logo",
       },
     ],

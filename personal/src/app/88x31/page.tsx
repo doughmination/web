@@ -11,24 +11,24 @@ export const metadata: Metadata = {
     "A collection of the 88x31 pixel buttons featured across Clove Twilight's site — grab one and link back.",
   keywords: [
     "Clove Twilight",
-    "c.stupid.cat",
+    "doughmination.gay",
     "88x31",
     "buttons",
     "web buttons",
     "personal",
   ],
-  alternates: { canonical: "https://c.stupid.cat/88x31" },
+  alternates: { canonical: "https://doughmination.gay/88x31" },
   openGraph: {
     type: "website",
-    siteName: "c.stupid.cat",
+    siteName: "doughmination.gay",
     title: "Clove Twilight",
     description:
       "A collection of the 88x31 pixel buttons featured across Clove Twilight's site — grab one and link back.",
-    url: "https://c.stupid.cat/88x31",
+    url: "https://doughmination.gay/88x31",
     locale: "en_GB",
     images: [
       {
-        url: "https://c.stupid.cat/assets/favicon/favicon.png",
+        url: "https://doughmination.gay/assets/favicon/favicon.png",
         alt: "Clove Twilight logo",
       },
     ],

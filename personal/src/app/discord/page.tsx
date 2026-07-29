@@ -14,25 +14,25 @@ export const metadata: Metadata = {
     "Clove Twilight's live Discord presence — current status, activity, and what fae is up to right now.",
   keywords: [
     "Clove Twilight",
-    "c.stupid.cat",
+    "doughmination.gay",
     "Discord",
     "presence",
     "status",
     "Doughmination",
     "Restful",
   ],
-  alternates: { canonical: "https://c.stupid.cat/discord" },
+  alternates: { canonical: "https://doughmination.gay/discord" },
   openGraph: {
     type: "website",
-    siteName: "c.stupid.cat",
+    siteName: "doughmination.gay",
     title: "Clove Twilight",
     description:
       "Clove Twilight's live Discord presence — current status, activity, and what fae is up to right now.",
-    url: "https://c.stupid.cat/discord",
+    url: "https://doughmination.gay/discord",
     locale: "en_GB",
     images: [
       {
-        url: "https://c.stupid.cat/assets/favicon/favicon.png",
+        url: "https://doughmination.gay/assets/favicon/favicon.png",
         alt: "Clove Twilight logo",
       },
     ],

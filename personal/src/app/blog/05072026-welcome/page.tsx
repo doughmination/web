@@ -9,18 +9,18 @@ export const metadata: Metadata = {
   title: "Welcome to the blog | Clove Twilight",
   description:
     "Kicking off the blog with a quick intro to what I'll be posting here.",
-  alternates: { canonical: "https://c.stupid.cat/blog/05072026-welcome" },
+  alternates: { canonical: "https://doughmination.gay/blog/05072026-welcome" },
   openGraph: {
     type: "article",
-    siteName: "c.stupid.cat",
+    siteName: "doughmination.gay",
     title: "Welcome to the blog",
     description:
       "Kicking off the blog with a quick intro to what I'll be posting here.",
-    url: "https://c.stupid.cat/blog/05072026-welcome",
+    url: "https://doughmination.gay/blog/05072026-welcome",
     locale: "en_GB",
     images: [
       {
-        url: "https://c.stupid.cat/assets/favicon/favicon.png",
+        url: "https://doughmination.gay/assets/favicon/favicon.png",
         alt: "Clove Twilight logo",
       },
     ],

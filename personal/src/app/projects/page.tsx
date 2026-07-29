@@ -11,24 +11,24 @@ export const metadata: Metadata = {
     "Explore the projects Clove Twilight actively builds and contributes to, from web apps to Discord bots.",
   keywords: [
     "Clove Twilight",
-    "c.stupid.cat",
+    "doughmination.gay",
     "projects",
     "portfolio",
     "developer",
     "open source",
   ],
-  alternates: { canonical: "https://c.stupid.cat/projects" },
+  alternates: { canonical: "https://doughmination.gay/projects" },
   openGraph: {
     type: "website",
-    siteName: "c.stupid.cat",
+    siteName: "doughmination.gay",
     title: "Clove Twilight",
     description:
       "Explore the projects Clove Twilight actively builds and contributes to, from web apps to Discord bots.",
-    url: "https://c.stupid.cat/projects",
+    url: "https://doughmination.gay/projects",
     locale: "en_GB",
     images: [
       {
-        url: "https://c.stupid.cat/assets/favicon/favicon.png",
+        url: "https://doughmination.gay/assets/favicon/favicon.png",
         alt: "Clove Twilight logo",
       },
     ],

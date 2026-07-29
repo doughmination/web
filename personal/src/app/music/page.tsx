@@ -12,25 +12,25 @@ export const metadata: Metadata = {
     "What Clove Twilight is listening to — live now-playing track, synced lyrics, and recent plays from Last.fm.",
   keywords: [
     "Clove Twilight",
-    "c.stupid.cat",
+    "doughmination.gay",
     "music",
     "now playing",
     "Last.fm",
     "lyrics",
     "scrobbles",
   ],
-  alternates: { canonical: "https://c.stupid.cat/music" },
+  alternates: { canonical: "https://doughmination.gay/music" },
   openGraph: {
     type: "website",
-    siteName: "c.stupid.cat",
+    siteName: "doughmination.gay",
     title: "Clove Twilight",
     description:
       "What Clove Twilight is listening to — live now-playing track, synced lyrics, and recent plays from Last.fm.",
-    url: "https://c.stupid.cat/music",
+    url: "https://doughmination.gay/music",
     locale: "en_GB",
     images: [
       {
-        url: "https://c.stupid.cat/assets/favicon/favicon.png",
+        url: "https://doughmination.gay/assets/favicon/favicon.png",
         alt: "Clove Twilight logo",
       },
     ],

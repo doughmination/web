@@ -13,23 +13,23 @@ export const metadata: Metadata = {
     "All of Clove's Minecraft Accounts and Data",
   keywords: [
     "Clove Twilight",
-    "c.stupid.cat",
+    "doughmination.gay",
     "minecraft",
     "mojang",
     "skyblock",
   ],
-  alternates: { canonical: "https://c.stupid.cat/minecraft" },
+  alternates: { canonical: "https://doughmination.gay/minecraft" },
   openGraph: {
     type: "website",
-    siteName: "c.stupid.cat",
+    siteName: "doughmination.gay",
     title: "Clove Twilight",
     description:
       "All of Clove's Minecraft Accounts and Data",
-    url: "https://c.stupid.cat/minecraft",
+    url: "https://doughmination.gay/minecraft",
     locale: "en_GB",
     images: [
       {
-        url: "https://c.stupid.cat/assets/favicon/favicon.png",
+        url: "https://doughmination.gay/assets/favicon/favicon.png",
         alt: "Clove Twilight logo",
       },
     ],

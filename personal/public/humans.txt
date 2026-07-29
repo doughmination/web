@@ -3,7 +3,7 @@ Owner and Developer: Clove Twilight, AKA Doughmination
 
 /* SITE */
 Built with: HTML, CSS, JS
-Hosted at: c.stupid.cat
+Hosted at: doughmination.gay
 Language: English
 
 /* THANKS */

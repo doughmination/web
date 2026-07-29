@@ -29,13 +29,13 @@ import "@styles/scroll-wrap.css";
 import "@styles/responsive.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://c.stupid.cat"),
+  metadataBase: new URL("https://doughmination.gay"),
   title: "Clove Twilight",
   description:
     "The homepage and hub for everything Clove Twilight — projects, music, Discord presence, dev stats, and more.",
   keywords: [
     "Clove Twilight",
-    "c.stupid.cat",
+    "doughmination.gay",
     "portfolio",
     "personal",
     "developer",
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     "max-video-preview": -1,
   },
   alternates: {
-    canonical: "https://c.stupid.cat",
+    canonical: "https://doughmination.gay",
   },
   icons: {
     icon: [
@@ -63,15 +63,15 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    siteName: "c.stupid.cat",
+    siteName: "doughmination.gay",
     title: "Clove Twilight",
     description:
       "The homepage and hub for everything Clove Twilight — projects, music, Discord presence, dev stats, and more.",
-    url: "https://c.stupid.cat",
+    url: "https://doughmination.gay",
     locale: "en_GB",
     images: [
       {
-        url: "https://c.stupid.cat/assets/favicon/favicon.png",
+        url: "https://doughmination.gay/assets/favicon/favicon.png",
         alt: "Clove Twilight logo",
       },
     ],
@@ -83,7 +83,7 @@ export const metadata: Metadata = {
     title: "Clove Twilight",
     description:
       "The homepage and hub for everything Clove Twilight — projects, music, Discord presence, dev stats, and more.",
-    images: ["https://c.stupid.cat/assets/favicon/favicon.png"],
+    images: ["https://doughmination.gay/assets/favicon/favicon.png"],
   },
 };
 

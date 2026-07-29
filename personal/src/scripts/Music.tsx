@@ -143,7 +143,7 @@ async function lrclibGet(params: Record<string, string>) {
   for (const host of LRCLIB_HOSTS) {
     try {
       const res = await fetch(`${host}/api/get?${qs}`, {
-        headers: { "X-User-Agent": "c.stupid.cat music (https://c.stupid.cat)" },
+        headers: { "X-User-Agent": "doughmination.gay music (https://doughmination.gay)" },
       });
       if (res.ok) return res.json();
     } catch {
@@ -674,14 +674,14 @@ export default function Music() {
       </div>
       <div
         className={`lyrics ${ly.kind === "loading"
-            ? "is-loading"
-            : ly.kind === "instrumental"
-              ? "is-instrumental"
-              : ly.kind === "synced"
-                ? "is-synced"
-                : ly.kind === "plain"
-                  ? "is-plain"
-                  : "is-empty"
+          ? "is-loading"
+          : ly.kind === "instrumental"
+            ? "is-instrumental"
+            : ly.kind === "synced"
+              ? "is-synced"
+              : ly.kind === "plain"
+                ? "is-plain"
+                : "is-empty"
           }`}
         id="lyrics"
         ref={lyricsBoxRef}

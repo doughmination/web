@@ -11,23 +11,23 @@ export const metadata: Metadata = {
   description: "Browse a gallery of selfies from Clove Twilight.",
   keywords: [
     "Clove Twilight",
-    "c.stupid.cat",
+    "doughmination.gay",
     "selfies",
     "photos",
     "gallery",
     "personal",
   ],
-  alternates: { canonical: "https://c.stupid.cat/selfies" },
+  alternates: { canonical: "https://doughmination.gay/selfies" },
   openGraph: {
     type: "website",
-    siteName: "c.stupid.cat",
+    siteName: "doughmination.gay",
     title: "Clove Twilight",
     description: "Browse a gallery of selfies from Clove Twilight.",
-    url: "https://c.stupid.cat/selfies",
+    url: "https://doughmination.gay/selfies",
     locale: "en_GB",
     images: [
       {
-        url: "https://c.stupid.cat/assets/favicon/favicon.png",
+        url: "https://doughmination.gay/assets/favicon/favicon.png",
         alt: "Clove Twilight logo",
       },
     ],

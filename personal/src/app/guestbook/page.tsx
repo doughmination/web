@@ -9,19 +9,19 @@ import "@styles/pages/guestbook.css";
 export const metadata: Metadata = {
   title: "Clove Twilight",
   description: "Sign Clove Twilight's guestbook — leave a message and say hello.",
-  keywords: ["Clove Twilight", "c.stupid.cat", "guestbook", "messages", "sign"],
-  alternates: { canonical: "https://c.stupid.cat/guestbook" },
+  keywords: ["Clove Twilight", "doughmination.gay", "guestbook", "messages", "sign"],
+  alternates: { canonical: "https://doughmination.gay/guestbook" },
   openGraph: {
     type: "website",
-    siteName: "c.stupid.cat",
+    siteName: "doughmination.gay",
     title: "Clove Twilight",
     description:
       "Sign Clove Twilight's guestbook — leave a message and say hello.",
-    url: "https://c.stupid.cat/guestbook",
+    url: "https://doughmination.gay/guestbook",
     locale: "en_GB",
     images: [
       {
-        url: "https://c.stupid.cat/assets/favicon/favicon.png",
+        url: "https://doughmination.gay/assets/favicon/favicon.png",
         alt: "Clove Twilight logo",
       },
     ],
