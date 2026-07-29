@@ -1,26 +1,27 @@
+/* app/page.tsx */
+
 import {
   page,
   header,
+  brand,
+  avatarWrap,
+  avatarDisc,
+  avatar,
   name,
   letter,
-  tagline,
   actions,
   btnPrimary,
   btnSecondary,
-  grid,
-  card,
-  cardTitle,
-  cardArrow,
-  cardDesc,
   footer,
 } from "@styles/home.css";
+import SiteGrid from "@app/SiteGrid";
+import Tagline from "@app/Tagline";
 
-// PocketID login lives here; the signup page is on this site at /signup.
-const POCKETID = "https://doughmination.xyz";
+// PocketID login; the signup page is on this site at /signup.
+const pocketIdUrl = "https://doughmination.xyz";
 
-// ── Edit me ──────────────────────────────────────────────
-// Add / change your sites here. That's the only part you touch.
-const SITES = [
+// Edit me: add or change your sites here.
+const sites = [
   {
     title: "Doughmination Gay",
     desc: "My personal website",
@@ -53,57 +54,52 @@ const SITES = [
   },
 ];
 
-const ME = {
-  name: "doughmination.info",
-  tagline: "A little map to everything I make and run.",
-};
-// ─────────────────────────────────────────────────────────
+const brandName = "doughmination.info";
 
 export default function Page() {
   return (
     <main className={page}>
       <div className={actions}>
-        <a className={btnSecondary} href={POCKETID}>Log in</a>
+        <a className={btnSecondary} href={pocketIdUrl}>Log in</a>
         <a className={btnPrimary} href="/signup">Sign up</a>
       </div>
 
       <header className={header}>
-        <h1 className={name} aria-label={ME.name}>
-          {[...ME.name].map((ch, i) => (
-            <span
-              key={i}
-              className={letter}
-              aria-hidden
-              style={{ animationDelay: `${(i * 0.06).toFixed(2)}s` }}
-            >
-              {ch === " " ? " " : ch}
-            </span>
-          ))}
-        </h1>
-        <p className={tagline}>{ME.tagline}</p>
+        <div className={brand}>
+          <div className={avatarWrap}>
+            <span className={avatarDisc} aria-hidden />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              className={avatar}
+              src="/avatar.png"
+              alt="Clove's avatar"
+              width={190}
+              height={190}
+            />
+          </div>
+
+          <h1 className={name} aria-label={brandName}>
+            {[...brandName].map((character, index) => (
+              <span
+                key={index}
+                className={letter}
+                aria-hidden
+                style={{ animationDelay: `${(index * 0.06).toFixed(2)}s` }}
+              >
+                {character === " " ? " " : character}
+              </span>
+            ))}
+          </h1>
+        </div>
+
+        <Tagline />
       </header>
 
-      <nav className={grid}>
-        {SITES.map((site) => (
-          <a
-            key={site.href + site.title}
-            className={card}
-            href={site.href}
-            target="_blank"
-            rel="noreferrer"
-          >
-            <span className={cardTitle}>
-              {site.title}
-              <span className={cardArrow} aria-hidden>
-                →
-              </span>
-            </span>
-            <span className={cardDesc}>{site.desc}</span>
-          </a>
-        ))}
-      </nav>
+      <SiteGrid sites={sites} />
 
-      <footer className={footer}>© {new Date().getFullYear()} Doughmination System</footer>
+      <footer className={footer}>
+        © {new Date().getFullYear()} Doughmination System
+      </footer>
     </main>
   );
 }

@@ -34,8 +34,7 @@ const pocketIdUrl =
 // they can come back to the same code later.
 const storageKey = "doughmination:invite-code";
 
-// The rules a visitor must agree to before we hand them to PocketID.
-// EDIT THESE to your real site rules.
+// Edit me: rules a visitor must agree to before PocketID.
 const siteRules = [
   "Be respectful of the resources, no harassment, hate speech, or targeted abuse, and PLEASE keep it legal",
   "Please don't change your username unless you get permission from an admin. (Stops resource hogging)",
@@ -81,7 +80,7 @@ function RulesGate() {
       const saved = localStorage.getItem(storageKey);
       if (saved) setCode(normalizeCode(saved));
     } catch {
-      // ignore
+      // storage may be unavailable
     }
   }, [params]);
 

@@ -67,8 +67,8 @@ function SignupForm() {
     }
   }, [params]);
 
-  function handleSubmit(e: FormEvent) {
-    e.preventDefault();
+  function handleSubmit(event: FormEvent) {
+    event.preventDefault();
 
     const clean = normalizeCode(code);
 
@@ -81,7 +81,7 @@ function SignupForm() {
     try {
       localStorage.setItem(storageKey, clean);
     } catch {
-      // ignore
+      // storage may be unavailable
     }
 
     // Send them to the rules gate; PocketID is only reached after they agree.
@@ -106,8 +106,8 @@ function SignupForm() {
             id="code"
             className={input}
             value={code}
-            onChange={(e) => {
-              setCode(e.target.value);
+            onChange={(event) => {
+              setCode(event.target.value);
               setErr("");
             }}
             placeholder="hqm4k9a1VubBGckh"

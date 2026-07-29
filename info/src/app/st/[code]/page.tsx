@@ -1,8 +1,8 @@
+/* app/st/[code]/page.tsx */
+
 import { redirect } from "next/navigation";
 
-// Friendly entry point: doughmination.info/st/<code> drops the visitor on the
-// signup page with their code already filled in. (Next 15+ hands params as a
-// promise.)
+// /st/<code> drops the visitor on signup with their code prefilled.
 export default async function StCodePage({
   params,
 }: {

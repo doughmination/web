@@ -1,3 +1,5 @@
+/* styles/theme.css.ts */
+
 import { createThemeContract } from "@vanilla-extract/css";
 
 // The shape of the design system. Values are filled per-theme below.

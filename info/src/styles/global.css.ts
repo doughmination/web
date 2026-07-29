@@ -1,3 +1,5 @@
+/* styles/global.css.ts */
+
 import {
   globalStyle,
   assignVars,
@@ -45,4 +47,16 @@ globalStyle("body", {
 globalStyle("a", {
   color: "inherit",
   textDecoration: "none",
+});
+
+// Respect users who ask for less motion: kill every animation/transition,
+// including decorative pseudo-elements, in one sweep.
+globalStyle("*, *::before, *::after", {
+  "@media": {
+    "(prefers-reduced-motion: reduce)": {
+      animationDuration: "0.001ms !important",
+      animationIterationCount: "1 !important",
+      transitionDuration: "0.001ms !important",
+    },
+  },
 });
