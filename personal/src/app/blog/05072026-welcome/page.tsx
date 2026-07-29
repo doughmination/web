@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     locale: "en_GB",
     images: [
       {
-        url: "https://doughmination.gay/assets/favicon/favicon.png",
+        url: "https://doughmination.gay/assets/favicon.png",
         alt: "Clove Twilight logo",
       },
     ],
@@ -34,7 +34,7 @@ export default function WelcomePost() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           className="pfp"
-          src="/assets/favicon/avatar.png"
+          src="/assets/favicon.png"
           alt="Clove Twilight avatar"
         />
         <h1>Welcome</h1>

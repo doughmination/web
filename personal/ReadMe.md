@@ -1,5 +1,7 @@
 # Personal
 
+![](https://doughmination.gay/assets/favicon.png?width=30)
+
 This is my <a href=https://doughmination.gay>doughmination.gay</a> website, a personal project allowing me to mess with different frameworks.
 
 This site also uses the DoughminationAPI React Wrapper

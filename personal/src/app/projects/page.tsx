@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     locale: "en_GB",
     images: [
       {
-        url: "https://doughmination.gay/assets/favicon/favicon.png",
+        url: "https://doughmination.gay/assets/favicon.png",
         alt: "Clove Twilight logo",
       },
     ],
@@ -77,7 +77,7 @@ const GIRLS_NETWORK: Project[] = [
 const PERSONAL: Project[] = [
   {
     href: "https://github.com/doughmination/web/tree/main/mailbox",
-    img: "/assets/favicon/avatar.png",
+    img: "/assets/favicon.png",
     alt: "Doughmination Mail",
     title: "Doughmination Mail",
     status: "Open Source",
@@ -86,7 +86,7 @@ const PERSONAL: Project[] = [
   },
   {
     href: "https://github.com/doughmination/api",
-    img: "/assets/favicon/avatar.png",
+    img: "/assets/favicon.png",
     alt: "API",
     title: "Doughmination API",
     status: "Open Source",
@@ -95,7 +95,7 @@ const PERSONAL: Project[] = [
   },
   {
     href: "https://github.com/doughmination/utils",
-    img: "/assets/favicon/favicon.png",
+    img: "/assets/favicon.png",
     alt: "Shortcuts Bot",
     title: "Shortcuts Bot",
     status: "Open Source",
@@ -157,7 +157,7 @@ export default function ProjectsPage() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           className="pfp"
-          src="/assets/favicon/avatar.png"
+          src="/assets/favicon.png"
           alt="Clove Twilight avatar"
         />
         <h1>Clove Twilight</h1>

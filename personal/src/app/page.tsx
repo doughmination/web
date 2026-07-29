@@ -17,7 +17,7 @@ export default function Home() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             className="pfp"
-            src="/assets/favicon/avatar.png"
+            src="/assets/favicon.png"
             alt="Clove Twilight avatar"
           />
           <h1>Clove Twilight</h1>
