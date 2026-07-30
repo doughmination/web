@@ -8,7 +8,16 @@ services:
       dockerfile: Dockerfile
     container_name: personal
     ports:
-      - "127.0.0.1:5002:5002"
+      - "127.0.0.1:4050:4050"
+    restart: unless-stopped
+
+  blog:
+    build:
+      context: ./blog
+      dockerfile: Dockerfile
+    container_name: blog
+    ports:
+      - "127.0.0.1:4010:4010"
     restart: unless-stopped
 
   info:
@@ -17,7 +26,7 @@ services:
       dockerfile: Dockerfile
     container_name: info
     ports:
-      - "127.0.0.1:4050:4050"
+      - "127.0.0.1:4020:4020"
     restart: unless-stopped
 
   system:
@@ -28,7 +37,7 @@ services:
     environment:
       - NODE_ENV=production
     ports:
-      - "127.0.0.1:5000:5000"
+      - "127.0.0.1:4030:4030"
 
   inbox:
     build:

@@ -39,7 +39,7 @@
     "label": "Selfies",
     "href": "/selfies"
   },
-  { "label": "Blog", "href": "/blog"},
+  { "label": "Blog", "href": "https://doughmination.site"},
   { "label": "Minecraft", "href": "/minecraft"},
   { "label": "Genshin", "href": "/genshin"}
 ]

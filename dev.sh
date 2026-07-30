@@ -24,4 +24,10 @@
   PORT=3002 bun dev
 ) &
 
+(
+  cd blog
+  bun install
+  PORT=3003 bun dev
+) &
+
 wait

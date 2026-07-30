@@ -14,9 +14,24 @@
 | --- | --- | --- |
 | Info | Main link hub | <a href="https://doughmination.info">doughmination.info</a> |
 | Personal | Personal homepage and central site | <a href="https://doughmination.gay">doughmination.gay</a> |
+| Blog | Personal blog | <a href="https://doughmination.site">doughmination.site</a> |
 | Fonts | Comic Code font archive | <a href="https://fonts.doughmination.co.uk">fonts.doughmination.co.uk</a> |
 | System | Doughmination System Frontend | <a href="https://doughmination.co.uk">doughmination.co.uk</a> |
 | Mailbox | Email mailbox | <a href="https://doughmination.tech">doughmination.tech</a> |
+
+## Ports
+
+Production containers follow a sequenced `40x0` scheme (bound to `127.0.0.1` in
+[`compose.yml`](./compose.yml) and fronted by the reverse proxy). Local `bun dev`
+uses a separate `300x` range (see [`dev.sh`](./dev.sh)).
+
+| Service | Prod | Dev |
+| --- | --- | --- |
+| Personal | 4050 | 3000 |
+| Blog | 4010 | 3003 |
+| Info | 4020 | 3002 |
+| System | 4030 | 3001 |
+| Mailbox (inbox) | 4040 | — |
 
 ## Tech Stack
 
