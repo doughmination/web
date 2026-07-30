@@ -175,3 +175,107 @@ globalStyle(".blog-contents h2, .blog-contents h3", {
 
 globalStyle(".blog-contents a", { color: vars.info });
 globalStyle(".blog-contents a:hover", { textDecoration: "underline" });
+
+/* ---- sensitive-content warning callout ------------------------------------ */
+
+/**
+ * A high-visibility content warning shown before sensitive posts. Uses the
+ * danger token, a thick left rule, and a tinted panel so it clearly reads as a
+ * "stop and read this first" block rather than body copy.
+ */
+globalStyle(".warning", {
+  width: "100%",
+  maxWidth: 680,
+  margin: "2.5rem auto 2.5rem",
+  padding: "1.15rem 1.25rem",
+  borderRadius: 12,
+  border: `1px solid ${vars.danger}`,
+  borderLeft: `6px solid ${vars.danger}`,
+  background: "rgba(209, 95, 140, 0.12)",
+  color: vars.text,
+  fontSize: "0.95rem",
+  lineHeight: 1.6,
+  boxShadow: "0 4px 16px rgba(209, 95, 140, 0.2)",
+  /* Keeps the callout clear of the sticky header when linked via #content-warning. */
+  scrollMarginTop: "2rem",
+});
+
+globalStyle(".warning b", {
+  color: vars.danger,
+  letterSpacing: "0.01em",
+});
+
+globalStyle(".warning-actions", {
+  marginTop: "1rem",
+});
+
+globalStyle(".warning-proceed", {
+  appearance: "none",
+  cursor: "pointer",
+  border: `1px solid ${vars.danger}`,
+  background: vars.danger,
+  color: "#ffffff",
+  fontWeight: 700,
+  fontSize: "0.9rem",
+  padding: "0.6rem 1.15rem",
+  borderRadius: 999,
+  transition: "transform 0.15s ease, opacity 0.15s ease",
+});
+
+globalStyle(".warning-proceed:hover", {
+  transform: "translateY(-1px)",
+  opacity: 0.92,
+});
+
+globalStyle(".warning-proceed:focus-visible", {
+  outline: `2px solid ${vars.accent}`,
+  outlineOffset: 2,
+});
+
+/* ---- blurred gate for sensitive post bodies ------------------------------- */
+
+/**
+ * The post body is blurred and non-interactive until the reader clicks
+ * "proceed" in the content warning, at which point `.is-revealed` clears it.
+ */
+globalStyle(".blog-gate-body", {
+  filter: "blur(12px)",
+  pointerEvents: "none",
+  userSelect: "none",
+  transition: "filter 0.4s ease",
+});
+
+globalStyle(".blog-gate-body.is-revealed", {
+  filter: "none",
+  pointerEvents: "auto",
+  userSelect: "auto",
+});
+
+/* ---- GitHub-style "note" disclaimer callout ------------------------------- */
+
+/**
+ * A low-key informational callout in the style of GitHub's `> [!NOTE]` blocks:
+ * a tinted panel with a coloured left rule and a small label above the text.
+ */
+globalStyle(".disclaimer", {
+  width: "100%",
+  maxWidth: 680,
+  margin: "1.5rem auto",
+  padding: "0.85rem 1.1rem",
+  borderRadius: 8,
+  borderLeft: `4px solid ${vars.info}`,
+  background: "rgba(154, 163, 194, 0.12)",
+  color: vars.textMuted,
+  fontSize: "0.88rem",
+  lineHeight: 1.55,
+});
+
+globalStyle(".disclaimer::before", {
+  content: '"ℹ Transparency Note"',
+  display: "block",
+  marginBottom: "0.3rem",
+  fontWeight: 700,
+  fontSize: "0.82rem",
+  letterSpacing: "0.02em",
+  color: vars.info,
+});
