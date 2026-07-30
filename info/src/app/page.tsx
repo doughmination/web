@@ -28,6 +28,11 @@ const sites = [
     href: "https://doughmination.gay",
   },
   {
+    title: "Doughmination Blog",
+    desc: "My personal blog",
+    href: "https://doughmination.site",
+  },
+  {
     title: "ImLesbian.fyi",
     desc: "A queer redirect subdomain service.",
     href: "https://imlesbian.fyi",
