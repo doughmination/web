@@ -11,7 +11,7 @@ COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
 
 # ---- Build ----
-FROM node:22-slim AS builder
+FROM node:25-slim AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
