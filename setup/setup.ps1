@@ -1,5 +1,6 @@
-# Copyright (c) 2026 Clove Twilight
-# Licensed under the ESAL-2.0 Licence.
+# setup/setup.ps1
+# Copyright (c) 2026 Clove Nytrix Doughmination Twilight
+# Licensed under the DASL-1.0 Licence.
 # See LICENCE.md in the project root for full licence information.
 
 # Doughmination Setup Script
@@ -109,7 +110,7 @@ Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "  Doughmination Windows Setup Script" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "Licenced by ESAL-1.4" -ForegroundColor Gray
+Write-Host "Licensed under DASL-1.0" -ForegroundColor Gray
 Write-Host "Clove Nytrix Doughmination Twilight" -ForegroundColor Gray
 Write-Host ""
 Write-Host "Running with Administrator privileges" -ForegroundColor Green

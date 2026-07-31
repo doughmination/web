@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
-# scripts/pmx2glb.py
-# ESAL-2.3
+# personal/scripts/pmx2glb.py
+# Copyright (c) 2026 Clove Nytrix Doughmination Twilight
+# Licensed under the DASL-1.0 Licence.
+# See LICENCE.md in the project root for full licence information.
 
 """pmx2glb.py — convert an MMD .pmx model to a self-contained .glb.
 

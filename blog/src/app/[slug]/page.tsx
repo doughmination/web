@@ -1,3 +1,8 @@
+/* blog/src/app/[slug]/page.tsx
+ * Copyright (c) 2026 Clove Nytrix Doughmination Twilight
+ * Licensed under the DASL-1.0 Licence.
+ * See LICENCE.md in the project root for full licence information.
+ */
 /* src/app/[slug]/page.tsx — individual post */
 
 import type { Metadata } from "next";

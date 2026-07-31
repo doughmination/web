@@ -1,5 +1,7 @@
-/* src/styles/pages/dev-info.css.ts
- * ESAL-2.3
+/* personal/src/styles/pages/dev-info.css.ts
+ * Copyright (c) 2026 Clove Nytrix Doughmination Twilight
+ * Licensed under the DASL-1.0 Licence.
+ * See LICENCE.md in the project root for full licence information.
  */
 
 /**

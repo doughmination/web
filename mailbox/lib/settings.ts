@@ -1,3 +1,8 @@
+/* mailbox/lib/settings.ts
+ * Copyright (c) 2026 Clove Nytrix Doughmination Twilight
+ * Licensed under the DASL-1.0 Licence.
+ * See LICENCE.md in the project root for full licence information.
+ */
 import { sql, asJson } from "./db";
 
 // User-managed configuration. Right now that's just the list of addresses the

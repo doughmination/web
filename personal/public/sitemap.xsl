@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?> 
+<!-- personal/public/sitemap.xsl
+     Copyright (c) 2026 Clove Nytrix Doughmination Twilight
+     Licensed under the DASL-1.0 Licence.
+     See LICENCE.md in the project root for full licence information. -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:s="http://www.sitemaps.org/schemas/sitemap/0.9"> 
     <xsl:output method="html" encoding="UTF-8"/> 
     <xsl:template match="/"> 

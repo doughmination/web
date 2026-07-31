@@ -1,3 +1,8 @@
+/* mailbox/lib/push.ts
+ * Copyright (c) 2026 Clove Nytrix Doughmination Twilight
+ * Licensed under the DASL-1.0 Licence.
+ * See LICENCE.md in the project root for full licence information.
+ */
 import * as webpush from "web-push";
 import type { PushSubscription } from "web-push";
 import { sql, asJson } from "./db";

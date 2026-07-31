@@ -1,3 +1,8 @@
+/* mailbox/scripts/create-db.sql
+ * Copyright (c) 2026 Clove Nytrix Doughmination Twilight
+ * Licensed under the DASL-1.0 Licence.
+ * See LICENCE.md in the project root for full licence information.
+ */
 -- Create a dedicated Postgres role + database for the mailbox app.
 -- Run ONCE as a superuser against your existing Postgres server.
 --

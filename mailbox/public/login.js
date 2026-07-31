@@ -1,3 +1,8 @@
+/* mailbox/public/login.js
+ * Copyright (c) 2026 Clove Nytrix Doughmination Twilight
+ * Licensed under the DASL-1.0 Licence.
+ * See LICENCE.md in the project root for full licence information.
+ */
 const form = document.getElementById("loginForm");
 const errorEl = document.getElementById("loginError");
 

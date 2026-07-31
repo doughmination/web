@@ -1,3 +1,8 @@
+/* blog/src/styles/pages/blog.css.ts
+ * Copyright (c) 2026 Clove Nytrix Doughmination Twilight
+ * Licensed under the DASL-1.0 Licence.
+ * See LICENCE.md in the project root for full licence information.
+ */
 /* src/styles/pages/blog.css.ts
  * The /blog card grid and the individual post layout, ported from the personal
  * site, extended with markdown-body element styles and the sensitive-content

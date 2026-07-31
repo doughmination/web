@@ -1,5 +1,6 @@
-/* Copyright (c) 2026 Clove Twilight
- * Licensed under the ESAL-2.0 Licence.
+/* system/src/app/not-found.css.ts
+ * Copyright (c) 2026 Clove Nytrix Doughmination Twilight
+ * Licensed under the DASL-1.0 Licence.
  * See LICENCE.md in the project root for full licence information.
  */
 

@@ -1,75 +1,144 @@
-# Web
-
 <div align="center">
   <img src="https://doughmination.gay/assets/favicon.png" alt="Clove logo" width="150" />
 
+  <h1>Web</h1>
+
+  <p>The monorepo containing all of Clove's websites — five apps and a font archive, built with Bun and Next.js, shipped as Docker images.</p>
+
   <p>
-    The monorepo containing all of Clove's websites.
+    <img src="https://img.shields.io/badge/runtime-Bun-000000?style=plastic&logo=bun&logoColor=F9F1E1" alt="Bun" />
+    <img src="https://img.shields.io/badge/Next.js-000000?style=plastic&logo=nextdotjs&logoColor=white" alt="Next.js" />
+    <img src="https://img.shields.io/badge/TypeScript-3178C6?style=plastic&logo=typescript&logoColor=white" alt="TypeScript" />
+    <img src="https://img.shields.io/badge/Docker-2496ED?style=plastic&logo=docker&logoColor=white" alt="Docker" />
+    <img src="https://img.shields.io/badge/licence-DASL--1.0-blue?style=plastic" alt="Licence" />
   </p>
 </div>
 
 ## Sites
 
-| Name | Description | URL |
-| --- | --- | --- |
-| Info | Main link hub | <a href="https://doughmination.info">doughmination.info</a> |
-| Personal | Personal homepage and central site | <a href="https://doughmination.gay">doughmination.gay</a> |
-| Blog | Personal blog | <a href="https://doughmination.site">doughmination.site</a> |
-| Fonts | Comic Code font archive | <a href="https://fonts.doughmination.co.uk">fonts.doughmination.co.uk</a> |
-| System | Doughmination System Frontend | <a href="https://doughmination.co.uk">doughmination.co.uk</a> |
-| Mailbox | Email mailbox | <a href="https://doughmination.tech">doughmination.tech</a> |
+| Name | Description | URL | Source |
+| --- | --- | --- | --- |
+| Info | Main link hub | [doughmination.info](https://doughmination.info) | [`info/`](./info) |
+| Personal | Personal homepage and central site | [doughmination.gay](https://doughmination.gay) | [`personal/`](./personal) |
+| Blog | Personal blog | [doughmination.site](https://doughmination.site) | [`blog/`](./blog) |
+| System | Doughmination System frontend | [doughmination.co.uk](https://doughmination.co.uk) | [`system/`](./system) |
+| Mailbox | Email mailbox | [doughmination.tech](https://doughmination.tech) | [`mailbox/`](./mailbox) |
+| Fonts | Comic Code font archive (static) | [fonts.doughmination.co.uk](https://fonts.doughmination.co.uk) | [`fonts/`](./fonts) |
 
-## Ports
+## Repository layout
 
-Production containers follow a sequenced `40x0` scheme (bound to `127.0.0.1` in
-[`compose.yml`](./compose.yml) and fronted by the reverse proxy). Local `bun dev`
-uses a separate `300x` range (see [`dev.sh`](./dev.sh)).
+```
+web/
+├── personal/        Next.js — homepage & hub (doughmination.gay)
+├── blog/            Next.js — blog (doughmination.site)
+├── info/            Next.js — link hub (doughmination.info)
+├── system/          Next.js — system frontend (doughmination.co.uk)
+├── mailbox/         Bun + Hono — email inbox API/UI (doughmination.tech)
+├── fonts/           Static Comic Code font archive
+├── setup/           Windows setup helper (PowerShell)
+├── compose.yml      Production stack (pulls doughmination/* images)
+├── dev.sh           Runs all Next.js apps locally in parallel
+└── .env.example     Environment template (mailbox)
+```
 
-| Service | Prod | Dev |
-| --- | --- | --- |
-| Personal | 4050 | 3000 |
-| Blog | 4010 | 3003 |
-| Info | 4020 | 3002 |
-| System | 4030 | 3001 |
-| Mailbox (inbox) | 4040 | — |
+The four Next.js apps (`personal`, `blog`, `info`, `system`) share the same stack: Next.js on Bun, styled with Vanilla Extract and Radix UI, data via TanStack Query. `mailbox` is a Bun + Hono server with Postgres, Redis, OIDC auth, and Web Push.
 
-## Tech Stack
+## Getting started
 
-### Frameworks & Languages
+### Prerequisites
 
-![Next.js](https://img.shields.io/badge/Next.js-000000?style=plastic\&logo=nextdotjs\&logoColor=white)
-![React](https://img.shields.io/badge/React-61DAFB?style=plastic\&logo=react\&logoColor=000000)
-![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=plastic\&logo=typescript\&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=plastic\&logo=javascript\&logoColor=000000)
-![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=plastic\&logo=html5\&logoColor=white)
-![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=plastic\&logo=css\&logoColor=white)
+- [Bun](https://bun.sh) (latest)
+- [Docker](https://www.docker.com) + Docker Compose (for the production stack)
 
-### Runtime & Infrastructure
+### Local development
 
-![Bun](https://img.shields.io/badge/Bun-000000?style=plastic\&logo=bun\&logoColor=F9F1E1)
-![Node.js](https://img.shields.io/badge/Node.js-339933?style=plastic\&logo=nodedotjs\&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-2496ED?style=plastic\&logo=docker\&logoColor=white)
-![NGINX](https://img.shields.io/badge/NGINX-009639?style=plastic\&logo=nginx\&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=plastic\&logo=postgresql\&logoColor=white)
+The four Next.js apps run together via the helper script, each on its own `300x` port:
 
-### Libraries & Tools
+```bash
+./dev.sh
+```
 
-![Resend](https://img.shields.io/badge/Resend-000000?style=plastic\&logo=resend\&logoColor=white)
-![Hono](https://img.shields.io/badge/Hono-E36002?style=plastic\&logo=hono\&logoColor=white)
-![ESLint](https://img.shields.io/badge/ESLint-4B32C3?style=plastic\&logo=eslint\&logoColor=white)
-![Vanilla Extract](https://img.shields.io/badge/Vanilla_Extract-F786AD?style=plastic\&logo=vanillaextract\&logoColor=white)
-![Radix UI](https://img.shields.io/badge/Radix_UI-161618?style=plastic\&logo=radixui\&logoColor=white)
-![TanStack Query](https://img.shields.io/badge/TanStack_Query-FF4154?style=plastic\&logo=reactquery\&logoColor=white)
-![Recharts](https://img.shields.io/badge/Recharts-FF7300?style=plastic)
-![Sonner](https://img.shields.io/badge/Sonner-000000?style=plastic)
-![JOSE](https://img.shields.io/badge/JOSE-444444?style=plastic)
-![Web Push](https://img.shields.io/badge/Web_Push-4285F4?style=plastic)
+| App | Local URL |
+| --- | --- |
+| Personal | http://localhost:3000 |
+| System | http://localhost:3001 |
+| Info | http://localhost:3002 |
+| Blog | http://localhost:3003 |
 
-### Build & Development
+To run a single app instead:
 
-![Turbopack](https://img.shields.io/badge/Turbopack-000000?style=plastic\&logo=nextdotjs\&logoColor=white)
-![@doughmination/react-api](https://img.shields.io/badge/@doughmination/react--api-8B5CF6?style=plastic)
+```bash
+cd personal
+bun install
+bun dev
+```
+
+`mailbox` runs on its own and needs environment variables (see below):
+
+```bash
+cd mailbox
+bun install
+bun dev
+```
+
+> **Note:** `dev.sh` uses `bun install` (never `bun update`) so dependencies stay pinned to `bun.lock`. To intentionally bump versions, run `bun update` by hand — Dependabot otherwise handles routine updates.
+
+## Environment
+
+Only `mailbox` requires configuration. Copy the template and fill in your values:
+
+```bash
+cp .env.example .env
+```
+
+It covers Resend (transactional email), VAPID (Web Push), OIDC (auth), Redis, and Postgres. In production, secrets are decrypted at runtime with [dotenvx](https://dotenvx.com) — the container mounts `.env` and `.env.keys` read-only (see [`compose.yml`](./compose.yml)).
+
+## Deployment
+
+Production containers bind to `127.0.0.1` on a sequenced `40x0` scheme and sit behind a reverse proxy. They join an external Docker network named `infra`, created once with:
+
+```bash
+docker network create infra
+```
+
+| Service | Prod port | Dev port | Image |
+| --- | --- | --- | --- |
+| Personal | 4050 | 3000 | `doughmination/personal` |
+| Blog | 4010 | 3003 | `doughmination/blog` |
+| Info | 4020 | 3002 | `doughmination/info` |
+| System | 4030 | 3001 | `doughmination/system` |
+| Mailbox (inbox) | 4040 | — | `doughmination/mailbox` |
+
+Pull the latest published images and start the stack:
+
+```bash
+docker compose pull
+docker compose up -d
+```
+
+`compose.yml` references the published Docker Hub images rather than building locally, so a `pull` grabs whatever the CI last pushed.
+
+## CI/CD
+
+GitHub Actions build and publish images automatically:
+
+- **Per-service builds** — a push to `main` that touches a service folder (e.g. `info/**`) builds that service and pushes `doughmination/<service>` to Docker Hub, tagged `latest`, the short commit SHA, and the date. Each service has its own path-filtered workflow in [`.github/workflows/`](./.github/workflows), all calling the shared [`docker-build.yml`](./.github/workflows/docker-build.yml).
+- **Dependency updates** — [Dependabot](./.github/dependabot.yml) checks Bun and Docker dependencies daily and opens one grouped PR per service for minor and patch bumps.
+
+Publishing requires two repository secrets: `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN`.
+
+## Tech stack
+
+**Frameworks & languages** — Next.js, React, TypeScript, HTML5, CSS3
+
+**Runtime & infrastructure** — Bun, Node.js, Docker, NGINX, PostgreSQL, Redis
+
+**Libraries & tools** — Hono, Resend, Vanilla Extract, Radix UI, TanStack Query, Recharts, Sonner, JOSE, Web Push, `@doughmination/react-api`, ESLint, Turbopack
+
+## Contributing & security
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for how to propose changes and [SECURITY.md](./SECURITY.md) to report a vulnerability.
 
 ## Licence
 
-See [LICENCE](./LICENCE.md) for details.
+Licensed under the **Doughmination Authorised Source Licence (DASL-1.0)**. See [LICENCE.md](./LICENCE.md) for the full terms.

@@ -1,3 +1,8 @@
+/* blog/src/scripts/PostFilter.tsx
+ * Copyright (c) 2026 Clove Nytrix Doughmination Twilight
+ * Licensed under the DASL-1.0 Licence.
+ * See LICENCE.md in the project root for full licence information.
+ */
 /* src/scripts/PostFilter.tsx
  * Client-side tag filter for the blog index. Renders a chip bar plus the card
  * grid, and narrows the visible cards to the selected tag. The initial tag is

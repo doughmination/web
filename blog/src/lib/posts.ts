@@ -1,3 +1,8 @@
+/* blog/src/lib/posts.ts
+ * Copyright (c) 2026 Clove Nytrix Doughmination Twilight
+ * Licensed under the DASL-1.0 Licence.
+ * See LICENCE.md in the project root for full licence information.
+ */
 /* src/lib/posts.ts
  * Markdown-file content pipeline. Posts live in content/posts/<slug>.md, where
  * the slug is DDMMYYYY-name (the date is parsed from it, mirroring the original

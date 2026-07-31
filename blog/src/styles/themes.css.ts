@@ -1,3 +1,8 @@
+/* blog/src/styles/themes.css.ts
+ * Copyright (c) 2026 Clove Nytrix Doughmination Twilight
+ * Licensed under the DASL-1.0 Licence.
+ * See LICENCE.md in the project root for full licence information.
+ */
 /* src/styles/themes.css.ts
  * Shared palette, ported verbatim from the doughmination.gay personal site so
  * the blog reads as part of the same family.

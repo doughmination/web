@@ -1,5 +1,7 @@
-/* src/scripts/presenceShared.ts
- * ESAL-2.3
+/* personal/src/scripts/presenceShared.ts
+ * Copyright (c) 2026 Clove Nytrix Doughmination Twilight
+ * Licensed under the DASL-1.0 Licence.
+ * See LICENCE.md in the project root for full licence information.
  */
 
 /* presenceShared.ts — pure helpers, constants and data hooks behind PresenceCard.

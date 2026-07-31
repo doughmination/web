@@ -1,3 +1,8 @@
+/* mailbox/public/sw.js
+ * Copyright (c) 2026 Clove Nytrix Doughmination Twilight
+ * Licensed under the DASL-1.0 Licence.
+ * See LICENCE.md in the project root for full licence information.
+ */
 // Service worker for the mailbox PWA. Its main job is Web Push: show a
 // notification when the server sends one, and focus/open the inbox when the
 // user taps it. Deliberately minimal — no offline caching.

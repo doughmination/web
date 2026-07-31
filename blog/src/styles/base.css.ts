@@ -1,3 +1,8 @@
+/* blog/src/styles/base.css.ts
+ * Copyright (c) 2026 Clove Nytrix Doughmination Twilight
+ * Licensed under the DASL-1.0 Licence.
+ * See LICENCE.md in the project root for full licence information.
+ */
 /* src/styles/base.css.ts
  * Global reset, the custom cursor set, and the background watermark layers.
  * Ported from the personal site so the blog shares the same feel.

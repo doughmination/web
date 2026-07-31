@@ -1,3 +1,8 @@
+/* mailbox/public/app.js
+ * Copyright (c) 2026 Clove Nytrix Doughmination Twilight
+ * Licensed under the DASL-1.0 Licence.
+ * See LICENCE.md in the project root for full licence information.
+ */
 const listEl = document.getElementById("list");
 const detailEl = document.getElementById("detailContent");
 const backBtn = document.getElementById("backBtn");

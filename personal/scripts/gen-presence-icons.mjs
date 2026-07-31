@@ -1,3 +1,8 @@
+/* personal/scripts/gen-presence-icons.mjs
+ * Copyright (c) 2026 Clove Nytrix Doughmination Twilight
+ * Licensed under the DASL-1.0 Licence.
+ * See LICENCE.md in the project root for full licence information.
+ */
 /* gen-presence-icons.mjs — regenerate src/scripts/presenceIcons.ts
  *
  * core.ts is a legacy imperative script that builds HTML strings for innerHTML,

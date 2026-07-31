@@ -1,4 +1,8 @@
 #!/bin/bash
+# dev.sh
+# Copyright (c) 2026 Clove Nytrix Doughmination Twilight
+# Licensed under the DASL-1.0 Licence.
+# See LICENCE.md in the project root for full licence information.
 
 # `bun install` honours package.json + bun.lock exactly — it will NOT float
 # caret-ranged deps to newer versions. `bun update` was removed on purpose: it

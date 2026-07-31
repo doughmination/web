@@ -1,5 +1,7 @@
-/* src/scripts/presenceIcons.ts
- * ESAL-2.3
+/* personal/src/scripts/presenceIcons.ts
+ * Copyright (c) 2026 Clove Nytrix Doughmination Twilight
+ * Licensed under the DASL-1.0 Licence.
+ * See LICENCE.md in the project root for full licence information.
  */
 
 /* presenceIcons.ts — inline SVG for core.ts, the legacy imperative shell.

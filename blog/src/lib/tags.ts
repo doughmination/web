@@ -1,3 +1,8 @@
+/* blog/src/lib/tags.ts
+ * Copyright (c) 2026 Clove Nytrix Doughmination Twilight
+ * Licensed under the DASL-1.0 Licence.
+ * See LICENCE.md in the project root for full licence information.
+ */
 /* src/lib/tags.ts
  * Client-safe tag helpers (no filesystem imports, so this can be used in both
  * server components and "use client" components).

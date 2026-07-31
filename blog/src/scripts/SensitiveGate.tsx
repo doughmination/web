@@ -1,3 +1,8 @@
+/* blog/src/scripts/SensitiveGate.tsx
+ * Copyright (c) 2026 Clove Nytrix Doughmination Twilight
+ * Licensed under the DASL-1.0 Licence.
+ * See LICENCE.md in the project root for full licence information.
+ */
 /* src/scripts/SensitiveGate.tsx */
 
 "use client";

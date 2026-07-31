@@ -1,5 +1,7 @@
-/* src/app/cool-people/page.tsx
- * ESAL-2.3
+/* personal/src/app/cool-people/page.tsx
+ * Copyright (c) 2026 Clove Nytrix Doughmination Twilight
+ * Licensed under the DASL-1.0 Licence.
+ * See LICENCE.md in the project root for full licence information.
  */
 
 import type { Metadata } from "next";
