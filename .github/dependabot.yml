@@ -1,0 +1,121 @@
+# .github/dependabot.yml
+# Copyright (c) 2026 Clove Twilight
+# Licensed under the ESAL-2.0 Licence.
+# See LICENCE.md in the project root for full licence information.
+
+version: 2
+
+updates:
+  # ---- Bun dependencies (one entry per site) ----
+
+  - package-ecosystem: "bun"
+    directory: "/blog"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    groups:
+      blog-deps:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  - package-ecosystem: "bun"
+    directory: "/info"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    groups:
+      info-deps:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  - package-ecosystem: "bun"
+    directory: "/mailbox"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    groups:
+      mailbox-deps:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  - package-ecosystem: "bun"
+    directory: "/personal"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    groups:
+      personal-deps:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  - package-ecosystem: "bun"
+    directory: "/system"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    groups:
+      system-deps:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # ---- Docker base images (one entry per Dockerfile) ----
+
+  - package-ecosystem: "docker"
+    directory: "/blog"
+    schedule:
+      interval: "daily"
+    groups:
+      blog-docker:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "docker"
+    directory: "/info"
+    schedule:
+      interval: "daily"
+    groups:
+      info-docker:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "docker"
+    directory: "/mailbox"
+    schedule:
+      interval: "daily"
+    groups:
+      mailbox-docker:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "docker"
+    directory: "/personal"
+    schedule:
+      interval: "daily"
+    groups:
+      personal-docker:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "docker"
+    directory: "/system"
+    schedule:
+      interval: "daily"
+    groups:
+      system-docker:
+        patterns:
+          - "*"

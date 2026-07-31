@@ -1,38 +1,31 @@
+# compose.yml
 # Copyright (c) 2026 Clove Twilight
 # Licensed under the ESAL-2.0 Licence.
 # See LICENCE.md in the project root for full licence information.
 services:
   personal:
-    build:
-      context: ./personal
-      dockerfile: Dockerfile
+    image: doughmination/personal:latest
     container_name: personal
     ports:
       - "127.0.0.1:4050:4050"
     restart: unless-stopped
 
   blog:
-    build:
-      context: ./blog
-      dockerfile: Dockerfile
+    image: doughmination/blog:latest
     container_name: blog
     ports:
       - "127.0.0.1:4010:4010"
     restart: unless-stopped
 
   info:
-    build:
-      context: ./info
-      dockerfile: Dockerfile
+    image: doughmination/info:latest
     container_name: info
     ports:
       - "127.0.0.1:4020:4020"
     restart: unless-stopped
 
   system:
-    build:
-      context: ./system
-      dockerfile: Dockerfile
+    image: doughmination/system:latest
     container_name: system
     environment:
       - NODE_ENV=production
@@ -40,9 +33,7 @@ services:
       - "127.0.0.1:4030:4030"
 
   inbox:
-    build:
-      context: ./mailbox
-      dockerfile: Dockerfile
+    image: doughmination/mailbox:latest
     container_name: inbox
     ports:
       - "127.0.0.1:4040:4040"

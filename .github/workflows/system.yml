@@ -1,0 +1,23 @@
+# .github/workflows/system.yml
+# Copyright (c) 2026 Clove Twilight
+# Licensed under the ESAL-2.0 Licence.
+# See LICENCE.md in the project root for full licence information.
+
+name: system
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "system/**"
+      - ".github/workflows/system.yml"
+      - ".github/workflows/docker-build.yml"
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: ./.github/workflows/docker-build.yml
+    with:
+      service: system
+    secrets: inherit
