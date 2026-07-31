@@ -31,7 +31,7 @@ RUN bun install --frozen-lockfile
 # execute next under Bun. Building on a Node image avoids the dual-package hazard
 # entirely. Dependencies are still installed by Bun (bun.lock stays the source of
 # truth) — Node reads that node_modules tree fine.
-FROM node:22-slim AS builder
+FROM node:25-slim AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
