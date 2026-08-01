@@ -67,6 +67,11 @@ const sites = [
     desc: "Real-time system status and uptime monitoring",
     href: "https://doughmination.org",
   },
+  {
+    title: "Dozzle",
+    desc: "Docker log viewer",
+    href: "https://doughmination.systems",
+  },
 ];
 
 const brandName = "doughmination.info";
