@@ -32,6 +32,20 @@ services:
     ports:
       - "127.0.0.1:4030:4030"
 
+  status:
+    image: doughmination/status:latest
+    container_name: status
+    ports:
+      - "127.0.0.1:4000:4000"
+    volumes:
+      - "./.env:/app/.env:ro"
+      - "./.env.keys:/app/.env.keys:ro"
+      - "./status-data:/app/data"
+      # Read-only Docker socket: lets the status page report each container's
+      # backend state (running/health) alongside the public URL check.
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    restart: unless-stopped
+
   inbox:
     image: doughmination/mailbox:latest
     container_name: inbox

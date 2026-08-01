@@ -1,5 +1,5 @@
 {
-  "name": "info",
+  "name": "status",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@vanilla-extract/css": "^1.21.2",
+    "jose": "^6.2.4",
     "next": "16.2.12",
     "react": "19.2.8",
     "react-dom": "19.2.8"

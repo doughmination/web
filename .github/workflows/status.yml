@@ -1,0 +1,23 @@
+# .github/workflows/status.yml
+# Copyright (c) 2026 Clove Nytrix Doughmination Twilight
+# Licensed under the DASL-1.0 Licence.
+# See LICENCE.md in the project root for full licence information.
+
+name: status
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "status/**"
+      - ".github/workflows/status.yml"
+      - ".github/workflows/docker-build.yml"
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: ./.github/workflows/docker-build.yml
+    with:
+      service: status
+    secrets: inherit

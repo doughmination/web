@@ -23,6 +23,7 @@
 | Blog | Personal blog | [doughmination.site](https://doughmination.site) | [`blog/`](./blog) |
 | System | Doughmination System frontend | [doughmination.co.uk](https://doughmination.co.uk) | [`system/`](./system) |
 | Mailbox | Email mailbox | [doughmination.tech](https://doughmination.tech) | [`mailbox/`](./mailbox) |
+| Status | Service status page (public) + PocketID-gated admin | [status.doughmination.co.uk](https://status.doughmination.co.uk) | [`status/`](./status) |
 | Fonts | Comic Code font archive (static) | [fonts.doughmination.co.uk](https://fonts.doughmination.co.uk) | [`fonts/`](./fonts) |
 
 ## Repository layout
@@ -34,6 +35,7 @@ web/
 ├── info/            Next.js — link hub (doughmination.info)
 ├── system/          Next.js — system frontend (doughmination.co.uk)
 ├── mailbox/         Bun + Hono — email inbox API/UI (doughmination.tech)
+├── status/          Next.js — service status + PocketID admin (status.doughmination.co.uk)
 ├── fonts/           Static Comic Code font archive
 ├── setup/           Windows setup helper (PowerShell)
 ├── compose.yml      Production stack (pulls doughmination/* images)
@@ -64,6 +66,7 @@ The four Next.js apps run together via the helper script, each on its own `300x`
 | System | http://localhost:3001 |
 | Info | http://localhost:3002 |
 | Blog | http://localhost:3003 |
+| Status | http://localhost:3004 |
 
 To run a single app instead:
 
@@ -85,7 +88,7 @@ bun dev
 
 ## Environment
 
-Only `mailbox` requires configuration. Copy the template and fill in your values:
+`mailbox` and `status` require configuration — both are documented in the single root [`.env.example`](./.env.example). For `mailbox`, copy the template to `.env` and fill in your values. For `status`, put its values (its own PocketID client, a `SESSION_SECRET`, and the `ADMIN_USERS` allowlist) in `.env.status`, which the container loads in production (see [`compose.yml`](./compose.yml)):
 
 ```bash
 cp .env.example .env
@@ -108,6 +111,7 @@ docker network create infra
 | Info | 4020 | 3002 | `doughmination/info` |
 | System | 4030 | 3001 | `doughmination/system` |
 | Mailbox (inbox) | 4040 | — | `doughmination/mailbox` |
+| Status | 4000 | 3004 | `doughmination/status` |
 
 Pull the latest published images and start the stack:
 

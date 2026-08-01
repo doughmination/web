@@ -29,107 +29,19 @@ const FRIEND_POLL_MS = 60000;
 
 const FRIENDS: Group[] = [
   {
-    title: "Fiancée",
+    title: "Real Friends",
     members: [{
       name: "Aria",
       tier: "wife",
-      discordId: "1305215902685597797",
-      link: null
-    }],
-  },
-  {
-    title: "Close Friends",
-    members: [
-      {
-        name: "Ari",
-        tier: "close",
-        discordId: "1474568910736199825",
-        link: "https://a.stupid.cat"
-      },
-      {
-        name: "Ria",
-        tier: "close",
-        discordId: "1513506390088618145",
-        link: null
-      },
-      {
-        name: "Camilla",
-        tier: "close",
-        discordId: "1110542429838397471",
-        link: "https://cammy-the-cat.com"
-      },
-      {
-        name: "Saphie",
-        tier: "close",
-        discordId: "527709099186716673",
-        link: null
-      },
-    ],
-  },
-  {
-    title: "Friends",
-    members: [
-      {
-        name: "Meme",
-        tier: "friend",
-        discordId: "812998699667161098",
-        link: null
-      },
-      {
-        name: "N",
-        tier: "friend",
-        discordId: "639399972407869450",
-        link: null
-      },
-      {
-        name: "Simon",
-        tier: "friend",
-        discordId: "758466783354814514",
-        link: null
-      },
-    ],
-  },
-  {
-    title: "Other Peeps",
-    subtitle: "You can request to be added here!",
-    members: [
-      {
-        name: "furi",
-        tier: "known",
-        discordId: "781445370177126401",
-        link: "https://furina.is-a.dev"
-      },
-      {
-        name: "pokemon",
-        tier: "known",
-        discordId: "784443338627612673",
-        link: "https://devmatei.com/"
-      },
-      {
-        name: "animosity",
-        tier: "known",
-        discordId: "1525864258900857054",
-        link: "https://0c6a.site/"
-      },
-      {
-        name: "winte",
-        tier: "known",
-        discordId: "1357429661834936510",
-        link: "https://buddywinte.xyz/"
-      },
-      {
-        name: "interverti",
-        tier: "known",
-        discordId: "674329017339346955",
-        link: "https://interverti.fr/"
-      },
-      {
-        name: "schuh",
-        tier: "known",
-        discordId: "492707412504215552",
-        link: "https://schuh.wtf/"
-      },
-    ],
+      discordId: "1474568910736199825",
+      link: "https://ari.rip"
+    },
+    {
+      name: "Ria",
+      tier: "close",
+      discordId: "1513506390088618145",
+    }
+  ],
   },
   {
     title: "Alts",
@@ -140,39 +52,33 @@ const FRIENDS: Group[] = [
         user: "real_serial_designationj",
         img: "/assets/alts/j.png",
         tier: "active-alt",
-        discordId: "1500197577336033301",
-        link: null
+        discordId: "1500197577336033301"
       },
       {
         name: "Uzi",
         user: "theuzidoorman",
         img: "/assets/alts/uzi.png",
         tier: "active-alt",
-        discordId: "526626867973849123",
-        link: null
-      },
-      {
-        name: "Clove Twilight",
-        user: "clovetwilight3",
-        img: "/assets/alts/clovetwilight3.png",
-        tier: "dead-alt",
-        discordId: null,
-        link: null
+        discordId: "526626867973849123"
       },
       {
         name: "estrogenhrt",
         user: "estrogenhrt",
         img: "/assets/alts/estrogenhrt.png",
-        tier: "dead-alt",
-        discordId: "1025770042245251122",
-        link: null
+        tier: "active-alt",
+        discordId: "1025770042245251122"
+      },
+      {
+        name: "Clove Twilight",
+        user: "clovetwilight3",
+        img: "/assets/alts/clovetwilight3.png",
+        tier: "dead-alt"
       },
       {
         name: "Clove <3",
         img: "/assets/alts/clove.png",
         tier: "dead-alt",
         discordId: "1125844710511104030",
-        link: null
       },
       {
         name: "Clove ⛤",
@@ -180,7 +86,6 @@ const FRIENDS: Group[] = [
         img: "/assets/alts/butterfly.png",
         tier: "dead-alt",
         discordId: "514994021970739201",
-        link: null
       },
       {
         name: "Mrow",
@@ -188,7 +93,6 @@ const FRIENDS: Group[] = [
         img: "/assets/alts/mrow.png",
         tier: "dead-alt",
         discordId: "219480349053288450",
-        link: null
       },
     ],
   },

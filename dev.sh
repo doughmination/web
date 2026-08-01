@@ -34,4 +34,10 @@
   PORT=3003 bun dev
 ) &
 
+(
+  cd status
+  bun install
+  PORT=3004 bun dev
+) &
+
 wait
