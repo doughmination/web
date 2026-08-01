@@ -111,7 +111,7 @@ docker network create infra
 | Info | 4020 | 3002 | `doughmination/info` |
 | System | 4030 | 3001 | `doughmination/system` |
 | Mailbox (inbox) | 4040 | — | `doughmination/mailbox` |
-| Status | 4000 | 3004 | `doughmination/status` |
+| Status | 4080 | 3004 | `doughmination/status` |
 
 Pull the latest published images and start the stack:
 

@@ -7,18 +7,14 @@
 /**
  * nav.css.ts — the page nav, pinned top-left.
  *
- * Ported from public/css/shared/nav.css. Two things were dropped as dead:
+ * The nav is a React component now (NavMenu.tsx) built from navItems.tsx with
+ * react-bootstrap-icons, so these are plain global class rules the component
+ * renders against (.nav / .nav-links / .nav-link / .nav-ico / .nav-label).
  *
- *   .nav-link.is-a-dev (+ :hover) — core.ts only ever adds "selected" to a nav
- *                                   link; nothing applies is-a-dev. (The
- *                                   "is-a-dev" strings elsewhere in src are a
- *                                   visitor-counter namespace and a Discord
- *                                   server name — unrelated to this class.)
- *   .badges                       — shared a transition rule with .nav, but the
- *                                   badge stack is no longer rendered anywhere.
- *
- * globalStyle because core.ts builds the nav imperatively from nav.json with
- * hardcoded class strings (buildNav / window.ctpBuildNav).
+ * Desktop (min-width 641px): the nav collapses into a hamburger. Opening it
+ * blooms the items in as icon dots (staggered), holds ~1s, then telescopes
+ * each dot out into its label. Pure CSS off a hidden checkbox — no JS timers.
+ * Mobile keeps the centred wrapping row (icons hidden, labels shown).
  */
 import { globalStyle } from "@vanilla-extract/css";
 import { vars } from "./themes.css";
@@ -43,6 +39,7 @@ globalStyle(".nav-link", {
   position: "relative",
   display: "inline-flex",
   alignItems: "center",
+  gap: "0.45rem",
   padding: "0.3rem 0.7rem",
   borderRadius: 999,
   background: vars.surface,
@@ -79,3 +76,264 @@ globalStyle(".nav-link.selected::before", {
   border: "6px solid transparent",
   borderLeftColor: vars.accent,
 });
+
+/* The icon rides inside each link; hidden on mobile (labels-only row). */
+globalStyle(".nav-ico", {
+  display: "none",
+});
+
+/* ==========================================================================
+ * Desktop hamburger + JARVIS-style reveal (min-width 641px only).
+ * ======================================================================== */
+
+const DESKTOP = "(min-width: 641px)";
+
+/* The checkbox is hidden but stays focusable so keyboard users can toggle it. */
+globalStyle(".nav-toggle", {
+  position: "absolute",
+  width: 1,
+  height: 1,
+  opacity: 0,
+  margin: 0,
+  pointerEvents: "none",
+});
+
+/* Burger button: hidden by default, shown only on desktop. */
+globalStyle(".nav-burger", {
+  display: "none",
+});
+
+globalStyle(".nav-burger", {
+  "@media": {
+    [DESKTOP]: {
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      gap: "4px",
+      width: "2.5rem",
+      height: "2.5rem",
+      padding: "0 0.6rem",
+      borderRadius: 999,
+      background: vars.surface,
+      border: `1px solid ${vars.surfaceHi}`,
+      cursor: "pointer",
+      transition: "border-color 0.15s ease, background 0.15s ease",
+    },
+  },
+});
+
+globalStyle(".nav-burger:hover", {
+  "@media": {
+    [DESKTOP]: {
+      borderColor: vars.accent,
+      background: vars.surfaceHi,
+    },
+  },
+});
+
+globalStyle(".nav-toggle:focus-visible ~ .nav-burger", {
+  "@media": {
+    [DESKTOP]: {
+      borderColor: vars.accent,
+      outline: `2px solid ${vars.accent}`,
+      outlineOffset: 2,
+    },
+  },
+});
+
+/* The three bars. */
+globalStyle(".nav-burger span", {
+  "@media": {
+    [DESKTOP]: {
+      display: "block",
+      width: "100%",
+      height: "2px",
+      borderRadius: 2,
+      background: vars.textSoft,
+      transition: "transform 0.3s ease, opacity 0.2s ease",
+    },
+  },
+});
+
+/* Checked = morph the bars into an X (bar gap 4px + height 2px = 6px shift). */
+globalStyle(".nav-toggle:checked ~ .nav-burger span:nth-child(1)", {
+  "@media": { [DESKTOP]: { transform: "translateY(6px) rotate(45deg)" } },
+});
+globalStyle(".nav-toggle:checked ~ .nav-burger span:nth-child(2)", {
+  "@media": { [DESKTOP]: { opacity: 0 } },
+});
+globalStyle(".nav-toggle:checked ~ .nav-burger span:nth-child(3)", {
+  "@media": { [DESKTOP]: { transform: "translateY(-6px) rotate(-45deg)" } },
+});
+
+/* Collapsed menu container. */
+globalStyle(".nav-links", {
+  "@media": {
+    [DESKTOP]: {
+      overflow: "hidden",
+      maxHeight: 0,
+      opacity: 0,
+      transform: "translateY(-6px)",
+      marginTop: "0.5rem",
+      pointerEvents: "none",
+      transition:
+        "max-height 0.42s ease, opacity 0.25s ease, transform 0.32s ease",
+    },
+  },
+});
+
+globalStyle(".nav-toggle:checked ~ .nav-links", {
+  "@media": {
+    [DESKTOP]: {
+      maxHeight: "80vh",
+      opacity: 1,
+      transform: "translateY(0)",
+      pointerEvents: "auto",
+    },
+  },
+});
+
+/* Desktop: no selected-triangle/indent — dots stay aligned, selected shows via
+ * the accent fill instead. */
+globalStyle(".nav-link.selected", {
+  "@media": { [DESKTOP]: { marginLeft: 0 } },
+});
+globalStyle(".nav-link.selected::before", {
+  "@media": { [DESKTOP]: { display: "none" } },
+});
+
+/* Phase 1 — each item starts as a hidden icon dot. Per-property transitions so
+ * the checked state can delay the "expand" props (max-width/padding) well after
+ * the "appear" props (opacity/transform). */
+globalStyle(".nav-links .nav-link", {
+  "@media": {
+    [DESKTOP]: {
+      width: "2.5rem",
+      height: "2.5rem",
+      maxWidth: "2.5rem",
+      padding: 0,
+      justifyContent: "center",
+      overflow: "hidden",
+      opacity: 0,
+      transform: "scale(0.4)",
+      transitionProperty:
+        "opacity, transform, max-width, padding, background, border-color, color",
+      transitionDuration: "0.3s, 0.3s, 0.45s, 0.45s, 0.15s, 0.15s, 0.15s",
+      transitionTimingFunction: "ease",
+    },
+  },
+});
+
+globalStyle(".nav-links .nav-link:hover", {
+  "@media": { [DESKTOP]: { transform: "scale(1.06)" } },
+});
+
+/* The icon, centred in the dot; fades out as the label takes over. */
+globalStyle(".nav-ico", {
+  "@media": {
+    [DESKTOP]: {
+      display: "flex",
+      position: "absolute",
+      inset: 0,
+      alignItems: "center",
+      justifyContent: "center",
+      fontSize: "1.05rem",
+      opacity: 1,
+      pointerEvents: "none",
+      transition: "opacity 0.3s ease",
+    },
+  },
+});
+
+/* The label, collapsed until the expand phase. */
+globalStyle(".nav-label", {
+  "@media": {
+    [DESKTOP]: {
+      maxWidth: 0,
+      opacity: 0,
+      overflow: "hidden",
+      whiteSpace: "nowrap",
+      transition: "opacity 0.3s ease, max-width 0.4s ease",
+    },
+  },
+});
+
+/* Phase 1 result: dots bloom in. */
+globalStyle(".nav-toggle:checked ~ .nav-links .nav-link", {
+  "@media": {
+    [DESKTOP]: {
+      opacity: 1,
+      transform: "scale(1)",
+      // Phase 2: telescope open (delayed ~1s in the per-item rules below).
+      maxWidth: "15rem",
+      padding: "0 0.8rem",
+    },
+  },
+});
+
+/* Phase 2: icon fades and label reveals, ~1s after the dots have bloomed. */
+globalStyle(".nav-toggle:checked ~ .nav-links .nav-ico", {
+  "@media": { [DESKTOP]: { opacity: 0, transitionDelay: "0.95s" } },
+});
+globalStyle(".nav-toggle:checked ~ .nav-links .nav-label", {
+  "@media": {
+    [DESKTOP]: { maxWidth: "12rem", opacity: 1, transitionDelay: "1s" },
+  },
+});
+
+/* Per-item stagger. transition-delay order matches transitionProperty above:
+ * opacity, transform, max-width, padding, background, border-color, color.
+ * Appear (opacity/transform) staggers; expand (max-width/padding) waits ~1s.
+ * Explicit rules because Turbopack's vanilla-extract plugin can't instrument a
+ * top-level loop in a .css.ts. */
+globalStyle(".nav-toggle:checked ~ .nav-links .nav-link:nth-child(1)", {
+  "@media": { [DESKTOP]: { transitionDelay: "0.05s, 0.05s, 1s, 1s, 0s, 0s, 0s" } },
+});
+globalStyle(".nav-toggle:checked ~ .nav-links .nav-link:nth-child(2)", {
+  "@media": { [DESKTOP]: { transitionDelay: "0.10s, 0.10s, 1s, 1s, 0s, 0s, 0s" } },
+});
+globalStyle(".nav-toggle:checked ~ .nav-links .nav-link:nth-child(3)", {
+  "@media": { [DESKTOP]: { transitionDelay: "0.15s, 0.15s, 1s, 1s, 0s, 0s, 0s" } },
+});
+globalStyle(".nav-toggle:checked ~ .nav-links .nav-link:nth-child(4)", {
+  "@media": { [DESKTOP]: { transitionDelay: "0.20s, 0.20s, 1s, 1s, 0s, 0s, 0s" } },
+});
+globalStyle(".nav-toggle:checked ~ .nav-links .nav-link:nth-child(5)", {
+  "@media": { [DESKTOP]: { transitionDelay: "0.25s, 0.25s, 1s, 1s, 0s, 0s, 0s" } },
+});
+globalStyle(".nav-toggle:checked ~ .nav-links .nav-link:nth-child(6)", {
+  "@media": { [DESKTOP]: { transitionDelay: "0.30s, 0.30s, 1s, 1s, 0s, 0s, 0s" } },
+});
+globalStyle(".nav-toggle:checked ~ .nav-links .nav-link:nth-child(7)", {
+  "@media": { [DESKTOP]: { transitionDelay: "0.35s, 0.35s, 1s, 1s, 0s, 0s, 0s" } },
+});
+globalStyle(".nav-toggle:checked ~ .nav-links .nav-link:nth-child(8)", {
+  "@media": { [DESKTOP]: { transitionDelay: "0.40s, 0.40s, 1s, 1s, 0s, 0s, 0s" } },
+});
+globalStyle(".nav-toggle:checked ~ .nav-links .nav-link:nth-child(9)", {
+  "@media": { [DESKTOP]: { transitionDelay: "0.45s, 0.45s, 1s, 1s, 0s, 0s, 0s" } },
+});
+globalStyle(".nav-toggle:checked ~ .nav-links .nav-link:nth-child(10)", {
+  "@media": { [DESKTOP]: { transitionDelay: "0.50s, 0.50s, 1s, 1s, 0s, 0s, 0s" } },
+});
+globalStyle(".nav-toggle:checked ~ .nav-links .nav-link:nth-child(11)", {
+  "@media": { [DESKTOP]: { transitionDelay: "0.55s, 0.55s, 1s, 1s, 0s, 0s, 0s" } },
+});
+globalStyle(".nav-toggle:checked ~ .nav-links .nav-link:nth-child(12)", {
+  "@media": { [DESKTOP]: { transitionDelay: "0.60s, 0.60s, 1s, 1s, 0s, 0s, 0s" } },
+});
+globalStyle(".nav-toggle:checked ~ .nav-links .nav-link:nth-child(13)", {
+  "@media": { [DESKTOP]: { transitionDelay: "0.65s, 0.65s, 1s, 1s, 0s, 0s, 0s" } },
+});
+
+/* Reduced motion: skip the bloom/telescope, just show the labelled pills. */
+globalStyle(
+  ".nav-links, .nav-links .nav-link, .nav-ico, .nav-label, .nav-burger span",
+  {
+    "@media": {
+      "(prefers-reduced-motion: reduce)": {
+        transition: "none",
+      },
+    },
+  },
+);

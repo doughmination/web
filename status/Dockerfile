@@ -22,7 +22,7 @@ RUN npm run build
 FROM base AS runner
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV PORT=4000
+ENV PORT=4080
 ENV HOSTNAME=0.0.0.0
 
 COPY --from=builder /app/public ./public

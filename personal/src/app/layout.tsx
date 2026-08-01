@@ -5,11 +5,10 @@
  */
 
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
 import NavBridge from "./_components/NavBridge";
 import Providers from "./providers";
 import SettingsMenu from "@components/chrome/SettingsMenu";
-import WebringDock from "@components/chrome/WebringDock";
+import NavMenu from "@components/chrome/NavMenu";
 import SiteChrome from "@components/chrome/SiteChrome";
 // One fixed palette. Importing for side effects emits the :root token block at
 // build time; see src/styles/themes.css.ts.
@@ -20,7 +19,6 @@ import "@styles/fonts.css";
 import "@styles/base.css";
 import "@styles/bg-music.css";
 import "@styles/cat-picker.css";
-import "@styles/keyring.css";
 import "@styles/layout.css";
 import "@styles/nav.css";
 import "@styles/visitor-counter.css";
@@ -111,10 +109,9 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://fonts.doughmination.co.uk" />
       </head>
       <body>
-        {/* Persistent nav shell — core.ts populates .nav-links from nav.json */}
-        <header className="nav">
-          <nav className="nav-links"></nav>
-        </header>
+        {/* Page nav (React-owned). Desktop shows a hamburger that opens icon
+            dots then telescopes them into labels; mobile is a wrapping row. */}
+        <NavMenu />
 
         {/* Routes core.ts's nav clicks through Next's client router so the
             layout (and bg-music audio) never unloads between pages. */}
@@ -122,7 +119,6 @@ export default function RootLayout({
 
         {/* Chrome, now in React (theme owned here; cat + music bridge to core.ts) */}
         <SettingsMenu />
-        <WebringDock />
 
         {/* Wrapper data layer: one REST client + socket shared by every
             migrated widget (Fronting first). See providers.tsx. */}
@@ -132,12 +128,6 @@ export default function RootLayout({
             bg music. Runs once, client-only, via SiteChrome. (Realtime now lives
             in the wrapper's shared socket via Providers, not here.) */}
         <SiteChrome catSrc="/assets/oneko/classics/classic.png" />
-        {/* lanyard.cafe keyring (webring) */}
-        <Script
-          src="https://lanyard.cafe/api/embed.js"
-          strategy="afterInteractive"
-          data-theme="dark"
-        />
       </body>
     </html>
   );

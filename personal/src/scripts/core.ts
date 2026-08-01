@@ -149,49 +149,16 @@ export function initCore(catSrc: string = "/assets/oneko/classics/classic.png") 
 
   document.querySelectorAll("[data-href]").forEach(wireDataHref);
 
-  /* ===================== nav.js (auto nav builder) ===================== */
-  async function buildNav() {
-    const container = document.querySelector(".nav-links");
-    if (!container) return;
+  /* The nav is now a React component (src/components/chrome/NavMenu.tsx) built
+   * from the TS nav list (navItems.tsx) with react-bootstrap-icons. It owns its
+   * own selected state via usePathname, so the old buildNav()/ctpBuildNav()
+   * imperative builder was removed. */
 
-    let items;
-    try {
-      items = await fetch("/nav.json").then((r) => {
-        if (!r.ok) throw new Error(`nav.json (${r.status})`);
-        return r.json();
-      });
-    } catch (err) {
-      console.error("Could not load nav.json:", err);
-      return;
-    }
-
-    const currentPath = location.pathname.replace(/\/+$/, "") || "/";
-
-    container.innerHTML = "";
-    items.forEach(({ label, href }) => {
-      const a = document.createElement("a");
-      a.className = "nav-link";
-      a.dataset.href = href;
-      a.textContent = label;
-
-      const linkPath = href.replace(/\/+$/, "") || "/";
-      if (linkPath === currentPath) a.classList.add("selected");
-
-      wireDataHref(a);
-      container.appendChild(a);
-    });
-  }
-
-  buildNav();
-  /* Exposed so the Next.js NavBridge can refresh the active link on client-side
-   * navigation (core.js only runs buildNav once, on first load). */
-  window.ctpBuildNav = buildNav;
-
-  /* flavors.js + webrings.js now live as React components
-   * (src/components/chrome/SettingsMenu.tsx + WebringDock.tsx). core.js still
-   * owns the oneko cat, the cat-collection modal (window.toggleCatPicker), the
-   * bg-music <audio>/gate (window.ctpBgm), the nav builder, and the soft-nav
-   * bridge — the React chrome drives those through the window hooks below. */
+  /* flavors.js now lives as a React component (src/components/chrome/
+   * SettingsMenu.tsx). core.js still owns the oneko cat, the cat-collection
+   * modal (window.toggleCatPicker), the bg-music <audio>/gate (window.ctpBgm),
+   * the nav builder, and the soft-nav bridge — the React chrome drives those
+   * through the window hooks below. */
 
   /* ===================== bg-music.js (click-to-enter gate) ======================= */
   (function bgMusic() {

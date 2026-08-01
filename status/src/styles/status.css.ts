@@ -204,6 +204,42 @@ export const checkLabel = style({
   fontFamily: vars.font.mono,
 });
 
+// ---- 90-day uptime bar ----
+
+export const uptimeWrap = style({
+  display: "flex",
+  flexDirection: "column",
+  gap: vars.space.xs,
+  marginTop: vars.space.sm,
+});
+
+export const uptimeBar = style({
+  display: "flex",
+  gap: "2px",
+  height: "26px",
+  alignItems: "stretch",
+});
+
+export const uptimeCell = style({
+  flex: "1 1 0",
+  minWidth: 0,
+  borderRadius: "2px",
+  transition: "transform 0.1s ease",
+  selectors: {
+    "&:hover": {
+      transform: "scaleY(1.15)",
+    },
+  },
+});
+
+export const uptimeMeta = style({
+  display: "flex",
+  justifyContent: "space-between",
+  fontSize: "0.72rem",
+  color: vars.color.muted,
+  fontFamily: vars.font.mono,
+});
+
 export const actions = style({
   position: "fixed",
   top: vars.space.md,

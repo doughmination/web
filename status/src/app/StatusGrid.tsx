@@ -26,14 +26,21 @@ import {
   checks,
   checkLine,
   checkLabel,
+  uptimeWrap,
+  uptimeBar,
+  uptimeCell,
+  uptimeMeta,
 } from "@styles/status.css";
 import type {
   HealthResult,
   Reach,
+  DayUptime,
+  HistoryResponse,
 } from "@lib/services";
 
-// Re-check every 30 seconds.
+// Re-check every 30 seconds; refresh the 90-day history every 5 minutes.
 const POLL_MS = 30000;
+const HISTORY_MS = 5 * 60 * 1000;
 
 const colorUp = "#5bfaad";
 const colorDown = "#f5a9b8";
@@ -76,8 +83,62 @@ function Dot({ state }: { state: Reach }) {
   );
 }
 
+// 90 empty days, used before history loads or for brand-new services.
+const emptyHistory: DayUptime[] = Array.from({ length: 90 }, (_, index) => {
+  const date = new Date();
+  date.setUTCDate(date.getUTCDate() - (89 - index));
+  return {
+    date: date.toISOString().slice(0, 10),
+    ratio: null,
+  };
+});
+
+function cellColor(ratio: number | null): string {
+  if (ratio === null) return "#232838"; // no data — matches border
+  if (ratio >= 0.999) return colorUp;
+  if (ratio >= 0.95) return "#8fe6b0"; // dim green
+  if (ratio >= 0.5) return "#f0c674"; // amber
+  return colorDown;
+}
+
+function UptimeBar({ days }: { days: DayUptime[] }) {
+  const withData = days.filter((day) => day.ratio !== null);
+  const average =
+    withData.length > 0
+      ? withData.reduce((sum, day) => sum + (day.ratio ?? 0), 0) /
+        withData.length
+      : null;
+
+  return (
+    <div className={uptimeWrap}>
+      <div className={uptimeBar}>
+        {days.map((day) => (
+          <span
+            key={day.date}
+            className={uptimeCell}
+            style={{ background: cellColor(day.ratio) } as CSSProperties}
+            title={
+              day.ratio === null
+                ? `${day.date} · no data`
+                : `${day.date} · ${(day.ratio * 100).toFixed(1)}% up`
+            }
+          />
+        ))}
+      </div>
+      <div className={uptimeMeta}>
+        <span>90 days ago</span>
+        <span>
+          {average === null ? "no history yet" : `${(average * 100).toFixed(2)}% uptime`}
+        </span>
+        <span>today</span>
+      </div>
+    </div>
+  );
+}
+
 export default function StatusGrid() {
   const [results, setResults] = useState<HealthResult[]>([]);
+  const [history, setHistory] = useState<HistoryResponse>({});
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -98,6 +159,27 @@ export default function StatusGrid() {
 
     poll();
     const timer = setInterval(poll, POLL_MS);
+    return () => {
+      alive = false;
+      clearInterval(timer);
+    };
+  }, []);
+
+  useEffect(() => {
+    let alive = true;
+
+    async function loadHistory() {
+      try {
+        const response = await fetch("/api/history", { cache: "no-store" });
+        const data = (await response.json()) as { history: HistoryResponse };
+        if (alive) setHistory(data.history);
+      } catch {
+        // Bars just stay empty if history can't load.
+      }
+    }
+
+    loadHistory();
+    const timer = setInterval(loadHistory, HISTORY_MS);
     return () => {
       alive = false;
       clearInterval(timer);
@@ -168,6 +250,8 @@ export default function StatusGrid() {
                 {result.latencyMs !== null ? `${result.latencyMs} ms` : "—"}
               </span>
             </div>
+
+            <UptimeBar days={history[result.id] ?? emptyHistory} />
           </article>
         ))}
       </div>

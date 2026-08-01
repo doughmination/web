@@ -36,7 +36,7 @@ services:
     image: doughmination/status:latest
     container_name: status
     ports:
-      - "127.0.0.1:4000:4000"
+      - "127.0.0.1:4080:4080"
     volumes:
       - "./.env:/app/.env:ro"
       - "./.env.keys:/app/.env.keys:ro"

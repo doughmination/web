@@ -7,20 +7,19 @@
 "use client";
 
 import { useEffect } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 /**
- * Bridges core.ts's imperative navigation to Next's client-side router.
+ * Bridges core.ts's remaining imperative links to Next's client-side router.
  *
- * core.ts builds the nav and, on click, calls window.ctpNavigate(url). By
- * pointing that at router.push we get client-side navigation: the root layout
- * (and the background-music <audio> that core.ts appends to <body>) never
- * unloads, so music keeps playing across pages while each route's React
- * widgets mount fresh.
+ * core.ts still routes [data-href] elements (project cards, the 88x31 → /discord
+ * link, etc.) through window.ctpNavigate(url). Pointing that at router.push gives
+ * client-side navigation: the root layout — and the background-music <audio>
+ * core.ts appends to <body> — never unloads, so music keeps playing across
+ * pages. (The nav itself is now React/next/link via NavMenu.)
  */
 export default function NavBridge() {
   const router = useRouter();
-  const pathname = usePathname();
 
   useEffect(() => {
     const w = window as unknown as {
@@ -39,13 +38,6 @@ export default function NavBridge() {
       }
     };
   }, [router]);
-
-  useEffect(() => {
-    // core.ts only runs buildNav() once on load; refresh the active link after
-    // each client navigation.
-    const w = window as unknown as { ctpBuildNav?: () => void };
-    w.ctpBuildNav?.();
-  }, [pathname]);
 
   return null;
 }

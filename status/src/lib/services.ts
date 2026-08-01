@@ -35,3 +35,12 @@ export interface HealthResult {
   latencyMs: number | null;
   checkedAt: string;
 }
+
+// One day's uptime ratio (0..1), or null when no samples were recorded.
+export interface DayUptime {
+  date: string;
+  ratio: number | null;
+}
+
+// serviceId -> ordered list of days (oldest first).
+export type HistoryResponse = Record<string, DayUptime[]>;
