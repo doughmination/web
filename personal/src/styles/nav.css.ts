@@ -166,18 +166,17 @@ globalStyle(".nav-toggle:checked ~ .nav-burger span:nth-child(3)", {
   "@media": { [DESKTOP]: { transform: "translateY(-6px) rotate(-45deg)" } },
 });
 
-/* Collapsed menu container. */
+/* Menu container. No max-height collapse — that snapped shut faster than the
+ * items could reverse-animate. Instead the container just toggles interactivity
+ * and a subtle group shift; each item's own opacity hides it when closed, so
+ * closing reverse-telescopes the pills back into dots and fades them out. */
 globalStyle(".nav-links", {
   "@media": {
     [DESKTOP]: {
-      overflow: "hidden",
-      maxHeight: 0,
-      opacity: 0,
       transform: "translateY(-6px)",
       marginTop: "0.5rem",
       pointerEvents: "none",
-      transition:
-        "max-height 0.42s ease, opacity 0.25s ease, transform 0.32s ease",
+      transition: "transform 0.32s ease",
     },
   },
 });
@@ -185,8 +184,6 @@ globalStyle(".nav-links", {
 globalStyle(".nav-toggle:checked ~ .nav-links", {
   "@media": {
     [DESKTOP]: {
-      maxHeight: "80vh",
-      opacity: 1,
       transform: "translateY(0)",
       pointerEvents: "auto",
     },
@@ -210,14 +207,13 @@ globalStyle(".nav-links .nav-link", {
     [DESKTOP]: {
       width: "2.5rem",
       height: "2.5rem",
-      maxWidth: "2.5rem",
       padding: 0,
       justifyContent: "center",
       overflow: "hidden",
       opacity: 0,
       transform: "scale(0.4)",
       transitionProperty:
-        "opacity, transform, max-width, padding, background, border-color, color",
+        "opacity, transform, width, padding, background, border-color, color",
       transitionDuration: "0.3s, 0.3s, 0.45s, 0.45s, 0.15s, 0.15s, 0.15s",
       transitionTimingFunction: "ease",
     },
@@ -249,11 +245,10 @@ globalStyle(".nav-ico", {
 globalStyle(".nav-label", {
   "@media": {
     [DESKTOP]: {
-      maxWidth: 0,
       opacity: 0,
       overflow: "hidden",
       whiteSpace: "nowrap",
-      transition: "opacity 0.3s ease, max-width 0.4s ease",
+      transition: "opacity 0.3s ease",
     },
   },
 });
@@ -264,8 +259,10 @@ globalStyle(".nav-toggle:checked ~ .nav-links .nav-link", {
     [DESKTOP]: {
       opacity: 1,
       transform: "scale(1)",
-      // Phase 2: telescope open (delayed ~1s in the per-item rules below).
-      maxWidth: "15rem",
+      // Phase 2: telescope open to a uniform pill width (delayed ~1s in the
+      // per-item rules below). Animating width (not max-width) is what makes
+      // the pill actually grow from the dot.
+      width: "11rem",
       padding: "0 0.8rem",
     },
   },
@@ -277,13 +274,13 @@ globalStyle(".nav-toggle:checked ~ .nav-links .nav-ico", {
 });
 globalStyle(".nav-toggle:checked ~ .nav-links .nav-label", {
   "@media": {
-    [DESKTOP]: { maxWidth: "12rem", opacity: 1, transitionDelay: "1s" },
+    [DESKTOP]: { opacity: 1, transitionDelay: "1s" },
   },
 });
 
 /* Per-item stagger. transition-delay order matches transitionProperty above:
- * opacity, transform, max-width, padding, background, border-color, color.
- * Appear (opacity/transform) staggers; expand (max-width/padding) waits ~1s.
+ * opacity, transform, width, padding, background, border-color, color.
+ * Appear (opacity/transform) staggers; expand (width/padding) waits ~1s.
  * Explicit rules because Turbopack's vanilla-extract plugin can't instrument a
  * top-level loop in a .css.ts. */
 globalStyle(".nav-toggle:checked ~ .nav-links .nav-link:nth-child(1)", {
@@ -324,6 +321,57 @@ globalStyle(".nav-toggle:checked ~ .nav-links .nav-link:nth-child(12)", {
 });
 globalStyle(".nav-toggle:checked ~ .nav-links .nav-link:nth-child(13)", {
   "@media": { [DESKTOP]: { transitionDelay: "0.65s, 0.65s, 1s, 1s, 0s, 0s, 0s" } },
+});
+
+/* Reverse JARVIS on close. These delays sit on the UNCHECKED state, so they
+ * only apply when closing (opening uses the :checked delays above). Order
+ * matches transitionProperty: opacity, transform, width, padding, ... — so the
+ * pills shrink back to dots immediately (width/padding delay 0), then the dots
+ * fade + scale out bottom-to-top (opacity/transform delay grows toward item 1).
+ * Delay = 0.4s + (13 - index) * 0.05s. */
+globalStyle(".nav-links .nav-link:nth-child(1)", {
+  "@media": { [DESKTOP]: { transitionDelay: "1s, 1s, 0s, 0s, 0s, 0s, 0s" } },
+});
+globalStyle(".nav-links .nav-link:nth-child(2)", {
+  "@media": { [DESKTOP]: { transitionDelay: "0.95s, 0.95s, 0s, 0s, 0s, 0s, 0s" } },
+});
+globalStyle(".nav-links .nav-link:nth-child(3)", {
+  "@media": { [DESKTOP]: { transitionDelay: "0.90s, 0.90s, 0s, 0s, 0s, 0s, 0s" } },
+});
+globalStyle(".nav-links .nav-link:nth-child(4)", {
+  "@media": { [DESKTOP]: { transitionDelay: "0.85s, 0.85s, 0s, 0s, 0s, 0s, 0s" } },
+});
+globalStyle(".nav-links .nav-link:nth-child(5)", {
+  "@media": { [DESKTOP]: { transitionDelay: "0.80s, 0.80s, 0s, 0s, 0s, 0s, 0s" } },
+});
+globalStyle(".nav-links .nav-link:nth-child(6)", {
+  "@media": { [DESKTOP]: { transitionDelay: "0.75s, 0.75s, 0s, 0s, 0s, 0s, 0s" } },
+});
+globalStyle(".nav-links .nav-link:nth-child(7)", {
+  "@media": { [DESKTOP]: { transitionDelay: "0.70s, 0.70s, 0s, 0s, 0s, 0s, 0s" } },
+});
+globalStyle(".nav-links .nav-link:nth-child(8)", {
+  "@media": { [DESKTOP]: { transitionDelay: "0.65s, 0.65s, 0s, 0s, 0s, 0s, 0s" } },
+});
+globalStyle(".nav-links .nav-link:nth-child(9)", {
+  "@media": { [DESKTOP]: { transitionDelay: "0.60s, 0.60s, 0s, 0s, 0s, 0s, 0s" } },
+});
+globalStyle(".nav-links .nav-link:nth-child(10)", {
+  "@media": { [DESKTOP]: { transitionDelay: "0.55s, 0.55s, 0s, 0s, 0s, 0s, 0s" } },
+});
+globalStyle(".nav-links .nav-link:nth-child(11)", {
+  "@media": { [DESKTOP]: { transitionDelay: "0.50s, 0.50s, 0s, 0s, 0s, 0s, 0s" } },
+});
+globalStyle(".nav-links .nav-link:nth-child(12)", {
+  "@media": { [DESKTOP]: { transitionDelay: "0.45s, 0.45s, 0s, 0s, 0s, 0s, 0s" } },
+});
+globalStyle(".nav-links .nav-link:nth-child(13)", {
+  "@media": { [DESKTOP]: { transitionDelay: "0.40s, 0.40s, 0s, 0s, 0s, 0s, 0s" } },
+});
+
+/* Label collapses back with the pill (no per-item delay) as it closes. */
+globalStyle(".nav-label", {
+  "@media": { [DESKTOP]: { transitionDelay: "0s" } },
 });
 
 /* Reduced motion: skip the bloom/telescope, just show the labelled pills. */
