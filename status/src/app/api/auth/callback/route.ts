@@ -7,7 +7,10 @@
 
 import { NextRequest, NextResponse } from "next/server";
 
-import { completeLogin } from "@lib/oidc";
+import {
+  completeLogin,
+  publicOrigin,
+} from "@lib/oidc";
 import {
   takePending,
   createSession,
@@ -19,7 +22,8 @@ export async function GET(request: NextRequest) {
   const params = request.nextUrl.searchParams;
   const code = params.get("code");
   const state = params.get("state");
-  const origin = request.nextUrl.origin;
+  // Public origin, not the container's bind address (0.0.0.0:PORT).
+  const origin = publicOrigin() || request.nextUrl.origin;
 
   const pending = await takePending();
 

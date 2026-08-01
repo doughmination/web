@@ -33,5 +33,5 @@ COPY --from=builder /app/.next/static ./.next/static
 # globally, matching the mailbox service.
 RUN bun install -g @dotenvx/dotenvx
 
-EXPOSE 4000
+EXPOSE 4080
 CMD ["dotenvx", "run", "--", "bun", "server.js"]

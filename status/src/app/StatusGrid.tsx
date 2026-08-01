@@ -73,6 +73,28 @@ function isDown(result: HealthResult): boolean {
   return result.accessible === "down" || result.backend === "down";
 }
 
+// Live favicon: a coloured dot reflecting overall status.
+const faviconGreen = "#3fb950";
+const faviconOrange = "#f0a020";
+const faviconRed = "#f0506e";
+const faviconGrey = "#9aa3c2";
+
+function setFavicon(color: string) {
+  if (typeof document === "undefined") return;
+  const svg =
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">` +
+    `<circle cx="16" cy="16" r="11" fill="${color}"/></svg>`;
+  const href = `data:image/svg+xml,${encodeURIComponent(svg)}`;
+  document
+    .querySelectorAll('link[rel~="icon"]')
+    .forEach((el) => el.parentNode?.removeChild(el));
+  const link = document.createElement("link");
+  link.rel = "icon";
+  link.type = "image/svg+xml";
+  link.href = href;
+  document.head.appendChild(link);
+}
+
 function Dot({ state }: { state: Reach }) {
   const color = reachColor(state);
   return (
@@ -143,25 +165,60 @@ export default function StatusGrid() {
 
   useEffect(() => {
     let alive = true;
+    let gotData = false;
+    let source: EventSource | null = null;
+    let pollTimer: ReturnType<typeof setInterval> | null = null;
 
-    async function poll() {
+    function apply(list: HealthResult[]) {
+      if (!alive) return;
+      gotData = true;
+      setResults(list);
+      setLoaded(true);
+    }
+
+    async function pollOnce() {
       try {
         const response = await fetch("/api/health", { cache: "no-store" });
         const data = (await response.json()) as { results: HealthResult[] };
-        if (alive) {
-          setResults(data.results);
-          setLoaded(true);
-        }
+        apply(data.results);
       } catch {
         // Leave the last known state on screen if a poll fails.
       }
     }
 
-    poll();
-    const timer = setInterval(poll, POLL_MS);
+    function startPolling() {
+      if (pollTimer) return;
+      pollOnce();
+      pollTimer = setInterval(pollOnce, POLL_MS);
+    }
+
+    // Prefer the live SSE stream; fall back to polling if it's unavailable.
+    if (typeof EventSource !== "undefined") {
+      try {
+        source = new EventSource("/api/health/stream");
+        source.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data) as { results: HealthResult[] };
+            apply(data.results);
+          } catch {
+            // ignore malformed frame
+          }
+        };
+        source.onerror = () => {
+          // EventSource auto-reconnects; if we never got a first frame, poll once.
+          if (!gotData) pollOnce();
+        };
+      } catch {
+        startPolling();
+      }
+    } else {
+      startPolling();
+    }
+
     return () => {
       alive = false;
-      clearInterval(timer);
+      source?.close();
+      if (pollTimer) clearInterval(pollTimer);
     };
   }, []);
 
@@ -185,6 +242,22 @@ export default function StatusGrid() {
       clearInterval(timer);
     };
   }, []);
+
+  // Live favicon dot: grey while loading, green all-up, orange partial, red all-down.
+  useEffect(() => {
+    if (!loaded || results.length === 0) {
+      setFavicon(faviconGrey);
+      return;
+    }
+    const down = results.filter(isDown).length;
+    if (down >= results.length) {
+      setFavicon(faviconRed);
+    } else if (down > 0) {
+      setFavicon(faviconOrange);
+    } else {
+      setFavicon(faviconGreen);
+    }
+  }, [results, loaded]);
 
   const downCount = results.filter(isDown).length;
   const allUp = loaded && downCount === 0;

@@ -171,6 +171,22 @@ export async function completeLogin(
   };
 }
 
+/**
+ * The public origin of this site (e.g. https://doughmination.org). Behind a
+ * reverse proxy, request.nextUrl.origin resolves to the container's bind
+ * address (0.0.0.0:PORT), so redirects must be built from this instead.
+ * Derived from the configured OIDC redirect URI, or STATUS_PUBLIC_URL.
+ */
+export function publicOrigin(): string {
+  const explicit = process.env.STATUS_PUBLIC_URL;
+  if (explicit) return explicit.replace(/\/+$/, "");
+  try {
+    return new URL(OIDC.redirectUri).origin;
+  } catch {
+    return "";
+  }
+}
+
 /** PocketID end-session URL for logout, if configured. */
 export async function endSessionUrl(): Promise<string | null> {
   const discovered = await getDiscovery().catch(() => null);

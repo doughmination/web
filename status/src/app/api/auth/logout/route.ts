@@ -7,7 +7,10 @@
 
 import { NextRequest, NextResponse } from "next/server";
 
-import { endSessionUrl } from "@lib/oidc";
+import {
+  endSessionUrl,
+  publicOrigin,
+} from "@lib/oidc";
 import { destroySession } from "@lib/session";
 
 export const dynamic = "force-dynamic";
@@ -15,7 +18,8 @@ export const dynamic = "force-dynamic";
 async function handle(request: NextRequest) {
   await destroySession();
   const end = await endSessionUrl();
-  return NextResponse.redirect(end || `${request.nextUrl.origin}/`);
+  const home = `${publicOrigin() || request.nextUrl.origin}/`;
+  return NextResponse.redirect(end || home);
 }
 
 export async function GET(request: NextRequest) {

@@ -20,7 +20,7 @@ import { readSession } from "@lib/session";
 // Always render fresh — this is a live status view.
 export const dynamic = "force-dynamic";
 
-const siteName = "status.doughmination.co.uk";
+const siteName = "doughmination.org";
 
 export default async function Page() {
   const session = await readSession();

@@ -23,7 +23,7 @@
 | Blog | Personal blog | [doughmination.site](https://doughmination.site) | [`blog/`](./blog) |
 | System | Doughmination System frontend | [doughmination.co.uk](https://doughmination.co.uk) | [`system/`](./system) |
 | Mailbox | Email mailbox | [doughmination.tech](https://doughmination.tech) | [`mailbox/`](./mailbox) |
-| Status | Service status page (public) + PocketID-gated admin | [status.doughmination.co.uk](https://status.doughmination.co.uk) | [`status/`](./status) |
+| Status | Service status page (public) + PocketID-gated admin | [doughmination.org](https://doughmination.org) | [`status/`](./status) |
 | Fonts | Comic Code font archive (static) | [fonts.doughmination.co.uk](https://fonts.doughmination.co.uk) | [`fonts/`](./fonts) |
 
 ## Repository layout
@@ -35,7 +35,7 @@ web/
 ├── info/            Next.js — link hub (doughmination.info)
 ├── system/          Next.js — system frontend (doughmination.co.uk)
 ├── mailbox/         Bun + Hono — email inbox API/UI (doughmination.tech)
-├── status/          Next.js — service status + PocketID admin (status.doughmination.co.uk)
+├── status/          Next.js — service status + PocketID admin (doughmination.org)
 ├── fonts/           Static Comic Code font archive
 ├── setup/           Windows setup helper (PowerShell)
 ├── compose.yml      Production stack (pulls doughmination/* images)
