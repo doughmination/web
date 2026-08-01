@@ -62,6 +62,11 @@ const sites = [
     desc: "Public API have made",
     href: "https://doughmination.uk",
   },
+  {
+    title: "Doughmination Status",
+    desc: "Real-time system status and uptime monitoring",
+    href: "https://doughmination.org",
+  },
 ];
 
 const brandName = "doughmination.info";
