@@ -334,6 +334,73 @@ export function mapSelfHostToPresence(j: SelfJson, fallbackId: string | null): D
   };
 }
 
+/* ---- Doughmination Music (self-hosted web player) ------------------------- */
+
+/** The rich-presence application name broadcast by the self-hosted web player. */
+export const DM_MUSIC_APP = "Doughmination Music";
+
+/** Find the live "Doughmination Music" listening activity (Discord type 2). */
+export function dmMusicActivity(activities: unknown): Dict | null {
+  if (!Array.isArray(activities)) return null;
+  return (
+    (activities as Dict[]).find(
+      (a) => a && a.type === 2 && a.name === DM_MUSIC_APP,
+    ) ?? null
+  );
+}
+
+/**
+ * Map a Doughmination Music activity into the same flat shape SpotifyRow /
+ * NowPlaying / the /music hero already render from (song, artist, album,
+ * album_art_url, timestamps). `state` arrives as "Artist — Title", so the
+ * title (from `details`) is stripped off to recover the artist. `track_id`
+ * stays null — there's no Spotify track to deep-link to.
+ */
+export function dmListening(activities: unknown): Dict | null {
+  const a = dmMusicActivity(activities);
+  if (!a) return null;
+  const assets = (a.assets as Dict) || {};
+  const song = String(a.details || "");
+  const state = String(a.state || "");
+  let artist = state;
+  if (song && state.endsWith(song)) {
+    artist = state
+      .slice(0, state.length - song.length)
+      .replace(/\s*[—–-]\s*$/, "")
+      .trim();
+  } else {
+    const parts = state.split(/\s+[—–-]\s+/);
+    if (parts.length > 1) artist = parts[0].trim();
+  }
+  const mp = assets.large_image as string | undefined;
+  const album_art_url =
+    (assets.large_image_url as string) ||
+    (mp && mp.startsWith("mp:") ? "https://media.discordapp.net/" + mp.slice(3) : mp || "");
+  const largeText = String(assets.large_text || "");
+  const ts = a.timestamps as { start?: number; end?: number } | undefined;
+  return {
+    track_id: null,
+    song,
+    artist,
+    // large_text often just repeats the title; only surface a real album.
+    album: largeText && largeText !== song ? largeText : "",
+    album_art_url,
+    timestamps: ts ? { start: ts.start ?? null, end: ts.end ?? null } : null,
+  };
+}
+
+/** What the profile is "listening" to, preferring the self-hosted Doughmination
+    Music player over Discord's Spotify integration. */
+export function pickListening(
+  d: Dict | null,
+): { s: Dict; source: "doughmination" | "spotify" } | null {
+  if (!d) return null;
+  const dm = dmListening(d.activities);
+  if (dm) return { s: dm, source: "doughmination" };
+  const sp = d.listening_to_spotify ? (d.spotify as Dict | null) : null;
+  return sp ? { s: sp, source: "spotify" } : null;
+}
+
 /* ---- hooks ---------------------------------------------------------------- */
 
 /**

@@ -34,14 +34,14 @@
 
 import { useEffect, useMemo, useState } from "react";
 import {
-  Clock as ClockIcon, Gem, GeoAltFill, Globe, PatchCheckFill, StarFill, Stars,
+  Clock as ClockIcon, Gem, GeoAltFill, Globe, PatchCheckFill, Spotify, StarFill, Stars,
 } from "react-bootstrap-icons";
 import {
   BADGE_FLAGS, CONNECTION_ICON, CONNECTION_URLS, NAME_FONTS, PLATFORM_ICONS,
   STATUS_TITLE, WL_TYPE_LABEL, assetUrl, avatarUrl, bannerUrl, clamp, elapsedStr,
   emojiUrl, fmt, fmtPrice, fmtSinceDate, g, guildBadgeUrl, intToHex, isRealName,
-  mapSelfHostToPresence, proxyImg, rgbTriplet, useAlbumAccent, usePresenceFeed,
-  useTicker, wlImg,
+  mapSelfHostToPresence, pickListening, proxyImg, rgbTriplet, useAlbumAccent,
+  usePresenceFeed, useTicker, wlImg,
   type Dict, type PresenceOpts, type SelfJson,
 } from "./presenceShared";
 import { renderDiscordMarkdown } from "./discordMarkdown";
@@ -297,7 +297,7 @@ function Wishlist({ items }: { items: Dict[] | null }) {
 
 function RowText({
   kind, title, sub, children,
-}: { kind: string; title: string; sub: string; children?: React.ReactNode }) {
+}: { kind: React.ReactNode; title: string; sub: string; children?: React.ReactNode }) {
   return (
     <span className="pc-row-text">
       <span className="pc-row-kind">{kind}</span>
@@ -322,7 +322,7 @@ function CustomRow({ a }: { a: Dict }) {
   );
 }
 
-function SpotifyRow({ s }: { s: Dict }) {
+function SpotifyRow({ s, source }: { s: Dict; source: "doughmination" | "spotify" }) {
   const ts = s.timestamps as { start?: number; end?: number } | undefined;
   const start = ts?.start ?? 0;
   const end = ts?.end ?? 0;
@@ -332,12 +332,18 @@ function SpotifyRow({ s }: { s: Dict }) {
   const elapsed = live ? clamp(now - start, 0, end - start) : 0;
   const pct = live ? clamp((elapsed / (end - start)) * 100, 0, 100) : 0;
 
+  const dm = source === "doughmination";
+  const href = dm
+    ? "/music"
+    : s.track_id
+      ? "https://open.spotify.com/track/" + s.track_id
+      : "https://open.spotify.com/";
+
   return (
     <a
-      className="pc-row pc-spotify"
-      target="_blank"
-      rel="noopener"
-      href={s.track_id ? "https://open.spotify.com/track/" + s.track_id : "https://open.spotify.com/"}
+      className={"pc-row pc-spotify" + (dm ? " pc-dm-music" : "")}
+      {...(dm ? {} : { target: "_blank", rel: "noopener" })}
+      href={href}
       title={s.album ? (s.song || "") + " — " + s.album : undefined}
       data-start={start || undefined}
       data-end={end || undefined}
@@ -346,7 +352,17 @@ function SpotifyRow({ s }: { s: Dict }) {
         <img className="pc-art" src={String(s.album_art_url)} alt="" />
       ) : null}
       <RowText
-        kind="Listening to Spotify"
+        kind={
+          <>
+            {dm ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img className="pc-brand-logo" src="/assets/music.png" alt="" />
+            ) : (
+              <Spotify className="pc-brand-logo pc-brand-spotify" aria-hidden="true" />
+            )}
+            {dm ? "Listening on Doughmination Music" : "Listening to Spotify"}
+          </>
+        }
         title={(s.song as string) || ""}
         sub={(s.artist as string) || ""}
       >
@@ -479,8 +495,9 @@ export default function PresenceCard(opts: PresenceOpts) {
     [json, userId],
   );
 
-  const spotify = d?.listening_to_spotify ? (d.spotify as Dict) : null;
-  const accent = useAlbumAccent(spotify?.album_art_url as string | undefined);
+  const listening = pickListening(d);
+  const nowPlaying = listening?.s ?? null;
+  const accent = useAlbumAccent(nowPlaying?.album_art_url as string | undefined);
 
   // Nothing to show at all — same guard the factory had.
   if (!userId && !opts.fallbackName) return null;
@@ -498,7 +515,7 @@ export default function PresenceCard(opts: PresenceOpts) {
   const hasCustom = !!(custom && (custom.state || (custom.emoji && (custom.emoji as Dict).id)));
   const games = acts.filter((a) => a.type === 0);
   const streams = acts.filter((a) => a.type === 1);
-  const hasSections = !!spotify || games.length > 0 || streams.length > 0;
+  const hasSections = !!nowPlaying || games.length > 0 || streams.length > 0;
 
   // Before the first payload lands, fall back to the props the grid passed.
   const displayName = d
@@ -692,7 +709,7 @@ export default function PresenceCard(opts: PresenceOpts) {
       <Connections accounts={data?.connected_accounts as Dict[] | undefined} />
 
       <div className="pc-sections">
-        {spotify ? <SpotifyRow s={spotify} /> : null}
+        {nowPlaying ? <SpotifyRow s={nowPlaying} source={listening!.source} /> : null}
         {games.map((a, i) => <ActivityRow a={a} key={"g" + i} />)}
         {streams.map((a, i) => <StreamRow a={a} key={"s" + i} />)}
       </div>

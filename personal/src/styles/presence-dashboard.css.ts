@@ -388,6 +388,29 @@ export const panelTitle = style({
   color: vars.textDim,
 });
 
+/* Now-playing title carrying a brand glyph (DM logo or Spotify) inline. */
+export const npTitle_brand = style([
+  panelTitle,
+  {
+    display: "flex",
+    alignItems: "center",
+    gap: "0.4rem",
+  },
+]);
+
+export const brandLogo = style({
+  width: 14,
+  height: 14,
+  borderRadius: 3,
+  objectFit: "contain",
+  flexShrink: 0,
+});
+
+export const brandSpotify = style({
+  color: "#1DB954",
+  borderRadius: 0,
+});
+
 /* ---- collapsible panels ---------------------------------------------------
    Connections and Wishlist can run long, so their heading is a toggle. The
    whole heading row is the button (not just a chevron) to keep the hit target

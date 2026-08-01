@@ -233,10 +233,28 @@ globalStyle(".pc-row-text", {
 });
 
 globalStyle(".pc-row-kind", {
+  display: "inline-flex",
+  alignItems: "center",
+  gap: "0.3rem",
   fontSize: "0.6rem",
   textTransform: "uppercase",
   letterSpacing: "0.05em",
   color: vars.textMuted,
+});
+
+/* Brand glyph in the listening row's kind label: DM logo (png) or the
+   Spotify glyph, sized to sit inline with the uppercase caption. */
+globalStyle(".pc-brand-logo", {
+  width: 12,
+  height: 12,
+  borderRadius: 3,
+  objectFit: "contain",
+  flexShrink: 0,
+});
+
+globalStyle(".pc-brand-spotify", {
+  color: "#1DB954",
+  borderRadius: 0,
 });
 
 globalStyle(".pc-row-title", {

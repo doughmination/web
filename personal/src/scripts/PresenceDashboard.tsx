@@ -8,13 +8,13 @@
 import Link from "next/link";
 import { useId, useMemo, useState } from "react";
 import {
-  ChevronRight, Clock as ClockIcon, Gem, Globe, PatchCheckFill,
+  ChevronRight, Clock as ClockIcon, Gem, Globe, PatchCheckFill, Spotify,
 } from "react-bootstrap-icons";
 import {
   BADGE_FLAGS, CONNECTION_ICON, CONNECTION_URLS, NAME_FONTS, PLATFORM_ICONS,
   STATUS_TITLE, WL_TYPE_LABEL, assetUrl, avatarUrl, bannerUrl, clamp, elapsedStr,
   emojiUrl, fmt, fmtPrice, fmtSinceDate, guildBadgeUrl, intToHex, isRealName,
-  mapSelfHostToPresence, proxyImg, useAlbumAccent, usePresenceFeed,
+  mapSelfHostToPresence, pickListening, proxyImg, useAlbumAccent, usePresenceFeed,
   useReducedMotion, useTicker, wlImg, collectibleForSlot,
   type Collectible, type Dict, type SelfJson,
 } from "./presenceShared";
@@ -147,7 +147,15 @@ function Clock({ offsetMin, tzName }: { offsetMin: number; tzName: string | null
  *
  * The hook runs before the null check so hook order stays constant either way.
  */
-function NowPlaying({ sp, accent }: { sp: Dict | null; accent: string | null }) {
+function NowPlaying({
+  sp,
+  accent,
+  source,
+}: {
+  sp: Dict | null;
+  accent: string | null;
+  source?: "doughmination" | "spotify";
+}) {
   const ts = sp?.timestamps as { start?: number; end?: number } | undefined;
   const start = ts?.start ?? 0;
   const end = ts?.end ?? 0;
@@ -168,7 +176,15 @@ function NowPlaying({ sp, accent }: { sp: Dict | null; accent: string | null }) 
 
   return (
     <section className={s.panelWide}>
-      <h2 className={s.panelTitle}>Listening to Spotify</h2>
+      <h2 className={s.npTitle_brand}>
+        {source === "doughmination" ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img className={s.brandLogo} src="/assets/music.png" alt="" />
+        ) : (
+          <Spotify className={`${s.brandLogo} ${s.brandSpotify}`} aria-hidden="true" />
+        )}
+        {source === "doughmination" ? "Listening on Doughmination Music" : "Listening to Spotify"}
+      </h2>
       {/* Points at the site's own /music page rather than out to Spotify.
           next/link so it routes client-side and the bg-music audio in the
           persistent layout isn't torn down by a full page load. */}
@@ -307,8 +323,9 @@ export default function PresenceDashboard({ userId }: { userId: string }) {
 
   const d = useMemo(() => (json ? mapSelfHostToPresence(json, userId) : null), [json, userId]);
 
-  const spotify = d?.listening_to_spotify ? (d.spotify as Dict) : null;
-  const accent = useAlbumAccent(spotify?.album_art_url as string | undefined);
+  const listening = pickListening(d);
+  const nowPlaying = listening?.s ?? null;
+  const accent = useAlbumAccent(nowPlaying?.album_art_url as string | undefined);
 
   const bioRaw = apiUser.bio == null ? "" : String(apiUser.bio).trim();
   // Bios are Discord-flavoured Markdown, not plain text — **bold**, __underline__,
@@ -477,7 +494,7 @@ export default function PresenceDashboard({ userId }: { userId: string }) {
       </header>
 
       <div className={s.grid}>
-        <NowPlaying sp={spotify} accent={accent} />
+        <NowPlaying sp={nowPlaying} accent={accent} source={listening?.source} />
 
         <section className={s.panel}>
           <h2 className={s.panelTitle}>Status</h2>

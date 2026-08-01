@@ -9,6 +9,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useUserPresence } from "@doughmination/react-api";
 import { MusicNoteBeamed } from "react-bootstrap-icons";
+import { dmListening } from "./presenceShared";
 
 /* Ported from music.js — now-playing hero, synced lyrics (LRCLIB) with a
    follow/lock scroll, recent plays + top artists (Last.fm). The per-frame
@@ -416,27 +417,38 @@ export default function Music() {
   }, [applyTrack]);
 
   const onPresence = useCallback(
-    (d: { listening_to_spotify?: boolean; spotify?: Record<string, unknown> } | null) => {
-      if (d && d.listening_to_spotify && d.spotify) {
-        const s = d.spotify as {
+    (
+      d: {
+        activities?: unknown;
+        listening_to_spotify?: boolean;
+        spotify?: Record<string, unknown>;
+      } | null,
+    ) => {
+      // Prefer the self-hosted Doughmination Music player; fall back to Spotify.
+      const dm = dmListening(d?.activities);
+      const sp = d?.listening_to_spotify && d.spotify ? d.spotify : null;
+      const src = (dm ?? sp) as
+        | {
           song?: string;
           artist?: string;
           album?: string;
           album_art_url?: string;
-          track_id?: string;
-          timestamps?: { start?: number; end?: number };
-        };
-        const start = s.timestamps?.start;
-        const end = s.timestamps?.end;
+          track_id?: string | null;
+          timestamps?: { start?: number | null; end?: number | null };
+        }
+        | null;
+      if (src) {
+        const start = src.timestamps?.start ?? undefined;
+        const end = src.timestamps?.end ?? undefined;
         applyTrack({
-          song: s.song,
-          artist: s.artist,
-          album: s.album,
-          art: s.album_art_url || "",
-          trackId: s.track_id || "",
-          url: s.track_id ? `https://open.spotify.com/track/${s.track_id}` : "",
-          start,
-          end,
+          song: src.song,
+          artist: src.artist,
+          album: src.album,
+          art: src.album_art_url || "",
+          trackId: src.track_id || "",
+          url: src.track_id ? `https://open.spotify.com/track/${src.track_id}` : "",
+          start: start ?? undefined,
+          end: end ?? undefined,
           duration: start && end ? end - start : 0,
           live: true,
         });
@@ -529,6 +541,7 @@ export default function Music() {
     onPresence(
       livePresence
         ? {
+          activities: livePresence.activities,
           listening_to_spotify: livePresence.listening_to_spotify,
           spotify: livePresence.spotify
             ? Object.fromEntries(Object.entries(livePresence.spotify))
