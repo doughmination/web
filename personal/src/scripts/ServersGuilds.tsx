@@ -16,18 +16,13 @@ type GuildCfg = { name: string; invite: string; role?: string };
 const GUILDS: GuildCfg[] = [
   {
     name: "Doughmination",
-    invite: "KuVW2zSyTU",
+    invite: "N8gCjS294R",
     role: "owner"
   },
   {
     name: "Girls",
     invite: "K8qaKYBy6J",
     role: "mod"
-  },
-  {
-    name: "Lanyard",
-    invite: "Lanyard",
-    role: "member"
   },
   {
     name: "is-a.dev",
@@ -37,16 +32,6 @@ const GUILDS: GuildCfg[] = [
   {
     name: "Furina Mains",
     invite: "focalorsmains",
-    role: "member"
-  },
-  {
-    name: "Discord Previews",
-    invite: "discord-603970300668805120",
-    role: "member"
-  },
-  {
-    name: "Global Badges",
-    invite: "JsgsS8kzz8",
     role: "member"
   },
 ];
