@@ -23,8 +23,20 @@ function normalize(path: string): string {
   return path.replace(/\/+$/, "") || "/";
 }
 
+// Plays the open/close sound when the nav checkbox flips
+function playNavSound(isOpen: boolean) {
+  const file = isOpen ? "/assets/open.mp3" : "/assets/close.mp3";
+  const sound = new Audio(file);
+
+  sound.play().catch(() => {});
+}
+
 export default function NavMenu() {
   const current = normalize(usePathname());
+
+  function handleToggleChange(event: React.ChangeEvent<HTMLInputElement>) {
+    playNavSound(event.target.checked);
+  }
 
   return (
     <header className="nav">
@@ -33,6 +45,7 @@ export default function NavMenu() {
         id="nav-toggle"
         className="nav-toggle"
         aria-label="Toggle navigation menu"
+        onChange={handleToggleChange}
       />
       <label htmlFor="nav-toggle" className="nav-burger" aria-hidden="true">
         <span></span>

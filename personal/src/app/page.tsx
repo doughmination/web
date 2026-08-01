@@ -34,7 +34,7 @@ export default function Home() {
           </p>
           <a
             className="about-source"
-            href="hhttps://github.com/doughmination/web/tree/main/personal"
+            href="https://github.com/doughmination/web/tree/main/personal"
             target="_blank"
             rel="noopener noreferrer"
           >
