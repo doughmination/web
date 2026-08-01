@@ -19,10 +19,8 @@ import {
 } from "react-bootstrap-icons";
 
 const NAMES: Record<string, string> = {
-  iphone: "iPhone",
+  pixel: "Google Pixel",
   macbook: "MacBook",
-  ipad: "iPad",
-  pc: "PC",
 };
 
 function deviceName(id: string): string {

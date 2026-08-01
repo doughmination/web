@@ -54,13 +54,13 @@ function parseLocation(v: unknown): { url: string | null; label: string; query: 
 
 export default function Location() {
   // location lives on the iPhone entry only; seeds from REST, stays live.
-  const { device: iphone } = useDeviceState("iphone");
+  const { device: pixel } = useDeviceState("pixel");
 
-  if (!iphone) return null;
-  const loc = parseLocation(iphone.location);
+  if (!pixel) return null;
+  const loc = parseLocation(pixel.location);
   if (!loc || !loc.label) return null;
 
-  const when = relTime(iphone.updated_at);
+  const when = relTime(pixel.updated_at);
   const linkUrl =
     loc.url || (loc.query ? "https://www.google.com/maps?q=" + encodeURIComponent(loc.query) : "");
 
