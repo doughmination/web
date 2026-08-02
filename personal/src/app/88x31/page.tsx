@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     locale: "en_GB",
     images: [
       {
-        url: "https://doughmination.gay/assets/favicon.png",
+        url: "https://doughmination.gay/favicon.png",
         alt: "Clove Twilight logo",
       },
     ],
@@ -262,7 +262,7 @@ function ButtonImg({ b }: { b: Button }) {
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src={`/assets/88x31/${b.img}`}
+      src={`/88x31/${b.img}`}
       alt={b.alt}
       loading={b.eager ? "eager" : "lazy"}
     />

@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     locale: "en_GB",
     images: [
       {
-        url: "https://doughmination.gay/assets/favicon.png",
+        url: "https://doughmination.gay/favicon.png",
         alt: "Clove Twilight logo",
       },
     ],

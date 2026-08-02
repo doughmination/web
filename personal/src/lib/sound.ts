@@ -27,17 +27,17 @@ function playThrottled(file: string, throttleMs: number) {
 }
 
 export function playClickSound() {
-  play("/assets/click.mp3");
+  play("/sfx/click.mp3");
 }
 
 export function playHoverSound() {
-  playThrottled("/assets/hover.mp3", 150);
+  playThrottled("/sfx/hover.mp3", 150);
 }
 
 export function playOpenSound() {
-  play("/assets/open.mp3");
+  play("/sfx/open.mp3");
 }
 
 export function playCloseSound() {
-  play("/assets/close.mp3");
+  play("/sfx/close.mp3");
 }

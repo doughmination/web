@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     locale: "en_GB",
     images: [
       {
-        url: "https://doughmination.gay/assets/favicon.png",
+        url: "https://doughmination.gay/favicon.png",
         alt: "Clove Twilight logo",
       },
     ],
@@ -231,7 +231,7 @@ export default function GenshinPage() {
                 )}
                 <Model3D
                   src={c.model}
-                  poster="/assets/favicon.png"
+                  poster="/favicon.png"
                   alt={`3D model of ${c.name} from Genshin Impact`}
                 />
               </div>

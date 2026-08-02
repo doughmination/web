@@ -50,47 +50,47 @@ const FRIENDS: Group[] = [
       {
         name: "J",
         user: "real_serial_designationj",
-        img: "/assets/alts/j.png",
+        img: "/alts/j.png",
         tier: "active-alt",
         discordId: "1500197577336033301"
       },
       {
         name: "Uzi",
         user: "theuzidoorman",
-        img: "/assets/alts/uzi.png",
+        img: "/alts/uzi.png",
         tier: "active-alt",
         discordId: "526626867973849123"
       },
       {
         name: "estrogenhrt",
         user: "estrogenhrt",
-        img: "/assets/alts/estrogenhrt.png",
+        img: "/alts/estrogenhrt.png",
         tier: "active-alt",
         discordId: "1025770042245251122"
       },
       {
         name: "Clove Twilight",
         user: "clovetwilight3",
-        img: "/assets/alts/clovetwilight3.png",
+        img: "/alts/clovetwilight3.png",
         tier: "dead-alt"
       },
       {
         name: "Clove <3",
-        img: "/assets/alts/clove.png",
+        img: "/alts/clove.png",
         tier: "dead-alt",
         discordId: "1125844710511104030",
       },
       {
         name: "Clove ⛤",
         user: "greenirisluna",
-        img: "/assets/alts/butterfly.png",
+        img: "/alts/butterfly.png",
         tier: "dead-alt",
         discordId: "514994021970739201",
       },
       {
         name: "Mrow",
         user: "arisgayasswife",
-        img: "/assets/alts/mrow.png",
+        img: "/alts/mrow.png",
         tier: "dead-alt",
         discordId: "219480349053288450",
       },

@@ -15,7 +15,7 @@
 // Icons are inline SVG, not the old `bi` webfont — see presenceIcons.ts.
 import { icon } from "./presenceIcons";
 
-export function initCore(catSrc: string = "/assets/oneko/classics/classic.png") {
+export function initCore(catSrc: string = "/oneko/classic.png") {
   /* Ari was here uwu
    * Professional boob lover
    * girls kissing,,, */
@@ -163,14 +163,19 @@ export function initCore(catSrc: string = "/assets/oneko/classics/classic.png") 
   /* ===================== bg-music.js (click-to-enter gate) ======================= */
   (function bgMusic() {
     const ss = window.sessionStorage;
+    const ls = window.localStorage;
     const CONSENT_KEY = "ctpBgmConsent";
     const PLAYING_KEY = "ctpBgmPlaying";
     const TIME_KEY = "ctpBgmTime";
+    /* Persists across visits (unlike the two keys above, which are per-tab-
+     * session). Lets someone who's turned music off stay opted out on their
+     * next visit instead of re-seeing the entry gate every time. */
+    const ENABLED_KEY = "ctpBgmEnabled";
 
     const audio = document.createElement("audio");
     audio.id = "bgm";
     audio.dataset.ctpPersist = ""; /* survives soft navigation, see bottom of file */
-    audio.src = "/assets/background.mp3";
+    audio.src = "/sfx/background.mp3";
     audio.loop = true;
     audio.preload = "auto";
     audio.volume = 0.1; /* it's background music, not the main event */
@@ -186,8 +191,14 @@ export function initCore(catSrc: string = "/assets/oneko/classics/classic.png") 
 
     /* The play/pause button now lives in React (SettingsMenu.tsx); core.js keeps
      * the <audio> and exposes a tiny API the button drives. */
-    audio.addEventListener("play", () => { ss.setItem(PLAYING_KEY, "1"); });
-    audio.addEventListener("pause", () => { ss.setItem(PLAYING_KEY, "0"); });
+    audio.addEventListener("play", () => {
+      ss.setItem(PLAYING_KEY, "1");
+      ls.setItem(ENABLED_KEY, "1");
+    });
+    audio.addEventListener("pause", () => {
+      ss.setItem(PLAYING_KEY, "0");
+      ls.setItem(ENABLED_KEY, "0");
+    });
     window.ctpBgm = {
       toggle() {
         if (audio.paused) audio.play().catch(() => { });
@@ -233,7 +244,13 @@ export function initCore(catSrc: string = "/assets/oneko/classics/classic.png") 
       return;
     }
 
-    /* ---- first visit this session: click-to-enter gate ---- */
+    /* They've explicitly turned music off on a previous visit — respect that
+     * and stay silent, rather than showing the entry gate again every time. */
+    if (ls.getItem(ENABLED_KEY) === "0") {
+      return;
+    }
+
+    /* ---- first visit this session (and not previously opted out): click-to-enter gate ---- */
     const gate = document.createElement("div");
     gate.className = "bgm-gate";
     gate.dataset.ctpPersist = ""; /* survives soft navigation, see bottom of file */
@@ -353,7 +370,7 @@ export function initCore(catSrc: string = "/assets/oneko/classics/classic.png") 
 
     function init() {
       // Was read from the <script data-cat> tag; now passed into initCore().
-      let nekoFile = catSrc || "/assets/oneko/classics/classic.png";
+      let nekoFile = catSrc || "/oneko/classic.png";
 
       if (persistPosition) {
         let storedNeko = JSON.parse(window.localStorage.getItem("oneko"));
@@ -554,7 +571,7 @@ export function initCore(catSrc: string = "/assets/oneko/classics/classic.png") 
     init();
   })();
 
-  const BASE_SPRITE = "/assets/oneko/classics/classic.png";
+  const BASE_SPRITE = "/oneko/classic.png";
 
   let CAT_MODES = [];
 
@@ -662,7 +679,7 @@ export function initCore(catSrc: string = "/assets/oneko/classics/classic.png") 
     });
 
     /* ---- squeak / boop sound on click ---- */
-    const boop = new Audio("/assets/oneko/boop.mp3");
+    const boop = new Audio("/sfx/boop.mp3");
     boop.preload = "auto";
     function playBoop() {
       try {

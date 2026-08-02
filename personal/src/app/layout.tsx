@@ -54,7 +54,7 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: "/assets/favicon.png",
+        url: "/favicon.png",
         type: "image/png"
       },
     ],
@@ -69,7 +69,7 @@ export const metadata: Metadata = {
     locale: "en_GB",
     images: [
       {
-        url: "https://doughmination.gay/assets/favicon.png",
+        url: "https://doughmination.gay/favicon.png",
         alt: "Clove Twilight logo",
       },
     ],
@@ -81,7 +81,7 @@ export const metadata: Metadata = {
     title: "Clove Twilight",
     description:
       "The homepage and hub for everything Clove Twilight — projects, music, Discord presence, dev stats, and more.",
-    images: ["https://doughmination.gay/assets/favicon.png"],
+    images: ["https://doughmination.gay/favicon.png"],
   },
 };
 
@@ -127,7 +127,7 @@ export default function RootLayout({
         {/* Persistent chrome, ported into the bundle: nav builder, oneko cat, and
             bg music. Runs once, client-only, via SiteChrome. (Realtime now lives
             in the wrapper's shared socket via Providers, not here.) */}
-        <SiteChrome catSrc="/assets/oneko/classics/classic.png" />
+          <SiteChrome catSrc="/oneko/classic.png" />
       </body>
     </html>
   );

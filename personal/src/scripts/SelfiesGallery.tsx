@@ -10,13 +10,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { CameraFill } from "react-bootstrap-icons";
 import { playClickSound } from "@lib/sound";
 
-/* Ported from selfies.js — grid + lightbox from /assets/selfies/selfies.json.
+/* Ported from selfies.js — grid + lightbox from /selfies/selfies.json.
    Manifest is an array of filename strings or { src, alt, caption } objects. */
 
 type Item = { src: string; alt: string; caption: string };
 
-const MANIFEST = "/assets/selfies/selfies.json";
-const FOLDER = "/assets/selfies/";
+const MANIFEST = "/selfies/selfies.json";
+const FOLDER = "/selfies/";
 
 function resolveSrc(s: unknown): string {
   if (typeof s !== "string") return "";

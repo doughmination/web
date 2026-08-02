@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     locale: "en_GB",
     images: [
       {
-        url: "https://doughmination.gay/assets/favicon.png",
+        url: "https://doughmination.gay/favicon.png",
         alt: "Clove Twilight logo",
       },
     ],
@@ -61,10 +61,6 @@ const MC_UUIDS: McAccount[] = [
     role: "furina",
     uid: uid("d20b556ae2cc452dab726ae082d439af")
   }, // FontaineDeFurina
-  {
-    role: "rose",
-    uid: uid("33d473f2902e458a9da1b345654f5f22")
-  }, // ChooseEevee
   {
     role: "luna",
     uid: uid("d9ca235297fd4686b680e497432fb719")

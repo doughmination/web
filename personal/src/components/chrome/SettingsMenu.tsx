@@ -8,7 +8,7 @@
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Gear, PlayFill, PauseFill, EyeFill, EyeSlashFill } from "react-bootstrap-icons";
-import { playClickSound } from "@lib/sound";
+import { playClickSound, playOpenSound, playCloseSound } from "@lib/sound";
 import styles from "./SettingsMenu.module.css";
 
 /**
@@ -77,21 +77,17 @@ export default function SettingsMenu() {
     return () => unsub?.();
   }, []);
 
-  // Close on outside click / Escape.
+  // Close on Escape. (Outside-click used to also close this, but that made
+  // the flyout snap shut the moment you interacted with anything it opened —
+  // e.g. the cat-collection modal — so it's gone; the cog now stays open
+  // until explicitly toggled or dismissed with Escape.)
   useEffect(() => {
     if (!open) return;
-    const onClick = (e: MouseEvent) => {
-      if (barRef.current && !barRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
     };
-    document.addEventListener("click", onClick);
     document.addEventListener("keydown", onKey);
     return () => {
-      document.removeEventListener("click", onClick);
       document.removeEventListener("keydown", onKey);
     };
   }, [open]);
@@ -107,53 +103,61 @@ export default function SettingsMenu() {
         title="Settings"
         onClick={(e) => {
           e.stopPropagation();
-          playClickSound();
-          setOpen((o) => !o);
+          setOpen((o) => {
+            const next = !o;
+            if (next) playOpenSound();
+            else playCloseSound();
+            return next;
+          });
         }}
       >
         <Gear size={22} />
       </button>
 
-      {open && (
-        <div className={styles.items}>
-          <button
-            type="button"
-            className={styles.btn}
-            title="Cat collection"
-            aria-label="Open cat collection"
-            onClick={() => {
-              playClickSound();
-              window.toggleCatPicker?.();
-            }}
-          >
-            <span className={styles.catIcon} aria-hidden="true" />
-          </button>
+      {/* Always mounted (not `{open && ...}`) so the close transition can
+          actually play instead of the flyout just vanishing. Hidden from
+          layout/AT/keyboard via aria-hidden + tabIndex while closed. */}
+      <div className={styles.items} aria-hidden={!open}>
+        <button
+          type="button"
+          className={styles.btn}
+          title="Cat collection"
+          aria-label="Open cat collection"
+          tabIndex={open ? 0 : -1}
+          onClick={() => {
+            playClickSound();
+            window.toggleCatPicker?.();
+          }}
+        >
+          <span className={styles.catIcon} aria-hidden="true" />
+        </button>
 
-          <button
-            type="button"
-            className={styles.btn}
-            aria-pressed={catHidden}
-            title={catHidden ? "Show cat" : "Hide cat"}
-            aria-label={catHidden ? "Show cat" : "Hide cat"}
-            onClick={toggleCat}
-          >
-            {catHidden ? <EyeSlashFill size={22} /> : <EyeFill size={22} />}
-          </button>
+        <button
+          type="button"
+          className={styles.btn}
+          aria-pressed={catHidden}
+          title={catHidden ? "Show cat" : "Hide cat"}
+          aria-label={catHidden ? "Show cat" : "Hide cat"}
+          tabIndex={open ? 0 : -1}
+          onClick={toggleCat}
+        >
+          {catHidden ? <EyeSlashFill size={22} /> : <EyeFill size={22} />}
+        </button>
 
-          <button
-            type="button"
-            className={styles.btn}
-            aria-pressed={!paused}
-            title={paused ? "Play background music" : "Pause background music"}
-            onClick={() => {
-              playClickSound();
-              window.ctpBgm?.toggle();
-            }}
-          >
-            {paused ? <PlayFill size={22} /> : <PauseFill size={22} />}
-          </button>
-        </div>
-      )}
+        <button
+          type="button"
+          className={styles.btn}
+          aria-pressed={!paused}
+          title={paused ? "Play background music" : "Pause background music"}
+          tabIndex={open ? 0 : -1}
+          onClick={() => {
+            playClickSound();
+            window.ctpBgm?.toggle();
+          }}
+        >
+          {paused ? <PlayFill size={22} /> : <PauseFill size={22} />}
+        </button>
+      </div>
     </div>
   );
 }

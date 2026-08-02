@@ -34,12 +34,6 @@ const LRCLIB_HOSTS = [
 ];
 const BLANK_ART =
   "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-const OBSESSIONS = [
-  "6vmtWuZN1IbDPhVshbeD22",
-  "3s44Qv8x974tm0ueLexMWN",
-  "4ujxDgeTs9YpwMKHSmZ4qc",
-  "7ipaq31bGwoqfcv1cSFuJO",
-];
 
 // ---- types ----------------------------------------------------------------
 type Track = {
@@ -203,13 +197,11 @@ async function lfm(method: string, extra?: Record<string, string>) {
   return res.json();
 }
 
-// ---- artist images (TheAudioDB -> MusicBrainz -> Spotify oEmbed) ----------
+// ---- artist images (TheAudioDB) --------------------------------------------
 const TADB_ROOT = "https://www.theaudiodb.com/api/v1/json/123";
-const MB_ROOT = "https://musicbrainz.org/ws/2";
-const ART_CACHE_PREFIX = "cstupidcat:artimg:";
+const ART_CACHE_PREFIX = "dough:artimg:";
 const ART_TTL_HIT = 30 * 864e5;
 const ART_TTL_MISS = 3 * 864e5;
-let mbChain: Promise<unknown> = Promise.resolve();
 
 async function tadbArtistImg(name: string): Promise<string> {
   try {
@@ -221,16 +213,6 @@ async function tadbArtistImg(name: string): Promise<string> {
   } catch {
     return "";
   }
-}
-function mbFetch(url: string): Promise<{ artists?: unknown[]; relations?: unknown[] } | null> {
-  const run = mbChain.then(() =>
-    fetch(url, { headers: { Accept: "application/json" } })
-      .then((r) => (r.ok ? r.json() : null))
-      .catch(() => null),
-  );
-  const gap = () => new Promise((r) => setTimeout(r, 1100));
-  mbChain = run.then(gap, gap);
-  return run as Promise<{ artists?: unknown[]; relations?: unknown[] } | null>;
 }
 function artCacheGet(name: string): string | undefined {
   try {
@@ -257,49 +239,11 @@ function artCacheSet(name: string, url: string) {
     /* skip */
   }
 }
-async function mbArtistId(name: string): Promise<string> {
-  const q = encodeURIComponent(`artist:"${name.replace(/"/g, " ")}"`);
-  const data = await mbFetch(`${MB_ROOT}/artist?query=${q}&limit=1&fmt=json`);
-  const a = data?.artists?.[0] as { name?: string; score?: number; id?: string } | undefined;
-  if (!a) return "";
-  const same = (a.name || "").toLowerCase() === name.toLowerCase();
-  return same || (a.score || 0) >= 90 ? a.id || "" : "";
-}
-async function mbSpotifyUrl(mbid: string): Promise<string> {
-  const data = await mbFetch(`${MB_ROOT}/artist/${mbid}?inc=url-rels&fmt=json`);
-  const rels = (data?.relations || []) as { url?: { resource?: string } }[];
-  for (const r of rels) {
-    const u = r?.url?.resource;
-    if (u && u.indexOf("open.spotify.com/artist") !== -1) return u;
-  }
-  return "";
-}
-async function spotifyOembedImg(spotifyUrl: string): Promise<string> {
-  try {
-    const res = await fetch(`https://open.spotify.com/oembed?url=${encodeURIComponent(spotifyUrl)}`);
-    if (!res.ok) return "";
-    const data = await res.json();
-    return data.thumbnail_url || "";
-  } catch {
-    return "";
-  }
-}
 async function artistImg(name: string): Promise<string> {
   if (!name) return "";
   const cached = artCacheGet(name);
   if (cached !== undefined) return cached;
-  let url = await tadbArtistImg(name);
-  if (!url) {
-    try {
-      const mbid = await mbArtistId(name);
-      if (mbid) {
-        const sp = await mbSpotifyUrl(mbid);
-        if (sp) url = await spotifyOembedImg(sp);
-      }
-    } catch {
-      url = "";
-    }
-  }
+  const url = await tadbArtistImg(name);
   artCacheSet(name, url);
   return url;
 }
@@ -732,27 +676,6 @@ export default function Music() {
             </p>
           ))
         )}
-      </div>
-
-      {/* current obsessions */}
-      <h2 className="sec-title" id="current-obsessions">
-        Current Obsessions
-      </h2>
-      <div className="obsessions" id="obsessions">
-        {OBSESSIONS.map((id) => (
-          <iframe
-            key={id}
-            className="obsession-embed"
-            style={{ borderRadius: "12px" }}
-            src={`https://open.spotify.com/embed/track/${id}?utm_source=generator`}
-            width="100%"
-            height="152"
-            frameBorder="0"
-            allowFullScreen
-            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-            loading="lazy"
-          />
-        ))}
       </div>
 
       {/* recently played */}

@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     locale: "en_GB",
     images: [
       {
-        url: "https://doughmination.gay/assets/favicon.png",
+        url: "https://doughmination.gay/favicon.png",
         alt: "Clove Twilight logo",
       },
     ],
@@ -51,7 +51,7 @@ type Project = {
 const GIRLS_NETWORK: Project[] = [
   {
     href: "https://security.girlsnetwork.dev",
-    img: "/assets/projects/ghostwire.png",
+    img: "/projects/ghostwire.png",
     alt: "Ghostwire",
     title: "Ghostwire",
     status: "Closed Source",
@@ -60,7 +60,7 @@ const GIRLS_NETWORK: Project[] = [
   },
   {
     href: "https://github.com/Girls-Network/GayBot-v2",
-    img: "/assets/projects/gaybot.png",
+    img: "/projects/gaybot.png",
     alt: "GayBot",
     title: "GayBot",
     status: "Open Source",
@@ -68,7 +68,7 @@ const GIRLS_NETWORK: Project[] = [
   },
   {
     href: "https://github.com/Girls-Network/bansync",
-    img: "/assets/projects/bansync.png",
+    img: "/projects/bansync.png",
     alt: "BanSync",
     title: "BanSync",
     status: "Open Source",
@@ -79,7 +79,7 @@ const GIRLS_NETWORK: Project[] = [
 const PERSONAL: Project[] = [
   {
     href: "https://github.com/doughmination/web/tree/main/mailbox",
-    img: "/assets/favicon.png",
+    img: "/favicon.png",
     alt: "Doughmination Mail",
     title: "Doughmination Mail",
     status: "Open Source",
@@ -88,7 +88,7 @@ const PERSONAL: Project[] = [
   },
   {
     href: "https://github.com/doughmination/api",
-    img: "/assets/favicon.png",
+    img: "/favicon.png",
     alt: "API",
     title: "Doughmination API",
     status: "Open Source",
@@ -97,7 +97,7 @@ const PERSONAL: Project[] = [
   },
   {
     href: "https://github.com/doughmination/utils",
-    img: "/assets/favicon.png",
+    img: "/favicon.png",
     alt: "Shortcuts Bot",
     title: "Shortcuts Bot",
     status: "Open Source",
@@ -105,7 +105,7 @@ const PERSONAL: Project[] = [
   },
   {
     href: "https://github.com/doughmination/cf-error-worker",
-    img: "/assets/projects/cf.png",
+    img: "/projects/cf.png",
     alt: "CF Error Worker",
     title: "CF Error Worker",
     status: "Open Source",
@@ -159,7 +159,7 @@ export default function ProjectsPage() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           className="pfp"
-          src="/assets/favicon.png"
+          src="/favicon.png"
           alt="Clove Twilight avatar"
         />
         <h1>Clove Twilight</h1>

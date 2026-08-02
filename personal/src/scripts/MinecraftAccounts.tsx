@@ -47,10 +47,6 @@ const ROLE_META: Record<string, { label: string; accent: string }> = {
     label: "Furina",
     accent: "sky"
   },
-  rose: {
-    label: "Rose",
-    accent: "accent"
-  },
   luna: {
     label: "Luna",
     accent: "teal"

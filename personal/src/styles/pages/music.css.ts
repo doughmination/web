@@ -229,7 +229,7 @@ globalStyle(".ly-lock", {
   fontFamily: "inherit",
   fontSize: "0.72rem",
   letterSpacing: "0.04em",
-  cursor: 'url("/assets/cursor/pointer_0.png"), pointer',
+  cursor: 'url("/cursor/pointer_0.png"), pointer',
   borderRadius: 999,
   padding: "0.28rem 0.8rem 0.28rem 0.7rem",
   background: vars.surface,
@@ -524,18 +524,4 @@ globalStyle(".top-name", {
 globalStyle(".top-plays", {
   color: vars.textMuted,
   fontSize: "0.72rem"
-});
-
-/* ---- obsessions ----------------------------------------------------------- */
-
-globalStyle(".obsessions", {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-  gap: "1rem",
-  marginBottom: "2rem",
-});
-
-globalStyle(".obsession-embed", {
-  width: "100%",
-  border: "none"
 });

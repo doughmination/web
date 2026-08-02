@@ -20,8 +20,7 @@ const MONO = "'Comic Code', ui-monospace, monospace";
 
 globalStyle("#visitor-counter", {
   position: "fixed",
-  // Clears the settings row in the corner.
-  top: "4rem",
+  top: "1rem",
   right: "1rem",
   zIndex: 6,
   display: "flex",
@@ -29,14 +28,6 @@ globalStyle("#visitor-counter", {
   alignItems: "center",
   gap: 4,
   transition: "opacity 0.6s ease, transform 0.6s ease",
-
-  // Mobile: drop out of fixed positioning and sit in the topbar flow.
-  "@media": {
-    "(max-width: 640px)": {
-      position: "static",
-      margin: "0 auto",
-    },
-  },
 });
 
 /* A `.topbar #visitor-counter { order: 2 }` rule used to sit here. Nothing

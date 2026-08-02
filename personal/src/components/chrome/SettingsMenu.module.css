@@ -24,7 +24,7 @@
   background: var(--surface);
   border: 1px solid var(--surface-hi);
   color: var(--text);
-  cursor: url("/assets/cursor/pointer_0.png"), pointer;
+  cursor: url("/cursor/pointer_0.png"), pointer;
   transition: border-color 0.15s ease, transform 0.15s ease;
 }
 
@@ -45,18 +45,69 @@
   transform: none;
 }
 
+/* Flies out to the right of the toggle, vertically centred on it — always
+   mounted (SettingsMenu.tsx no longer conditionally renders this) so the
+   close transition can play instead of the flyout just vanishing. */
 .items {
   position: absolute;
-  bottom: calc(100% + 0.5rem);
-  left: 0;
+  top: 50%;
+  left: calc(100% + 0.5rem);
+  transform: translateY(-50%) translateX(-6px);
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 0.5rem;
   padding: 0.5rem;
-  background: var(--surface);
-  border: 1px solid var(--surface-hi);
-  border-radius: 14px;
-  box-shadow: 0 10px 26px -16px rgba(0, 0, 0, 0.7);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.3s ease;
+}
+
+.bar.open .items {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+  pointer-events: auto;
+}
+
+/* Single-phase bloom per item (opacity + scale) — no telescope/expand phase,
+   since these are icon-only buttons with no label to reveal. Stagger mirrors
+   nav.css.ts's 0.05s-per-item cadence; close delays are the reverse so the
+   farthest item collapses back toward the button first. */
+.items .btn {
+  opacity: 0;
+  transform: scale(0.4);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.bar.open .items .btn {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.items .btn:nth-child(1) {
+  transition-delay: 0.1s;
+}
+.items .btn:nth-child(2) {
+  transition-delay: 0.05s;
+}
+.items .btn:nth-child(3) {
+  transition-delay: 0s;
+}
+
+.bar.open .items .btn:nth-child(1) {
+  transition-delay: 0s;
+}
+.bar.open .items .btn:nth-child(2) {
+  transition-delay: 0.05s;
+}
+.bar.open .items .btn:nth-child(3) {
+  transition-delay: 0.1s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .items,
+  .items .btn {
+    transition: none;
+  }
 }
 
 /* No border-radius or cover-crop: theme artwork is shown whole rather than
@@ -110,7 +161,7 @@
   color: var(--text-soft);
   font-size: 0.75rem;
   white-space: nowrap;
-  cursor: url("/assets/cursor/pointer_0.png"), pointer;
+  cursor: url("/cursor/pointer_0.png"), pointer;
   transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
 }
 
@@ -151,7 +202,7 @@
   width: 22px;
   height: 22px;
   display: block;
-  background-image: url("/assets/oneko/classics/classic.png");
+  background-image: url("/oneko/classic.png");
   background-repeat: no-repeat;
   background-size: 176px 88px;
   background-position: -66px -66px;

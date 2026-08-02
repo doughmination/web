@@ -5,30 +5,30 @@
   },
   {
     "name": "Trans",
-    "sprite": "/assets/oneko/pride/trans.png"
+    "sprite": "/oneko/trans.png"
   },
   {
     "name": "Lesbian",
-    "sprite": "/assets/oneko/pride/lesbian.png"
+    "sprite": "/oneko/lesbian.png"
   },
   {
     "name": "Genderfae",
-    "sprite": "/assets/oneko/pride/genderfae.png"
+    "sprite": "/oneko/genderfae.png"
   },
   {
     "name": "Genderfluid",
-    "sprite": "/assets/oneko/pride/genderfluid.png"
+    "sprite": "/oneko/genderfluid.png"
   },
   {
     "name": "Blue Butterfly",
-    "sprite": "/assets/oneko/other-animals/blue-butterfly.png"
+    "sprite": "/oneko/blue-butterfly.png"
   },
   {
     "name": "Eevee",
-    "sprite": "/assets/oneko/pokemon/eevee.png"
+    "sprite": "/oneko/eevee.png"
   },
   {
     "name": "Star",
-    "sprite": "/assets/oneko/things/star.png"
+    "sprite": "/oneko/star.png"
   }
 ]

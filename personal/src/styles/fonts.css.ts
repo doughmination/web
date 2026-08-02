@@ -55,7 +55,7 @@ const DDN: Array<[family: string, file: string]> = [
 
 for (const [family, file] of DDN) {
   globalFontFace(family, {
-    src: `url('/assets/fonts/${file}') format('woff2')`,
+    src: `url('/fonts/${file}') format('woff2')`,
     fontDisplay: "swap",
   });
 }

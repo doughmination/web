@@ -25,7 +25,7 @@
 import { globalStyle, globalKeyframes } from "@vanilla-extract/css";
 import { vars } from "../themes.css";
 
-const POINTER = 'url("/assets/cursor/pointer_0.png"), pointer';
+const POINTER = 'url("/cursor/pointer_0.png"), pointer';
 const ELLIPSIS = {
   whiteSpace: "nowrap",
   overflow: "hidden",

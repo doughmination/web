@@ -58,7 +58,7 @@ export default function VisitorCounter({
   namespace = "clove-is-a-dev",
   hitKey = "hits",
   label = "visitors",
-  imgPath = "/assets/numbers/",
+  imgPath = "/numbers/",
   imgExt = ".png",
 }: Props) {
   const [count, setCount] = useState<number | null>(null);

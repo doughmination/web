@@ -19,7 +19,7 @@ import {
 } from "react-bootstrap-icons";
 
 const NAMES: Record<string, string> = {
-  pixel: "Google Pixel",
+  pixel: "Pixel",
   macbook: "MacBook",
 };
 

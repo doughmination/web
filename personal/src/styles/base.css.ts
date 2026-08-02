@@ -22,7 +22,7 @@ import { globalStyle } from "@vanilla-extract/css";
 import { vars } from "./themes.css";
 
 const cursor = (file: string, fallback: string, hotspot = "") =>
-  `url('/assets/cursor/${file}.png')${hotspot ? " " + hotspot : ""}, ${fallback}`;
+  `url('/cursor/${file}.png')${hotspot ? " " + hotspot : ""}, ${fallback}`;
 
 const PAGE_BG = `linear-gradient(135deg, ${vars.bg} 0%, ${vars.bgRaised} 60%, ${vars.bgDeep} 100%)`;
 
@@ -118,7 +118,7 @@ globalStyle("body::before", {
   content: '""',
   position: "fixed",
   inset: 0,
-  background: "url(/assets/theme/estrogen.svg) center / cover no-repeat",
+  background: "url(/bg/estrogen.svg) center / cover no-repeat",
   filter: "invert(86%) sepia(8%) saturate(900%) hue-rotate(190deg) brightness(105%)",
   opacity: 0.05,
   pointerEvents: "none",
@@ -133,7 +133,7 @@ globalStyle("body::after", {
   bottom: "0.5rem",
   width: "clamp(96px, 14vw, 168px)",
   aspectRatio: "564 / 547",
-  background: "url(/assets/theme/miku.png) center / contain no-repeat",
+  background: "url(/bg/miku.png) center / contain no-repeat",
   opacity: 0.18,
   pointerEvents: "none",
   zIndex: 0,

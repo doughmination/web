@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     locale: "en_GB",
     images: [
       {
-        url: "https://doughmination.gay/assets/favicon.png",
+        url: "https://doughmination.gay/favicon.png",
         alt: "Clove Twilight logo",
       },
     ],
@@ -120,7 +120,7 @@ export default function DevInfoPage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             className="pfp"
-            src="/assets/favicon.png"
+            src="/favicon.png"
             alt="Clove Twilight avatar"
           />
           <h1>Clove Twilight</h1>
@@ -137,7 +137,7 @@ export default function DevInfoPage() {
                 className={`tech-icon ${color}`}
                 style={
                   {
-                    "--si": `url('https://cdn.simpleicons.org/${slug}')`,
+                    "--si": `url('/icons/${slug}.svg')`,
                   } as CSSProperties
                 }
                 role="img"
