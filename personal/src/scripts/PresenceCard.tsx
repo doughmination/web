@@ -45,6 +45,7 @@ import {
   type Dict, type PresenceOpts, type SelfJson,
 } from "./presenceShared";
 import { renderDiscordMarkdown } from "./discordMarkdown";
+import { playClickSound } from "@lib/sound";
 
 /* ---- small shared bits ---------------------------------------------------- */
 
@@ -579,7 +580,11 @@ export default function PresenceCard(opts: PresenceOpts) {
     cardStyle["--pc-grad-2-rgb"] = rgbTriplet(themeColors![1]);
   }
 
-  const goLink = () => opts.link && window.open(opts.link, "_blank", "noopener");
+  const goLink = () => {
+    if (!opts.link) return;
+    playClickSound();
+    window.open(opts.link, "_blank", "noopener");
+  };
 
   return (
     <div
@@ -698,6 +703,7 @@ export default function PresenceCard(opts: PresenceOpts) {
           aria-expanded={wishlistOpen}
           onClick={(e) => {
             e.stopPropagation();
+            playClickSound();
             setWishlistOpen((v) => !v);
           }}
         >

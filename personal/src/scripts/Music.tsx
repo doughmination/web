@@ -9,6 +9,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useUserPresence } from "@doughmination/react-api";
 import { MusicNoteBeamed } from "react-bootstrap-icons";
+import { playClickSound } from "@lib/sound";
 import { dmListening } from "./presenceShared";
 
 /* Ported from music.js — now-playing hero, synced lyrics (LRCLIB) with a
@@ -617,6 +618,7 @@ export default function Music() {
       <a
         className="mdc"
         id="dc-link"
+        onClick={playClickSound}
         {...(track?.url ? {
           href: track.url,
           target: "_blank",
@@ -671,6 +673,7 @@ export default function Music() {
           aria-pressed={locked}
           hidden={!syncedAvailable}
           onClick={() => {
+            playClickSound();
             if (locked) setLocked(false);
             else {
               setLocked(true);
@@ -762,7 +765,7 @@ export default function Music() {
         ) : (
           recent.map((t, i) => (
             <li className={`rc-item${t.now ? " is-now" : ""}`} key={i}>
-              <a href={t.url} target="_blank" rel="noopener">
+              <a href={t.url} target="_blank" rel="noopener" onClick={playClickSound}>
                 {t.art ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img className="rc-art" src={t.art} alt="" loading="lazy" />
@@ -794,7 +797,7 @@ export default function Music() {
             <ol className="top-chips">
               {top.map((a, i) => (
                 <li className="top-chip" key={a.name + i}>
-                  <a href={a.url} target="_blank" rel="noopener">
+                  <a href={a.url} target="_blank" rel="noopener" onClick={playClickSound}>
                     <span className="top-rank">{i + 1}</span>
                     {topImg[a.name] ? (
                       // eslint-disable-next-line @next/next/no-img-element

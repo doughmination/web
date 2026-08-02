@@ -8,6 +8,7 @@
 
 import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
+import { playClickSound } from "@lib/sound";
 
 /* Ported from heatmap.js + dev-info.js — the contribution heatmap and the
    WakaTime coding stats. Same page, so one component (renders both). */
@@ -441,7 +442,7 @@ function WakaContent() {
 
       <p className="waka-credit">
         Tracked automatically with{" "}
-        <a href="https://wakatime.com" target="_blank" rel="noopener">
+        <a href="https://wakatime.com" target="_blank" rel="noopener" onClick={playClickSound}>
           wakatime
         </a>
         .

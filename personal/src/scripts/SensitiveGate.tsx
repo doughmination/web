@@ -7,6 +7,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import { playClickSound } from "@lib/sound";
 
 /**
  * Gates sensitive post content behind a content warning. The body is rendered
@@ -38,7 +39,10 @@ export default function SensitiveGate({
             <button
               type="button"
               className="warning-proceed"
-              onClick={() => setRevealed(true)}
+              onClick={() => {
+                playClickSound();
+                setRevealed(true);
+              }}
             >
               I understand the risks — proceed
             </button>

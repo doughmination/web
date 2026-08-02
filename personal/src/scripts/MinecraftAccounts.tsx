@@ -22,6 +22,7 @@ import {
   XLg,
 } from "react-bootstrap-icons";
 import { createWave } from "./skinAnimations";
+import { playClickSound } from "@lib/sound";
 
 /* Ported from minecraft.js — account cards + a detail modal (Overview / 3D
    Model / Hypixel). The 3D tab uses the lazy-loaded skinview3d WebGL viewer,
@@ -190,6 +191,7 @@ function CopyBtn({ value }: { value: string }) {
       type="button"
       title="Click to copy"
       onClick={() => {
+        playClickSound();
         if (navigator.clipboard) {
           navigator.clipboard
             .writeText(value)
@@ -342,7 +344,10 @@ function Skin3D({ data }: { data: ProfileData }) {
               key={i}
               type="button"
               className={`mc-pill${i === capeIdx ? " is-active" : ""}`}
-              onClick={() => setCapeIdx(i)}
+              onClick={() => {
+                playClickSound();
+                setCapeIdx(i);
+              }}
             >
               {opt.label}
             </button>
@@ -353,13 +358,14 @@ function Skin3D({ data }: { data: ProfileData }) {
               <button
                 type="button"
                 className={`mc-pill mc-elytra${elytraOn ? " is-active" : ""}`}
-                onClick={() =>
+                onClick={() => {
+                  playClickSound();
                   setElytraOn((v) => {
                     const nv = !v;
                     if (nv && capeIdx === 0 && capes.length) setCapeIdx(1);
                     return nv;
-                  })
-                }
+                  });
+                }}
               >
                 <Feather aria-hidden="true" /> Elytra
               </button>
@@ -375,7 +381,10 @@ function Skin3D({ data }: { data: ProfileData }) {
             key={i}
             type="button"
             className={`mc-pill${i === animIdx ? " is-active" : ""}`}
-            onClick={() => setAnimIdx(i)}
+            onClick={() => {
+              playClickSound();
+              setAnimIdx(i);
+            }}
           >
             {label}
           </button>
@@ -441,7 +450,10 @@ function AccountModal({
       role="dialog"
       aria-modal="true"
       onClick={(e) => {
-        if (e.target === e.currentTarget) requestClose();
+        if (e.target === e.currentTarget) {
+          playClickSound();
+          requestClose();
+        }
       }}
       onTransitionEnd={() => {
         if (!open) {
@@ -451,7 +463,16 @@ function AccountModal({
       }}
     >
       <div className="mc-dialog">
-        <button ref={closeRef} className="mc-close" type="button" aria-label="Close" onClick={requestClose}>
+        <button
+          ref={closeRef}
+          className="mc-close"
+          type="button"
+          aria-label="Close"
+          onClick={() => {
+            playClickSound();
+            requestClose();
+          }}
+        >
           <XLg aria-hidden="true" />
         </button>
 
@@ -474,7 +495,10 @@ function AccountModal({
               type="button"
               role="tab"
               aria-selected={tab === t}
-              onClick={() => setTab(t)}
+              onClick={() => {
+                playClickSound();
+                setTab(t);
+              }}
             >
               {t === "ext" ? "Overview" : t === "model" ? "3D Model" : "Hypixel"}
             </button>
@@ -486,7 +510,14 @@ function AccountModal({
             <div className="mc-ext-hero">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img className="mc-hero" alt="" referrerPolicy="no-referrer" src={heroSrc} />
-              <button className="mc-hat" type="button" onClick={() => setShowHat((v) => !v)}>
+              <button
+                className="mc-hat"
+                type="button"
+                onClick={() => {
+                  playClickSound();
+                  setShowHat((v) => !v);
+                }}
+              >
                 <Layers aria-hidden="true" /> {showHat ? "Hide hat layer" : "Show hat layer"}
               </button>
             </div>
@@ -569,6 +600,7 @@ function AccountCard({ cfg, data, onOpen }: { cfg: Cfg; data: ProfileData; onOpe
       data-uuid={uid}
       onClick={(e) => {
         e.preventDefault();
+        playClickSound();
         onOpen();
       }}
     >

@@ -18,24 +18,21 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { navItems } from "./navItems";
+import { playOpenSound, playCloseSound, playHoverSound, playClickSound } from "@lib/sound";
 
 function normalize(path: string): string {
   return path.replace(/\/+$/, "") || "/";
-}
-
-// Plays the open/close sound when the nav checkbox flips
-function playNavSound(isOpen: boolean) {
-  const file = isOpen ? "/assets/open.mp3" : "/assets/close.mp3";
-  const sound = new Audio(file);
-
-  sound.play().catch(() => {});
 }
 
 export default function NavMenu() {
   const current = normalize(usePathname());
 
   function handleToggleChange(event: React.ChangeEvent<HTMLInputElement>) {
-    playNavSound(event.target.checked);
+    if (event.target.checked) {
+      playOpenSound();
+    } else {
+      playCloseSound();
+    }
   }
 
   return (
@@ -70,14 +67,28 @@ export default function NavMenu() {
 
           if (external) {
             return (
-              <a key={href} className={className} href={href} aria-label={label}>
+              <a
+                key={href}
+                className={className}
+                href={href}
+                aria-label={label}
+                onMouseEnter={playHoverSound}
+                onClick={playClickSound}
+              >
                 {inner}
               </a>
             );
           }
 
           return (
-            <Link key={href} className={className} href={href} aria-label={label}>
+            <Link
+              key={href}
+              className={className}
+              href={href}
+              aria-label={label}
+              onMouseEnter={playHoverSound}
+              onClick={playClickSound}
+            >
               {inner}
             </Link>
           );

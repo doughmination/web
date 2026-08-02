@@ -8,6 +8,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { playClickSound } from "@lib/sound";
 
 /* Ported from blogs.js — fetches /posts.json and renders blog cards.
    The date shown is parsed from the slug (DDMMYYYY-name), so there's no
@@ -116,7 +117,7 @@ export default function BlogCards() {
         const title = post.title || titleCaseFromSlugName(parsed.name);
         const iso = `${parsed.year}-${String(parsed.month).padStart(2, "0")}-${String(parsed.day).padStart(2, "0")}`;
         return (
-          <Link key={post.slug} className="blog-card" href={`/blog/${post.slug}`}>
+          <Link key={post.slug} className="blog-card" href={`/blog/${post.slug}`} onClick={playClickSound}>
             {post.thumbnail ? (
               <div className="blog-card-thumb">
                 {/* eslint-disable-next-line @next/next/no-img-element */}

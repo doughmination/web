@@ -27,6 +27,7 @@
  */
 
 import { useState } from "react";
+import { playClickSound } from "@lib/sound";
 
 export interface MarkdownOpts {
   /** Resolves <:name:id> to an <img>; return null to leave the text as-is. */
@@ -55,6 +56,7 @@ function Spoiler({ cls, children }: { cls?: string; children: React.ReactNode })
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
+        playClickSound();
         setShown(true);
       }}
       onKeyDown={(e) => {

@@ -8,6 +8,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CameraFill } from "react-bootstrap-icons";
+import { playClickSound } from "@lib/sound";
 
 /* Ported from selfies.js — grid + lightbox from /assets/selfies/selfies.json.
    Manifest is an array of filename strings or { src, alt, caption } objects. */
@@ -161,7 +162,10 @@ export default function SelfiesGallery() {
               type="button"
               className="selfie-thumb"
               aria-label={`Open ${it.caption || it.alt}`}
-              onClick={() => openAt(i)}
+              onClick={() => {
+                playClickSound();
+                openAt(i);
+              }}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -184,7 +188,10 @@ export default function SelfiesGallery() {
           aria-modal="true"
           aria-label="Selfie viewer"
           onClick={(e) => {
-            if (e.target === e.currentTarget) close();
+            if (e.target === e.currentTarget) {
+              playClickSound();
+              close();
+            }
           }}
         >
           <button
@@ -192,7 +199,10 @@ export default function SelfiesGallery() {
             className="lightbox-close"
             type="button"
             aria-label="Close (Esc)"
-            onClick={close}
+            onClick={() => {
+              playClickSound();
+              close();
+            }}
           >
             {"×"}
           </button>
@@ -201,7 +211,10 @@ export default function SelfiesGallery() {
               className="lightbox-nav lightbox-prev"
               type="button"
               aria-label="Previous selfie"
-              onClick={() => step(-1)}
+              onClick={() => {
+                playClickSound();
+                step(-1);
+              }}
             >
               {"‹"}
             </button>
@@ -218,7 +231,10 @@ export default function SelfiesGallery() {
               className="lightbox-nav lightbox-next"
               type="button"
               aria-label="Next selfie"
-              onClick={() => step(1)}
+              onClick={() => {
+                playClickSound();
+                step(1);
+              }}
             >
               {"›"}
             </button>

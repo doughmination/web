@@ -18,6 +18,7 @@ import {
   useReducedMotion, useTicker, wlImg, collectibleForSlot,
   type Collectible, type Dict, type SelfJson,
 } from "./presenceShared";
+import { playClickSound } from "@lib/sound";
 import { renderDiscordMarkdown } from "./discordMarkdown";
 import * as s from "@styles/presence-dashboard.css";
 
@@ -67,7 +68,10 @@ function CollapsiblePanel({
         className={`${s.panelToggle}${open ? "" : " " + s.panelToggleClosed}`}
         aria-expanded={open}
         aria-controls={bodyId}
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => {
+          playClickSound();
+          setOpen((v) => !v);
+        }}
       >
         <span>{title}</span>
         <span className={s.panelCount}>{count}</span>
@@ -188,7 +192,7 @@ function NowPlaying({
       {/* Points at the site's own /music page rather than out to Spotify.
           next/link so it routes client-side and the bg-music audio in the
           persistent layout isn't torn down by a full page load. */}
-      <Link className={s.npRow} href="/music">
+      <Link className={s.npRow} href="/music" onClick={playClickSound}>
         {sp.album_art_url ? (
           <SafeImg className={s.npArt} src={String(sp.album_art_url)} alt="" />
         ) : null}
@@ -297,7 +301,7 @@ function StreamRow({ a }: { a: Dict }) {
     </>
   );
   return url ? (
-    <a className={s.actRow} href={url} target="_blank" rel="noopener">{inner}</a>
+    <a className={s.actRow} href={url} target="_blank" rel="noopener" onClick={playClickSound}>{inner}</a>
   ) : (
     <div className={s.actRow}>{inner}</div>
   );
@@ -536,7 +540,7 @@ export default function PresenceDashboard({ userId }: { userId: string }) {
                   );
                   return b.link ? (
                     <a className={s.badgeLink} key={String(b.id)} href={String(b.link)}
-                      target="_blank" rel="noopener">{img}</a>
+                      target="_blank" rel="noopener" onClick={playClickSound}>{img}</a>
                   ) : (
                     <span key={String(b.id)} style={{ lineHeight: 0 }}>{img}</span>
                   );
@@ -598,7 +602,7 @@ export default function PresenceDashboard({ userId }: { userId: string }) {
                 );
                 const key = String(a.type) + ":" + String(a.id ?? a.name) + i;
                 return url ? (
-                  <a className={s.conn} key={key} href={url} target="_blank" rel="noopener">{inner}</a>
+                  <a className={s.conn} key={key} href={url} target="_blank" rel="noopener" onClick={playClickSound}>{inner}</a>
                 ) : (
                   <span className={s.conn} key={key}>{inner}</span>
                 );

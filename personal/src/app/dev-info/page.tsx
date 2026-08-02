@@ -7,6 +7,7 @@
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
 import DevInfo from "@scripts/DevInfo";
+import SoundLink from "@components/SoundLink";
 import "@styles/pages/dev-info.css";
 
 export const metadata: Metadata = {
@@ -151,106 +152,106 @@ export default function DevInfoPage() {
           <p className="hw-intro">This is the beast setup I daily-drive. ✨</p>
           <dl className="hw-list">
             <HardwareRow term="CPU">
-              <a
+              <SoundLink
                 className="hw-item"
                 href="https://uk.pcpartpicker.com/product/Pk62FT/amd-ryzen-9-9950x3d-43-ghz-16-core-processor-100-100000719wof"
               >
                 AMD Ryzen 9 9950x3d 4.3 GHz 16-Core Processor
-              </a>
+              </SoundLink>
             </HardwareRow>
             <HardwareRow term="GPU">
-              <a
+              <SoundLink
                 className="hw-item"
                 href="https://uk.pcpartpicker.com/product/GtXJ7P/xfx-speedster-merc-310-black-edition-radeon-rx-7900-xtx-24-gb-video-card-rx-79xmercb9"
               >
                 XFX Speedster MERC 310 Black Edition Radeon RX 7900 XTX 24 GB
                 Video Card
-              </a>
+              </SoundLink>
             </HardwareRow>
             <HardwareRow term="RAM">
-              <a
+              <SoundLink
                 className="hw-item"
                 href="https://uk.pcpartpicker.com/product/LWVmP6/corsair-vengeance-64-gb-2-x-32-gb-ddr5-6000-cl40-memory-cmk64gx5m2b6000z40"
               >
                 Corsair Vengeance 64 GB (2 x 32 GB) DDR5-6000 CL40 Memory
-              </a>
+              </SoundLink>
             </HardwareRow>
             <HardwareRow term="Storage">
-              <a
+              <SoundLink
                 className="hw-item"
                 href="https://uk.pcpartpicker.com/product/YPKscf/acer-predator-gm7-1-tb-m2-2280-pcie-40-x4-nvme-solid-state-drive-bl9bwwr118"
               >
                 2x 1TB NVMe
-              </a>{" "}
+              </SoundLink>{" "}
               +{" "}
-              <a
+              <SoundLink
                 className="hw-item"
                 href="https://uk.pcpartpicker.com/product/fmfhP6/seagate-exos-x14-12-tb-35-7200-rpm-internal-hard-drive-st12000nm0008"
               >
                 10TB HDD
-              </a>
+              </SoundLink>
             </HardwareRow>
             <HardwareRow term="Motherboard">
-              <a
+              <SoundLink
                 className="hw-item"
                 href="https://uk.pcpartpicker.com/product/Q8KnTW/gigabyte-b850m-aorus-elite-wifi6e-ice-micro-atx-am5-motherboard-b850m-aorus-elite-wifi6e-ice"
               >
                 Gigabyte B850M AORUS ELITE WIFI6E ICE Micro ATX AM5 Motherboard
-              </a>
+              </SoundLink>
             </HardwareRow>
             <HardwareRow term="Cooling">
-              <a
+              <SoundLink
                 className="hw-item"
                 href="https://uk.pcpartpicker.com/product/YXFmP6/thermalright-aqua-elite-v3-6617-cfm-liquid-cpu-cooler-aqua-elite-360-white-v3"
               >
                 Thermalright Aqua Elite V3 66.17 CFM Liquid CPU Cooler
-              </a>
+              </SoundLink>
             </HardwareRow>
             <HardwareRow term="Keyboard">
-              <a
+              <SoundLink
                 className="hw-item"
                 href="https://en.akkogear.com/product/sakura-miku-5108b-plus-mechanical-keyboard/"
               >
                 Akko Sakura Miku 5108B Plus
-              </a>
+              </SoundLink>
             </HardwareRow>
             <HardwareRow term="Mouse">
-              <a
+              <SoundLink
                 className="hw-item"
                 href="https://www.logitechg.com/en-gb/shop/p/g502-x-plus-wireless-lightforce.910-006163"
               >
                 Logitech G502 X Gaming Lightspeed Wireless
-              </a>
+              </SoundLink>
             </HardwareRow>
             <HardwareRow term="Monitor(s)">
-              <a
+              <SoundLink
                 className="hw-item"
                 href="https://uk.pcpartpicker.com/product/XpVfrH/gigabyte-g34wqcp-340-3440-x-1440-180-hz-curved-monitor-g34wqcp"
               >
                 Gigabyte G34WQCP 34.0&quot; 3440 x 1440 180 Hz Curved Monitor
-              </a>
+              </SoundLink>
             </HardwareRow>
             <HardwareRow term="Headphones">
-              <a className="hw-item" href="https://m.yowu.com/product/detail?sku=3588">
+              <SoundLink className="hw-item" href="https://m.yowu.com/product/detail?sku=3588">
                 Yowu Cat Ear Headphones Hatsune Miku NX
-              </a>
+              </SoundLink>
             </HardwareRow>
             <HardwareRow term="Microphone">
-              <a className="hw-item" href="https://amzn.eu/d/00FjYEzR">
+              <SoundLink className="hw-item" href="https://amzn.eu/d/00FjYEzR">
                 Aokeo AK-60 USB Microphone
-              </a>
+              </SoundLink>
             </HardwareRow>
             <HardwareRow term="OS">
-              <a className="hw-item" href="https://archlinux.org/download/">
+              <SoundLink className="hw-item" href="https://archlinux.org/download/">
                 Arch Linux
-              </a>{" "}
+              </SoundLink>{" "}
               |{" "}
-              <a
+              <SoundLink
                 className="hw-item"
                 href="https://www.microsoft.com/en-us/software-download/windows11"
               >
                 Windows 11
-              </a>
+              </SoundLink>
             </HardwareRow>
           </dl>
         </details>

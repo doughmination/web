@@ -8,6 +8,7 @@
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Gear, PlayFill, PauseFill, EyeFill, EyeSlashFill } from "react-bootstrap-icons";
+import { playClickSound } from "@lib/sound";
 import styles from "./SettingsMenu.module.css";
 
 /**
@@ -56,6 +57,7 @@ export default function SettingsMenu() {
   const catHidden = useSyncExternalStore(subscribeCatHidden, getCatHiddenSnapshot, () => false);
 
   const toggleCat = useCallback(() => {
+    playClickSound();
     const next = !getCatHiddenSnapshot();
     if (window.ctpSetCatHidden) window.ctpSetCatHidden(next);
     else window.localStorage.setItem("onekoHidden", next ? "1" : "0");
@@ -105,6 +107,7 @@ export default function SettingsMenu() {
         title="Settings"
         onClick={(e) => {
           e.stopPropagation();
+          playClickSound();
           setOpen((o) => !o);
         }}
       >
@@ -118,7 +121,10 @@ export default function SettingsMenu() {
             className={styles.btn}
             title="Cat collection"
             aria-label="Open cat collection"
-            onClick={() => window.toggleCatPicker?.()}
+            onClick={() => {
+              playClickSound();
+              window.toggleCatPicker?.();
+            }}
           >
             <span className={styles.catIcon} aria-hidden="true" />
           </button>
@@ -139,7 +145,10 @@ export default function SettingsMenu() {
             className={styles.btn}
             aria-pressed={!paused}
             title={paused ? "Play background music" : "Pause background music"}
-            onClick={() => window.ctpBgm?.toggle()}
+            onClick={() => {
+              playClickSound();
+              window.ctpBgm?.toggle();
+            }}
           >
             {paused ? <PlayFill size={22} /> : <PauseFill size={22} />}
           </button>

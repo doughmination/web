@@ -9,6 +9,7 @@
 import { useEffect, useRef, useState } from "react";
 import { HeartFill, type Icon } from "react-bootstrap-icons";
 import { useGuestbook, useGuestbookPost } from "@doughmination/react-api";
+import { playClickSound } from "@lib/sound";
 
 /* Ported from guestbook.js — the sign form (with honeypot + optional Cloudflare
    Turnstile) and the list of entries. Reads + writes now go through the wrapper
@@ -103,6 +104,7 @@ export default function Guestbook({ turnstileKey }: Props) {
 
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault();
+    playClickSound();
 
     if (!name.trim() || !message.trim()) {
       setStatus({
@@ -270,7 +272,7 @@ export default function Guestbook({ turnstileKey }: Props) {
                 <div className="gb-entry-head">
                   <span className="gb-entry-name">
                     {safeWeb ? (
-                      <a href={safeWeb} target="_blank" rel="noopener nofollow ugc">
+                      <a href={safeWeb} target="_blank" rel="noopener nofollow ugc" onClick={playClickSound}>
                         {entry.name}
                       </a>
                     ) : (
