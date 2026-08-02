@@ -76,6 +76,16 @@ globalStyle(".genshin-desktop-only", {
   },
 });
 
+globalStyle(".genshin-partial-note", {
+  textAlign: "center",
+  color: vars.text,
+  opacity: 0.65,
+  fontSize: "0.8rem",
+  maxWidth: "48ch",
+  margin: "-1rem auto 1.5rem",
+  lineHeight: 1.5,
+});
+
 globalStyle(".genshin-card", {
   background: vars.bgRaised,
   border: `1px solid ${vars.surface}`,

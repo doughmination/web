@@ -5,7 +5,7 @@
  */
 
 import type { Metadata } from "next";
-import Model3D from "@components/chrome/Model3D";
+import GenshinGallery, { type Character } from "@scripts/GenshinGallery";
 import "@styles/pages/genshin.css";
 
 export const metadata: Metadata = {
@@ -39,167 +39,133 @@ export const metadata: Metadata = {
   },
 };
 
-type Character = {
-  name: string;
-  model: string;
-  tier: "owned" | "want";
-  /** Adventure level 1–90. Only rendered for owned characters. */
-  level?: number;
-};
-
-const TIER_LABEL: Record<NonNullable<Character["tier"]>, string> = {
-  owned: "Owned",
-  want: "Want",
-};
-
-/** Genshin ascension level caps. 90 is the ceiling. */
-const ASCENSION_CAPS = [20, 40, 50, 60, 70, 80, 90] as const;
-const MAX_LEVEL = 90;
-
-/**
- * Where a level sits within its current ascension phase.
- * Returns the phase bounds and a 0–1 fill for the progress bar.
- */
-function ascensionProgress(level: number) {
-  const clamped = Math.min(Math.max(level, 1), MAX_LEVEL);
-  if (clamped >= MAX_LEVEL) {
-    return {
-      cap: MAX_LEVEL,
-      floor: ASCENSION_CAPS.at(-2)!,
-      fill: 1,
-      maxed: true
-    };
-  }
-  const cap = ASCENSION_CAPS.find((c) => c > clamped)!;
-  const capIndex = ASCENSION_CAPS.indexOf(cap);
-  const floor = capIndex === 0 ? 1 : ASCENSION_CAPS[capIndex - 1];
-  return {
-    cap,
-    floor,
-    fill: (clamped - floor) / (cap - floor),
-    maxed: false,
-  };
-}
+/** My Genshin UID — live owned/level data comes from Doughmination Restful
+ *  (Enka.Network passthrough), see GenshinGallery. */
+const GENSHIN_UID = "691386457";
 
 // Models converted from MMD (.pmx) to .glb via scripts/pmx2glb.py.
 // Attribution handled separately — names only here.
-// Kept alphabetical by name; display order (want first) is derived below.
+//
+// `avatarId` is Enka's numeric character id — set it and owned/level status
+// comes live from the API instead of the `tier`/`level` fields below (which
+// then only serve as a fallback while that loads, or if it ever errors).
+// Leave `avatarId` unset for characters not in Enka's current catalog —
+// Prune and Sandrone aren't turning up there yet, so those two stay manual
+// for now.
+// Kept alphabetical by name; display order (want first) is derived in
+// GenshinGallery.
 const CHARACTERS: Character[] = [
   {
     name: "Aino",
     model: "/models/aino.glb",
+    avatarId: "10000121",
     tier: "owned",
-    level: 20
+    level: 20,
   },
   {
     name: "Amber",
     model: "/models/amber.glb",
+    avatarId: "10000021",
     tier: "owned",
-    level: 40
+    level: 40,
   },
   {
     name: "Barbara",
     model: "/models/barbara.glb",
+    avatarId: "10000014",
     tier: "owned",
-    level: 1
+    level: 1,
   },
   {
     name: "Diona",
     model: "/models/diona.glb",
+    avatarId: "10000039",
     tier: "owned",
-    level: 40
+    level: 40,
   },
   {
     name: "Fischl",
     model: "/models/fischl.glb",
+    avatarId: "10000031",
     tier: "owned",
-    level: 38
+    level: 38,
   },
   {
     name: "Freminet",
     model: "/models/freminet.glb",
+    avatarId: "10000085",
     tier: "owned",
-    level: 1
+    level: 1,
   },
   {
     name: "Furina",
     model: "/models/furina.glb",
-    tier: "want"
+    avatarId: "10000089",
+    tier: "want",
   },
   {
     name: "Hu Tao",
     model: "/models/hutao.glb",
-    tier: "want"
+    avatarId: "10000046",
+    tier: "want",
   },
   {
     name: "Kaeya",
     model: "/models/kaeya.glb",
+    avatarId: "10000015",
     tier: "owned",
-    level: 40
+    level: 40,
   },
   {
     name: "Lisa",
     model: "/models/lisa.glb",
+    avatarId: "10000006",
     tier: "owned",
-    level: 20
+    level: 20,
   },
   {
     name: "Lumine",
     model: "/models/lumine.glb",
+    avatarId: "10000007",
     tier: "owned",
-    level: 56
+    level: 56,
   },
   {
     name: "Noelle",
     model: "/models/noelle.glb",
+    avatarId: "10000034",
     tier: "owned",
-    level: 20
+    level: 20,
   },
   {
     name: "Prune",
     model: "/models/prune.glb",
+    avatarId: "10000132",
     tier: "owned",
-    level: 39
+    level: 39,
   },
   {
     name: "Sandrone",
     model: "/models/sandrone.glb",
+    avatarId: "10000133",
     tier: "owned",
-    level: 20
+    level: 50,
   },
   {
     name: "Sucrose",
     model: "/models/sucrose.glb",
+    avatarId: "10000043",
     tier: "owned",
-    level: 13
+    level: 13,
   },
   {
     name: "Yumemizuki Mizuki",
     model: "/models/yumemizuki.glb",
+    avatarId: "10000109",
     tier: "owned",
-    level: 55
+    level: 55,
   },
 ];
-
-// TODO: Add Freminent (lvl 1)
-
-/**
- * Display order: want tier first, then owned sorted by level (highest first),
- * with same-level characters ordered alphabetically by name.
- */
-const TIER_ORDER: Record<Character["tier"], number> = {
-  want: 0,
-  owned: 1
-};
-const ORDERED_CHARACTERS = [...CHARACTERS].sort((a, b) => {
-  if (TIER_ORDER[a.tier] !== TIER_ORDER[b.tier]) {
-    return TIER_ORDER[a.tier] - TIER_ORDER[b.tier];
-  }
-  if ((b.level ?? 0) !== (a.level ?? 0)) {
-    return (b.level ?? 0) - (a.level ?? 0);
-  }
-  return a.name.localeCompare(b.name);
-});
 
 export default function GenshinPage() {
   return (
@@ -216,55 +182,7 @@ export default function GenshinPage() {
         spin the models.
       </p>
 
-      <div className="genshin-grid">
-        {ORDERED_CHARACTERS.map((c) => {
-          const showLevel = c.tier === "owned" && typeof c.level === "number";
-          const progress = showLevel ? ascensionProgress(c.level!) : null;
-
-          return (
-            <article className="genshin-card" key={c.name}>
-              <div className="genshin-viewer">
-                {c.tier && (
-                  <span className={`genshin-tag ${c.tier}`}>
-                    {TIER_LABEL[c.tier]}
-                  </span>
-                )}
-                <Model3D
-                  src={c.model}
-                  poster="/favicon.png"
-                  alt={`3D model of ${c.name} from Genshin Impact`}
-                />
-              </div>
-              <div className="genshin-meta">
-                <h2>{c.name}</h2>
-                {progress && (
-                  <div className="genshin-level">
-                    <div className="genshin-level-row">
-                      <span className="genshin-level-value">Lv. {c.level}</span>
-                      <span className="genshin-level-cap">
-                        {progress.maxed ? "Max" : `→ ${progress.cap}`}
-                      </span>
-                    </div>
-                    <div
-                      className={`genshin-level-track${progress.maxed ? " maxed" : ""}`}
-                      role="progressbar"
-                      aria-valuemin={progress.floor}
-                      aria-valuemax={progress.cap}
-                      aria-valuenow={c.level}
-                      aria-label={`${c.name} progress to level ${progress.cap}`}
-                    >
-                      <span
-                        className="genshin-level-fill"
-                        style={{ width: `${Math.round(progress.fill * 100)}%` }}
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-            </article>
-          );
-        })}
-      </div>
+      <GenshinGallery uid={GENSHIN_UID} characters={CHARACTERS} />
     </main>
   );
 }
