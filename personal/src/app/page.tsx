@@ -48,7 +48,7 @@ export default function Home() {
         <Location />
       </main>
 
-      <VisitorCounter namespace="clove-is-a-dev" hitKey="hits" label="visitors" />
+      <VisitorCounter namespace="dough" hitKey="hits" label="visitors" />
     </>
   );
 }

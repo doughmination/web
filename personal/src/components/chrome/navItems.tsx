@@ -17,7 +17,6 @@ import {
   Grid,
   Book,
   Camera,
-  Newspaper,
   Boxes,
   Controller,
 } from "react-bootstrap-icons";
@@ -84,11 +83,6 @@ export const navItems: NavItem[] = [
     label: "Selfies",
     href: "/selfies",
     Icon: Camera,
-  },
-  {
-    label: "Blog",
-    href: "https://doughmination.site",
-    Icon: Newspaper,
   },
   {
     label: "Minecraft",

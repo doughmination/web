@@ -21,7 +21,7 @@ type Props = {
 };
 
 function storeKey(ns: string, key: string) {
-  return `vc:${ns}:${key}`;
+  return `${ns}:${key}`;
 }
 
 /* Cached count for this tab-session, or null. A refresh keeps the same
@@ -55,7 +55,7 @@ function setCached(ns: string, key: string, count: number) {
 }
 
 export default function VisitorCounter({
-  namespace = "clove-is-a-dev",
+  namespace = "dough",
   hitKey = "hits",
   label = "visitors",
   imgPath = "/numbers/",

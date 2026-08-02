@@ -15,7 +15,7 @@ interface GeocodeResult {
 }
 
 async function geocodeCity(query: string): Promise<GeocodeResult | null> {
-  const cacheKey = `geocode:${query}`;
+  const cacheKey = `dough:geocode:${query}`;
   const cached = localStorage.getItem(cacheKey);
   if (cached) return JSON.parse(cached);
 

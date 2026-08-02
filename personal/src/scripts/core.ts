@@ -164,13 +164,13 @@ export function initCore(catSrc: string = "/oneko/classic.png") {
   (function bgMusic() {
     const ss = window.sessionStorage;
     const ls = window.localStorage;
-    const CONSENT_KEY = "ctpBgmConsent";
-    const PLAYING_KEY = "ctpBgmPlaying";
-    const TIME_KEY = "ctpBgmTime";
+    const CONSENT_KEY = "dough:bg-music:consent";
+    const PLAYING_KEY = "dough:bg-music:playing";
+    const TIME_KEY = "dough:bg-music:time";
     /* Persists across visits (unlike the two keys above, which are per-tab-
      * session). Lets someone who's turned music off stay opted out on their
      * next visit instead of re-seeing the entry gate every time. */
-    const ENABLED_KEY = "ctpBgmEnabled";
+    const ENABLED_KEY = "dough:bg-music:enabled";
 
     const audio = document.createElement("audio");
     audio.id = "bgm";
