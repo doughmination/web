@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://doughmination.gay/assets/favicon.png" alt="Clove logo" width="150" />
+  <img src="https://doughmination.gay/favicon.png" alt="Clove logo" width="150" />
 
   <h1>Web</h1>
 
