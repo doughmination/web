@@ -22,6 +22,7 @@
  * classes owned by several different components.
  */
 import { globalStyle } from "@vanilla-extract/css";
+import { vars } from "./themes.css";
 
 /* ---- narrow / short screens ---------------------------------------------- */
 
@@ -102,18 +103,90 @@ globalStyle(
   },
 );
 
-/** Page nav becomes a centred, wrapping group instead of a fixed column. */
+/**
+ * Page nav becomes a centred group instead of a fixed column, and now hosts
+ * its own hamburger toggle (same checkbox/label as desktop) instead of always
+ * showing the links row.
+ */
 globalStyle(".nav", {
   "@media": {
     [MOBILE]: {
       order: 3,
       position: "static",
       inset: "auto",
-      width: "100%"
+      width: "100%",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
     }
   },
 });
 
+/* Burger button: hidden on desktop (see nav.css.ts), shown on mobile. */
+globalStyle(".nav-burger", {
+  "@media": {
+    [MOBILE]: {
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      gap: "4px",
+      width: "2.5rem",
+      height: "2.5rem",
+      padding: "0 0.6rem",
+      borderRadius: 999,
+      background: vars.surface,
+      border: `1px solid ${vars.surfaceHi}`,
+      cursor: "pointer",
+      transition: "border-color 0.15s ease, background 0.15s ease",
+    },
+  },
+});
+
+globalStyle(".nav-burger:hover", {
+  "@media": {
+    [MOBILE]: {
+      borderColor: vars.accent,
+      background: vars.surfaceHi,
+    },
+  },
+});
+
+globalStyle(".nav-toggle:focus-visible ~ .nav-burger", {
+  "@media": {
+    [MOBILE]: {
+      borderColor: vars.accent,
+      outline: `2px solid ${vars.accent}`,
+      outlineOffset: 2,
+    },
+  },
+});
+
+/* The three bars. */
+globalStyle(".nav-burger span", {
+  "@media": {
+    [MOBILE]: {
+      display: "block",
+      width: "100%",
+      height: "2px",
+      borderRadius: 2,
+      background: vars.textSoft,
+      transition: "transform 0.3s ease, opacity 0.2s ease",
+    },
+  },
+});
+
+/* Checked = morph the bars into an X, same as desktop. */
+globalStyle(".nav-toggle:checked ~ .nav-burger span:nth-child(1)", {
+  "@media": { [MOBILE]: { transform: "translateY(6px) rotate(45deg)" } },
+});
+globalStyle(".nav-toggle:checked ~ .nav-burger span:nth-child(2)", {
+  "@media": { [MOBILE]: { opacity: 0 } },
+});
+globalStyle(".nav-toggle:checked ~ .nav-burger span:nth-child(3)", {
+  "@media": { [MOBILE]: { transform: "translateY(-6px) rotate(-45deg)" } },
+});
+
+/* Links row: wraps and centres as before, but now collapsed until toggled. */
 globalStyle(".nav-links", {
   "@media": {
     [MOBILE]: {
@@ -121,6 +194,22 @@ globalStyle(".nav-links", {
       flexWrap: "wrap",
       justifyContent: "center",
       gap: "0.5rem",
+      maxHeight: 0,
+      overflow: "hidden",
+      opacity: 0,
+      pointerEvents: "none",
+      transition: "opacity 0.25s ease, max-height 0.25s ease",
+    },
+  },
+});
+
+globalStyle(".nav-toggle:checked ~ .nav-links", {
+  "@media": {
+    [MOBILE]: {
+      maxHeight: "40rem",
+      opacity: 1,
+      pointerEvents: "auto",
+      marginTop: "0.5rem",
     },
   },
 });
@@ -135,6 +224,15 @@ globalStyle(".nav-link.selected", {
 
 globalStyle(".nav-link.selected::before", {
   "@media": { [MOBILE]: { display: "none" } },
+});
+
+/* Reduced motion: skip the fade/collapse, just show the links open. */
+globalStyle(".nav-links, .nav-burger span", {
+  "@media": {
+    "(prefers-reduced-motion: reduce)": {
+      transition: "none",
+    },
+  },
 });
 
 /** Keep long-form content from butting up against the nav below it. */
