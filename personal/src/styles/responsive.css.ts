@@ -116,20 +116,11 @@ globalStyle(
  * already renders), with a dark backdrop behind it.
  * ======================================================================== */
 
-/** Page nav container: just holds the burger button in the page flow. */
-globalStyle(".nav", {
-  "@media": {
-    [MOBILE]: {
-      order: 3,
-      position: "static",
-      inset: "auto",
-      width: "100%",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-    }
-  },
-});
+/**
+ * Page nav container: no mobile override needed here anymore. It stays fixed
+ * top-left (from nav.css.ts's base rule) same as desktop — the burger just
+ * sits there; the links panel below is its own fixed, centred overlay.
+ */
 
 /* ---- dark backdrop, faded in behind the open panel ------------------------ */
 
