@@ -46,9 +46,10 @@ export default function Home() {
         <Fronting />
         <Devices />
         <Location />
+        <VisitorCounter namespace="dough" hitKey="hits" label="visitors" />
       </main>
 
-      <VisitorCounter namespace="dough" hitKey="hits" label="visitors" />
+      
     </>
   );
 }

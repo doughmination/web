@@ -122,9 +122,15 @@ globalStyle(
  * sits there; the links panel below is its own fixed, centred overlay.
  */
 
-/* ---- dark backdrop, faded in behind the open panel ------------------------ */
+/* ---- dark backdrop, faded in behind the open panel ------------------------
+ * Deliberately NOT body::before — base.css.ts already uses that pseudo for
+ * the sitewide estrogen watermark, and since responsive.css.ts loads last,
+ * reusing it here would silently replace the watermark on mobile at all
+ * times, not just while the menu's open. .nav is already a fixed, empty
+ * element, so its own ::before can be position:fixed + inset:0 as a
+ * viewport-covering backdrop without any of that collision. */
 
-globalStyle("body::before", {
+globalStyle(".nav::before", {
   "@media": {
     [MOBILE]: {
       content: '""',
@@ -139,7 +145,7 @@ globalStyle("body::before", {
   },
 });
 
-globalStyle("body:has(.nav-toggle:checked)::before", {
+globalStyle(".nav:has(.nav-toggle:checked)::before", {
   "@media": {
     [MOBILE]: {
       opacity: 1,
@@ -426,6 +432,27 @@ globalStyle(
     },
   },
 );
+
+/* ---- visitor counter: drop out of the fixed corner on mobile -------------- */
+
+/**
+ * Desktop pins this to the fixed top-right corner (see visitor-counter.css.ts).
+ * On mobile it should just sit in normal flow at the bottom of .hub, below
+ * Location (it's already the last element there in page.tsx's JSX). Dropping
+ * `position: fixed` is also what fixes it poking through the nav backdrop —
+ * a fixed, z-indexed element paints above normal in-flow content no matter
+ * what, so once this is static it's naturally covered by the fixed overlay.
+ */
+globalStyle("#visitor-counter", {
+  "@media": {
+    [MOBILE]: {
+      position: "static",
+      top: "auto",
+      right: "auto",
+      marginTop: "1rem",
+    },
+  },
+});
 
 /** Keep long-form content from butting up against the nav below it. */
 globalStyle(".dev-info, .project-grid, .friend-grid", {
