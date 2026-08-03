@@ -10,6 +10,7 @@ import Providers from "./providers";
 import SettingsMenu from "@components/chrome/SettingsMenu";
 import NavMenu from "@components/chrome/NavMenu";
 import SiteChrome from "@components/chrome/SiteChrome";
+import { LanguageProvider } from "@/i18n/LanguageProvider";
 // One fixed palette. Importing for side effects emits the :root token block at
 // build time; see src/styles/themes.css.ts.
 import "@styles/themes.css";
@@ -109,25 +110,31 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://fonts.doughmination.co.uk" />
       </head>
       <body>
-        {/* Page nav (React-owned). Desktop shows a hamburger that opens icon
-            dots then telescopes them into labels; mobile is a wrapping row. */}
-        <NavMenu />
+        {/* Active language (localStorage-persisted, browser-detected on first
+            visit). Wraps everything below, not just Providers' children —
+            NavMenu and SettingsMenu need translations too and both render
+            outside Providers. See src/i18n/LanguageProvider.tsx. */}
+        <LanguageProvider>
+          {/* Page nav (React-owned). Desktop shows a hamburger that opens icon
+              dots then telescopes them into labels; mobile is a wrapping row. */}
+          <NavMenu />
 
-        {/* Routes core.ts's nav clicks through Next's client router so the
-            layout (and bg-music audio) never unloads between pages. */}
-        <NavBridge />
+          {/* Routes core.ts's nav clicks through Next's client router so the
+              layout (and bg-music audio) never unloads between pages. */}
+          <NavBridge />
 
-        {/* Chrome, now in React (theme owned here; cat + music bridge to core.ts) */}
-        <SettingsMenu />
+          {/* Chrome, now in React (theme owned here; cat + music bridge to core.ts) */}
+          <SettingsMenu />
 
-        {/* Wrapper data layer: one REST client + socket shared by every
-            migrated widget (Fronting first). See providers.tsx. */}
-        <Providers>{children}</Providers>
+          {/* Wrapper data layer: one REST client + socket shared by every
+              migrated widget (Fronting first). See providers.tsx. */}
+          <Providers>{children}</Providers>
 
-        {/* Persistent chrome, ported into the bundle: nav builder, oneko cat, and
-            bg music. Runs once, client-only, via SiteChrome. (Realtime now lives
-            in the wrapper's shared socket via Providers, not here.) */}
+          {/* Persistent chrome, ported into the bundle: nav builder, oneko cat, and
+              bg music. Runs once, client-only, via SiteChrome. (Realtime now lives
+              in the wrapper's shared socket via Providers, not here.) */}
           <SiteChrome catSrc="/oneko/classic.png" />
+        </LanguageProvider>
       </body>
     </html>
   );

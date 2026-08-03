@@ -20,6 +20,7 @@ import {
   Boxes,
   Controller,
 } from "react-bootstrap-icons";
+import type { TranslationKey } from "@/i18n/translate";
 
 interface IconProps {
   size?: number | string;
@@ -28,69 +29,72 @@ interface IconProps {
 }
 
 export interface NavItem {
-  label: string;
+  // A translation key rather than a literal string — NavMenu resolves it
+  // through useLanguage()'s t() at render time, so the label follows the
+  // active language. See src/i18n/locales/en.ts for the English text.
+  labelKey: TranslationKey;
   href: string;
   Icon: ComponentType<IconProps>;
 }
 
 export const navItems: NavItem[] = [
   {
-    label: "Home",
+    labelKey: "nav.home",
     href: "/",
     Icon: House,
   },
   {
-    label: "Cool People",
+    labelKey: "nav.coolPeople",
     href: "/cool-people",
     Icon: People,
   },
   {
-    label: "Dev Info",
+    labelKey: "nav.devInfo",
     href: "/dev-info",
     Icon: CodeSlash,
   },
   {
-    label: "Discord",
+    labelKey: "nav.discord",
     href: "/discord",
     Icon: Discord,
   },
   {
-    label: "Servers",
+    labelKey: "nav.servers",
     href: "/servers",
     Icon: HddNetwork,
   },
   {
-    label: "Projects",
+    labelKey: "nav.projects",
     href: "/projects",
     Icon: Kanban,
   },
   {
-    label: "Music",
+    labelKey: "nav.music",
     href: "/music",
     Icon: MusicNoteBeamed,
   },
   {
-    label: "88x31",
+    labelKey: "nav.webring",
     href: "/88x31",
     Icon: Grid,
   },
   {
-    label: "Guestbook",
+    labelKey: "nav.guestbook",
     href: "/guestbook",
     Icon: Book,
   },
   {
-    label: "Selfies",
+    labelKey: "nav.selfies",
     href: "/selfies",
     Icon: Camera,
   },
   {
-    label: "Minecraft",
+    labelKey: "nav.minecraft",
     href: "/minecraft",
     Icon: Boxes,
   },
   {
-    label: "Genshin",
+    labelKey: "nav.genshin",
     href: "/genshin",
     Icon: Controller,
   },

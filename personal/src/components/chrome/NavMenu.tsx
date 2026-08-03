@@ -19,6 +19,7 @@ import { usePathname } from "next/navigation";
 
 import { navItems } from "./navItems";
 import { playOpenSound, playCloseSound, playHoverSound, playClickSound } from "@lib/sound";
+import { useLanguage } from "@/i18n/LanguageProvider";
 
 function normalize(path: string): string {
   return path.replace(/\/+$/, "") || "/";
@@ -26,6 +27,7 @@ function normalize(path: string): string {
 
 export default function NavMenu() {
   const current = normalize(usePathname());
+  const { t } = useLanguage();
 
   function handleToggleChange(event: React.ChangeEvent<HTMLInputElement>) {
     if (event.target.checked) {
@@ -51,7 +53,8 @@ export default function NavMenu() {
       </label>
 
       <nav className="nav-links">
-        {navItems.map(({ label, href, Icon }) => {
+        {navItems.map(({ labelKey, href, Icon }) => {
+          const label = t(labelKey);
           const external = href.startsWith("http");
           const selected = !external && normalize(href) === current;
           const className = `nav-link${selected ? " selected" : ""}`;

@@ -84,12 +84,15 @@
 }
 
 .items .btn:nth-child(1) {
-  transition-delay: 0.1s;
+  transition-delay: 0.15s;
 }
 .items .btn:nth-child(2) {
-  transition-delay: 0.05s;
+  transition-delay: 0.1s;
 }
 .items .btn:nth-child(3) {
+  transition-delay: 0.05s;
+}
+.items .btn:nth-child(4) {
   transition-delay: 0s;
 }
 
@@ -101,6 +104,9 @@
 }
 .bar.open .items .btn:nth-child(3) {
   transition-delay: 0.1s;
+}
+.bar.open .items .btn:nth-child(4) {
+  transition-delay: 0.15s;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -119,14 +125,14 @@
   object-fit: contain;
 }
 
-/* ---- Theme picker ------------------------------------------------------
+/* ---- Language picker ------------------------------------------------------
    Flies out to the right of the whole bar so it never covers the other buttons.
    Anchored to .bar (position: fixed), NOT to .items — .items is a narrow flex
    column, and positioning against it left the grid with no width to resolve
-   against. The minmax() floor is load-bearing for the same reason: minmax(0,1fr)
-   lets both tracks collapse to zero. Past ~8 themes max-height scrolls it
-   rather than letting it run off-screen. */
-.themePicker {
+   against. Single column: only a handful of languages, and one column reads
+   better than a lopsided 2-up grid with a trailing orphan. Past ~8 entries
+   max-height scrolls it rather than letting it run off-screen. */
+.langPicker {
   position: absolute;
   left: calc(100% + 0.5rem);
   /* Lifted clear of the webring dock, which is also fixed to bottom: 1rem and
@@ -136,7 +142,7 @@
   bottom: var(--dock-clearance);
   z-index: 1;
   display: grid;
-  grid-template-columns: repeat(2, minmax(7.5rem, 1fr));
+  grid-template-columns: minmax(8.5rem, 1fr);
   gap: 0.35rem;
   padding: 0.5rem;
   width: max-content;
@@ -149,7 +155,7 @@
   box-shadow: 0 10px 26px -16px rgba(0, 0, 0, 0.7);
 }
 
-.themeOption {
+.langOption {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -165,36 +171,37 @@
   transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
 }
 
-.themeOption:hover {
+.langOption:hover {
   border-color: var(--accent);
   color: var(--text);
 }
 
-.themeActive {
+.langActive {
   border-color: var(--accent);
   background: var(--surface-hi);
   color: var(--text);
 }
 
-.themeSwatch {
-  width: 20px;
-  height: 20px;
+/* Small text badge (EN / JA / ES) standing in for a flag icon — no image
+   assets needed, and it doubles as a legible code when the native name
+   (e.g. "日本語") doesn't tell an unfamiliar reader what it says. */
+.langCode {
   flex: 0 0 auto;
   display: block;
-  object-fit: contain;
+  min-width: 1.6rem;
+  padding: 0.05rem 0.3rem;
+  border-radius: 6px;
+  background: var(--surface-hi);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-align: center;
+  text-transform: uppercase;
 }
 
-.themeName {
+.langName {
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-/* Narrow screens: one column, still flying out to the right. Opening upward
-   instead would land it on top of .items, which occupies that exact space. */
-@media (max-width: 480px) {
-  .themePicker {
-    grid-template-columns: minmax(7.5rem, 1fr);
-  }
 }
 
 /* the classic oneko idle frame, scaled down from the 256x128 sprite sheet */

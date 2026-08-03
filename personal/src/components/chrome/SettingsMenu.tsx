@@ -7,8 +7,10 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { Gear, PlayFill, PauseFill, EyeFill, EyeSlashFill } from "react-bootstrap-icons";
+import { Gear, PlayFill, PauseFill, EyeFill, EyeSlashFill, Translate } from "react-bootstrap-icons";
 import { playClickSound, playOpenSound, playCloseSound } from "@lib/sound";
+import { useLanguage } from "@/i18n/LanguageProvider";
+import { LANGUAGE_NAMES, SUPPORTED_LANGUAGES } from "@/i18n/config";
 import styles from "./SettingsMenu.module.css";
 
 /**
@@ -52,7 +54,10 @@ function getCatHiddenSnapshot(): boolean {
 export default function SettingsMenu() {
   const [open, setOpen] = useState(false);
   const [paused, setPaused] = useState(true);
+  const [langPickerOpen, setLangPickerOpen] = useState(false);
   const barRef = useRef<HTMLDivElement>(null);
+
+  const { lang, setLang, t } = useLanguage();
 
   const catHidden = useSyncExternalStore(subscribeCatHidden, getCatHiddenSnapshot, () => false);
 
@@ -84,7 +89,10 @@ export default function SettingsMenu() {
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") {
+        setLangPickerOpen(false);
+        setOpen(false);
+      }
     };
     document.addEventListener("keydown", onKey);
     return () => {
@@ -92,15 +100,22 @@ export default function SettingsMenu() {
     };
   }, [open]);
 
+  // The language picker only makes sense while the bar itself is open —
+  // collapse it too if the bar closes some other way (e.g. its own Escape
+  // handler above already covers Escape; this covers clicking the cog shut).
+  useEffect(() => {
+    if (!open) setLangPickerOpen(false);
+  }, [open]);
+
   return (
     <div className={`${styles.bar}${open ? " " + styles.open : ""}`} ref={barRef}>
       <button
         type="button"
         className={`${styles.btn} ${styles.toggle}`}
-        aria-label="Settings"
+        aria-label={t("settings.title")}
         aria-haspopup="true"
         aria-expanded={open}
-        title="Settings"
+        title={t("settings.title")}
         onClick={(e) => {
           e.stopPropagation();
           setOpen((o) => {
@@ -121,8 +136,8 @@ export default function SettingsMenu() {
         <button
           type="button"
           className={styles.btn}
-          title="Cat collection"
-          aria-label="Open cat collection"
+          title={t("settings.catCollection")}
+          aria-label={t("settings.openCatCollection")}
           tabIndex={open ? 0 : -1}
           onClick={() => {
             playClickSound();
@@ -136,8 +151,8 @@ export default function SettingsMenu() {
           type="button"
           className={styles.btn}
           aria-pressed={catHidden}
-          title={catHidden ? "Show cat" : "Hide cat"}
-          aria-label={catHidden ? "Show cat" : "Hide cat"}
+          title={catHidden ? t("settings.showCat") : t("settings.hideCat")}
+          aria-label={catHidden ? t("settings.showCat") : t("settings.hideCat")}
           tabIndex={open ? 0 : -1}
           onClick={toggleCat}
         >
@@ -148,7 +163,7 @@ export default function SettingsMenu() {
           type="button"
           className={styles.btn}
           aria-pressed={!paused}
-          title={paused ? "Play background music" : "Pause background music"}
+          title={paused ? t("settings.playMusic") : t("settings.pauseMusic")}
           tabIndex={open ? 0 : -1}
           onClick={() => {
             playClickSound();
@@ -157,7 +172,55 @@ export default function SettingsMenu() {
         >
           {paused ? <PlayFill size={22} /> : <PauseFill size={22} />}
         </button>
+
+        <button
+          type="button"
+          className={styles.btn}
+          aria-haspopup="true"
+          aria-expanded={langPickerOpen}
+          aria-pressed={langPickerOpen}
+          title={t("settings.language")}
+          aria-label={t("settings.language")}
+          tabIndex={open ? 0 : -1}
+          onClick={(e) => {
+            e.stopPropagation();
+            playClickSound();
+            setLangPickerOpen((o) => !o);
+          }}
+        >
+          <Translate size={22} />
+        </button>
       </div>
+
+      {/* Flyout grid of language options, anchored to the whole bar (see
+          .langPicker) so it never overlaps .items. Only rendered while the
+          bar is open so it can't be reached or focused while collapsed. */}
+      {open && langPickerOpen && (
+        <div className={styles.langPicker} role="menu" aria-label={t("settings.language")}>
+          {SUPPORTED_LANGUAGES.map((code) => {
+            const active = code === lang;
+            return (
+              <button
+                key={code}
+                type="button"
+                role="menuitemradio"
+                aria-checked={active}
+                className={`${styles.langOption}${active ? " " + styles.langActive : ""}`}
+                onClick={() => {
+                  playClickSound();
+                  setLang(code);
+                  setLangPickerOpen(false);
+                }}
+              >
+                <span className={styles.langCode} aria-hidden="true">
+                  {code}
+                </span>
+                <span className={styles.langName}>{LANGUAGE_NAMES[code]}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
