@@ -11,22 +11,22 @@ const CDN = "https://fonts.doughmination.co.uk";
 /** Comic Code — the site's body/mono face, four cuts. */
 const COMIC_CODE = [
   {
-    file: "ComicCode-Regular_2022-05-24-151938_hsmz",
+    file: "ComicCode-Regular",
     weight: 400,
     style: "normal"
   },
   {
-    file: "ComicCode-Italic_2022-05-24-151939_rdtu",
+    file: "ComicCode-Italic",
     weight: 400,
     style: "italic"
   },
   {
-    file: "ComicCode-Medium_2022-05-24-151941_ugqm",
+    file: "ComicCode-Medium",
     weight: 500,
     style: "normal"
   },
   {
-    file: "ComicCode-Bold_2022-05-24-152309_zqkm",
+    file: "ComicCode-Bold",
     weight: 700,
     style: "normal"
   },
