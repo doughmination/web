@@ -34,7 +34,7 @@ const COMIC_CODE = [
 
 for (const { file, weight, style } of COMIC_CODE) {
   globalFontFace("Comic Code", {
-    src: `url('${CDN}/${file}.woff2') format('woff2'), url('${CDN}/${file}.woff') format('woff')`,
+    src: `url('${CDN}/Comic-Code/woff2/${file}.woff2') format('woff2'), url('${CDN}/Comic-Code/woff/${file}.woff') format('woff')`,
     fontWeight: weight,
     fontStyle: style,
     // swap: show fallback text immediately rather than blocking on the webfont.
@@ -55,7 +55,7 @@ const DDN: Array<[family: string, file: string]> = [
 
 for (const [family, file] of DDN) {
   globalFontFace(family, {
-    src: `url('/fonts/${file}') format('woff2')`,
+    src: `url('${CDN}/discord/${file}') format('woff2')`,
     fontDisplay: "swap",
   });
 }
