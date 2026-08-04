@@ -8,6 +8,7 @@
 
 import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Circle } from "react-leaflet";
+import { useLanguage } from "@/i18n/LanguageProvider";
 
 interface GeocodeResult {
   lat: number;
@@ -43,6 +44,7 @@ export default function CityMap({
   label: string;
   className?: string;
 }) {
+  const { t } = useLanguage();
   const [coords, setCoords] = useState<GeocodeResult | null | undefined>(undefined);
 
   useEffect(() => {
@@ -68,7 +70,7 @@ export default function CityMap({
       dragging={false}
       zoomControl={false}
       attributionControl={true}
-      aria-label={`Map showing ${label}`}
+      aria-label={t("map.showing").replace("{name}", label)}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

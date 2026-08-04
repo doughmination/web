@@ -8,6 +8,7 @@
 
 import type { CSSProperties } from "react";
 import { useFronters } from "@doughmination/react-api";
+import { useLanguage } from "@/i18n/LanguageProvider";
 
 // member.color is a 6-char hex with no leading #, and may be null.
 function colorHex(color?: string | null): string | undefined {
@@ -15,6 +16,8 @@ function colorHex(color?: string | null): string | undefined {
 }
 
 export default function Fronting() {
+  const { t } = useLanguage();
+
   // Seeds from GET /v2/plural/fronters, then stays live via the shared
   // socket's fronters_update event. Replaces the old useDMFeed path.
   const { data, isPending } = useFronters();
@@ -28,22 +31,22 @@ export default function Fronting() {
   return (
     <section
       className="fronting-card"
-      aria-label="Currently fronting"
+      aria-label={t("fronting.ariaLabel")}
       aria-busy={loading}
     >
       <div className="fr-head">
         <span className="fr-dot" aria-hidden="true" />
-        <span className="fr-label">Currently fronting</span>
+        <span className="fr-label">{t("fronting.heading")}</span>
       </div>
 
       <div className={loading ? "fr-members is-fetching" : "fr-members"}>
         {loading ? (
-          <span className="fr-empty">loading data…</span>
+          <span className="fr-empty">{t("fronting.loading")}</span>
         ) : members.length === 0 ? (
-          <span className="fr-empty">no one is currently fronting</span>
+          <span className="fr-empty">{t("fronting.empty")}</span>
         ) : (
           members.map((member, index) => {
-            const name = member.display_name || member.name || "Unknown";
+            const name = member.display_name || member.name || t("fronting.unknownName");
             const accent = colorHex(member.color);
 
             return (

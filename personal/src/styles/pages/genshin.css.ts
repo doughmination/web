@@ -76,7 +76,7 @@ globalStyle(".genshin-desktop-only", {
   },
 });
 
-globalStyle(".genshin-partial-note", {
+globalStyle(".genshin-partial-note, .genshin-stale-note", {
   textAlign: "center",
   color: vars.text,
   opacity: 0.65,
@@ -84,6 +84,13 @@ globalStyle(".genshin-partial-note", {
   maxWidth: "48ch",
   margin: "-1rem auto 1.5rem",
   lineHeight: 1.5,
+});
+
+/** The stale banner (live Enka data unavailable) reads as a warning rather
+ *  than a neutral note. */
+globalStyle(".genshin-stale-note", {
+  color: vars.warning,
+  opacity: 0.85,
 });
 
 globalStyle(".genshin-card", {
@@ -133,6 +140,18 @@ globalStyle(".genshin-tag", {
 
 globalStyle(".genshin-tag.owned", { background: vars.success });
 globalStyle(".genshin-tag.want", { background: vars.warning });
+
+/**
+ * Owned, but only known from the API's persistent ledger — no longer in the
+ * live showcase, so the level shown is last-known. Rendered as a hollow/dashed
+ * version of the owned badge so it reads as "owned, just not tracked live".
+ */
+globalStyle(".genshin-tag.owned.untracked", {
+  background: "transparent",
+  color: vars.success,
+  border: `1px dashed ${vars.success}`,
+  boxShadow: "none",
+});
 
 globalStyle(".genshin-meta", {
   padding: "1rem 1.1rem 1.2rem",

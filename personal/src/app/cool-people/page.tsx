@@ -6,6 +6,7 @@
 
 import type { Metadata } from "next";
 import FriendsGrid from "@scripts/FriendsGrid";
+import { Tr, TrLink } from "@components/chrome/i18nText";
 import "@styles/presence-card.css";
 import "@styles/pages/cool-people.css";
 
@@ -56,25 +57,20 @@ export default function CoolPeoplePage() {
 
       <main className="hub friends-wrap">
         <header className="hub-header">
-          <h1>Cool People</h1>
+          <h1><Tr k="coolPeople.title" /></h1>
           <p className="tagline">
-            This is where people I know can be put up on my site, click their
-            profiles for their pages
+            <Tr k="coolPeople.tagline" />
           </p>
         </header>
 
         <FriendsGrid />
 
         <p className="friends-disclaimer">
-          Presence data is served by{" "}
-          <a
+          <TrLink
+            k="coolPeople.presenceCredit"
             href="https://doughmination.uk"
-            target="_blank"
-            rel="noopener"
-          >
-            Doughmination Restful
-          </a>
-          .
+            linkText="Doughmination Restful"
+          />
         </p>
       </main>
 

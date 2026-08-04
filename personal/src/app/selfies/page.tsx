@@ -6,6 +6,7 @@
 
 import type { Metadata } from "next";
 import SelfiesGallery from "@scripts/SelfiesGallery";
+import { Tr } from "@components/chrome/i18nText";
 import "@styles/pages/selfies.css";
 
 export const metadata: Metadata = {
@@ -41,9 +42,9 @@ export default function SelfiesPage() {
     <>
       <div className="hub selfies-wrap">
         <header className="hub-header">
-          <h1>Selfies</h1>
+          <h1><Tr k="selfies.title" /></h1>
           <p className="tagline">
-            A gallery of my selfies — tap any photo to view it full size
+            <Tr k="selfies.tagline" />
           </p>
         </header>
 

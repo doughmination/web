@@ -6,6 +6,7 @@
 
 import type { Metadata } from "next";
 import ServersGuilds from "@scripts/ServersGuilds";
+import { Tr } from "@components/chrome/i18nText";
 // Shared card styles first, page overrides second — that's the cascade order.
 import "@styles/stage.css";
 import "@styles/pages/guilds.css";
@@ -52,8 +53,8 @@ export default function ServersPage() {
 
       <main className="presence-stage">
         <div className="presence-intro">
-          <h1>Servers</h1>
-          <p>Discord servers I&apos;m part of, live via Doughmination Restful.</p>
+          <h1><Tr k="serversPage.title" /></h1>
+          <p><Tr k="serversPage.intro" /></p>
         </div>
 
         <ServersGuilds />

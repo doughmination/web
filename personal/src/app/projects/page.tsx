@@ -5,6 +5,8 @@
  */
 
 import type { Metadata } from "next";
+import { Tr } from "@components/chrome/i18nText";
+import type { TranslationKey } from "@/i18n/translate";
 import "@styles/pages/projects.css";
 
 export const metadata: Metadata = {
@@ -42,9 +44,9 @@ type Project = {
   img: string;
   alt: string;
   title: string;
-  status: string;
+  statusKey: TranslationKey;
   closed?: boolean;
-  bio: string;
+  bioKey: TranslationKey;
   live?: string;
 };
 
@@ -54,25 +56,25 @@ const GIRLS_NETWORK: Project[] = [
     img: "/projects/ghostwire.png",
     alt: "Ghostwire",
     title: "Ghostwire",
-    status: "Closed Source",
+    statusKey: "projects.closedSource",
     closed: true,
-    bio: "The private security bot and brains behind everything major in Girls.",
+    bioKey: "projects.bioGhostwire",
   },
   {
     href: "https://github.com/Girls-Network/GayBot-v2",
     img: "/projects/gaybot.png",
     alt: "GayBot",
     title: "GayBot",
-    status: "Open Source",
-    bio: "A Discord bot for LGBTQIA+ servers — keyword emoji reactions, identity profiles, lookups, and a few fun extras.",
+    statusKey: "projects.openSource",
+    bioKey: "projects.bioGaybot",
   },
   {
     href: "https://github.com/Girls-Network/bansync",
     img: "/projects/bansync.png",
     alt: "BanSync",
     title: "BanSync",
-    status: "Open Source",
-    bio: "Syncs bans from Girls to our partner servers.",
+    statusKey: "projects.openSource",
+    bioKey: "projects.bioBansync",
   },
 ];
 
@@ -82,8 +84,8 @@ const PERSONAL: Project[] = [
     img: "/favicon.png",
     alt: "Doughmination Mail",
     title: "Doughmination Mail",
-    status: "Open Source",
-    bio: "My personal inbox, themed on Catppuchin Mocha, pink accent",
+    statusKey: "projects.openSource",
+    bioKey: "projects.bioMail",
     live: "https://doughmination.tech",
   },
   {
@@ -91,8 +93,8 @@ const PERSONAL: Project[] = [
     img: "/favicon.png",
     alt: "API",
     title: "Doughmination API",
-    status: "Open Source",
-    bio: "My personal API, which I dont mind people hooking into",
+    statusKey: "projects.openSource",
+    bioKey: "projects.bioApi",
     live: "https://doughmination.uk",
   },
   {
@@ -100,16 +102,16 @@ const PERSONAL: Project[] = [
     img: "/favicon.png",
     alt: "Shortcuts Bot",
     title: "Shortcuts Bot",
-    status: "Open Source",
-    bio: "My personal Discord bot I use for utilies",
+    statusKey: "projects.openSource",
+    bioKey: "projects.bioShortcuts",
   },
   {
     href: "https://github.com/doughmination/cf-error-worker",
     img: "/projects/cf.png",
     alt: "CF Error Worker",
     title: "CF Error Worker",
-    status: "Open Source",
-    bio: "This is what displays the error 500-600 when a page goes down",
+    statusKey: "projects.openSource",
+    bioKey: "projects.bioCfError",
   },
 ];
 
@@ -130,11 +132,11 @@ function ProjectCard({ p }: { p: Project }) {
           <div className="project-card-head">
             <span className="project-card-title">{p.title}</span>
             <span className={`project-card-status${p.closed ? " closed" : ""}`}>
-              {p.status}
+              <Tr k={p.statusKey} />
             </span>
           </div>
           <p className={`project-card-bio`}>
-            {p.bio}
+            <Tr k={p.bioKey} />
           </p>
         </div>
       </a>
@@ -145,7 +147,7 @@ function ProjectCard({ p }: { p: Project }) {
           target="_blank"
           rel="noopener noreferrer"
         >
-          View Live ↗
+          <Tr k="projects.viewLive" />
         </a>
       )}
     </div>
@@ -171,7 +173,7 @@ export default function ProjectsPage() {
       <br />
 
       <section className="section" id="personal-projects">
-        <h2 className="section-title">Personal Projects</h2>
+        <h2 className="section-title"><Tr k="projects.personalProjects" /></h2>
         <div className="project-grid">
           {PERSONAL.map((p) => (
             <ProjectCard key={p.href} p={p} />
@@ -180,7 +182,7 @@ export default function ProjectsPage() {
       </section>
 
       <section className="section" id="girls-network">
-        <h2 className="section-title">Girls Network</h2>
+        <h2 className="section-title"><Tr k="projects.girlsNetwork" /></h2>
         <div className="project-grid">
           {GIRLS_NETWORK.map((p) => (
             <ProjectCard key={p.href} p={p} />

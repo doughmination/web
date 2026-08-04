@@ -9,6 +9,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CameraFill } from "react-bootstrap-icons";
 import { playClickSound } from "@lib/sound";
+import { useLanguage } from "@/i18n/LanguageProvider";
 
 /* Ported from selfies.js — grid + lightbox from /selfies/selfies.json.
    Manifest is an array of filename strings or { src, alt, caption } objects. */
@@ -51,6 +52,7 @@ function normalize(entry: unknown, i: number): Item | null {
 type Status = "loading" | "ready" | "empty" | "error";
 
 export default function SelfiesGallery() {
+  const { t } = useLanguage();
   const [status, setStatus] = useState<Status>("loading");
   const [items, setItems] = useState<Item[]>([]);
   const [failed, setFailed] = useState<Set<string>>(new Set());
@@ -131,21 +133,21 @@ export default function SelfiesGallery() {
   }, [open, close, step]);
 
   if (status === "loading") {
-    return <div className="selfie-grid" aria-label="Selfies gallery" aria-busy="true" />;
+    return <div className="selfie-grid" aria-label={t("selfies.galleryLabel")} aria-busy="true" />;
   }
   if (status === "empty") {
     return (
-      <div className="selfie-grid" aria-label="Selfies gallery">
+      <div className="selfie-grid" aria-label={t("selfies.galleryLabel")}>
         <p className="selfie-empty">
-          No selfies yet, check back soon! <CameraFill aria-hidden="true" />
+          {t("selfies.empty")} <CameraFill aria-hidden="true" />
         </p>
       </div>
     );
   }
   if (status === "error") {
     return (
-      <div className="selfie-grid" aria-label="Selfies gallery">
-        <p className="selfie-empty">Couldn&apos;t load the selfies right now.</p>
+      <div className="selfie-grid" aria-label={t("selfies.galleryLabel")}>
+        <p className="selfie-empty">{t("selfies.error")}</p>
       </div>
     );
   }
@@ -155,13 +157,13 @@ export default function SelfiesGallery() {
 
   return (
     <>
-      <div className="selfie-grid" aria-label="Selfies gallery">
+      <div className="selfie-grid" aria-label={t("selfies.galleryLabel")}>
         {visible.map((it, i) => (
           <figure className="selfie-item" key={it.src}>
             <button
               type="button"
               className="selfie-thumb"
-              aria-label={`Open ${it.caption || it.alt}`}
+              aria-label={t("selfies.openLabel").replace("{name}", it.caption || it.alt)}
               onClick={() => {
                 playClickSound();
                 openAt(i);
@@ -186,7 +188,7 @@ export default function SelfiesGallery() {
           className={`lightbox${reduceMotion ? "" : " is-open"}`}
           role="dialog"
           aria-modal="true"
-          aria-label="Selfie viewer"
+          aria-label={t("selfies.viewerLabel")}
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               playClickSound();
@@ -198,7 +200,7 @@ export default function SelfiesGallery() {
             ref={closeBtnRef}
             className="lightbox-close"
             type="button"
-            aria-label="Close (Esc)"
+            aria-label={t("selfies.closeEsc")}
             onClick={() => {
               playClickSound();
               close();
@@ -210,7 +212,7 @@ export default function SelfiesGallery() {
             <button
               className="lightbox-nav lightbox-prev"
               type="button"
-              aria-label="Previous selfie"
+              aria-label={t("selfies.prev")}
               onClick={() => {
                 playClickSound();
                 step(-1);
@@ -230,7 +232,7 @@ export default function SelfiesGallery() {
             <button
               className="lightbox-nav lightbox-next"
               type="button"
-              aria-label="Next selfie"
+              aria-label={t("selfies.next")}
               onClick={() => {
                 playClickSound();
                 step(1);

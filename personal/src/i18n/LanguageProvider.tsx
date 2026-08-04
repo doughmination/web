@@ -17,6 +17,7 @@ import type { ReactNode } from "react";
 import { DEFAULT_LANGUAGE, detectLanguage, isLanguage, type Language } from "./config";
 import { dictionaries } from "./dictionaries";
 import { resolve, type TranslationKey } from "./translate";
+import type { Dictionary } from "./locales/en";
 
 const STORAGE_KEY = "lang";
 
@@ -24,6 +25,10 @@ interface LanguageContextValue {
   lang: Language;
   setLang: (lang: Language) => void;
   t: (key: TranslationKey) => string;
+  // The full dictionary for the active language — for the rare case (e.g.
+  // relTime() in util.ts) where a plain, non-component helper needs a group
+  // of related strings at once rather than one key via t().
+  dict: Dictionary;
 }
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
@@ -53,7 +58,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   const t = useCallback((key: TranslationKey) => resolve(dictionaries[lang], key), [lang]);
 
-  const value = useMemo(() => ({ lang, setLang, t }), [lang, setLang, t]);
+  const value = useMemo(() => ({ lang, setLang, t, dict: dictionaries[lang] }), [lang, setLang, t]);
 
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 }

@@ -7,6 +7,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLanguage } from "@/i18n/LanguageProvider";
 
 /* Ported from visitor-counter.js — a pixel-digit hit counter (via Abacus).
    Caches per tab-session so a refresh doesn't re-increment the count. */
@@ -15,6 +16,7 @@ type Props = {
   namespace?: string;
   /** Abacus key (named hitKey since `key` is reserved in React). */
   hitKey?: string;
+  /** Overrides the translated default ("visitors" / "訪問者" / "visitantes"). */
   label?: string;
   imgPath?: string;
   imgExt?: string;
@@ -57,10 +59,12 @@ function setCached(ns: string, key: string, count: number) {
 export default function VisitorCounter({
   namespace = "dough",
   hitKey = "hits",
-  label = "visitors",
+  label,
   imgPath = "/numbers/",
   imgExt = ".png",
 }: Props) {
+  const { t } = useLanguage();
+  const resolvedLabel = label ?? t("visitorCounter.label");
   const [count, setCount] = useState<number | null>(null);
   const [error, setError] = useState(false);
 
@@ -93,9 +97,9 @@ export default function VisitorCounter({
   }, [namespace, hitKey]);
 
   return (
-    <div id="visitor-counter" className="vc-root" role="status" aria-label="Visitor count">
+    <div id="visitor-counter" className="vc-root" role="status" aria-label={t("visitorCounter.ariaLabel")}>
       {error ? (
-        <span className="vc-error">?? visitors</span>
+        <span className="vc-error">{t("visitorCounter.error")}</span>
       ) : (
         <>
           <div className="vc-digits">
@@ -109,7 +113,7 @@ export default function VisitorCounter({
                   <img key={i} src={`${imgPath}${d}${imgExt}`} alt={d} width={22.5} height={50} />
                 ))}
           </div>
-          {label ? <span className="vc-label">{label}</span> : null}
+          {resolvedLabel ? <span className="vc-label">{resolvedLabel}</span> : null}
         </>
       )}
     </div>

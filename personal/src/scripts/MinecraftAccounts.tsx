@@ -23,6 +23,8 @@ import {
 } from "react-bootstrap-icons";
 import { createWave } from "./skinAnimations";
 import { playClickSound } from "@lib/sound";
+import { useLanguage } from "@/i18n/LanguageProvider";
+import type { TranslationKey } from "@/i18n/translate";
 
 /* Ported from minecraft.js — account cards + a detail modal (Overview / 3D
    Model / Hypixel). The 3D tab uses the lazy-loaded skinview3d WebGL viewer,
@@ -38,9 +40,12 @@ const CAPE_H = 96;
  * styles/themes.css.ts exactly. A typo here fails silently (the var just doesn't
  * resolve), which is why they're listed against the contract rather than guessed.
  */
-const ROLE_META: Record<string, { label: string; accent: string }> = {
+// `labelKey` (when set) is the translated label; `label` is the literal
+// fallback for the ones that are proper names (Furina/Luna/Uzi stay as-is).
+const ROLE_META: Record<string, { label: string; labelKey?: TranslationKey; accent: string }> = {
   main: {
     label: "Main",
+    labelKey: "minecraftPage.roleMain",
     accent: "sapphire"
   },
   furina: {
@@ -57,9 +62,15 @@ const ROLE_META: Record<string, { label: string; accent: string }> = {
   },
   alt: {
     label: "Alt",
+    labelKey: "minecraftPage.roleAlt",
     accent: "maroon"
   },
 };
+
+/** Resolve a role's display label against the active locale. */
+function roleLabel(meta: { label: string; labelKey?: TranslationKey }, t: (k: TranslationKey) => string): string {
+  return meta.labelKey ? t(meta.labelKey) : meta.label;
+}
 
 export type Cfg = { role: string; uid: string };
 type ProfileData = {
@@ -180,12 +191,13 @@ function Row({ k, v }: { k: string; v: string }) {
   );
 }
 function CopyBtn({ value }: { value: string }) {
+  const { t } = useLanguage();
   const [copied, setCopied] = useState(false);
   return (
     <button
       className="mc-copy mc-row-v"
       type="button"
-      title="Click to copy"
+      title={t("minecraftPage.clickToCopy")}
       onClick={() => {
         playClickSound();
         if (navigator.clipboard) {
@@ -199,7 +211,7 @@ function CopyBtn({ value }: { value: string }) {
         }
       }}
     >
-      {copied ? "Copied!" : value}
+      {copied ? t("minecraftPage.copied") : value}
     </button>
   );
 }
@@ -218,11 +230,12 @@ function CapeCanvas({ url }: { url: string }) {
 
 // ---- 3D model tab ---------------------------------------------------------
 function Skin3D({ data }: { data: ProfileData }) {
+  const { t } = useLanguage();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const viewerRef = useRef<SkinViewerInstance | null>(null);
   const svRef = useRef<Skinview3d | null>(null);
   const [ready, setReady] = useState(false);
-  const [loadingMsg, setLoadingMsg] = useState<string | null>("Loading 3D…");
+  const [loadingMsg, setLoadingMsg] = useState<string | null>(t("minecraftPage.loading3d"));
 
   const capes = capeList(data);
   const [capeIdx, setCapeIdx] = useState(capes.length ? 1 : 0);
@@ -237,7 +250,7 @@ function Skin3D({ data }: { data: ProfileData }) {
         if (disposed || !canvasRef.current) return;
         svRef.current = sv;
         if (!data.skin_url) {
-          setLoadingMsg("No skin available");
+          setLoadingMsg(t("minecraftPage.noSkin"));
           return;
         }
         const viewer = new sv.SkinViewer({
@@ -251,9 +264,9 @@ function Skin3D({ data }: { data: ProfileData }) {
         viewer
           .loadSkin(data.skin_url, { model: data.skin_model === "slim" ? "slim" : "default" })
           .then(() => setLoadingMsg(null))
-          .catch(() => setLoadingMsg("Couldn't load skin"));
+          .catch(() => setLoadingMsg(t("minecraftPage.skinLoadError")));
       })
-      .catch(() => setLoadingMsg("3D viewer failed to load"));
+      .catch(() => setLoadingMsg(t("minecraftPage.viewerError")));
     return () => {
       disposed = true;
       if (viewerRef.current) {
@@ -313,11 +326,15 @@ function Skin3D({ data }: { data: ProfileData }) {
 
   const capeOptions = [
     {
-      label: "No cape",
+      label: t("minecraftPage.noCape"),
       url: null as string | null
     },
     ...capes.map((c, i) => ({
-      label: c.name ? cap(c.name) : capes.length > 1 ? `Cape ${i + 1}` : "Cape",
+      label: c.name
+        ? cap(c.name)
+        : capes.length > 1
+          ? t("minecraftPage.capeN").replace("{n}", String(i + 1))
+          : t("minecraftPage.cape"),
       url: c.url,
     })),
   ];
@@ -330,11 +347,11 @@ function Skin3D({ data }: { data: ProfileData }) {
           {loadingMsg}
         </div>
       </div>
-      <p className="mc-3d-hint">Drag to spin · scroll to zoom</p>
+      <p className="mc-3d-hint">{t("minecraftPage.spinHint")}</p>
 
       {capeOptions.length > 1 ? (
         <div className="mc-cape-select mc-ctl-group">
-          <span className="mc-ctl-label">Cape</span>
+          <span className="mc-ctl-label">{t("minecraftPage.capeLabel")}</span>
           {capeOptions.map((opt, i) => (
             <button
               key={i}
@@ -363,7 +380,7 @@ function Skin3D({ data }: { data: ProfileData }) {
                   });
                 }}
               >
-                <Feather aria-hidden="true" /> Elytra
+                <Feather aria-hidden="true" /> {t("minecraftPage.elytra")}
               </button>
             </>
           ) : null}
@@ -371,8 +388,13 @@ function Skin3D({ data }: { data: ProfileData }) {
       ) : null}
 
       <div className="mc-anim-select mc-ctl-group">
-        <span className="mc-ctl-label">Animation</span>
-        {["Idle", "Walk", "Run", "Wave"].map((label, i) => (
+        <span className="mc-ctl-label">{t("minecraftPage.animation")}</span>
+        {[
+          t("minecraftPage.animIdle"),
+          t("minecraftPage.animWalk"),
+          t("minecraftPage.animRun"),
+          t("minecraftPage.animWave"),
+        ].map((label, i) => (
           <button
             key={i}
             type="button"
@@ -402,6 +424,7 @@ function AccountModal({
   data: ProfileData;
   onClose: () => void;
 }) {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState<"ext" | "model" | "hypixel">("ext");
   const [showHat, setShowHat] = useState(true);
@@ -438,7 +461,11 @@ function AccountModal({
   const capes = capeList(data);
   const dashed = data.uuid || cfg.uid;
   const capeVal =
-    capes.length === 0 ? "None" : capes.length === 1 ? "Yes" : `${capes.length} capes`;
+    capes.length === 0
+      ? t("minecraftPage.capeNone")
+      : capes.length === 1
+        ? t("minecraftPage.capeYes")
+        : t("minecraftPage.capeCount").replace("{n}", String(capes.length));
 
   return (
     <div
@@ -474,29 +501,33 @@ function AccountModal({
 
         <div className="mc-d-head">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="mc-skull" alt="head" referrerPolicy="no-referrer" src={skullSrc} />
+          <img className="mc-skull" alt={t("minecraftPage.headAlt")} referrerPolicy="no-referrer" src={skullSrc} />
           <div className="mc-d-title">
             <span className="mc-d-role" style={{ background: accent }}>
-              {meta.label}
+              {roleLabel(meta, t)}
             </span>
-            <span className="mc-d-name">{data.name || "Loading…"}</span>
+            <span className="mc-d-name">{data.name || t("minecraftPage.loading")}</span>
           </div>
         </div>
 
         <div className="mc-tabs" role="tablist">
-          {(["ext", "model", "hypixel"] as const).map((t) => (
+          {(["ext", "model", "hypixel"] as const).map((tabName) => (
             <button
-              key={t}
-              className={`mc-tab${tab === t ? " is-active" : ""}`}
+              key={tabName}
+              className={`mc-tab${tab === tabName ? " is-active" : ""}`}
               type="button"
               role="tab"
-              aria-selected={tab === t}
+              aria-selected={tab === tabName}
               onClick={() => {
                 playClickSound();
-                setTab(t);
+                setTab(tabName);
               }}
             >
-              {t === "ext" ? "Overview" : t === "model" ? "3D Model" : "Hypixel"}
+              {tabName === "ext"
+                ? t("minecraftPage.tabOverview")
+                : tabName === "model"
+                  ? t("minecraftPage.tab3d")
+                  : t("minecraftPage.tabHypixel")}
             </button>
           ))}
         </div>
@@ -514,23 +545,24 @@ function AccountModal({
                   setShowHat((v) => !v);
                 }}
               >
-                <Layers aria-hidden="true" /> {showHat ? "Hide hat layer" : "Show hat layer"}
+                <Layers aria-hidden="true" />{" "}
+                {showHat ? t("minecraftPage.hideHat") : t("minecraftPage.showHat")}
               </button>
             </div>
             <div className="mc-tex" hidden={!data.skin_url && capes.length === 0}>
               {data.skin_url ? (
                 <figure>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={data.skin_url} alt="skin texture" width={80} height={80} referrerPolicy="no-referrer" />
-                  <figcaption>Skin</figcaption>
+                  <img src={data.skin_url} alt={t("minecraftPage.skinTextureAlt")} width={80} height={80} referrerPolicy="no-referrer" />
+                  <figcaption>{t("minecraftPage.skin")}</figcaption>
                 </figure>
               ) : null}
               {capes.map((c, i) => {
                 const label = c.name
                   ? c.name.charAt(0).toUpperCase() + c.name.slice(1)
                   : capes.length > 1
-                    ? `Cape ${i + 1}`
-                    : "Cape";
+                    ? t("minecraftPage.capeN").replace("{n}", String(i + 1))
+                    : t("minecraftPage.cape");
                 return (
                   <figure key={i}>
                     <CapeCanvas url={c.url} />
@@ -540,14 +572,23 @@ function AccountModal({
               })}
             </div>
             <div className="mc-rows">
-              <Row k="Username" v={data.name || "—"} />
+              <Row k={t("minecraftPage.username")} v={data.name || t("minecraftPage.dash")} />
               <Row
-                k="Skin model"
-                v={data.skin_model ? (data.skin_model === "slim" ? "Slim (Alex)" : "Classic (Steve)") : "—"}
+                k={t("minecraftPage.skinModel")}
+                v={
+                  data.skin_model
+                    ? data.skin_model === "slim"
+                      ? t("minecraftPage.slim")
+                      : t("minecraftPage.classic")
+                    : t("minecraftPage.dash")
+                }
               />
-              <Row k={capes.length > 1 ? "Capes" : "Cape"} v={capeVal} />
+              <Row
+                k={capes.length > 1 ? t("minecraftPage.capePlural") : t("minecraftPage.cape")}
+                v={capeVal}
+              />
               <div className="mc-row">
-                <span className="mc-row-k">UUID</span>
+                <span className="mc-row-k">{t("minecraftPage.uuid")}</span>
                 <CopyBtn value={dashed} />
               </div>
             </div>
@@ -557,7 +598,7 @@ function AccountModal({
               rel="noopener noreferrer"
               href={`https://namemc.com/profile/${encodeURIComponent(uid)}`}
             >
-              View on NameMC <BoxArrowUpRight aria-hidden="true" />
+              {t("minecraftPage.viewNameMc")} <BoxArrowUpRight aria-hidden="true" />
             </a>
           </div>
 
@@ -566,9 +607,9 @@ function AccountModal({
           </div>
 
           <div className={`mc-panel${tab === "hypixel" ? " is-active" : ""}`}>
-            <div className="mc-section-t">Hypixel Stats</div>
+            <div className="mc-section-t">{t("minecraftPage.hypixelStats")}</div>
             <div className="mc-soon">
-              Coming soon <Stars aria-hidden="true" />
+              {t("minecraftPage.comingSoon")} <Stars aria-hidden="true" />
             </div>
           </div>
         </div>
@@ -579,6 +620,7 @@ function AccountModal({
 
 // ---- account card ---------------------------------------------------------
 function AccountCard({ cfg, data, onOpen }: { cfg: Cfg; data: ProfileData; onOpen: () => void }) {
+  const { t } = useLanguage();
   const uid = shortUuid(cfg.uid);
   const meta = roleMeta(cfg.role);
   const accent = `var(--${meta.accent})`;
@@ -601,14 +643,14 @@ function AccountCard({ cfg, data, onOpen }: { cfg: Cfg; data: ProfileData; onOpe
       }}
     >
       <span className="mc-role" style={{ background: accent }}>
-        {meta.label}
+        {roleLabel(meta, t)}
       </span>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img className="mc-body" alt="" referrerPolicy="no-referrer" src={bodySrc} />
       <span className="mc-name">{data.name || cfg.uid}</span>
       <span className="mc-cape" hidden={capes.length === 0}>
         <Award aria-hidden="true" /> {capes.length}{" "}
-        {capes.length === 1 ? "cape" : "capes"}
+        {capes.length === 1 ? t("minecraftPage.capeOne") : t("minecraftPage.capeMany")}
       </span>
     </a>
   );

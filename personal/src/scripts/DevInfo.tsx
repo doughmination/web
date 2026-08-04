@@ -9,6 +9,19 @@
 import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
 import { playClickSound } from "@lib/sound";
+import { useLanguage } from "@/i18n/LanguageProvider";
+import type { Dictionary } from "@/i18n/locales/en";
+
+/** Duration unit words for fmt(), pulled from the active locale. */
+type DurUnits = { hr: string; hrs: string; min: string; mins: string };
+function durUnits(d: Dictionary): DurUnits {
+  return { hr: d.devInfo.hr, hrs: d.devInfo.hrs, min: d.devInfo.min, mins: d.devInfo.mins };
+}
+/** Ordered month labels (Jan…Dec) for the given locale. */
+function monthLabels(d: Dictionary): string[] {
+  const m = d.devInfo.months;
+  return [m.jan, m.feb, m.mar, m.apr, m.may, m.jun, m.jul, m.aug, m.sep, m.oct, m.nov, m.dec];
+}
 
 /* Ported from heatmap.js + dev-info.js — the contribution heatmap and the
    WakaTime coding stats. Same page, so one component (renders both). */
@@ -79,8 +92,6 @@ function resolveTheme(theme: string): string[] {
   return THEMES[theme] || THEMES.rainbow;
 }
 
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
 function Heatmap({
   theme = "trans",
   url = "https://doughmination.uk/v2/contribapi",
@@ -88,6 +99,8 @@ function Heatmap({
   theme?: string;
   url?: string;
 }) {
+  const { t, dict } = useLanguage();
+  const MONTHS = monthLabels(dict);
   const [state, setState] = useState<
     { weeks: Week[]; total: number; since: string | null } | "loading" | "error"
   >("loading");
@@ -130,10 +143,12 @@ function Heatmap({
     <div className="ch-root" style={rootStyle}>
       <p className="ch-count">
         {state === "loading"
-          ? "Loading…"
+          ? t("devInfo.loading")
           : state === "error"
-            ? "Couldn't load contributions."
-            : `${state.total} contributions since ${state.since}`}
+            ? t("devInfo.contribError")
+            : t("devInfo.contribCount")
+                .replace("{n}", String(state.total))
+                .replace("{date}", String(state.since))}
       </p>
 
       {state !== "loading" && state !== "error" ? (
@@ -147,9 +162,11 @@ function Heatmap({
           </div>
           <div className="ch-body">
             <div className="ch-weekdays">
-              {["", "Mon", "", "Wed", "", "Fri", ""].map((t, i) => (
-                <span key={i}>{t}</span>
-              ))}
+              {["", dict.devInfo.weekday.mon, "", dict.devInfo.weekday.wed, "", dict.devInfo.weekday.fri, ""].map(
+                (label, i) => (
+                  <span key={i}>{label}</span>
+                ),
+              )}
             </div>
             <div className="ch-grid">
               {state.weeks.map((week, w) =>
@@ -162,7 +179,9 @@ function Heatmap({
                       key={`${w}-${di}`}
                       className={`ch-day l${level(day.contributions)}`}
                       title={
-                        `${day.contributions} contributions on ${day.date}` +
+                        t("devInfo.contribDay")
+                          .replace("{n}", String(day.contributions))
+                          .replace("{date}", day.date) +
                         (breakdown ? ` (${breakdown})` : "")
                       }
                       style={{ animationDelay: `${w * 8}ms` }}
@@ -176,11 +195,11 @@ function Heatmap({
       ) : null}
 
       <div className="ch-legend">
-        <span>Less</span>
+        <span>{t("devInfo.less")}</span>
         {[0, 1, 2, 3, 4].map((i) => (
           <span key={i} className={`ch-day l${i}`} />
         ))}
-        <span>More</span>
+        <span>{t("devInfo.more")}</span>
       </div>
     </div>
   );
@@ -204,22 +223,24 @@ type WeekDay = { label: string; short: string; total: number };
 /* null = loading, "error" = failed, array = data */
 type Section<T> = T[] | "error" | null;
 
-function fmt(seconds: number): string {
+function fmt(seconds: number, u: DurUnits): string {
   const s = Math.max(0, Math.round(seconds || 0));
   const h = Math.floor(s / 3600);
   const m = Math.round((s % 3600) / 60);
-  if (h && m) return `${h} hr${h > 1 ? "s" : ""} ${m} min${m > 1 ? "s" : ""}`;
-  if (h) return `${h} hr${h > 1 ? "s" : ""}`;
-  return `${m} min${m === 1 ? "" : "s"}`;
+  const hrU = h > 1 ? u.hrs : u.hr;
+  const minU = m === 1 ? u.min : u.mins;
+  if (h && m) return `${h} ${hrU} ${m} ${minU}`;
+  if (h) return `${h} ${hrU}`;
+  return `${m} ${minU}`;
 }
 function pctLabel(p: number): string {
   return (p < 10 ? Math.round(p * 10) / 10 : Math.round(p)) + "%";
 }
-function valueLabel(d: CatItem, hasSeconds: boolean): string {
-  if (hasSeconds && (d.total_seconds || 0) > 0) return d.text || fmt(d.total_seconds || 0);
+function valueLabel(d: CatItem, hasSeconds: boolean, u: DurUnits): string {
+  if (hasSeconds && (d.total_seconds || 0) > 0) return d.text || fmt(d.total_seconds || 0, u);
   if (typeof d.percent === "number") return pctLabel(d.percent);
   if (d.text) return d.text;
-  return fmt(d.total_seconds || 0);
+  return fmt(d.total_seconds || 0, u);
 }
 
 interface WakaJson {
@@ -305,6 +326,8 @@ function jsonp(url: string, timeoutMs = 12000): Promise<WakaJson> {
 }
 
 function Bars({ items }: { items: CatItem[] }) {
+  const { t, dict } = useLanguage();
+  const units = durUnits(dict);
   const hasSeconds = items.some((d) => (d.total_seconds || 0) > 0);
   const rows = items
     .filter((d) => (d.total_seconds || 0) > 0 || (d.percent || 0) > 0)
@@ -314,7 +337,7 @@ function Bars({ items }: { items: CatItem[] }) {
         : (b.percent || 0) - (a.percent || 0),
     )
     .slice(0, MAX_ROWS);
-  if (!rows.length) return <p className="waka-empty">No data yet.</p>;
+  if (!rows.length) return <p className="waka-empty">{t("devInfo.noData")}</p>;
   const max =
     rows.reduce((acc, d) => Math.max(acc, hasSeconds ? d.total_seconds || 0 : d.percent || 0), 0) ||
     1;
@@ -326,7 +349,7 @@ function Bars({ items }: { items: CatItem[] }) {
         return (
           <div className="waka-bar-row" key={i}>
             <span className="waka-bar-name" title={d.name || ""}>
-              {d.name || "Unknown"}
+              {d.name || t("devInfo.unknown")}
             </span>
             <span className="waka-bar-track">
               <span
@@ -337,7 +360,7 @@ function Bars({ items }: { items: CatItem[] }) {
                 }}
               />
             </span>
-            <span className="waka-bar-val">{valueLabel(d, hasSeconds)}</span>
+            <span className="waka-bar-val">{valueLabel(d, hasSeconds, units)}</span>
           </div>
         );
       })}
@@ -346,6 +369,7 @@ function Bars({ items }: { items: CatItem[] }) {
 }
 
 function BarSection({ id, title, state }: { id: string; title: string; state: Section<CatItem> }) {
+  const { t } = useLanguage();
   // still loading -> keep hidden (matches the old JS)
   if (state === null) return null;
   return (
@@ -353,7 +377,7 @@ function BarSection({ id, title, state }: { id: string; title: string; state: Se
       <summary className="section-title">{title}</summary>
       <div className="waka-bars">
         {state === "error" ? (
-          <p className="waka-empty">Couldn&apos;t load this chart.</p>
+          <p className="waka-empty">{t("devInfo.chartError")}</p>
         ) : (
           <Bars items={state} />
         )}
@@ -363,6 +387,8 @@ function BarSection({ id, title, state }: { id: string; title: string; state: Se
 }
 
 function WakaContent() {
+  const { t, dict } = useLanguage();
+  const units = durUnits(dict);
   const [meta, setMeta] = useState("");
   const [days, setDays] = useState<Section<WeekDay>>(null);
   const [langs, setLangs] = useState<Section<CatItem>>(null);
@@ -374,7 +400,7 @@ function WakaContent() {
     let cancelled = false;
     const setMetaFrom = (json: WakaJson) => {
       const r = json?.human_readable_range || json?.range?.text;
-      if (r && !cancelled) setMeta(`Range: ${r}`);
+      if (r && !cancelled) setMeta(t("devInfo.range").replace("{range}", r));
     };
     const load = (url: string, onData: (j: WakaJson) => void, onErr: () => void) => {
       jsonp(url)
@@ -406,13 +432,15 @@ function WakaContent() {
       {meta ? <p className="waka-meta">{meta}</p> : null}
 
       <div className="waka-section waka-total" id="waka-total">
-        <div className="waka-total-num">{haveDays ? fmt(total) : "—"}</div>
+        <div className="waka-total-num">{haveDays ? fmt(total, units) : "—"}</div>
         <div className="waka-total-sub">
-          {haveDays ? `across the last ${days.length} days` : "total coding time"}
+          {haveDays
+            ? t("devInfo.acrossDays").replace("{n}", String(days.length))
+            : t("devInfo.totalCodingTime")}
         </div>
         <div className="waka-week">
           {days === "error" ? (
-            <p className="waka-empty">No activity data yet.</p>
+            <p className="waka-empty">{t("devInfo.noActivity")}</p>
           ) : haveDays ? (
             days.map((d, i) => {
               const h = Math.max(3, Math.round((d.total / weekMax) * 100));
@@ -422,7 +450,7 @@ function WakaContent() {
                     <div
                       className="waka-day-fill"
                       style={{ height: `${h}%` }}
-                      title={`${d.label}: ${fmt(d.total)}`}
+                      title={`${d.label}: ${fmt(d.total, units)}`}
                     />
                   </div>
                   <span className="waka-day-label">{d.short}</span>
@@ -433,19 +461,19 @@ function WakaContent() {
         </div>
       </div>
 
-      <BarSection id="waka-section-languages" title="Languages" state={langs} />
-      <BarSection id="waka-section-categories" title="Categories" state={cats} />
+      <BarSection id="waka-section-languages" title={t("devInfo.languages")} state={langs} />
+      <BarSection id="waka-section-categories" title={t("devInfo.categories")} state={cats} />
       <div className="waka-grid2">
-        <BarSection id="waka-section-editors" title="Editors" state={editors} />
-        <BarSection id="waka-section-os" title="Operating Systems" state={os} />
+        <BarSection id="waka-section-editors" title={t("devInfo.editors")} state={editors} />
+        <BarSection id="waka-section-os" title={t("devInfo.operatingSystems")} state={os} />
       </div>
 
       <p className="waka-credit">
-        Tracked automatically with{" "}
+        {t("devInfo.trackedWith").split("{link}")[0]}
         <a href="https://wakatime.com" target="_blank" rel="noopener" onClick={playClickSound}>
           wakatime
         </a>
-        .
+        {t("devInfo.trackedWith").split("{link}")[1] ?? ""}
       </p>
     </div>
   );

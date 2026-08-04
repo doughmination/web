@@ -6,6 +6,7 @@
 
 import type { Metadata } from "next";
 import Guestbook from "@scripts/Guestbook";
+import { Tr } from "@components/chrome/i18nText";
 import "@styles/pages/guestbook.css";
 
 export const metadata: Metadata = {
@@ -41,8 +42,8 @@ export default function GuestbookPage() {
 
       <div className="hub friends-wrap guestbook-wrap">
         <header className="hub-header">
-          <h1>Guestbook</h1>
-          <p className="tagline">Leave a little note before you go &lt;3</p>
+          <h1><Tr k="guestbook.title" /></h1>
+          <p className="tagline"><Tr k="guestbook.tagline" /></p>
         </header>
 
         <Guestbook turnstileKey="0x4AAAAAAB08ZhSxKn5rAD3d" />

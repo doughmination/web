@@ -12,14 +12,16 @@ import {
 } from "react-bootstrap-icons";
 import {
   BADGE_FLAGS, CONNECTION_ICON, CONNECTION_URLS, NAME_FONTS, PLATFORM_ICONS,
-  STATUS_TITLE, WL_TYPE_LABEL, assetUrl, avatarUrl, bannerUrl, clamp, elapsedStr,
+  assetUrl, avatarUrl, bannerUrl, clamp, elapsedStr,
   emojiUrl, fmt, fmtPrice, fmtSinceDate, guildBadgeUrl, intToHex, isRealName,
-  mapSelfHostToPresence, pickListening, proxyImg, useAlbumAccent, usePresenceFeed,
+  isStatusKey, isWlTypeKey, mapSelfHostToPresence, pickListening, proxyImg, useAlbumAccent, usePresenceFeed,
   useReducedMotion, useTicker, wlImg, collectibleForSlot,
   type Collectible, type Dict, type SelfJson,
 } from "./presenceShared";
 import { playClickSound } from "@lib/sound";
 import { renderDiscordMarkdown } from "./discordMarkdown";
+import { useLanguage } from "@/i18n/LanguageProvider";
+import type { TranslationKey } from "@/i18n/translate";
 import * as s from "@styles/presence-dashboard.css";
 
 /** Status → the theme token used for its dot and label. */
@@ -155,10 +157,12 @@ function NowPlaying({
   sp,
   accent,
   source,
+  t,
 }: {
   sp: Dict | null;
   accent: string | null;
   source?: "doughmination" | "spotify";
+  t: (key: TranslationKey) => string;
 }) {
   const ts = sp?.timestamps as { start?: number; end?: number } | undefined;
   const start = ts?.start ?? 0;
@@ -172,8 +176,8 @@ function NowPlaying({
   if (!sp) {
     return (
       <section className={s.panelWide}>
-        <h2 className={s.panelTitle}>Now Playing</h2>
-        <p className={s.empty}>Not listening to anything right now</p>
+        <h2 className={s.panelTitle}>{t("presence.nowPlayingTitle")}</h2>
+        <p className={s.empty}>{t("presence.notListening")}</p>
       </section>
     );
   }
@@ -187,7 +191,7 @@ function NowPlaying({
         ) : (
           <Spotify className={`${s.brandLogo} ${s.brandSpotify}`} aria-hidden="true" />
         )}
-        {source === "doughmination" ? "Listening on Doughmination Music" : "Listening to Spotify"}
+        {source === "doughmination" ? t("presence.listeningOnDoughminationMusic") : t("presence.listeningToSpotify")}
       </h2>
       {/* Points at the site's own /music page rather than out to Spotify.
           next/link so it routes client-side and the bg-music audio in the
@@ -201,7 +205,7 @@ function NowPlaying({
           <div className={s.npArtist}>{String(sp.artist || "")}</div>
           {sp.album ? <div className={s.npAlbum}>{String(sp.album)}</div> : null}
           <div className={s.npBar} role="progressbar" aria-valuemin={0} aria-valuemax={100}
-            aria-valuenow={Math.round(pct)} aria-label="Track progress">
+            aria-valuenow={Math.round(pct)} aria-label={t("presence.trackProgress")}>
             <div
               className={s.npFill}
               style={{
@@ -222,7 +226,7 @@ function NowPlaying({
 
 /* ---- activities ----------------------------------------------------------- */
 
-function ActivityRow({ a }: { a: Dict }) {
+function ActivityRow({ a, t }: { a: Dict; t: (key: TranslationKey) => string }) {
   const isCode = /visual studio code|vscode/i.test((a.name as string) || "");
   const ts = a.timestamps as { start?: number } | undefined;
   const start = ts?.start;
@@ -232,10 +236,10 @@ function ActivityRow({ a }: { a: Dict }) {
   const large = assets.large_image && assetUrl(a.application_id as string, assets.large_image as string);
   const small = assets.small_image && assetUrl(a.application_id as string, assets.small_image as string);
 
-  let kind = isCode ? "Coding" : "Playing " + ((a.name as string) || "");
+  let kind = isCode ? t("presence.coding") : t("presence.playing").replace("{name}", (a.name as string) || "");
   const party = a.party as { size?: number[] } | undefined;
   if (party?.size?.length === 2 && party.size[1]) {
-    kind += " · " + party.size[0] + " of " + party.size[1];
+    kind += " · " + t("presence.partyOf").replace("{a}", String(party.size[0])).replace("{b}", String(party.size[1]));
   }
   const buttons = a.buttons as (string | { label?: string })[] | undefined;
 
@@ -272,7 +276,7 @@ function ActivityRow({ a }: { a: Dict }) {
         <div className={s.actButtons}>
           {buttons.map((b, i) => (
             <span className={s.actBtn} key={i}>
-              {typeof b === "string" ? b : b?.label || "Open"}
+              {typeof b === "string" ? b : b?.label || t("presence.openButton")}
             </span>
           ))}
         </div>
@@ -281,9 +285,9 @@ function ActivityRow({ a }: { a: Dict }) {
   );
 }
 
-function StreamRow({ a }: { a: Dict }) {
+function StreamRow({ a, t }: { a: Dict; t: (key: TranslationKey) => string }) {
   const url = a.url as string | undefined;
-  const platform = url && /twitch/i.test(url) ? "Twitch" : url && /youtube/i.test(url) ? "YouTube" : "Live";
+  const platform = url && /twitch/i.test(url) ? "Twitch" : url && /youtube/i.test(url) ? "YouTube" : t("presence.live");
   const assets = (a.assets as Dict) || {};
   const thumb = assets.large_image_url ? proxyImg(assets.large_image_url as string, { w: 240 }) : null;
   const inner = (
@@ -294,7 +298,7 @@ function StreamRow({ a }: { a: Dict }) {
         <span className={s.actDot} aria-hidden="true" />
       )}
       <div className={s.actBody}>
-        <div className={s.actKind}>{"Streaming on " + platform}</div>
+        <div className={s.actKind}>{t("presence.streamingOn").replace("{platform}", platform)}</div>
         <div className={s.actTitle}>{(a.details as string) || (a.name as string) || ""}</div>
         <div className={s.actSub}>{(a.state as string) || ""}</div>
       </div>
@@ -321,6 +325,7 @@ function ConnIcon({ type }: { type: string }) {
 /* ---- the dashboard -------------------------------------------------------- */
 
 export default function PresenceDashboard({ userId }: { userId: string }) {
+  const { t } = useLanguage();
   const json: SelfJson | null = usePresenceFeed(userId);
   const data = json?.data;
   const apiUser = (data?.user as Dict) || {};
@@ -346,13 +351,14 @@ export default function PresenceDashboard({ userId }: { userId: string }) {
     [bioRaw],
   );
 
-  if (!d) return <div className={s.skeleton} aria-busy="true" aria-label="Loading profile" />;
+  if (!d) return <div className={s.skeleton} aria-busy="true" aria-label={t("presence.loadingProfile")} />;
 
   const u = (d.discord_user as Dict) || {};
   const acts = (d.activities as Dict[]) || [];
   const status = (d.discord_status as string) || "offline";
   const isStreaming = acts.some((a) => a.type === 1);
   const effectiveStatus = isStreaming ? "streaming" : status;
+  const statusKey = isStatusKey(effectiveStatus) ? effectiveStatus : "offline";
   const statusColour = STATUS_VAR[effectiveStatus] || STATUS_VAR.offline;
 
   const custom = acts.find((a) => a.type === 4);
@@ -430,7 +436,7 @@ export default function PresenceDashboard({ userId }: { userId: string }) {
             <span
               className={s.statusPip}
               style={{ background: statusColour }}
-              title={STATUS_TITLE[effectiveStatus] || "Offline"}
+              title={t(`presence.status.${statusKey}` as TranslationKey)}
             />
           </div>
 
@@ -447,7 +453,7 @@ export default function PresenceDashboard({ userId }: { userId: string }) {
                   fontFamily: (styles && NAME_FONTS[styles.font_id as number]) || undefined,
                 }}
               >
-                {(u.display_name as string) || (u.global_name as string) || (u.username as string) || "Discord User"}
+                {(u.display_name as string) || (u.global_name as string) || (u.username as string) || t("presence.discordUser")}
               </h1>
               {showTag ? (
                 <span className={s.guildTag}>
@@ -461,7 +467,7 @@ export default function PresenceDashboard({ userId }: { userId: string }) {
               {u.username ? <span className={s.handle}>@{String(u.username)}</span> : null}
               <span className={s.statusText} style={{ color: statusColour }}>
                 <span className={s.statusDot} style={{ background: statusColour }} />
-                {STATUS_TITLE[effectiveStatus] || "Offline"}
+                {t(`presence.status.${statusKey}` as TranslationKey)}
               </span>
               {pron ? <span className={s.chip}>{pron}</span> : null}
               {tzOffsetMin != null ? (
@@ -470,7 +476,7 @@ export default function PresenceDashboard({ userId }: { userId: string }) {
               {nitroLabel ? (
                 <span
                   className={s.chip}
-                  title={nitroLabel + (prem?.since ? " · since " + fmtSinceDate(prem.since as string) : "")}
+                  title={nitroLabel + (prem?.since ? " · " + t("presence.since").replace("{date}", fmtSinceDate(prem.since as string)) : "")}
                 >
                   {nitroLabel}
                 </span>
@@ -478,8 +484,8 @@ export default function PresenceDashboard({ userId }: { userId: string }) {
               {prem?.guild_since ? (
                 <span
                   className={s.chip}
-                  title={"Boosting since " + fmtSinceDate(prem.guild_since as string)}
-                  aria-label="Server booster"
+                  title={t("presence.boostingSince").replace("{date}", fmtSinceDate(prem.guild_since as string))}
+                  aria-label={t("presence.serverBooster")}
                 >
                   <Gem aria-hidden="true" />
                 </span>
@@ -487,7 +493,8 @@ export default function PresenceDashboard({ userId }: { userId: string }) {
               {platformKeys.length ? (
                 <span className={s.platforms} aria-hidden="true">
                   {platformKeys.map((k) => {
-                    const { Ic, label } = PLATFORM_ICONS[k];
+                    const { Ic } = PLATFORM_ICONS[k];
+                    const label = t(`presence.platform.${k}` as TranslationKey);
                     return <Ic key={k} title={label} role="img" aria-label={label} />;
                   })}
                 </span>
@@ -498,10 +505,10 @@ export default function PresenceDashboard({ userId }: { userId: string }) {
       </header>
 
       <div className={s.grid}>
-        <NowPlaying sp={nowPlaying} accent={accent} source={listening?.source} />
+        <NowPlaying sp={nowPlaying} accent={accent} source={listening?.source} t={t} />
 
         <section className={s.panel}>
-          <h2 className={s.panelTitle}>Status</h2>
+          <h2 className={s.panelTitle}>{t("presence.statusTitle")}</h2>
           {hasCustom ? (
             <div className={s.statusBody}>
               {(() => {
@@ -511,21 +518,21 @@ export default function PresenceDashboard({ userId }: { userId: string }) {
               <span>{String(custom!.state || "")}</span>
             </div>
           ) : (
-            <p className={s.empty}>No custom status set</p>
+            <p className={s.empty}>{t("presence.noCustomStatus")}</p>
           )}
         </section>
 
         <section className={s.panel}>
-          <h2 className={s.panelTitle}>About</h2>
+          <h2 className={s.panelTitle}>{t("presence.aboutTitle")}</h2>
           {bioRaw ? (
             <p className={s.bio}>{bioContent}</p>
           ) : (
-            <p className={s.empty}>No bio set</p>
+            <p className={s.empty}>{t("presence.noBio")}</p>
           )}
         </section>
 
         <section className={s.panel}>
-          <h2 className={s.panelTitle}>Badges</h2>
+          <h2 className={s.panelTitle}>{t("presence.badgesTitle")}</h2>
           {hasBadges ? (
             <div className={s.badgeGrid}>
               {doughBadges?.length
@@ -567,23 +574,23 @@ export default function PresenceDashboard({ userId }: { userId: string }) {
               ))}
             </div>
           ) : (
-            <p className={s.empty}>No badges</p>
+            <p className={s.empty}>{t("presence.noBadges")}</p>
           )}
         </section>
 
         <section className={s.panel}>
-          <h2 className={s.panelTitle}>Activity</h2>
+          <h2 className={s.panelTitle}>{t("presence.activityTitle")}</h2>
           {games.length || streams.length ? (
             <div className={s.actList}>
-              {games.map((a, i) => <ActivityRow a={a} key={"g" + i} />)}
-              {streams.map((a, i) => <StreamRow a={a} key={"s" + i} />)}
+              {games.map((a, i) => <ActivityRow a={a} t={t} key={"g" + i} />)}
+              {streams.map((a, i) => <StreamRow a={a} t={t} key={"s" + i} />)}
             </div>
           ) : (
-            <p className={s.empty}>No current activity</p>
+            <p className={s.empty}>{t("presence.noActivity")}</p>
           )}
         </section>
 
-        <CollapsiblePanel title="Connections" count={conns.length}>
+        <CollapsiblePanel title={t("presence.connectionsTitle")} count={conns.length}>
           {conns.length ? (
             <div className={s.connGrid}>
               {conns.map((a, i) => {
@@ -594,7 +601,7 @@ export default function PresenceDashboard({ userId }: { userId: string }) {
                     <ConnIcon type={a.type as string} />
                     <span className={s.connName}>{String(a.name)}</span>
                     {a.verified ? (
-                      <span className={s.connCheck} title="Verified">
+                      <span className={s.connCheck} title={t("presence.verified")}>
                         <PatchCheckFill aria-hidden="true" />
                       </span>
                     ) : null}
@@ -609,16 +616,17 @@ export default function PresenceDashboard({ userId }: { userId: string }) {
               })}
             </div>
           ) : (
-            <p className={s.empty}>No connected accounts</p>
+            <p className={s.empty}>{t("presence.noConnections")}</p>
           )}
         </CollapsiblePanel>
 
-        <CollapsiblePanel title="Wishlist" count={wishlist.length} collapseAbove={6}>
+        <CollapsiblePanel title={t("presence.wishlistTitle")} count={wishlist.length} collapseAbove={6}>
           {wishlist.length ? (
             <div className={s.wlGrid}>
               {wishlist.map((w, i) => {
                 const ic = wlImg(w);
-                const typeLabel = WL_TYPE_LABEL[String(w.type)] || "";
+                const wType = String(w.type);
+                const typeLabel = isWlTypeKey(wType) ? t(`presence.wishlistType.${wType}` as TranslationKey) : "";
                 const price = fmtPrice(w.price as Dict);
                 return (
                   <div className={`${s.wlItem}${w.is_owned ? " " + s.wlOwned : ""}`} key={i}>
@@ -626,7 +634,7 @@ export default function PresenceDashboard({ userId }: { userId: string }) {
                       <SafeImg className={s.wlIc} src={ic} alt="" loading="lazy" referrerPolicy="no-referrer" />
                     ) : null}
                     <div className={s.wlBody}>
-                      <div className={s.wlName}>{String(w.name || "Collectible")}</div>
+                      <div className={s.wlName}>{String(w.name || t("presence.wishlist.collectible"))}</div>
                       {typeLabel ? <div className={s.wlType}>{typeLabel}</div> : null}
                     </div>
                     {price ? <span className={s.wlPrice}>{price}</span> : null}
@@ -635,7 +643,7 @@ export default function PresenceDashboard({ userId }: { userId: string }) {
               })}
             </div>
           ) : (
-            <p className={s.empty}>Nothing on the wishlist</p>
+            <p className={s.empty}>{t("presence.noWishlist")}</p>
           )}
         </CollapsiblePanel>
       </div>

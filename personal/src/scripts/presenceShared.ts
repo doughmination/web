@@ -142,13 +142,16 @@ export function bannerUrl(id: string, hash: string): string | null {
 
 /* ---- lookup tables -------------------------------------------------------- */
 
-export const STATUS_TITLE: Record<string, string> = {
-  online: "Online",
-  idle: "Idle",
-  dnd: "Do Not Disturb",
-  offline: "Offline",
-  streaming: "Streaming",
-};
+// Display text for these three lives in the i18n dictionaries now
+// (presence.status.*, presence.platform.*, presence.wishlistType.*) — these
+// arrays are just the valid key sets, so callers (which have a useLanguage()
+// t()) can validate a runtime string before building a dotted lookup key
+// with it, e.g. `presence.status.${status}`.
+export const STATUS_KEYS = ["online", "idle", "dnd", "offline", "streaming"] as const;
+export type StatusKey = (typeof STATUS_KEYS)[number];
+export function isStatusKey(v: string): v is StatusKey {
+  return (STATUS_KEYS as readonly string[]).includes(v);
+}
 
 export const NAME_FONTS: Record<number, string> = {
   3: "'DDN Sakura', cursive",
@@ -176,20 +179,14 @@ export const BADGE_FLAGS: [number, string, string][] = [
   [1 << 22, "Active Developer", "6bdc42827a38498929a4920da12695d9"],
 ];
 
-/** Platform pips in the sub-row. Components now, not `bi` glyph names. */
-export const PLATFORM_ICONS: Record<string, { Ic: Icon; label: string }> = {
-  desktop: {
-    Ic: Laptop,
-    label: "Desktop"
-  },
-  mobile: {
-    Ic: Phone,
-    label: "Mobile"
-  },
-  web: {
-    Ic: Globe,
-    label: "Web"
-  },
+/** Platform pips in the sub-row. Components now, not `bi` glyph names.
+    Labels come from presence.platform.* in the i18n dictionaries — this map
+    is icons only, keyed the same way so callers can build the lookup key
+    from the same string. */
+export const PLATFORM_ICONS: Record<string, { Ic: Icon }> = {
+  desktop: { Ic: Laptop },
+  mobile: { Ic: Phone },
+  web: { Ic: Globe },
 };
 
 export const CONNECTION_URLS: Record<string, (n: string, id?: string) => string> = {
@@ -242,14 +239,18 @@ export const CONNECTION_ICON: Record<string, { Ic?: Icon; img?: string }> = {
   domain: { Ic: Globe },
 };
 
-export const WL_TYPE_LABEL: Record<string, string> = {
-  avatar_decoration: "Decoration",
-  profile_effect: "Effect",
-  nameplate: "Nameplate",
-  bundle: "Bundle",
-  variants_group: "Variants",
-  external_sku: "Item",
-};
+export const WL_TYPE_KEYS = [
+  "avatar_decoration",
+  "profile_effect",
+  "nameplate",
+  "bundle",
+  "variants_group",
+  "external_sku",
+] as const;
+export type WlTypeKey = (typeof WL_TYPE_KEYS)[number];
+export function isWlTypeKey(v: string): v is WlTypeKey {
+  return (WL_TYPE_KEYS as readonly string[]).includes(v);
+}
 
 const CURRENCY_SYMBOL: Record<string, string> = {
   gbp: "£",

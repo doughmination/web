@@ -9,7 +9,9 @@
 import { useDevices } from "@doughmination/react-api";
 import type { DeviceRecord } from "@doughmination/react-api";
 
-import { realText, relTime } from "./util";
+import { realText, relTime, type RelTimeStrings } from "./util";
+import { useLanguage } from "@/i18n/LanguageProvider";
+import type { TranslationKey } from "@/i18n/translate";
 import {
   BatteryHalf,
   Earbuds,
@@ -43,13 +45,13 @@ function isConnected(v: unknown): boolean {
   return v === true || v === 1 || String(v).trim().toLowerCase() === "true";
 }
 
-function DeviceRow({ d }: { d: DeviceRecord }) {
+function DeviceRow({ d, t, time }: { d: DeviceRecord; t: (key: TranslationKey) => string; time: RelTimeStrings }) {
   const lvl = clampLevel(d.level);
   const cls = levelClass(lvl);
   const charging = d.charging === true;
   const pct = lvl == null ? "—" : `${lvl}%`;
   const width = lvl == null ? 0 : lvl;
-  const when = relTime(d.updated_at);
+  const when = relTime(d.updated_at, time);
   const wifiName = realText(d.wifi);
   const watch = isConnected(d.watch);
   const airpods = isConnected(d.airpods);
@@ -59,7 +61,7 @@ function DeviceRow({ d }: { d: DeviceRecord }) {
     <div className={`dev-row ${cls}${charging ? " is-charging" : ""}`}>
       <div className="dev-main">
         <span className="dev-name">{deviceName(d.device)}</span>
-        <span className="dev-track" role="img" aria-label={pct + (charging ? ", charging" : "")}>
+        <span className="dev-track" role="img" aria-label={pct + (charging ? t("devices.chargingSuffix") : "")}>
           <span className="dev-fill" style={{ width: `${width}%` }} />
         </span>
         <span className="dev-pct">
@@ -70,28 +72,28 @@ function DeviceRow({ d }: { d: DeviceRecord }) {
       {hasMeta ? (
         <div className="dev-meta">
           {charging ? (
-            <span className="dev-tag dev-charging" title="Charging">
-              <LightningChargeFill aria-hidden="true" /> Charging
+            <span className="dev-tag dev-charging" title={t("devices.charging")}>
+              <LightningChargeFill aria-hidden="true" /> {t("devices.charging")}
             </span>
           ) : null}
           {d.lowPowerMode === true ? (
-            <span className="dev-tag dev-lowpower" title="Low Power Mode">
-              <BatteryHalf aria-hidden="true" /> Low Power
+            <span className="dev-tag dev-lowpower" title={t("devices.lowPowerTitle")}>
+              <BatteryHalf aria-hidden="true" /> {t("devices.lowPower")}
             </span>
           ) : null}
           {wifiName ? (
-            <span className="dev-tag dev-wifi" title="Wi-Fi network">
+            <span className="dev-tag dev-wifi" title={t("devices.wifiTitle")}>
               <Wifi aria-hidden="true" /> {wifiName}
             </span>
           ) : null}
           {watch ? (
-            <span className="dev-tag dev-watch" title="Apple Watch connected">
-              <Smartwatch aria-hidden="true" /> Watch
+            <span className="dev-tag dev-watch" title={t("devices.watchTitle")}>
+              <Smartwatch aria-hidden="true" /> {t("devices.watch")}
             </span>
           ) : null}
           {airpods ? (
-            <span className="dev-tag dev-airpods" title="AirPods connected">
-              <Earbuds aria-hidden="true" /> AirPods
+            <span className="dev-tag dev-airpods" title={t("devices.airpodsTitle")}>
+              <Earbuds aria-hidden="true" /> {t("devices.airpods")}
             </span>
           ) : null}
           {when ? <span className="dev-when">{when}</span> : null}
@@ -102,6 +104,8 @@ function DeviceRow({ d }: { d: DeviceRecord }) {
 }
 
 export default function Devices() {
+  const { t, dict } = useLanguage();
+
   // Seeds from GET /v2/devices, then stays live via the socket's device_update
   // event (report merges the record, delete removes the key).
   const { data, isPending } = useDevices();
@@ -131,18 +135,18 @@ export default function Devices() {
   });
 
   return (
-    <section className="devices-card" aria-label="Device status" aria-busy={loading}>
+    <section className="devices-card" aria-label={t("devices.ariaLabel")} aria-busy={loading}>
       <div className="dev-head">
         <span className="dev-icon" aria-hidden="true" />
-        <span className="dev-label">Devices</span>
+        <span className="dev-label">{t("devices.heading")}</span>
       </div>
       <div className={loading ? "dev-rows is-fetching" : "dev-rows"}>
         {loading ? (
-          <span className="dev-empty">loading data…</span>
+          <span className="dev-empty">{t("devices.loading")}</span>
         ) : list.length === 0 ? (
-          <span className="dev-empty">no devices reporting</span>
+          <span className="dev-empty">{t("devices.empty")}</span>
         ) : (
-          list.map((d) => <DeviceRow key={d.device} d={d} />)
+          list.map((d) => <DeviceRow key={d.device} d={d} t={t} time={dict.time} />)
         )}
       </div>
     </section>

@@ -7,6 +7,8 @@
 "use client";
 
 import { useGuild } from "@doughmination/react-api";
+import { useLanguage } from "@/i18n/LanguageProvider";
+import type { TranslationKey } from "@/i18n/translate";
 
 /* Ported from guilds.js — Discord server cards, each resolved live via the
    Doughmination API through the wrapper's useGuild hook. */
@@ -36,11 +38,11 @@ const GUILDS: GuildCfg[] = [
   },
 ];
 
-const ROLE_LABELS: Record<string, string> = {
-  owner: "Owner",
-  admin: "Admin",
-  mod: "Mod",
-  member: "Member",
+const ROLE_LABEL_KEYS: Record<string, TranslationKey> = {
+  owner: "serversPage.roleOwner",
+  admin: "serversPage.roleAdmin",
+  mod: "serversPage.roleMod",
+  member: "serversPage.roleMember",
 };
 
 /* Discord CDN accepts ?size=<power of 2>; ensure a resolution big enough. */
@@ -51,6 +53,7 @@ function withSize(url: string, size: number): string {
 }
 
 function GuildCard({ cfg }: { cfg: GuildCfg }) {
+  const { t } = useLanguage();
   // Resolves the invite via the shared REST client; cached for 5 min.
   const { data: d } = useGuild(cfg.invite);
 
@@ -61,8 +64,10 @@ function GuildCard({ cfg }: { cfg: GuildCfg }) {
 
   const counts: string[] = [];
   const hasOnline = typeof d?.online_count === "number";
-  if (hasOnline) counts.push(d!.online_count!.toLocaleString() + " online");
-  if (typeof d?.member_count === "number") counts.push(d.member_count.toLocaleString() + " members");
+  if (hasOnline)
+    counts.push(t("serversPage.online").replace("{n}", d!.online_count!.toLocaleString()));
+  if (typeof d?.member_count === "number")
+    counts.push(t("serversPage.members").replace("{n}", d.member_count.toLocaleString()));
 
   return (
     <a
@@ -103,7 +108,9 @@ function GuildCard({ cfg }: { cfg: GuildCfg }) {
       </div>
       {d?.description ? <div className="gc-desc">{d.description}</div> : null}
       {cfg.role ? (
-        <span className={`gc-role gc-role-${roleKey}`}>{ROLE_LABELS[roleKey] || cfg.role}</span>
+        <span className={`gc-role gc-role-${roleKey}`}>
+          {ROLE_LABEL_KEYS[roleKey] ? t(ROLE_LABEL_KEYS[roleKey]) : cfg.role}
+        </span>
       ) : null}
     </a>
   );

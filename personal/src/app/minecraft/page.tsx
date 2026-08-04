@@ -6,6 +6,7 @@
 
 import type { Metadata } from "next";
 import MinecraftAccounts from "@scripts/MinecraftAccounts";
+import { Tr } from "@components/chrome/i18nText";
 import "@styles/stage.css";
 import "@styles/pages/minecraft.css";
 
@@ -112,8 +113,8 @@ export default function MinecraftPage() {
 
       <main className="presence-stage">
         <div className="presence-intro">
-          <h1>Minecraft</h1>
-          <p>All my Minecraft accounts, live via Doughmination Restful.</p>
+          <h1><Tr k="minecraftPage.title" /></h1>
+          <p><Tr k="minecraftPage.intro" /></p>
         </div>
 
         <MinecraftAccounts accounts={MC_UUIDS} />

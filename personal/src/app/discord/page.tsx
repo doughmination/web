@@ -6,6 +6,7 @@
 
 import type { Metadata } from "next";
 import PresenceDashboard from "@scripts/PresenceDashboard";
+import { Tr } from "@components/chrome/i18nText";
 import * as s from "@styles/presence-dashboard.css";
 
 const MY_DISCORD_USER_ID = "1464890289922641993";
@@ -54,8 +55,8 @@ export default function DiscordPage() {
 
       <main className={s.page}>
         <div className={s.intro}>
-          <h1 className={s.introTitle}>Discord</h1>
-          <p className={s.introSub}>What fae is up to, live via Doughmination Restful.</p>
+          <h1 className={s.introTitle}><Tr k="discordPage.title" /></h1>
+          <p className={s.introSub}><Tr k="discordPage.intro" /></p>
         </div>
 
         <PresenceDashboard userId={MY_DISCORD_USER_ID} />

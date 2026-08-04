@@ -14,6 +14,21 @@
  * SiteChrome on mount. @ts-nocheck/eslint-disable: faithful legacy port. */
 // Icons are inline SVG, not the old `bi` webfont — see presenceIcons.ts.
 import { icon } from "./presenceIcons";
+// core.ts runs once outside React (see the note above), so it can't call
+// useLanguage(). It resolves the active language itself, the same way
+// LanguageProvider does, and reads strings straight out of the shared
+// dictionaries — one source of truth, just two different ways of reading it.
+import { dictionaries } from "@/i18n/dictionaries";
+import { DEFAULT_LANGUAGE, detectLanguage, isLanguage } from "@/i18n/config";
+
+function currentDictionary() {
+  try {
+    const stored = window.localStorage.getItem("lang");
+    return dictionaries[stored && isLanguage(stored) ? stored : detectLanguage()];
+  } catch {
+    return dictionaries[DEFAULT_LANGUAGE];
+  }
+}
 
 export function initCore(catSrc: string = "/oneko/classic.png") {
   /* Ari was here uwu
@@ -609,14 +624,15 @@ export function initCore(catSrc: string = "/oneko/classic.png") {
     overlay.className = "cat-picker";
     overlay.dataset.ctpPersist = ""; /* survives soft navigation, see bottom of file */
     overlay.hidden = true;
+    const dict = currentDictionary();
     overlay.innerHTML = `
-    <div class="cat-picker-panel" role="dialog" aria-label="Choose a cat">
+    <div class="cat-picker-panel" role="dialog" aria-label="${dict.catPicker.dialogLabel}">
       <div class="cat-picker-head">
-        <span>Cat collection</span>
-        <button class="cat-picker-close" type="button" aria-label="Close">&times;</button>
+        <span>${dict.settings.catCollection}</span>
+        <button class="cat-picker-close" type="button" aria-label="${dict.catPicker.close}">&times;</button>
       </div>
       <div class="cat-grid"></div>
-      <p class="cat-hint">Pick your cat &middot; press C to toggle</p>
+      <p class="cat-hint">${dict.catPicker.hint}</p>
     </div>`;
     document.body.appendChild(overlay);
     const grid = overlay.querySelector(".cat-grid");

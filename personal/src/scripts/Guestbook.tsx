@@ -10,6 +10,8 @@ import { useEffect, useRef, useState } from "react";
 import { HeartFill, type Icon } from "react-bootstrap-icons";
 import { useGuestbook, useGuestbookPost } from "@doughmination/react-api";
 import { playClickSound } from "@lib/sound";
+import { useLanguage } from "@/i18n/LanguageProvider";
+import type { Dictionary } from "@/i18n/locales/en";
 
 /* Ported from guestbook.js — the sign form (with honeypot + optional Cloudflare
    Turnstile) and the list of entries. Reads + writes now go through the wrapper
@@ -34,12 +36,12 @@ declare global {
   }
 }
 
-function relTime(ts: number): string {
+function relTime(ts: number, time: Dictionary["time"]): string {
   const diff = Math.floor((Date.now() - ts) / 1000);
-  if (diff < 60) return "just now";
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-  if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
+  if (diff < 60) return time.justNow;
+  if (diff < 3600) return time.minutesAgo.replace("{n}", String(Math.floor(diff / 60)));
+  if (diff < 86400) return time.hoursAgo.replace("{n}", String(Math.floor(diff / 3600)));
+  if (diff < 604800) return time.daysAgo.replace("{n}", String(Math.floor(diff / 86400)));
   try {
     return new Date(ts).toLocaleDateString(undefined, {
       year: "numeric",
@@ -56,6 +58,7 @@ type Props = {
 };
 
 export default function Guestbook({ turnstileKey }: Props) {
+  const { t, dict } = useLanguage();
   const [name, setName] = useState("");
   const [website, setWebsite] = useState("");
   const [message, setMessage] = useState("");
@@ -108,7 +111,7 @@ export default function Guestbook({ turnstileKey }: Props) {
 
     if (!name.trim() || !message.trim()) {
       setStatus({
-        text: "Name and message are both required.",
+        text: t("guestbook.errRequired"),
         kind: "err"
       });
       return;
@@ -119,7 +122,7 @@ export default function Guestbook({ turnstileKey }: Props) {
     // so the trap has to be sprung here.
     if (hpRef.current?.value) {
       setStatus({
-        text: "Thanks for signing!",
+        text: t("guestbook.thanks"),
         kind: "ok",
         icon: HeartFill
       });
@@ -134,14 +137,14 @@ export default function Guestbook({ turnstileKey }: Props) {
       token = turnstileToken();
       if (!token) {
         setStatus({
-          text: "Please complete the captcha first.",
+          text: t("guestbook.errCaptcha"),
           kind: "err"
         });
         return;
       }
     }
 
-    setStatus({ text: "Signing…" });
+    setStatus({ text: t("guestbook.signing") });
     try {
       await post.mutateAsync({
         name,
@@ -151,7 +154,7 @@ export default function Guestbook({ turnstileKey }: Props) {
       });
 
       setStatus({
-        text: "Thanks for signing!",
+        text: t("guestbook.thanks"),
         kind: "ok",
         icon: HeartFill
       });
@@ -167,7 +170,7 @@ export default function Guestbook({ turnstileKey }: Props) {
       const text =
         err instanceof Error && err.message
           ? err.message
-          : "Something went wrong. Try again.";
+          : t("guestbook.errGeneric");
       setStatus({
         text,
         kind: "err"
@@ -179,50 +182,53 @@ export default function Guestbook({ turnstileKey }: Props) {
     <>
       <form className="gb-form" autoComplete="off" noValidate onSubmit={onSubmit}>
         <div className="gb-field">
-          <label htmlFor="gb-name">Name</label>
+          <label htmlFor="gb-name">{t("guestbook.nameLabel")}</label>
           <input
             type="text"
             id="gb-name"
             name="name"
             maxLength={40}
             required
-            placeholder="what should I call you?"
+            placeholder={t("guestbook.namePlaceholder")}
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
         </div>
         <div className="gb-field">
           <label htmlFor="gb-website">
-            Website <span className="gb-optional">(optional)</span>
+            {t("guestbook.websiteLabel")}{" "}
+            <span className="gb-optional">{t("guestbook.optional")}</span>
           </label>
           <input
             type="url"
             id="gb-website"
             name="website"
             maxLength={200}
-            placeholder="https://your-cool-site.com"
+            placeholder={t("guestbook.websitePlaceholder")}
             value={website}
             onChange={(e) => setWebsite(e.target.value)}
           />
         </div>
         <div className="gb-field">
-          <label htmlFor="gb-message">Message</label>
+          <label htmlFor="gb-message">{t("guestbook.messageLabel")}</label>
           <textarea
             id="gb-message"
             name="message"
             maxLength={500}
             rows={3}
             required
-            placeholder="say hi!"
+            placeholder={t("guestbook.messagePlaceholder")}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
           />
-          <span className="gb-counter">{message.length} / 500</span>
+          <span className="gb-counter">
+            {t("guestbook.counter").replace("{n}", String(message.length))}
+          </span>
         </div>
 
         {/* Honeypot: hidden from humans, bots tend to fill it. */}
         <div className="gb-hp" aria-hidden="true">
-          <label htmlFor="gb-url2">Leave this empty</label>
+          <label htmlFor="gb-url2">{t("guestbook.honeypot")}</label>
           <input
             type="text"
             id="gb-url2"
@@ -243,7 +249,7 @@ export default function Guestbook({ turnstileKey }: Props) {
 
         <div className="gb-actions">
           <button type="submit" disabled={submitting}>
-            Sign guestbook
+            {t("guestbook.sign")}
           </button>
           <span
             className={`gb-status${status?.kind ? ` gb-${status.kind}` : ""}`}
@@ -257,11 +263,11 @@ export default function Guestbook({ turnstileKey }: Props) {
 
       <div className="gb-entries" aria-live="polite">
         {isPending ? (
-          <p className="gb-empty">Loading messages…</p>
+          <p className="gb-empty">{t("guestbook.loadingMessages")}</p>
         ) : isError ? (
-          <p className="gb-empty">Could not load messages right now.</p>
+          <p className="gb-empty">{t("guestbook.loadError")}</p>
         ) : entries.length === 0 ? (
-          <p className="gb-empty">No messages yet, be the first to sign!</p>
+          <p className="gb-empty">{t("guestbook.noMessages")}</p>
         ) : (
           entries.map((entry) => {
             const safeWeb = /^https?:\/\//i.test(entry.website || "")
@@ -279,7 +285,7 @@ export default function Guestbook({ turnstileKey }: Props) {
                       entry.name
                     )}
                   </span>
-                  <span className="gb-entry-time">{relTime(entry.ts)}</span>
+                  <span className="gb-entry-time">{relTime(entry.ts, dict.time)}</span>
                 </div>
                 <div className="gb-entry-msg">{entry.message}</div>
               </div>

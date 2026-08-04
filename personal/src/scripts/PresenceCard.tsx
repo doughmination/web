@@ -38,14 +38,16 @@ import {
 } from "react-bootstrap-icons";
 import {
   BADGE_FLAGS, CONNECTION_ICON, CONNECTION_URLS, NAME_FONTS, PLATFORM_ICONS,
-  STATUS_TITLE, WL_TYPE_LABEL, assetUrl, avatarUrl, bannerUrl, clamp, elapsedStr,
+  assetUrl, avatarUrl, bannerUrl, clamp, elapsedStr,
   emojiUrl, fmt, fmtPrice, fmtSinceDate, g, guildBadgeUrl, intToHex, isRealName,
-  mapSelfHostToPresence, pickListening, proxyImg, rgbTriplet, useAlbumAccent,
+  isStatusKey, isWlTypeKey, mapSelfHostToPresence, pickListening, proxyImg, rgbTriplet, useAlbumAccent,
   usePresenceFeed, useTicker, wlImg,
   type Dict, type PresenceOpts, type SelfJson,
 } from "./presenceShared";
 import { renderDiscordMarkdown } from "./discordMarkdown";
 import { playClickSound } from "@lib/sound";
+import { useLanguage } from "@/i18n/LanguageProvider";
+import type { TranslationKey } from "@/i18n/translate";
 
 /* ---- small shared bits ---------------------------------------------------- */
 
@@ -79,7 +81,7 @@ function Clock({ offsetMin, tzName }: { offsetMin: number; tzName: string | null
 
 /* ---- head ----------------------------------------------------------------- */
 
-function PlatformIcons({ d }: { d: Dict }) {
+function PlatformIcons({ d, t }: { d: Dict; t: (key: TranslationKey) => string }) {
   const keys: string[] = [];
   if (d.active_on_discord_desktop) keys.push("desktop");
   if (d.active_on_discord_mobile) keys.push("mobile");
@@ -87,7 +89,8 @@ function PlatformIcons({ d }: { d: Dict }) {
   return (
     <span className="pc-platforms" aria-hidden="true">
       {keys.map((k) => {
-        const { Ic, label } = PLATFORM_ICONS[k];
+        const { Ic } = PLATFORM_ICONS[k];
+        const label = t(`presence.platform.${k}` as TranslationKey);
         return <Ic key={k} className="pc-plat" title={label} role="img" aria-label={label} />;
       })}
     </span>
@@ -154,7 +157,7 @@ function Badges({
   );
 }
 
-function Premium({ prem }: { prem: Dict | undefined }) {
+function Premium({ prem, t }: { prem: Dict | undefined; t: (key: TranslationKey) => string }) {
   const NITRO_LABEL: Record<string, string> = {
     nitro: "Nitro",
     classic: "Nitro Classic",
@@ -163,15 +166,15 @@ function Premium({ prem }: { prem: Dict | undefined }) {
   const label = prem ? NITRO_LABEL[prem.type as string] : undefined;
   const boosting = prem?.guild_since as string | undefined;
   if (!label && !boosting) return <span className="pc-premium" hidden />;
-  const since = prem?.since ? " · since " + fmtSinceDate(prem.since as string) : "";
+  const since = prem?.since ? " · " + t("presence.since").replace("{date}", fmtSinceDate(prem.since as string)) : "";
   return (
     <span className="pc-premium">
       {label ? <span className="pc-nitro" title={label + since}>{label}</span> : null}
       {boosting ? (
         <span
           className="pc-boost"
-          title={"Boosting since " + fmtSinceDate(boosting)}
-          aria-label="Server booster"
+          title={t("presence.boostingSince").replace("{date}", fmtSinceDate(boosting))}
+          aria-label={t("presence.serverBooster")}
         >
           <Gem aria-hidden="true" />
         </span>
@@ -222,7 +225,7 @@ function ConnIcon({ type }: { type: string }) {
   return <Ic className="pc-conn-ic" title={type} role="img" aria-label={type} />;
 }
 
-function Connections({ accounts }: { accounts: Dict[] | undefined }) {
+function Connections({ accounts, t }: { accounts: Dict[] | undefined; t: (key: TranslationKey) => string }) {
   const list = (accounts || []).filter((a) => a && isRealName(a.name));
   if (!list.length) return <div className="pc-connections" hidden />;
   return (
@@ -235,7 +238,7 @@ function Connections({ accounts }: { accounts: Dict[] | undefined }) {
             <ConnIcon type={a.type as string} />
             <span className="pc-conn-name">{String(a.name)}</span>
             {a.verified ? (
-              <span className="pc-conn-check" title="Verified">
+              <span className="pc-conn-check" title={t("presence.verified")}>
                 <PatchCheckFill aria-hidden="true" />
               </span>
             ) : null}
@@ -256,15 +259,16 @@ function Connections({ accounts }: { accounts: Dict[] | undefined }) {
 
 /* ---- wishlist ------------------------------------------------------------- */
 
-function Wishlist({ items }: { items: Dict[] | null }) {
+function Wishlist({ items, t }: { items: Dict[] | null; t: (key: TranslationKey) => string }) {
   const list = Array.isArray(items) ? items : [];
   return (
     <div className="pc-wishlist" id="pc-wishlist">
-      <div className="pc-wishlist-title">Wishlist</div>
+      <div className="pc-wishlist-title">{t("presence.wishlist.title")}</div>
       {list.length ? (
         list.map((w, i) => {
           const ic = wlImg(w);
-          const typeLabel = WL_TYPE_LABEL[String(w.type)] || "";
+          const type = String(w.type);
+          const typeLabel = isWlTypeKey(type) ? t(`presence.wishlistType.${type}` as TranslationKey) : "";
           const price = fmtPrice(w.price as Dict);
           return (
             <span className={"pc-wl-item" + (w.is_owned ? " is-owned" : "")} key={i}>
@@ -278,7 +282,7 @@ function Wishlist({ items }: { items: Dict[] | null }) {
                 />
               ) : null}
               <span className="pc-wl-text">
-                <span className="pc-wl-name">{String(w.name || "Collectible")}</span>
+                <span className="pc-wl-name">{String(w.name || t("presence.wishlist.collectible"))}</span>
                 {typeLabel ? <span className="pc-wl-type">{typeLabel}</span> : null}
               </span>
               {price ? <span className="pc-wl-price">{price}</span> : null}
@@ -287,7 +291,7 @@ function Wishlist({ items }: { items: Dict[] | null }) {
         })
       ) : (
         <p className="pc-wl-empty">
-          nothing on the wishlist yet <Stars aria-hidden="true" />
+          {t("presence.wishlist.empty")} <Stars aria-hidden="true" />
         </p>
       )}
     </div>
@@ -323,7 +327,7 @@ function CustomRow({ a }: { a: Dict }) {
   );
 }
 
-function SpotifyRow({ s, source }: { s: Dict; source: "doughmination" | "spotify" }) {
+function SpotifyRow({ s, source, t }: { s: Dict; source: "doughmination" | "spotify"; t: (key: TranslationKey) => string }) {
   const ts = s.timestamps as { start?: number; end?: number } | undefined;
   const start = ts?.start ?? 0;
   const end = ts?.end ?? 0;
@@ -361,7 +365,7 @@ function SpotifyRow({ s, source }: { s: Dict; source: "doughmination" | "spotify
             ) : (
               <Spotify className="pc-brand-logo pc-brand-spotify" aria-hidden="true" />
             )}
-            {dm ? "Listening on Doughmination Music" : "Listening to Spotify"}
+            {dm ? t("presence.listeningOnDoughminationMusic") : t("presence.listeningToSpotify")}
           </>
         }
         title={(s.song as string) || ""}
@@ -381,7 +385,7 @@ function SpotifyRow({ s, source }: { s: Dict; source: "doughmination" | "spotify
   );
 }
 
-function ActivityRow({ a }: { a: Dict }) {
+function ActivityRow({ a, t }: { a: Dict; t: (key: TranslationKey) => string }) {
   const isCode = /visual studio code|vscode/i.test((a.name as string) || "");
   const ts = a.timestamps as { start?: number } | undefined;
   const start = ts?.start;
@@ -391,10 +395,10 @@ function ActivityRow({ a }: { a: Dict }) {
   const large = assets.large_image && assetUrl(a.application_id as string, assets.large_image as string);
   const small = assets.small_image && assetUrl(a.application_id as string, assets.small_image as string);
 
-  let kind = isCode ? "Coding" : "Playing " + ((a.name as string) || "");
+  let kind = isCode ? t("presence.coding") : t("presence.playing").replace("{name}", (a.name as string) || "");
   const party = a.party as { size?: number[] } | undefined;
   if (party?.size?.length === 2 && party.size[1]) {
-    kind += " · " + party.size[0] + " of " + party.size[1];
+    kind += " · " + t("presence.partyOf").replace("{a}", String(party.size[0])).replace("{b}", String(party.size[1]));
   }
 
   const buttons = a.buttons as (string | { label?: string })[] | undefined;
@@ -432,7 +436,7 @@ function ActivityRow({ a }: { a: Dict }) {
         <div className="pc-buttons">
           {buttons.map((label, i) => (
             <span className="pc-btn" key={i}>
-              {typeof label === "string" ? label : label?.label || "Open"}
+              {typeof label === "string" ? label : label?.label || t("presence.openButton")}
             </span>
           ))}
         </div>
@@ -458,9 +462,9 @@ function StreamThumb({ src }: { src: string }) {
   );
 }
 
-function StreamRow({ a }: { a: Dict }) {
+function StreamRow({ a, t }: { a: Dict; t: (key: TranslationKey) => string }) {
   const url = a.url as string | undefined;
-  const platform = url && /twitch/i.test(url) ? "Twitch" : url && /youtube/i.test(url) ? "YouTube" : "Live";
+  const platform = url && /twitch/i.test(url) ? "Twitch" : url && /youtube/i.test(url) ? "YouTube" : t("presence.live");
   const assets = (a.assets as Dict) || {};
   const thumb = assets.large_image_url ? proxyImg(assets.large_image_url as string, { w: 240 }) : null;
 
@@ -468,7 +472,7 @@ function StreamRow({ a }: { a: Dict }) {
     <>
       {thumb ? <StreamThumb src={thumb} /> : <span className="pc-row-ic pc-dot" aria-hidden="true" />}
       <RowText
-        kind={"Streaming on " + platform}
+        kind={t("presence.streamingOn").replace("{platform}", platform)}
         title={(a.details as string) || (a.name as string) || ""}
         sub={(a.state as string) || ""}
       />
@@ -485,6 +489,7 @@ function StreamRow({ a }: { a: Dict }) {
 /* ---- the card ------------------------------------------------------------- */
 
 export default function PresenceCard(opts: PresenceOpts) {
+  const { t } = useLanguage();
   const userId = opts.userId || null;
   const json: SelfJson | null = usePresenceFeed(userId, opts.pollMs);
   const [wishlistOpen, setWishlistOpen] = useState(false);
@@ -520,7 +525,7 @@ export default function PresenceCard(opts: PresenceOpts) {
 
   // Before the first payload lands, fall back to the props the grid passed.
   const displayName = d
-    ? (u.display_name as string) || (u.global_name as string) || (u.username as string) || "Discord User"
+    ? (u.display_name as string) || (u.global_name as string) || (u.username as string) || t("presence.discordUser")
     : opts.fallbackName || "";
   const handle = d ? (u.username ? "@" + u.username : "") : opts.fallbackUser ? "@" + opts.fallbackUser : "";
   const avatar = d
@@ -664,15 +669,17 @@ export default function PresenceCard(opts: PresenceOpts) {
 
           <span className="pc-sub-row">
             <span className="pc-user">{handle}</span>
-            <span className="pc-status-text">{STATUS_TITLE[effectiveStatus] || "Offline"}</span>
+            <span className="pc-status-text">
+              {t(`presence.status.${isStatusKey(effectiveStatus) ? effectiveStatus : "offline"}` as TranslationKey)}
+            </span>
             {pron ? <span className="pc-pronouns">{pron}</span> : <span className="pc-pronouns" hidden />}
             {tzOffsetMin != null ? (
               <Clock offsetMin={tzOffsetMin} tzName={tz?.timezone || null} />
             ) : (
               <span className="pc-timezone" hidden />
             )}
-            <Premium prem={apiUser.premium as Dict | undefined} />
-            {d ? <PlatformIcons d={d} /> : <span className="pc-platforms" aria-hidden="true" />}
+            <Premium prem={apiUser.premium as Dict | undefined} t={t} />
+            {d ? <PlatformIcons d={d} t={t} /> : <span className="pc-platforms" aria-hidden="true" />}
           </span>
 
           {loc ? (
@@ -698,8 +705,8 @@ export default function PresenceCard(opts: PresenceOpts) {
         <button
           className={"pc-star" + (wishlistOpen ? " on" : "")}
           type="button"
-          aria-label="show wishlist"
-          title="wishlist"
+          aria-label={t("presence.wishlist.showLabel")}
+          title={t("presence.wishlist.tooltip")}
           aria-expanded={wishlistOpen}
           onClick={(e) => {
             e.stopPropagation();
@@ -712,15 +719,15 @@ export default function PresenceCard(opts: PresenceOpts) {
       </div>
 
       <Bio text={apiUser.bio} />
-      <Connections accounts={data?.connected_accounts as Dict[] | undefined} />
+      <Connections accounts={data?.connected_accounts as Dict[] | undefined} t={t} />
 
       <div className="pc-sections">
-        {nowPlaying ? <SpotifyRow s={nowPlaying} source={listening!.source} /> : null}
-        {games.map((a, i) => <ActivityRow a={a} key={"g" + i} />)}
-        {streams.map((a, i) => <StreamRow a={a} key={"s" + i} />)}
+        {nowPlaying ? <SpotifyRow s={nowPlaying} source={listening!.source} t={t} /> : null}
+        {games.map((a, i) => <ActivityRow a={a} t={t} key={"g" + i} />)}
+        {streams.map((a, i) => <StreamRow a={a} t={t} key={"s" + i} />)}
       </div>
 
-      <Wishlist items={wishlistItems} />
+      <Wishlist items={wishlistItems} t={t} />
     </div>
   );
 }

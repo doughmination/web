@@ -4,14 +4,19 @@
  * See LICENCE.md in the project root for full licence information.
  */
 
+"use client";
+
 import { Github } from "react-bootstrap-icons";
 import Fronting from "@scripts/Fronting";
 import Devices from "@scripts/Devices";
 import Location from "@scripts/Location";
 import VisitorCounter from "@scripts/VisitorCounter";
+import { useLanguage } from "@/i18n/LanguageProvider";
 import "@styles/pages/index.css";
 
 export default function Home() {
+  const { t } = useLanguage();
+
   return (
     <>
       <main className="hub">
@@ -20,18 +25,13 @@ export default function Home() {
           <img
             className="pfp"
             src="/favicon.png"
-            alt="Clove Twilight avatar"
+            alt={t("home.title")}
           />
-          <h1>Clove Twilight</h1>
+          <h1>{t("home.title")}</h1>
           <h2 className="pronouns">(fae/faer)</h2>
         </header>
         <section className="about">
-          <p className="about-bio">
-            Transfem developer from Southampton, UK. I make projects,
-            personal-site nonsense, and run a small corner of the internet under
-            the trade mark &ldquo;doughmination system&rdquo;. Big on Linux,
-            Catppuccin, and cats.
-          </p>
+          <p className="about-bio">{t("home.bio")}</p>
           <a
             className="about-source"
             href="https://github.com/doughmination/web/tree/main/personal"
@@ -39,14 +39,14 @@ export default function Home() {
             rel="noopener noreferrer"
           >
             <Github aria-hidden="true" />
-            View source on GitHub
+            {t("home.viewSource")}
           </a>
         </section>
 
         <Fronting />
         <Devices />
         <Location />
-        <VisitorCounter namespace="dough" hitKey="hits" label="visitors" />
+        <VisitorCounter namespace="dough" hitKey="hits" />
       </main>
 
       

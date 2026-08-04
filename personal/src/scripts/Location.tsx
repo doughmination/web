@@ -11,6 +11,7 @@ import dynamic from "next/dynamic";
 import { useDeviceState } from "@doughmination/react-api";
 
 import { realText, relTime } from "./util";
+import { useLanguage } from "@/i18n/LanguageProvider";
 import { BoxArrowUpRight, GeoAltFill } from "react-bootstrap-icons";
 import "leaflet/dist/leaflet.css";
 
@@ -26,8 +27,13 @@ function fmtLocation(raw: string): string {
     .join(", ");
 }
 
-/* location may be a plain place-name string or a map URL. */
-function parseLocation(v: unknown): { url: string | null; label: string; query: string } | null {
+/* location may be a plain place-name string or a map URL. viewOnMapFallback
+   is passed in (rather than imported/hooked here) since this is a plain
+   function, not a component — it can't call useLanguage() itself. */
+function parseLocation(
+  v: unknown,
+  viewOnMapFallback: string,
+): { url: string | null; label: string; query: string } | null {
   const raw = realText(v);
   if (!raw) return null;
   if (/^https?:\/\//i.test(raw)) {
@@ -42,22 +48,23 @@ function parseLocation(v: unknown): { url: string | null; label: string; query: 
       if (!label) label = u.hostname.replace(/^www\./, "");
       query = ll || label;
     } catch {
-      label = "View on map";
+      label = viewOnMapFallback;
     }
-    return { url: raw, label: label || "View on map", query };
+    return { url: raw, label: label || viewOnMapFallback, query };
   }
   const label = fmtLocation(raw);
   return { url: null, label, query: label };
 }
 
 export default function Location() {
+  const { t, dict } = useLanguage();
   const { device: pixel } = useDeviceState("pixel");
 
   if (!pixel) return null;
-  const loc = parseLocation(pixel.location);
+  const loc = parseLocation(pixel.location, t("location.viewOnMap"));
   if (!loc || !loc.label) return null;
 
-  const when = relTime(pixel.updated_at);
+  const when = relTime(pixel.updated_at, dict.time);
   // Only offer a link-out for plain place names (no source URL provided).
   // We don't know what precision a pasted map URL encodes, so we just show
   // the label as-is rather than treating it as a coordinate source.
@@ -66,10 +73,10 @@ export default function Location() {
     (loc.query ? "https://www.openstreetmap.org/search?query=" + encodeURIComponent(loc.query) : "");
 
   return (
-    <section className="location-card" aria-label="Current location">
+    <section className="location-card" aria-label={t("location.ariaLabel")}>
       <div className="loc-head">
         <GeoAltFill aria-hidden="true" />
-        <span className="loc-label">Location</span>
+        <span className="loc-label">{t("location.heading")}</span>
       </div>
       <div className="loc-body">
         {/* Only render a map for plain place-name locations, not arbitrary URLs */}

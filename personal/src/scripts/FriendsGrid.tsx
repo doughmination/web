@@ -8,6 +8,8 @@
 
 import { useEffect } from "react";
 import PresenceCard from "./PresenceCard";
+import { useLanguage } from "@/i18n/LanguageProvider";
+import type { TranslationKey } from "@/i18n/translate";
 
 /* /cool-people — the friends/alts grid. React renders the section/heading/grid
    structure; each member slot is a full-but-mini presence card. Each card
@@ -23,13 +25,22 @@ type Member = {
   discordId?: string | null;
   link?: string | null;
 };
-type Group = { title: string; subtitle?: string; members: Member[] };
+/** `id` is the stable anchor slug (kept language-independent so hash links
+ *  don't break when the display title is translated); `titleKey`/`subtitleKey`
+ *  point at the active locale's label. */
+type Group = {
+  id: string;
+  titleKey: TranslationKey;
+  subtitleKey?: TranslationKey;
+  members: Member[];
+};
 
 const FRIEND_POLL_MS = 60000;
 
 const FRIENDS: Group[] = [
   {
-    title: "Real Friends",
+    id: "real-friends",
+    titleKey: "coolPeople.realFriends",
     members: [{
       name: "Aria",
       tier: "wife",
@@ -44,8 +55,9 @@ const FRIENDS: Group[] = [
   ],
   },
   {
-    title: "Alts",
-    subtitle: "My other accounts, dead or alive",
+    id: "alts",
+    titleKey: "coolPeople.alts",
+    subtitleKey: "coolPeople.altsSubtitle",
     members: [
       {
         name: "J",
@@ -98,14 +110,6 @@ const FRIENDS: Group[] = [
   },
 ];
 
-function slugify(str: string) {
-  return String(str || "")
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
 function FriendSlot({ m }: { m: Member }) {
   // No batching → each card loads its own /discord/users/:id, then rides the
   // socket (or polls at pollMs when there's no socket).
@@ -124,6 +128,7 @@ function FriendSlot({ m }: { m: Member }) {
 }
 
 export default function FriendsGrid() {
+  const { t } = useLanguage();
   useEffect(() => {
     const jump = () => {
       const id = (location.hash || "").slice(1);
@@ -140,12 +145,14 @@ export default function FriendsGrid() {
       {FRIENDS.map((group) => (
         <section
           className="section"
-          id={slugify(group.title)}
-          key={group.title}
+          id={group.id}
+          key={group.id}
           style={{ fontFamily: "'DDN gg sans', sans-serif" }}
         >
-          <h2 className="section-title">{group.title}</h2>
-          {group.subtitle ? <p className="section-subtitle">{group.subtitle}</p> : null}
+          <h2 className="section-title">{t(group.titleKey)}</h2>
+          {group.subtitleKey ? (
+            <p className="section-subtitle">{t(group.subtitleKey)}</p>
+          ) : null}
           <div className="friend-grid">
             {group.members.map((m, i) => (
               <FriendSlot key={(m.discordId || m.name) + i} m={m} />

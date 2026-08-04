@@ -5,6 +5,7 @@
  */
 
 import type { Metadata } from "next";
+import { Tr } from "@components/chrome/i18nText";
 import "@styles/pages/88x31.css";
 
 export const metadata: Metadata = {
@@ -274,8 +275,8 @@ export default function ButtonsPage() {
     <>
       <div className="hub">
         <header className="hub-header">
-          <h1>88x31 Buttons</h1>
-          <p className="tagline">The little badges from around my site, all in one spot</p>
+          <h1><Tr k="webring.title" /></h1>
+          <p className="tagline"><Tr k="webring.tagline" /></p>
         </header>
 
         <div className="button-page">

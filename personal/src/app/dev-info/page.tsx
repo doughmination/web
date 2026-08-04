@@ -5,9 +5,10 @@
  */
 
 import type { Metadata } from "next";
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import DevInfo from "@scripts/DevInfo";
 import SoundLink from "@components/SoundLink";
+import { Tr } from "@components/chrome/i18nText";
 import "@styles/pages/dev-info.css";
 
 export const metadata: Metadata = {
@@ -95,7 +96,7 @@ function HardwareRow({
   term,
   children,
 }: {
-  term: string;
+  term: ReactNode;
   children: React.ReactNode;
 }) {
   return (
@@ -125,11 +126,11 @@ export default function DevInfoPage() {
           />
           <h1>Clove Twilight</h1>
           <h2 className="pronouns">(fae/faer)</h2>
-          <p className="tagline">Dev Info</p>
+          <p className="tagline"><Tr k="devInfo.tagline" /></p>
         </header>
 
         <details className="waka-section tech-stack" id="tech-stack">
-          <summary className="section-title">Tech Stack</summary>
+          <summary className="section-title"><Tr k="devInfo.techStack" /></summary>
           <div className="dev-info" role="region" aria-label="Tech stack">
             {TECH.map(([color, slug, label]) => (
               <span
@@ -148,8 +149,8 @@ export default function DevInfoPage() {
         </details>
 
         <details className="waka-section hardware" id="waka-section-hardware">
-          <summary className="section-title">Hardware</summary>
-          <p className="hw-intro">This is the beast setup I daily-drive. ✨</p>
+          <summary className="section-title"><Tr k="devInfo.hardware" /></summary>
+          <p className="hw-intro"><Tr k="devInfo.hardwareIntro" /></p>
           <dl className="hw-list">
             <HardwareRow term="CPU">
               <SoundLink
@@ -176,7 +177,7 @@ export default function DevInfoPage() {
                 Corsair Vengeance 64 GB (2 x 32 GB) DDR5-6000 CL40 Memory
               </SoundLink>
             </HardwareRow>
-            <HardwareRow term="Storage">
+            <HardwareRow term={<Tr k="devInfo.hwStorage" />}>
               <SoundLink
                 className="hw-item"
                 href="https://uk.pcpartpicker.com/product/YPKscf/acer-predator-gm7-1-tb-m2-2280-pcie-40-x4-nvme-solid-state-drive-bl9bwwr118"
@@ -191,7 +192,7 @@ export default function DevInfoPage() {
                 10TB HDD
               </SoundLink>
             </HardwareRow>
-            <HardwareRow term="Motherboard">
+            <HardwareRow term={<Tr k="devInfo.hwMotherboard" />}>
               <SoundLink
                 className="hw-item"
                 href="https://uk.pcpartpicker.com/product/Q8KnTW/gigabyte-b850m-aorus-elite-wifi6e-ice-micro-atx-am5-motherboard-b850m-aorus-elite-wifi6e-ice"
@@ -199,7 +200,7 @@ export default function DevInfoPage() {
                 Gigabyte B850M AORUS ELITE WIFI6E ICE Micro ATX AM5 Motherboard
               </SoundLink>
             </HardwareRow>
-            <HardwareRow term="Cooling">
+            <HardwareRow term={<Tr k="devInfo.hwCooling" />}>
               <SoundLink
                 className="hw-item"
                 href="https://uk.pcpartpicker.com/product/YXFmP6/thermalright-aqua-elite-v3-6617-cfm-liquid-cpu-cooler-aqua-elite-360-white-v3"
@@ -207,7 +208,7 @@ export default function DevInfoPage() {
                 Thermalright Aqua Elite V3 66.17 CFM Liquid CPU Cooler
               </SoundLink>
             </HardwareRow>
-            <HardwareRow term="Keyboard">
+            <HardwareRow term={<Tr k="devInfo.hwKeyboard" />}>
               <SoundLink
                 className="hw-item"
                 href="https://en.akkogear.com/product/sakura-miku-5108b-plus-mechanical-keyboard/"
@@ -215,7 +216,7 @@ export default function DevInfoPage() {
                 Akko Sakura Miku 5108B Plus
               </SoundLink>
             </HardwareRow>
-            <HardwareRow term="Mouse">
+            <HardwareRow term={<Tr k="devInfo.hwMouse" />}>
               <SoundLink
                 className="hw-item"
                 href="https://www.logitechg.com/en-gb/shop/p/g502-x-plus-wireless-lightforce.910-006163"
@@ -223,7 +224,7 @@ export default function DevInfoPage() {
                 Logitech G502 X Gaming Lightspeed Wireless
               </SoundLink>
             </HardwareRow>
-            <HardwareRow term="Monitor(s)">
+            <HardwareRow term={<Tr k="devInfo.hwMonitors" />}>
               <SoundLink
                 className="hw-item"
                 href="https://uk.pcpartpicker.com/product/XpVfrH/gigabyte-g34wqcp-340-3440-x-1440-180-hz-curved-monitor-g34wqcp"
@@ -231,12 +232,12 @@ export default function DevInfoPage() {
                 Gigabyte G34WQCP 34.0&quot; 3440 x 1440 180 Hz Curved Monitor
               </SoundLink>
             </HardwareRow>
-            <HardwareRow term="Headphones">
+            <HardwareRow term={<Tr k="devInfo.hwHeadphones" />}>
               <SoundLink className="hw-item" href="https://m.yowu.com/product/detail?sku=3588">
                 Yowu Cat Ear Headphones Hatsune Miku NX
               </SoundLink>
             </HardwareRow>
-            <HardwareRow term="Microphone">
+            <HardwareRow term={<Tr k="devInfo.hwMicrophone" />}>
               <SoundLink className="hw-item" href="https://amzn.eu/d/00FjYEzR">
                 Aokeo AK-60 USB Microphone
               </SoundLink>

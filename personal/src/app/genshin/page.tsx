@@ -6,6 +6,7 @@
 
 import type { Metadata } from "next";
 import GenshinGallery, { type Character } from "@scripts/GenshinGallery";
+import { Tr } from "@components/chrome/i18nText";
 import "@styles/pages/genshin.css";
 
 export const metadata: Metadata = {
@@ -171,15 +172,14 @@ export default function GenshinPage() {
   return (
     <main className="genshin-stage">
       <div className="genshin-intro">
-        <h1>Genshin</h1>
+        <h1><Tr k="genshin.title" /></h1>
         <p>
-          My Genshin wishlist.
+          <Tr k="genshin.intro" />
         </p>
       </div>
 
       <p className="genshin-desktop-only" role="note">
-        The 3D gallery is a desktop-only feature. Open this page on a computer to
-        spin the models.
+        <Tr k="genshin.desktopOnly" />
       </p>
 
       <GenshinGallery uid={GENSHIN_UID} characters={CHARACTERS} />

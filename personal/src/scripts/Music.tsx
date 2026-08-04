@@ -11,6 +11,8 @@ import { useUserPresence } from "@doughmination/react-api";
 import { MusicNoteBeamed } from "react-bootstrap-icons";
 import { playClickSound } from "@lib/sound";
 import { dmListening } from "./presenceShared";
+import { useLanguage } from "@/i18n/LanguageProvider";
+import type { Dictionary } from "@/i18n/locales/en";
 
 /* Ported from music.js — now-playing hero, synced lyrics (LRCLIB) with a
    follow/lock scroll, recent plays + top artists (Last.fm). The per-frame
@@ -115,10 +117,10 @@ function normalizeLyrics(rec: {
     plain: rec.plainLyrics || "",
   };
 }
-function lyricsView(data: Lyrics | null): LyricsView {
+function lyricsView(data: Lyrics | null, noLyricsMsg: string): LyricsView {
   if (!data) return {
     kind: "note",
-    msg: "No lyrics found for this one."
+    msg: noLyricsMsg
   };
   if (data.instrumental) return { kind: "instrumental" };
   if (data.synced.length) return {
@@ -131,7 +133,7 @@ function lyricsView(data: Lyrics | null): LyricsView {
   };
   return {
     kind: "note",
-    msg: "No lyrics found for this one."
+    msg: noLyricsMsg
   };
 }
 
@@ -176,13 +178,14 @@ function lfmImg(images: { "#text"?: string }[]): string {
   const url = big["#text"] || "";
   return url && url.indexOf(LFM_PLACEHOLDER) === -1 ? url : "";
 }
-function timeAgo(uts: number | string): string {
+function timeAgo(uts: number | string, strings: Dictionary["music"]): string {
   const diff = Math.floor(Date.now() / 1000) - Number(uts);
   if (!isFinite(diff) || diff < 0) return "";
-  if (diff < 60) return "just now";
-  if (diff < 3600) return `${Math.floor(diff / 60)} min ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)} hr ago`;
-  return `${Math.floor(diff / 86400)} day${diff < 172800 ? "" : "s"} ago`;
+  if (diff < 60) return strings.timeJustNow;
+  if (diff < 3600) return strings.timeMinAgo.replace("{n}", String(Math.floor(diff / 60)));
+  if (diff < 86400) return strings.timeHrAgo.replace("{n}", String(Math.floor(diff / 3600)));
+  const days = Math.floor(diff / 86400);
+  return (days < 2 ? strings.timeDayAgo : strings.timeDaysAgo).replace("{n}", String(days));
 }
 async function lfm(method: string, extra?: Record<string, string>) {
   const qs = new URLSearchParams({
@@ -250,10 +253,11 @@ async function artistImg(name: string): Promise<string> {
 
 // ===========================================================================
 export default function Music() {
+  const { t, dict } = useLanguage();
   const [track, setTrack] = useState<Track | null>(null);
   const [ly, setLy] = useState<LyricsView>({
     kind: "note",
-    msg: "Waiting for a track…"
+    msg: dict.music.waitingForTrack
   });
   const [locked, setLocked] = useState(true);
   const [recent, setRecent] = useState<RecentItem[] | { note: string } | null>(null);
@@ -294,13 +298,13 @@ export default function Music() {
     if (!t) {
       setLy({
         kind: "note",
-        msg: "No track playing."
+        msg: dict.music.noTrackPlaying
       });
       return;
     }
     const key = trackKey(t);
     if (lyricsCache.current.has(key)) {
-      setLy(lyricsView(lyricsCache.current.get(key) || null));
+      setLy(lyricsView(lyricsCache.current.get(key) || null, dict.music.noLyricsFound));
       return;
     }
     setLy({ kind: "loading" });
@@ -321,8 +325,8 @@ export default function Music() {
     if (myReq !== lyricsReqRef.current) return;
     const data = normalizeLyrics(rec);
     lyricsCache.current.set(key, data);
-    setLy(lyricsView(data));
-  }, []);
+    setLy(lyricsView(data, dict.music.noLyricsFound));
+  }, [dict]);
 
   const applyTrack = useCallback(
     (next: Track | null) => {
@@ -411,7 +415,7 @@ export default function Music() {
   // ---- recent + top ----
   const loadRecent = useCallback(async () => {
     if (!LFM_OK) {
-      setRecent({ note: "Add your Last.fm username + key to show recent plays." });
+      setRecent({ note: dict.music.addLastfmNote });
       return;
     }
     try {
@@ -419,7 +423,7 @@ export default function Music() {
       const arr = data?.recenttracks?.track || [];
       const list = Array.isArray(arr) ? arr : [arr];
       if (!list.length) {
-        setRecent({ note: "No recent scrobbles." });
+        setRecent({ note: dict.music.noRecentScrobbles });
         return;
       }
       setRecent(
@@ -431,14 +435,14 @@ export default function Music() {
             url: t.url || "#",
             art: lfmImg(t.image),
             now,
-            when: now ? "" : timeAgo(t.date?.uts),
+            when: now ? "" : timeAgo(t.date?.uts, dict.music),
           };
         }),
       );
     } catch {
-      setRecent({ note: "Couldn’t reach Last.fm just now." });
+      setRecent({ note: dict.music.lastfmUnreachable });
     }
-  }, []);
+  }, [dict]);
 
   const loadTop = useCallback(async () => {
     if (!LFM_OK) return;
@@ -554,8 +558,8 @@ export default function Music() {
   return (
     <main className={`music-wrap${track ? (track.live ? " is-live" : "") : " is-idle"}`} id="music">
       <header className="music-head">
-        <h1>Music</h1>
-        <p>What I&apos;m listening to, with lyrics that follow along.</p>
+        <h1>{t("music.title")}</h1>
+        <p>{t("music.subtitle")}</p>
       </header>
 
       {/* now playing */}
@@ -578,10 +582,10 @@ export default function Music() {
         />
         <div className="mdc-meta">
           <span className="mdc-state" id="dc-state">
-            {track ? (track.live ? "Listening now" : "Last played") : "Not listening right now"}
+            {track ? (track.live ? t("music.listeningNow") : t("music.lastPlayed")) : t("music.notListening")}
           </span>
           <span className="mdc-title" id="dc-title">
-            {track ? track.song || "Unknown track" : "—"}
+            {track ? track.song || t("music.unknownTrack") : "—"}
           </span>
           <span className="mdc-artist" id="dc-artist">
             {track?.artist || ""}
@@ -609,7 +613,7 @@ export default function Music() {
 
       {/* lyrics */}
       <div className="sec-row" id="lyrics-section">
-        <h2 className="sec-title">Lyrics</h2>
+        <h2 className="sec-title">{t("music.lyricsHeading")}</h2>
         <button
           className={`ly-lock${locked ? " is-locked" : ""}`}
           id="ly-lock"
@@ -631,7 +635,7 @@ export default function Music() {
             <i />
             <i />
           </span>
-          <span className="ly-lock-label">{locked ? "Synced" : "Sync"}</span>
+          <span className="ly-lock-label">{locked ? t("music.synced") : t("music.sync")}</span>
         </button>
       </div>
       <div
@@ -655,24 +659,24 @@ export default function Music() {
         }}
       >
         {ly.kind === "loading" ? (
-          <p className="ly-note">Finding lyrics…</p>
+          <p className="ly-note">{t("music.findingLyrics")}</p>
         ) : ly.kind === "note" ? (
           <p className="ly-note">{ly.msg}</p>
         ) : ly.kind === "instrumental" ? (
           <p className="ly-note">
-            <MusicNoteBeamed aria-hidden="true" /> instrumental{" "}
+            <MusicNoteBeamed aria-hidden="true" /> {t("music.instrumental")}{" "}
             <MusicNoteBeamed aria-hidden="true" />
           </p>
         ) : ly.kind === "synced" ? (
           ly.lines.map((l, i) => (
             <p className="ly-line" data-i={i} key={i}>
-              {l.text || " "}
+              {l.text || " "}
             </p>
           ))
         ) : (
           ly.lines.map((l, i) => (
             <p className="ly-line ly-static" key={i}>
-              {l || " "}
+              {l || " "}
             </p>
           ))
         )}
@@ -680,7 +684,7 @@ export default function Music() {
 
       {/* recently played */}
       <h2 className="sec-title" id="recently-played">
-        Recently played
+        {t("music.recentlyPlayed")}
       </h2>
       <ul className="recent" id="recent">
         {recent === null ? null : "note" in recent ? (
@@ -702,7 +706,7 @@ export default function Music() {
                   <span className="rc-artist">{t.artist}</span>
                 </span>
                 {t.now ? (
-                  <span className="rc-now">scrobbling now</span>
+                  <span className="rc-now">{dict.music.scrobblingNow}</span>
                 ) : (
                   <span className="rc-when">{t.when}</span>
                 )}
@@ -716,7 +720,7 @@ export default function Music() {
       <div id="top" hidden={!top}>
         {top ? (
           <>
-            <h2 className="sec-title">Top artists · last 7 days</h2>
+            <h2 className="sec-title">{t("music.topArtistsHeading")}</h2>
             <ol className="top-chips">
               {top.map((a, i) => (
                 <li className="top-chip" key={a.name + i}>
@@ -732,7 +736,7 @@ export default function Music() {
                     )}
                     <span className="top-text">
                       <span className="top-name">{a.name}</span>
-                      <span className="top-plays">{a.playcount} plays</span>
+                      <span className="top-plays">{dict.music.plays.replace("{n}", a.playcount)}</span>
                     </span>
                   </a>
                 </li>
