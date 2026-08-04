@@ -12,7 +12,7 @@
                 <style>
                     @font-face {
                         font-family: 'Comic Code';
-                        src: url('/css/fonts/ComicCode.woff2');
+                        src: url('https://fonts.doughmination.co.uk/ComicCode/woff2/ComicCode-Regular.woff2');
                     }
                     :root {
                         --base: #1e1e2e;
