@@ -7,7 +7,13 @@
 import en from "./locales/en";
 import ja from "./locales/ja";
 import es from "./locales/es";
+import nl from "./locales/nl";
 import type { Dictionary } from "./locales/en";
 import type { Language } from "./config";
 
-export const dictionaries: Record<Language, Dictionary> = { en, ja, es };
+export const dictionaries: Record<Language, Dictionary> = {
+  en,
+  ja,
+  es,
+  nl,
+};

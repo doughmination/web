@@ -30,6 +30,7 @@ const es = {
     playMusic: "Reproducir música de fondo",
     pauseMusic: "Pausar música de fondo",
     language: "Idioma",
+    volume: "Volumen de la música de fondo",
   },
   home: {
     // Site owner asked for the display name itself to translate — "Clove"

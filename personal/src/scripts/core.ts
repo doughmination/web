@@ -19,10 +19,20 @@ import { icon } from "./presenceIcons";
 // LanguageProvider does, and reads strings straight out of the shared
 // dictionaries — one source of truth, just two different ways of reading it.
 import { dictionaries } from "@/i18n/dictionaries";
-import { DEFAULT_LANGUAGE, detectLanguage, isLanguage } from "@/i18n/config";
+import {
+  DEFAULT_LANGUAGE,
+  detectLanguage,
+  isLanguage,
+  localeFromPathname,
+} from "@/i18n/config";
 
 function currentDictionary() {
   try {
+    // The URL prefix is the source of truth (see LanguageProvider); fall back
+    // to the persisted choice, then to browser detection.
+    const fromUrl = localeFromPathname(window.location.pathname);
+    if (fromUrl) return dictionaries[fromUrl];
+
     const stored = window.localStorage.getItem("lang");
     return dictionaries[stored && isLanguage(stored) ? stored : detectLanguage()];
   } catch {
@@ -186,6 +196,9 @@ export function initCore(catSrc: string = "/oneko/classic.png") {
      * session). Lets someone who's turned music off stay opted out on their
      * next visit instead of re-seeing the entry gate every time. */
     const ENABLED_KEY = "dough:bg-music:enabled";
+    // The chosen volume (0..1), persisted across visits so the slider in
+    // SettingsMenu restores where it was left.
+    const VOLUME_KEY = "dough:bg-music:volume";
 
     const audio = document.createElement("audio");
     audio.id = "bgm";
@@ -193,7 +206,10 @@ export function initCore(catSrc: string = "/oneko/classic.png") {
     audio.src = "/sfx/background.mp3";
     audio.loop = true;
     audio.preload = "auto";
-    audio.volume = 0.1; /* it's background music, not the main event */
+    // Default 0.1 — background music, not the main event — unless a saved
+    // choice exists.
+    const savedVol = parseFloat(ls.getItem(VOLUME_KEY) ?? "");
+    audio.volume = isNaN(savedVol) ? 0.1 : Math.min(1, Math.max(0, savedVol));
     audio.hidden = true;
     document.body.appendChild(audio);
 
@@ -214,6 +230,8 @@ export function initCore(catSrc: string = "/oneko/classic.png") {
       ss.setItem(PLAYING_KEY, "0");
       ls.setItem(ENABLED_KEY, "0");
     });
+    const volumeListeners = new Set<(volume: number) => void>();
+
     window.ctpBgm = {
       toggle() {
         if (audio.paused) audio.play().catch(() => { });
@@ -228,6 +246,20 @@ export function initCore(catSrc: string = "/oneko/classic.png") {
         return () => {
           audio.removeEventListener("play", h);
           audio.removeEventListener("pause", h);
+        };
+      },
+      getVolume() { return audio.volume; },
+      setVolume(volume: number) {
+        const next = Math.min(1, Math.max(0, volume));
+        audio.volume = next;
+        ls.setItem(VOLUME_KEY, String(next));
+        volumeListeners.forEach((cb) => cb(next));
+      },
+      subscribeVolume(cb) {
+        volumeListeners.add(cb);
+        cb(audio.volume);
+        return () => {
+          volumeListeners.delete(cb);
         };
       },
     };

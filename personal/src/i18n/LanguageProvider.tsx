@@ -4,22 +4,30 @@
  * See LICENCE.md in the project root for full licence information.
  */
 /*
- * The language toggle's actual state: which language is active, persisted to
- * localStorage, with browser-language detection for first-time visitors.
- * Wraps the whole <body> in layout.tsx (not just Providers' children) since
+ * The active language, now driven by the URL. proxy.ts guarantees every
+ * page is served under a locale prefix (/en/…), so the prefix in the path
+ * is the source of truth: this provider reads it, and setLang navigates to the
+ * same page under the new prefix. The choice is persisted to a cookie (which
+ * middleware reads on the next bare visit) and to localStorage (which the
+ * legacy core.ts still reads). Wraps the whole <body> in layout.tsx since
  * NavMenu and SettingsMenu — both outside Providers — need it too.
  */
 
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo } from "react";
 import type { ReactNode } from "react";
-import { DEFAULT_LANGUAGE, detectLanguage, isLanguage, type Language } from "./config";
+import { usePathname, useRouter } from "next/navigation";
+
+import { DEFAULT_LANGUAGE, localeFromPathname, localizedPath, type Language } from "./config";
 import { dictionaries } from "./dictionaries";
 import { resolve, type TranslationKey } from "./translate";
 import type { Dictionary } from "./locales/en";
 
 const STORAGE_KEY = "lang";
+
+// A year, in seconds.
+const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
 interface LanguageContextValue {
   lang: Language;
@@ -33,28 +41,38 @@ interface LanguageContextValue {
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
 
-export function LanguageProvider({ children }: { children: ReactNode }) {
-  // Server-rendered HTML always assumes DEFAULT_LANGUAGE (matches <html
-  // lang="en"> in layout.tsx). The real choice — localStorage, else browser
-  // detection — is resolved client-side in the effect below, same pattern
-  // SettingsMenu already uses for cat visibility. Doing it there rather than
-  // in a lazy useState initializer keeps the first client render in sync
-  // with the server-rendered markup and avoids a hydration mismatch.
-  const [lang, setLangState] = useState<Language>(DEFAULT_LANGUAGE);
+// Mirror the URL's language into storage the middleware and legacy core.ts
+// read. The URL already carries it, so a failure here is non-fatal.
+function persist(next: Language) {
+  try {
+    window.localStorage.setItem(STORAGE_KEY, next);
+    document.cookie = `${STORAGE_KEY}=${next}; path=/; max-age=${COOKIE_MAX_AGE}; samesite=lax`;
+  } catch {
+    // Storage can throw in private modes; the URL still carries the language.
+  }
+}
 
-  useEffect(() => {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    setLangState(stored && isLanguage(stored) ? stored : detectLanguage());
-  }, []);
+export function LanguageProvider({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  const router = useRouter();
+
+  // The prefix in the URL is authoritative. Both the server render and the
+  // first client render read the same pathname, so there's no hydration
+  // mismatch and no flash of the wrong language.
+  const lang = localeFromPathname(pathname) ?? DEFAULT_LANGUAGE;
 
   useEffect(() => {
     document.documentElement.lang = lang;
+    persist(lang);
   }, [lang]);
 
-  const setLang = useCallback((next: Language) => {
-    setLangState(next);
-    window.localStorage.setItem(STORAGE_KEY, next);
-  }, []);
+  const setLang = useCallback(
+    (next: Language) => {
+      persist(next);
+      router.push(localizedPath(pathname, next));
+    },
+    [pathname, router],
+  );
 
   const t = useCallback((key: TranslationKey) => resolve(dictionaries[lang], key), [lang]);
 

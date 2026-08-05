@@ -33,6 +33,7 @@ const ja = {
     playMusic: "BGMを再生",
     pauseMusic: "BGMを一時停止",
     language: "言語",
+    volume: "BGMの音量",
   },
   home: {
     // Site owner asked for the display name itself to translate, since

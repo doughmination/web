@@ -9,6 +9,7 @@ import NavBridge from "./_components/NavBridge";
 import Providers from "./providers";
 import SettingsMenu from "@components/chrome/SettingsMenu";
 import NavMenu from "@components/chrome/NavMenu";
+import { MenusProvider } from "@components/chrome/MenusProvider";
 import SiteChrome from "@components/chrome/SiteChrome";
 import { LanguageProvider } from "@/i18n/LanguageProvider";
 // One fixed palette. Importing for side effects emits the :root token block at
@@ -115,16 +116,21 @@ export default function RootLayout({
             NavMenu and SettingsMenu need translations too and both render
             outside Providers. See src/i18n/LanguageProvider.tsx. */}
         <LanguageProvider>
-          {/* Page nav (React-owned). Desktop shows a hamburger that opens icon
-              dots then telescopes them into labels; mobile is a wrapping row. */}
-          <NavMenu />
+          {/* The two top-left menus share one open/closed state so only one is
+              ever open — opening the cog closes the burger and vice versa. */}
+          <MenusProvider>
+            {/* Page nav (React-owned). Desktop shows a hamburger that opens icon
+                dots then telescopes them into labels; mobile is a wrapping row. */}
+            <NavMenu />
+
+            {/* Chrome, now in React (cat + music bridge to core.ts). Cog sits
+                beside the burger on desktop. */}
+            <SettingsMenu />
+          </MenusProvider>
 
           {/* Routes core.ts's nav clicks through Next's client router so the
               layout (and bg-music audio) never unloads between pages. */}
           <NavBridge />
-
-          {/* Chrome, now in React (theme owned here; cat + music bridge to core.ts) */}
-          <SettingsMenu />
 
           {/* Wrapper data layer: one REST client + socket shared by every
               migrated widget (Fronting first). See providers.tsx. */}

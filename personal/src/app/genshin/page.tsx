@@ -78,6 +78,12 @@ const CHARACTERS: Character[] = [
     level: 1,
   },
   {
+    name: "Dehya",
+    model: "/models/dehya.glb",
+    tier: "owned",
+    avatarId: "10000079"
+  },
+  {
     name: "Diona",
     model: "/models/diona.glb",
     avatarId: "10000039",
@@ -109,6 +115,12 @@ const CHARACTERS: Character[] = [
     model: "/models/hutao.glb",
     avatarId: "10000046",
     tier: "want",
+  },
+  {
+    name: "Jahoda",
+    model: "/models/jahoda.glb",
+    tier: "owned",
+    avatarId: "10000124"
   },
   {
     name: "Kaeya",

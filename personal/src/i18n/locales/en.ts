@@ -37,6 +37,7 @@ const en = {
     playMusic: "Play background music",
     pauseMusic: "Pause background music",
     language: "Language",
+    volume: "Background music volume",
   },
   home: {
     title: "Clove Twilight",

@@ -9,6 +9,8 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
+import { DEFAULT_LANGUAGE, localeFromPathname, localizedPath } from "@/i18n/config";
+
 /**
  * Bridges core.ts's remaining imperative links to Next's client-side router.
  *
@@ -29,7 +31,11 @@ export default function NavBridge() {
       try {
         const dest = new URL(url, location.href);
         if (dest.origin === location.origin) {
-          router.push(dest.pathname + dest.search + dest.hash);
+          // Keep same-origin jumps under the active locale prefix so they don't
+          // bounce through middleware's bare-path redirect.
+          const active = localeFromPathname(location.pathname) ?? DEFAULT_LANGUAGE;
+          const localized = localizedPath(dest.pathname, active);
+          router.push(localized + dest.search + dest.hash);
         } else {
           location.href = url;
         }

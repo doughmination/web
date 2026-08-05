@@ -3,156 +3,258 @@
  * Licensed under the DASL-1.0 Licence.
  * See LICENCE.md in the project root for full licence information.
  */
-/* personal/src/components/chrome/SettingsMenu.module.css */
 
+/* The cog sits beside the nav burger (top-left) and its controls float down
+   from it. .bar is a vertical column: cog first, .items below. */
 .bar {
   position: fixed;
-  bottom: 1rem;
-  left: 1rem;
+  top: 1rem;
+  left: 4rem;
   z-index: 8;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 0.5rem;
+  /* The column's empty area must not intercept hovers: while closed it overlaps
+     the (lower z-index) nav pills, and a transparent-but-clickable box would
+     steal their hover. Only the cog and the open flyout opt back in below. */
+  pointer-events: none;
 }
 
+.bar.open {
+  z-index: 9;
+}
+
+/* Icon dots: same 2.5rem footprint as the nav's dots so the cog lines up with
+   the burger. */
 .btn {
+  width: 2.5rem;
+  height: 2.5rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.35rem;
+  padding: 0;
   border-radius: 999px;
   background: var(--surface);
   border: 1px solid var(--surface-hi);
   color: var(--text);
   cursor: url("/cursor/pointer_0.png"), pointer;
-  transition: border-color 0.15s ease, transform 0.15s ease;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
 }
 
 .btn:hover {
   border-color: var(--accent);
-  transform: translateY(2px);
+  background: var(--surface-hi);
 }
 
-/* An open menu outranks the webring dock, which shares z-index 8 and renders
-   later in layout.tsx — so without this it paints over the flyout regardless
-   of where the flyout sits. */
-.bar.open {
-  z-index: 9;
+.toggle {
+  pointer-events: auto;
+  transition: border-color 0.15s ease, background 0.15s ease;
 }
 
 .bar.open .toggle {
   border-color: var(--accent);
-  transform: none;
 }
 
-/* Flies out to the right of the toggle, vertically centred on it — always
-   mounted (SettingsMenu.tsx no longer conditionally renders this) so the
-   close transition can play instead of the flyout just vanishing. */
+/* The flyout column. Floats down on open (translateY), matching the nav's
+   reveal. Always mounted so the close transition can play; interactivity and
+   each child's own bloom are what actually hide it while closed. */
 .items {
-  position: absolute;
-  top: 50%;
-  left: calc(100% + 0.5rem);
-  transform: translateY(-50%) translateX(-6px);
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 0.5rem;
-  padding: 0.5rem;
-  opacity: 0;
+  /* Hang the controls under the burger's left edge (1rem), not the cog's
+     (4rem), so the flyout shares the nav's left chrome edge. The cog stays put
+     beside the burger; only its flyout shifts left. */
+  margin-left: -3rem;
+  transform: translateY(-6px);
   pointer-events: none;
-  transition: opacity 0.2s ease, transform 0.3s ease;
+  transition: transform 0.32s ease;
 }
 
 .bar.open .items {
-  opacity: 1;
-  transform: translateY(-50%) translateX(0);
+  transform: translateY(0);
   pointer-events: auto;
 }
 
-/* Single-phase bloom per item (opacity + scale) — no telescope/expand phase,
-   since these are icon-only buttons with no label to reveal. Stagger mirrors
-   nav.css.ts's 0.05s-per-item cadence; close delays are the reverse so the
-   farthest item collapses back toward the button first. */
-.items .btn {
+/* Clone of the nav's JARVIS bloom (nav.css.ts): each control starts as a
+   scaled-down, faded dot and blooms in, staggered 0.05s apart. The dots in the
+   row bloom left-to-right, then the slider and the language pill follow. */
+.dotRow .btn,
+.volumeRow,
+.langPill {
   opacity: 0;
   transform: scale(0.4);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform-origin: left center;
+  transition: opacity 0.3s ease, transform 0.3s ease, border-color 0.15s ease,
+    background 0.15s ease;
 }
 
-.bar.open .items .btn {
+.bar.open .dotRow .btn,
+.bar.open .volumeRow,
+.bar.open .langPill {
   opacity: 1;
   transform: scale(1);
 }
 
-.items .btn:nth-child(1) {
-  transition-delay: 0.15s;
-}
-.items .btn:nth-child(2) {
-  transition-delay: 0.1s;
-}
-.items .btn:nth-child(3) {
+/* Open: bloom top-to-bottom (dots left-to-right first). */
+.bar.open .dotRow .btn:nth-child(1) {
   transition-delay: 0.05s;
 }
-.items .btn:nth-child(4) {
+.bar.open .dotRow .btn:nth-child(2) {
+  transition-delay: 0.1s;
+}
+.bar.open .dotRow .btn:nth-child(3) {
+  transition-delay: 0.15s;
+}
+.bar.open .volumeRow {
+  transition-delay: 0.2s;
+}
+.bar.open .langPill {
+  transition-delay: 0.25s;
+}
+
+/* Close: reverse — the language pill collapses back first, the dots last,
+   mirroring the nav's reverse cadence. Delays sit on the closed state. */
+.dotRow .btn:nth-child(1) {
+  transition-delay: 0.2s;
+}
+.dotRow .btn:nth-child(2) {
+  transition-delay: 0.15s;
+}
+.dotRow .btn:nth-child(3) {
+  transition-delay: 0.1s;
+}
+.volumeRow {
+  transition-delay: 0.05s;
+}
+.langPill {
   transition-delay: 0s;
 }
 
-.bar.open .items .btn:nth-child(1) {
-  transition-delay: 0s;
-}
-.bar.open .items .btn:nth-child(2) {
-  transition-delay: 0.05s;
-}
-.bar.open .items .btn:nth-child(3) {
-  transition-delay: 0.1s;
-}
-.bar.open .items .btn:nth-child(4) {
-  transition-delay: 0.15s;
+/* Cat collection / cat visibility / music play-pause, in one horizontal row. */
+.dotRow {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .items,
-  .items .btn {
-    transition: none;
-  }
+/* Volume: an icon + slider inside a pill, same width as the row above. */
+.volumeRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0 0.75rem;
+  height: 2.5rem;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--surface-hi);
 }
 
-/* No border-radius or cover-crop: theme artwork is shown whole rather than
-   masked into a circle, so nothing gets clipped off the edges. */
-.themeIcon {
-  width: 22px;
-  height: 22px;
-  display: block;
-  object-fit: contain;
+.volumeIcon {
+  flex: 0 0 auto;
+  color: var(--text-soft);
 }
 
-/* ---- Language picker ------------------------------------------------------
-   Flies out to the right of the whole bar so it never covers the other buttons.
-   Anchored to .bar (position: fixed), NOT to .items — .items is a narrow flex
-   column, and positioning against it left the grid with no width to resolve
-   against. Single column: only a handful of languages, and one column reads
-   better than a lopsided 2-up grid with a trailing orphan. Past ~8 entries
-   max-height scrolls it rather than letting it run off-screen. */
+.volumeSlider {
+  flex: 1 1 auto;
+  width: 100%;
+  height: 4px;
+  margin: 0;
+  border-radius: 999px;
+  background: var(--surface-hi);
+  outline-offset: 3px;
+  cursor: url("/cursor/pointer_0.png"), pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.volumeSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: var(--accent);
+  border: none;
+  cursor: url("/cursor/pointer_0.png"), pointer;
+}
+
+.volumeSlider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: var(--accent);
+  border: none;
+  cursor: url("/cursor/pointer_0.png"), pointer;
+}
+
+/* Language: a pill showing the current language; click flows the list down. */
+.langPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  height: 2.5rem;
+  padding: 0 0.85rem;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--surface-hi);
+  color: var(--text);
+  font-size: 0.8rem;
+  white-space: nowrap;
+  cursor: url("/cursor/pointer_0.png"), pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.langPill:hover {
+  border-color: var(--accent);
+  background: var(--surface-hi);
+}
+
+.langPillName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.langChevron {
+  margin-left: auto;
+  flex: 0 0 auto;
+  transition: transform 0.25s ease;
+}
+
+.langChevronOpen {
+  transform: rotate(180deg);
+}
+
+/* The list, flowing down below the pill (in-flow, so it pushes nothing —
+   it's the last item). Scrolls past ~8 entries rather than running off-screen.
+   It's conditionally mounted, so a transition wouldn't fire — a keyframe
+   animation plays the drop-in on mount instead. */
 .langPicker {
-  position: absolute;
-  left: calc(100% + 0.5rem);
-  /* Lifted clear of the webring dock, which is also fixed to bottom: 1rem and
-     starts at left: 4rem — directly under this flyout. --dock-clearance is its
-     38px tab height plus breathing room; keep them in step if the dock resizes. */
-  --dock-clearance: calc(38px + 0.75rem);
-  bottom: var(--dock-clearance);
-  z-index: 1;
   display: grid;
   grid-template-columns: minmax(8.5rem, 1fr);
   gap: 0.35rem;
-  padding: 0.5rem;
-  width: max-content;
+  width: 100%;
+  padding: 0;
   max-width: min(19rem, calc(100vw - 5rem));
-  max-height: 60vh;
+  max-height: 50vh;
   overflow-y: auto;
-  background: var(--surface);
-  border: 1px solid var(--surface-hi);
-  border-radius: 14px;
-  box-shadow: 0 10px 26px -16px rgba(0, 0, 0, 0.7);
+  transform-origin: top center;
+  animation: langDrop 0.22s ease;
+}
+
+@keyframes langDrop {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scaleY(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
 }
 
 .langOption {
@@ -182,9 +284,7 @@
   color: var(--text);
 }
 
-/* Small text badge (EN / JA / ES) standing in for a flag icon — no image
-   assets needed, and it doubles as a legible code when the native name
-   (e.g. "日本語") doesn't tell an unfamiliar reader what it says. */
+/* Small text badge (en / ja / es / nl) standing in for a flag icon. */
 .langCode {
   flex: 0 0 auto;
   display: block;
@@ -204,7 +304,7 @@
   text-overflow: ellipsis;
 }
 
-/* the classic oneko idle frame, scaled down from the 256x128 sprite sheet */
+/* The classic oneko idle frame, scaled down from the 256x128 sprite sheet. */
 .catIcon {
   width: 22px;
   height: 22px;
@@ -214,4 +314,38 @@
   background-size: 176px 88px;
   background-position: -66px -66px;
   image-rendering: pixelated;
+}
+
+/* Mobile: no burger to sit beside, and the nav becomes a top row — drop the
+   cog to the bottom-left and rise the controls above it instead. */
+@media (max-width: 640px) {
+  .bar {
+    top: auto;
+    left: 1rem;
+    bottom: 1rem;
+    flex-direction: column-reverse;
+  }
+
+  .items {
+    flex-direction: column-reverse;
+    transform: translateY(6px);
+    /* No burger to align under here — sits at the bar's own left edge. */
+    margin-left: 0;
+  }
+
+  .bar.open .items {
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .items,
+  .dotRow,
+  .volumeRow,
+  .langPill,
+  .langPicker,
+  .langChevron {
+    transition: none;
+    animation: none;
+  }
 }

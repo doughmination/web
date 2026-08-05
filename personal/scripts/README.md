@@ -5,7 +5,7 @@ releases) into web-ready `.glb` for the `/genshin` gallery. Target renderer is
 `<model-viewer>` (standard PBR), so only geometry, normals, UVs and each
 material's **base** texture are kept — sphere maps, toon ramps and morphs are
 dropped (model-viewer can't display them anyway). Handedness is converted from
-MMD (left-handed) to glTF (right-handed).
+MMD (left-handed) to glTF (right-handed).de
 
 ## Folders
 

@@ -21,6 +21,7 @@ import {
 import { playClickSound } from "@lib/sound";
 import { renderDiscordMarkdown } from "./discordMarkdown";
 import { useLanguage } from "@/i18n/LanguageProvider";
+import { localizedPath } from "@/i18n/config";
 import type { TranslationKey } from "@/i18n/translate";
 import * as s from "@styles/presence-dashboard.css";
 
@@ -164,6 +165,8 @@ function NowPlaying({
   source?: "doughmination" | "spotify";
   t: (key: TranslationKey) => string;
 }) {
+  const { lang } = useLanguage();
+
   const ts = sp?.timestamps as { start?: number; end?: number } | undefined;
   const start = ts?.start ?? 0;
   const end = ts?.end ?? 0;
@@ -196,7 +199,7 @@ function NowPlaying({
       {/* Points at the site's own /music page rather than out to Spotify.
           next/link so it routes client-side and the bg-music audio in the
           persistent layout isn't torn down by a full page load. */}
-      <Link className={s.npRow} href="/music" onClick={playClickSound}>
+      <Link className={s.npRow} href={localizedPath("/music", lang)} onClick={playClickSound}>
         {sp.album_art_url ? (
           <SafeImg className={s.npArt} src={String(sp.album_art_url)} alt="" />
         ) : null}
