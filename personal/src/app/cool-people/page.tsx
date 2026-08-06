@@ -11,11 +11,11 @@ import "@styles/presence-card.css";
 import "@styles/pages/cool-people.css";
 
 export const metadata: Metadata = {
-  title: "Clove Twilight",
+  title: "Clove Nytrix Doughmination Twilight",
   description:
-    "Cool people Clove Twilight knows — friends, mutuals, and creators worth checking out, with links to their sites.",
+    "Cool people Clove Nytrix Doughmination Twilight knows — friends, mutuals, and creators worth checking out, with links to their sites.",
   keywords: [
-    "Clove Twilight",
+    "Clove Nytrix Doughmination Twilight",
     "doughmination.gay",
     "friends",
     "cool people",
@@ -26,15 +26,15 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "doughmination.gay",
-    title: "Clove Twilight",
+    title: "Clove Nytrix Doughmination Twilight",
     description:
-      "Cool people Clove Twilight knows — friends, mutuals, and creators worth checking out, with links to their sites.",
+      "Cool people Clove Nytrix Doughmination Twilight knows — friends, mutuals, and creators worth checking out, with links to their sites.",
     url: "https://doughmination.gay/cool-people",
     locale: "en_GB",
     images: [
       {
         url: "https://m.doughmination.gay/img/avatars/favicon.png",
-        alt: "Clove Twilight logo",
+        alt: "Clove Nytrix Doughmination Twilight logo",
       },
     ],
   },

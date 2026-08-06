@@ -10,10 +10,10 @@ import { Tr } from "@components/chrome/i18nText";
 import "@styles/pages/selfies.css";
 
 export const metadata: Metadata = {
-  title: "Clove Twilight",
-  description: "Browse a gallery of selfies from Clove Twilight.",
+  title: "Clove Nytrix Doughmination Twilight",
+  description: "Browse a gallery of selfies from Clove Nytrix Doughmination Twilight.",
   keywords: [
-    "Clove Twilight",
+    "Clove Nytrix Doughmination Twilight",
     "doughmination.gay",
     "selfies",
     "photos",
@@ -24,14 +24,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "doughmination.gay",
-    title: "Clove Twilight",
-    description: "Browse a gallery of selfies from Clove Twilight.",
+    title: "Clove Nytrix Doughmination Twilight",
+    description: "Browse a gallery of selfies from Clove Nytrix Doughmination Twilight.",
     url: "https://doughmination.gay/selfies",
     locale: "en_GB",
     images: [
       {
         url: "https://m.doughmination.gay/img/avatars/favicon.png",
-        alt: "Clove Twilight logo",
+        alt: "Clove Nytrix Doughmination Twilight logo",
       },
     ],
   },

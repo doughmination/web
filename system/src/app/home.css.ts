@@ -7,8 +7,13 @@
  * pages/Index.tsx).
  */
 
-import { globalStyle, style } from "@vanilla-extract/css";
+import { globalStyle, style, keyframes } from "@vanilla-extract/css";
 import { vars } from "@/styles/theme.css";
+
+// Shared trans-flag gradient title, uniform across every site.
+const transSlide = keyframes({
+  to: { backgroundPositionX: "200%" },
+});
 
 const mix = (color: string, pct: number) =>
   `color-mix(in srgb, ${color} ${pct}%, transparent)`;
@@ -241,7 +246,19 @@ export const pageTitle = style({
   marginBottom: "2rem",
   textAlign: "center",
   fontFamily: vars.fontComic,
-  color: vars.accent,
+  letterSpacing: "-0.02em",
+  backgroundImage:
+    "linear-gradient(90deg, #5BCEFA, #F5A9B8, #ffffff, #F5A9B8, #5BCEFA, #5BCEFA)",
+  backgroundSize: "200% 100%",
+  WebkitBackgroundClip: "text",
+  backgroundClip: "text",
+  color: "transparent",
+  animation: `${transSlide} 6s linear infinite`,
+  "@media": {
+    "(prefers-reduced-motion: reduce)": {
+      animation: "none",
+    },
+  },
 });
 
 /* Mental state banner extras */

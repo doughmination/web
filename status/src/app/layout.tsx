@@ -5,12 +5,57 @@
  */
 /* app/layout.tsx */
 
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+import SoundFX from "./SoundFX";
 import "@styles/global.css";
 
+const DESCRIPTION = "Live status of everything I host.";
+
+const AVATAR = "https://m.doughmination.gay/img/avatars/favicon.png";
+
+const SITE_URL = "https://doughmination.org";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "Status",
-  description: "Live status of everything I host.",
+  description: DESCRIPTION,
+  alternates: {
+    canonical: SITE_URL,
+  },
+  icons: {
+    icon: [
+      {
+        url: AVATAR,
+        type: "image/png",
+      },
+    ],
+  },
+  openGraph: {
+    type: "website",
+    siteName: "doughmination.org",
+    title: "Status",
+    description: DESCRIPTION,
+    url: SITE_URL,
+    locale: "en_GB",
+    images: [
+      {
+        url: AVATAR,
+        alt: "Doughmination status",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary",
+    site: "@DoughminCEO",
+    creator: "@DoughminCEO",
+    title: "Status",
+    description: DESCRIPTION,
+    images: [AVATAR],
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#f5a9b8",
 };
 
 export default function RootLayout({
@@ -27,7 +72,10 @@ export default function RootLayout({
           crossOrigin=""
         />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <SoundFX />
+      </body>
     </html>
   );
 }

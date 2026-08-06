@@ -40,7 +40,7 @@ const en = {
     volume: "Background music volume",
   },
   home: {
-    title: "Clove Twilight",
+    title: "Clove Nytrix Doughmination Twilight",
     bio: "Transfem developer from Southampton, UK. I make projects, personal-site nonsense, and run a small corner of the internet under the trade mark “doughmination system”. Big on Linux, Catppuccin, and cats.",
     viewSource: "View source on GitHub",
   },
@@ -273,7 +273,7 @@ const en = {
     closeEsc: "Close (Esc)",
     prev: "Previous selfie",
     next: "Next selfie",
-    fallbackAlt: "Selfie {n} of Clove Twilight",
+    fallbackAlt: "Selfie {n} of Clove Nytrix Doughmination Twilight",
   },
   guestbook: {
     title: "Guestbook",
@@ -303,7 +303,7 @@ const en = {
     openSource: "Open Source",
     closedSource: "Closed Source",
     viewLive: "View Live ↗",
-    avatarAlt: "Clove Twilight avatar",
+    avatarAlt: "Clove Nytrix Doughmination Twilight avatar",
     bioGhostwire:
       "The private security bot and brains behind everything major in Girls.",
     bioGaybot:
@@ -321,7 +321,7 @@ const en = {
   },
   devInfo: {
     tagline: "Dev Info",
-    avatarAlt: "Clove Twilight avatar",
+    avatarAlt: "Clove Nytrix Doughmination Twilight avatar",
     techStack: "Tech Stack",
     techStackLabel: "Tech stack",
     hardware: "Hardware",

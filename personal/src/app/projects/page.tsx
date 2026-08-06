@@ -10,11 +10,11 @@ import type { TranslationKey } from "@/i18n/translate";
 import "@styles/pages/projects.css";
 
 export const metadata: Metadata = {
-  title: "Clove Twilight",
+  title: "Clove Nytrix Doughmination Twilight",
   description:
-    "Explore the projects Clove Twilight actively builds and contributes to, from web apps to Discord bots.",
+    "Explore the projects Clove Nytrix Doughmination Twilight actively builds and contributes to, from web apps to Discord bots.",
   keywords: [
-    "Clove Twilight",
+    "Clove Nytrix Doughmination Twilight",
     "doughmination.gay",
     "projects",
     "portfolio",
@@ -25,15 +25,15 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "doughmination.gay",
-    title: "Clove Twilight",
+    title: "Clove Nytrix Doughmination Twilight",
     description:
-      "Explore the projects Clove Twilight actively builds and contributes to, from web apps to Discord bots.",
+      "Explore the projects Clove Nytrix Doughmination Twilight actively builds and contributes to, from web apps to Discord bots.",
     url: "https://doughmination.gay/projects",
     locale: "en_GB",
     images: [
       {
         url: "https://m.doughmination.gay/img/avatars/favicon.png",
-        alt: "Clove Twilight logo",
+        alt: "Clove Nytrix Doughmination Twilight logo",
       },
     ],
   },
@@ -162,9 +162,9 @@ export default function ProjectsPage() {
         <img
           className="pfp"
           src="https://m.doughmination.gay/img/avatars/favicon.png"
-          alt="Clove Twilight avatar"
+          alt="Clove Nytrix Doughmination Twilight avatar"
         />
-        <h1>Clove Twilight</h1>
+        <h1>Clove Nytrix Doughmination Twilight</h1>
         <h2 className="pronouns">(fae/faer)</h2>
       </header>
 

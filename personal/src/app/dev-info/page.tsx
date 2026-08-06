@@ -12,11 +12,11 @@ import { Tr } from "@components/chrome/i18nText";
 import "@styles/pages/dev-info.css";
 
 export const metadata: Metadata = {
-  title: "Clove Twilight",
+  title: "Clove Nytrix Doughmination Twilight",
   description:
-    "What Clove Twilight has been coding lately — a live contribution heatmap and WakaTime coding stats.",
+    "What Clove Nytrix Doughmination Twilight has been coding lately — a live contribution heatmap and WakaTime coding stats.",
   keywords: [
-    "Clove Twilight",
+    "Clove Nytrix Doughmination Twilight",
     "doughmination.gay",
     "dev info",
     "coding stats",
@@ -28,15 +28,15 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "doughmination.gay",
-    title: "Clove Twilight",
+    title: "Clove Nytrix Doughmination Twilight",
     description:
-      "What Clove Twilight has been coding lately — a live contribution heatmap and WakaTime coding stats.",
+      "What Clove Nytrix Doughmination Twilight has been coding lately — a live contribution heatmap and WakaTime coding stats.",
     url: "https://doughmination.gay/dev-info",
     locale: "en_GB",
     images: [
       {
         url: "https://m.doughmination.gay/img/avatars/favicon.png",
-        alt: "Clove Twilight logo",
+        alt: "Clove Nytrix Doughmination Twilight logo",
       },
     ],
   },
@@ -122,9 +122,9 @@ export default function DevInfoPage() {
           <img
             className="pfp"
             src="https://m.doughmination.gay/img/avatars/favicon.png"
-            alt="Clove Twilight avatar"
+            alt="Clove Nytrix Doughmination Twilight avatar"
           />
-          <h1>Clove Twilight</h1>
+          <h1>Clove Nytrix Doughmination Twilight</h1>
           <h2 className="pronouns">(fae/faer)</h2>
           <p className="tagline"><Tr k="devInfo.tagline" /></p>
         </header>

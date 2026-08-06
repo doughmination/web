@@ -10,11 +10,11 @@ import { Tr } from "@components/chrome/i18nText";
 import "@styles/pages/genshin.css";
 
 export const metadata: Metadata = {
-  title: "Genshin — Clove Twilight",
+  title: "Genshin — Clove Nytrix Doughmination Twilight",
   description:
     "A little gallery of 3D renders of Genshin Impact characters Clove finds cute — spin them around.",
   keywords: [
-    "Clove Twilight",
+    "Clove Nytrix Doughmination Twilight",
     "doughmination.gay",
     "Genshin Impact",
     "3D models",
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "doughmination.gay",
-    title: "Genshin — Clove Twilight",
+    title: "Genshin — Clove Nytrix Doughmination Twilight",
     description:
       "A little gallery of 3D renders of Genshin Impact characters Clove finds cute.",
     url: "https://doughmination.gay/genshin",
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     images: [
       {
         url: "https://m.doughmination.gay/img/avatars/favicon.png",
-        alt: "Clove Twilight logo",
+        alt: "Clove Nytrix Doughmination Twilight logo",
       },
     ],
   },

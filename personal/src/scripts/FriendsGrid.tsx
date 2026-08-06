@@ -81,7 +81,7 @@ const FRIENDS: Group[] = [
         discordId: "1025770042245251122"
       },
       {
-        name: "Clove Twilight",
+        name: "Clove Nytrix Doughmination Twilight",
         user: "clovetwilight3",
         img: "https://m.doughmination.gay/img/old-pfps/clovetwilight3.png",
         tier: "dead-alt"

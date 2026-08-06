@@ -272,7 +272,7 @@ const es = {
     closeEsc: "Cerrar (Esc)",
     prev: "Selfie anterior",
     next: "Selfie siguiente",
-    fallbackAlt: "Selfie {n} de Clove Twilight",
+    fallbackAlt: "Selfie {n} de Clove Nytrix Doughmination Twilight",
   },
   guestbook: {
     title: "Libro de visitas",
@@ -302,7 +302,7 @@ const es = {
     openSource: "Código abierto",
     closedSource: "Código cerrado",
     viewLive: "Ver en vivo ↗",
-    avatarAlt: "Avatar de Clove Twilight",
+    avatarAlt: "Avatar de Clove Nytrix Doughmination Twilight",
     bioGhostwire:
       "El bot de seguridad privado y el cerebro detrás de todo lo importante en Girls.",
     bioGaybot:
@@ -321,7 +321,7 @@ const es = {
   },
   devInfo: {
     tagline: "Info de desarrollo",
-    avatarAlt: "Avatar de Clove Twilight",
+    avatarAlt: "Avatar de Clove Nytrix Doughmination Twilight",
     techStack: "Stack tecnológico",
     techStackLabel: "Stack tecnológico",
     hardware: "Hardware",

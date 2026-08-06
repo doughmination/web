@@ -9,11 +9,11 @@ import Music from "@scripts/Music";
 import "@styles/pages/music.css";
 
 export const metadata: Metadata = {
-  title: "Clove Twilight",
+  title: "Clove Nytrix Doughmination Twilight",
   description:
-    "What Clove Twilight is listening to — live now-playing track, synced lyrics, and recent plays from Last.fm.",
+    "What Clove Nytrix Doughmination Twilight is listening to — live now-playing track, synced lyrics, and recent plays from Last.fm.",
   keywords: [
-    "Clove Twilight",
+    "Clove Nytrix Doughmination Twilight",
     "doughmination.gay",
     "music",
     "now playing",
@@ -25,15 +25,15 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "doughmination.gay",
-    title: "Clove Twilight",
+    title: "Clove Nytrix Doughmination Twilight",
     description:
-      "What Clove Twilight is listening to — live now-playing track, synced lyrics, and recent plays from Last.fm.",
+      "What Clove Nytrix Doughmination Twilight is listening to — live now-playing track, synced lyrics, and recent plays from Last.fm.",
     url: "https://doughmination.gay/music",
     locale: "en_GB",
     images: [
       {
         url: "https://m.doughmination.gay/img/avatars/favicon.png",
-        alt: "Clove Twilight logo",
+        alt: "Clove Nytrix Doughmination Twilight logo",
       },
     ],
   },

@@ -6,6 +6,7 @@
 
 import type { Metadata, Viewport } from "next";
 import NavBridge from "./_components/NavBridge";
+import SoundFX from "./SoundFX";
 import Providers from "./providers";
 import SettingsMenu from "@components/chrome/SettingsMenu";
 import NavMenu from "@components/chrome/NavMenu";
@@ -31,11 +32,11 @@ import "@styles/responsive.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://doughmination.gay"),
-  title: "Clove Twilight",
+  title: "Clove Nytrix Doughmination Twilight",
   description:
-    "The homepage and hub for everything Clove Twilight — projects, music, Discord presence, dev stats, and more.",
+    "The homepage and hub for everything Clove Nytrix Doughmination Twilight — projects, music, Discord presence, dev stats, and more.",
   keywords: [
-    "Clove Twilight",
+    "Clove Nytrix Doughmination Twilight",
     "doughmination.gay",
     "portfolio",
     "personal",
@@ -64,15 +65,15 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "doughmination.gay",
-    title: "Clove Twilight",
+    title: "Clove Nytrix Doughmination Twilight",
     description:
-      "The homepage and hub for everything Clove Twilight — projects, music, Discord presence, dev stats, and more.",
+      "The homepage and hub for everything Clove Nytrix Doughmination Twilight — projects, music, Discord presence, dev stats, and more.",
     url: "https://doughmination.gay",
     locale: "en_GB",
     images: [
       {
         url: "https://m.doughmination.gay/img/avatars/favicon.png",
-        alt: "Clove Twilight logo",
+        alt: "Clove Nytrix Doughmination Twilight logo",
       },
     ],
   },
@@ -80,9 +81,9 @@ export const metadata: Metadata = {
     card: "summary",
     site: "@DoughminCEO",
     creator: "@DoughminCEO",
-    title: "Clove Twilight",
+    title: "Clove Nytrix Doughmination Twilight",
     description:
-      "The homepage and hub for everything Clove Twilight — projects, music, Discord presence, dev stats, and more.",
+      "The homepage and hub for everything Clove Nytrix Doughmination Twilight — projects, music, Discord presence, dev stats, and more.",
     images: ["https://m.doughmination.gay/img/avatars/favicon.png"],
   },
 };
@@ -140,6 +141,8 @@ export default function RootLayout({
               bg music. Runs once, client-only, via SiteChrome. (Realtime now lives
               in the wrapper's shared socket via Providers, not here.) */}
           <SiteChrome catSrc="https://m.doughmination.gay/img/oneko/classic.png" />
+
+          <SoundFX />
         </LanguageProvider>
       </body>
     </html>

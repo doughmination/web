@@ -14,8 +14,13 @@
  * page components (app/page.tsx, 88x31, selfies, dev-info, …) rather than owned
  * by a single one, so the class names must stay literal.
  */
-import { globalStyle } from "@vanilla-extract/css";
+import { globalStyle, keyframes } from "@vanilla-extract/css";
 import { vars } from "./themes.css";
+
+// Shared trans-flag gradient title, uniform across every site.
+const transSlide = keyframes({
+  to: { backgroundPositionX: "200%" },
+});
 
 globalStyle(".hub", {
   position: "relative",
@@ -43,8 +48,19 @@ globalStyle(".hub-header h1", {
   margin: 0,
   fontSize: "2rem",
   fontWeight: 700,
-  color: vars.accent,
-  transition: "color 0.6s ease",
+  letterSpacing: "-0.02em",
+  backgroundImage:
+    "linear-gradient(90deg, #5BCEFA, #F5A9B8, #ffffff, #F5A9B8, #5BCEFA, #5BCEFA)",
+  backgroundSize: "200% 100%",
+  WebkitBackgroundClip: "text",
+  backgroundClip: "text",
+  color: "transparent",
+  animation: `${transSlide} 6s linear infinite`,
+  "@media": {
+    "(prefers-reduced-motion: reduce)": {
+      animation: "none",
+    },
+  },
 });
 
 globalStyle(".tagline", {

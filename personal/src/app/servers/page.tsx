@@ -12,11 +12,11 @@ import "@styles/stage.css";
 import "@styles/pages/guilds.css";
 
 export const metadata: Metadata = {
-  title: "Servers | Clove Twilight",
+  title: "Servers | Clove Nytrix Doughmination Twilight",
   description:
-    "Discord servers Clove Twilight is part of — live member counts via Doughmination Restful.",
+    "Discord servers Clove Nytrix Doughmination Twilight is part of — live member counts via Doughmination Restful.",
   keywords: [
-    "Clove Twilight",
+    "Clove Nytrix Doughmination Twilight",
     "doughmination.gay",
     "Discord",
     "servers",
@@ -28,15 +28,15 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "doughmination.gay",
-    title: "Servers | Clove Twilight",
+    title: "Servers | Clove Nytrix Doughmination Twilight",
     description:
-      "Discord servers Clove Twilight is part of — live member counts via Doughmination Restful.",
+      "Discord servers Clove Nytrix Doughmination Twilight is part of — live member counts via Doughmination Restful.",
     url: "https://doughmination.gay/servers",
     locale: "en_GB",
     images: [
       {
         url: "https://m.doughmination.gay/img/avatars/favicon.png",
-        alt: "Clove Twilight logo",
+        alt: "Clove Nytrix Doughmination Twilight logo",
       },
     ],
   },

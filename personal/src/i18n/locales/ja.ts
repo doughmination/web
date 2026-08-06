@@ -274,7 +274,7 @@ const ja = {
     closeEsc: "閉じる（Esc）",
     prev: "前の自撮り",
     next: "次の自撮り",
-    fallbackAlt: "Clove Twilightの自撮り {n}枚目",
+    fallbackAlt: "Clove Nytrix Doughmination Twilightの自撮り {n}枚目",
   },
   guestbook: {
     title: "ゲストブック",
@@ -304,7 +304,7 @@ const ja = {
     openSource: "オープンソース",
     closedSource: "クローズドソース",
     viewLive: "ライブを見る ↗",
-    avatarAlt: "Clove Twilightのアバター",
+    avatarAlt: "Clove Nytrix Doughmination Twilightのアバター",
     bioGhostwire:
       "Girlsの主要なすべてを支えるプライベートなセキュリティボットであり頭脳。",
     bioGaybot:
@@ -322,7 +322,7 @@ const ja = {
   },
   devInfo: {
     tagline: "開発情報",
-    avatarAlt: "Clove Twilightのアバター",
+    avatarAlt: "Clove Nytrix Doughmination Twilightのアバター",
     techStack: "技術スタック",
     techStackLabel: "技術スタック",
     hardware: "ハードウェア",

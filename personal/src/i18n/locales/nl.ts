@@ -38,7 +38,7 @@ const nl: Dictionary = {
     volume: "Volume achtergrondmuziek",
   },
   home: {
-    title: "Clove Twilight",
+    title: "Clove Nytrix Doughmination Twilight",
     bio: "Transfem-ontwikkelaar uit Southampton, VK. Ik maak projecten, onzin voor mijn eigen site, en beheer een klein hoekje van het internet onder het handelsmerk “doughmination system”. Groot fan van Linux, Catppuccin en katten.",
     viewSource: "Broncode bekijken op GitHub",
   },
@@ -271,7 +271,7 @@ const nl: Dictionary = {
     closeEsc: "Sluiten (Esc)",
     prev: "Vorige selfie",
     next: "Volgende selfie",
-    fallbackAlt: "Selfie {n} van Clove Twilight",
+    fallbackAlt: "Selfie {n} van Clove Nytrix Doughmination Twilight",
   },
   guestbook: {
     title: "Gastenboek",
@@ -301,7 +301,7 @@ const nl: Dictionary = {
     openSource: "Open Source",
     closedSource: "Closed Source",
     viewLive: "Live bekijken ↗",
-    avatarAlt: "Clove Twilight-avatar",
+    avatarAlt: "Clove Nytrix Doughmination Twilight-avatar",
     bioGhostwire:
       "De private beveiligingsbot en het brein achter alles wat groot is in Girls.",
     bioGaybot:
@@ -319,7 +319,7 @@ const nl: Dictionary = {
   },
   devInfo: {
     tagline: "Dev Info",
-    avatarAlt: "Clove Twilight-avatar",
+    avatarAlt: "Clove Nytrix Doughmination Twilight-avatar",
     techStack: "Tech Stack",
     techStackLabel: "Tech stack",
     hardware: "Hardware",

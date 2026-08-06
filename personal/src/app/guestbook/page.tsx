@@ -10,22 +10,22 @@ import { Tr } from "@components/chrome/i18nText";
 import "@styles/pages/guestbook.css";
 
 export const metadata: Metadata = {
-  title: "Clove Twilight",
-  description: "Sign Clove Twilight's guestbook — leave a message and say hello.",
-  keywords: ["Clove Twilight", "doughmination.gay", "guestbook", "messages", "sign"],
+  title: "Clove Nytrix Doughmination Twilight",
+  description: "Sign Clove Nytrix Doughmination Twilight's guestbook — leave a message and say hello.",
+  keywords: ["Clove Nytrix Doughmination Twilight", "doughmination.gay", "guestbook", "messages", "sign"],
   alternates: { canonical: "https://doughmination.gay/guestbook" },
   openGraph: {
     type: "website",
     siteName: "doughmination.gay",
-    title: "Clove Twilight",
+    title: "Clove Nytrix Doughmination Twilight",
     description:
-      "Sign Clove Twilight's guestbook — leave a message and say hello.",
+      "Sign Clove Nytrix Doughmination Twilight's guestbook — leave a message and say hello.",
     url: "https://doughmination.gay/guestbook",
     locale: "en_GB",
     images: [
       {
         url: "https://m.doughmination.gay/img/avatars/favicon.png",
-        alt: "Clove Twilight logo",
+        alt: "Clove Nytrix Doughmination Twilight logo",
       },
     ],
   },

@@ -11,11 +11,11 @@ import "@styles/stage.css";
 import "@styles/pages/minecraft.css";
 
 export const metadata: Metadata = {
-  title: "Clove Twilight",
+  title: "Clove Nytrix Doughmination Twilight",
   description:
     "All of Clove's Minecraft Accounts and Data",
   keywords: [
-    "Clove Twilight",
+    "Clove Nytrix Doughmination Twilight",
     "doughmination.gay",
     "minecraft",
     "mojang",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "doughmination.gay",
-    title: "Clove Twilight",
+    title: "Clove Nytrix Doughmination Twilight",
     description:
       "All of Clove's Minecraft Accounts and Data",
     url: "https://doughmination.gay/minecraft",
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     images: [
       {
         url: "https://m.doughmination.gay/img/avatars/favicon.png",
-        alt: "Clove Twilight logo",
+        alt: "Clove Nytrix Doughmination Twilight logo",
       },
     ],
   },

@@ -41,7 +41,7 @@ function normalize(entry: unknown, i: number): Item | null {
   if (!raw.trim()) return null;
   const src = resolveSrc(raw);
   if (!src) return null;
-  if (!alt) alt = caption || `Selfie ${i + 1} of Clove Twilight`;
+  if (!alt) alt = caption || `Selfie ${i + 1} of Clove Nytrix Doughmination Twilight`;
   return {
     src,
     alt,

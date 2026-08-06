@@ -7,6 +7,7 @@
 
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
+import SoundFX from "./SoundFX";
 import { SITE_URL, SITE_NAME } from "@lib/site";
 // One fixed palette. Importing for side effects emits the :root token block at
 // build time; see src/styles/themes.css.ts. Import order IS the cascade order.
@@ -77,6 +78,7 @@ export default function RootLayout({
           </nav>
           {children}
         </div>
+        <SoundFX />
       </body>
     </html>
   );

@@ -86,15 +86,85 @@ export const subtitle = style({
 });
 
 // Overall banner: green when all up, accent-pink when something is down.
+// Full-width to sit above the board, statuspage-style, but keeps the pill glow.
 export const banner = style({
+  width: "100%",
+  maxWidth: "44rem",
   display: "flex",
   alignItems: "center",
+  justifyContent: "center",
   gap: vars.space.sm,
-  padding: `${vars.space.sm} ${vars.space.md}`,
-  borderRadius: vars.radius.full,
+  padding: `${vars.space.md} ${vars.space.lg}`,
+  borderRadius: vars.radius.lg,
   border: `1px solid ${vars.color.border}`,
   background: vars.color.surface,
   fontWeight: 600,
+});
+
+// ---- statuspage-style single-column board ----
+
+export const board = style({
+  width: "100%",
+  maxWidth: "44rem",
+  background: vars.color.surface,
+  border: `1px solid ${vars.color.border}`,
+  borderRadius: vars.radius.lg,
+  padding: `0 ${vars.space.lg}`,
+});
+
+export const item = style({
+  display: "flex",
+  flexDirection: "column",
+  gap: vars.space.xs,
+  padding: `${vars.space.md} 0`,
+  borderTop: `1px solid ${vars.color.border}`,
+  animation: `${riseIn} 0.5s ease backwards`,
+  selectors: {
+    "&:first-child": {
+      borderTop: "none",
+    },
+  },
+  "@media": {
+    "(prefers-reduced-motion: reduce)": {
+      animation: "none",
+    },
+  },
+});
+
+export const itemHead = style({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  gap: vars.space.sm,
+});
+
+export const itemNameWrap = style({
+  display: "flex",
+  alignItems: "center",
+  gap: vars.space.sm,
+  minWidth: 0,
+});
+
+export const itemName = style({
+  fontSize: "1.05rem",
+  fontWeight: 600,
+});
+
+export const itemDetail = style({
+  display: "flex",
+  flexWrap: "wrap",
+  gap: vars.space.md,
+  fontSize: "0.8rem",
+  color: vars.color.muted,
+  fontFamily: vars.font.mono,
+  paddingLeft: "1.2rem",
+});
+
+export const statusLabel = style({
+  fontSize: "0.85rem",
+  fontWeight: 600,
+  whiteSpace: "nowrap",
+  flexShrink: 0,
 });
 
 export const grid = style({

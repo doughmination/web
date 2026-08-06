@@ -9,11 +9,11 @@ import { Tr } from "@components/chrome/i18nText";
 import "@styles/pages/88x31.css";
 
 export const metadata: Metadata = {
-  title: "Clove Twilight",
+  title: "Clove Nytrix Doughmination Twilight",
   description:
-    "A collection of the 88x31 pixel buttons featured across Clove Twilight's site — grab one and link back.",
+    "A collection of the 88x31 pixel buttons featured across Clove Nytrix Doughmination Twilight's site — grab one and link back.",
   keywords: [
-    "Clove Twilight",
+    "Clove Nytrix Doughmination Twilight",
     "doughmination.gay",
     "88x31",
     "buttons",
@@ -24,15 +24,15 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "doughmination.gay",
-    title: "Clove Twilight",
+    title: "Clove Nytrix Doughmination Twilight",
     description:
-      "A collection of the 88x31 pixel buttons featured across Clove Twilight's site — grab one and link back.",
+      "A collection of the 88x31 pixel buttons featured across Clove Nytrix Doughmination Twilight's site — grab one and link back.",
     url: "https://doughmination.gay/88x31",
     locale: "en_GB",
     images: [
       {
         url: "https://m.doughmination.gay/img/avatars/favicon.png",
-        alt: "Clove Twilight logo",
+        alt: "Clove Nytrix Doughmination Twilight logo",
       },
     ],
   },

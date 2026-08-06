@@ -12,11 +12,11 @@ import * as s from "@styles/presence-dashboard.css";
 const MY_DISCORD_USER_ID = "1464890289922641993";
 
 export const metadata: Metadata = {
-  title: "Clove Twilight",
+  title: "Clove Nytrix Doughmination Twilight",
   description:
-    "Clove Twilight's live Discord presence — current status, activity, and what fae is up to right now.",
+    "Clove Nytrix Doughmination Twilight's live Discord presence — current status, activity, and what fae is up to right now.",
   keywords: [
-    "Clove Twilight",
+    "Clove Nytrix Doughmination Twilight",
     "doughmination.gay",
     "Discord",
     "presence",
@@ -28,15 +28,15 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "doughmination.gay",
-    title: "Clove Twilight",
+    title: "Clove Nytrix Doughmination Twilight",
     description:
-      "Clove Twilight's live Discord presence — current status, activity, and what fae is up to right now.",
+      "Clove Nytrix Doughmination Twilight's live Discord presence — current status, activity, and what fae is up to right now.",
     url: "https://doughmination.gay/discord",
     locale: "en_GB",
     images: [
       {
         url: "https://m.doughmination.gay/img/avatars/favicon.png",
-        alt: "Clove Twilight logo",
+        alt: "Clove Nytrix Doughmination Twilight logo",
       },
     ],
   },

@@ -14,18 +14,16 @@ import {
 } from "react";
 
 import {
-  grid,
-  card,
-  cardTop,
-  cardName,
-  cardUrl,
-  cardMeta,
+  board,
+  item,
+  itemHead,
+  itemNameWrap,
+  itemName,
+  itemDetail,
+  statusLabel,
   dot,
   dotChecking,
   banner,
-  checks,
-  checkLine,
-  checkLabel,
   uptimeWrap,
   uptimeBar,
   uptimeCell,
@@ -44,12 +42,40 @@ const HISTORY_MS = 5 * 60 * 1000;
 
 const colorUp = "#5bfaad";
 const colorDown = "#f5a9b8";
+const colorAmber = "#f0c674";
 const colorMuted = "#9aa3c2";
 
 function reachColor(state: Reach): string {
   if (state === "up") return colorUp;
   if (state === "down") return colorDown;
   return colorMuted;
+}
+
+type ServiceState = "up" | "degraded" | "down" | "checking";
+
+// Both checks up -> operational; one down -> degraded; both down -> down.
+function serviceState(result: HealthResult, loaded: boolean): ServiceState {
+  if (!loaded) return "checking";
+  const downs = [result.accessible, result.backend].filter(
+    (reach) => reach === "down",
+  ).length;
+  if (downs >= 2) return "down";
+  if (downs === 1) return "degraded";
+  return "up";
+}
+
+function stateColor(state: ServiceState): string {
+  if (state === "up") return colorUp;
+  if (state === "degraded") return colorAmber;
+  if (state === "down") return colorDown;
+  return colorMuted;
+}
+
+function stateLabel(state: ServiceState): string {
+  if (state === "up") return "Operational";
+  if (state === "degraded") return "Degraded";
+  if (state === "down") return "Down";
+  return "Checking…";
 }
 
 function accessibleLabel(state: Reach): string {
@@ -93,16 +119,6 @@ function setFavicon(color: string) {
   link.type = "image/svg+xml";
   link.href = href;
   document.head.appendChild(link);
-}
-
-function Dot({ state }: { state: Reach }) {
-  const color = reachColor(state);
-  return (
-    <span
-      className={dot}
-      style={{ color, background: color } as CSSProperties}
-    />
-  );
 }
 
 // 90 empty days, used before history loads or for brand-new services.
@@ -288,45 +304,45 @@ export default function StatusGrid() {
           `${downCount} service${downCount === 1 ? "" : "s"} need attention`}
       </div>
 
-      <div className={grid}>
-        {results.map((result) => (
-          <article key={result.id} className={card}>
-            <div className={cardTop}>
-              <span className={cardName}>{result.name}</span>
-            </div>
+      <div className={board}>
+        {results.map((result) => {
+          const state = serviceState(result, loaded);
+          const color = stateColor(state);
+          return (
+            <article key={result.id} className={item}>
+              <div className={itemHead}>
+                <span className={itemNameWrap}>
+                  <span
+                    className={loaded ? dot : dotChecking}
+                    style={{ color, background: color } as CSSProperties}
+                  />
+                  <span className={itemName}>{result.name}</span>
+                </span>
+                <span className={statusLabel} style={{ color }}>
+                  {stateLabel(state)}
+                </span>
+              </div>
 
-            {result.url && <span className={cardUrl}>{result.url}</span>}
-
-            <div className={checks}>
-              <span className={checkLine}>
-                <Dot state={result.accessible} />
-                <span className={checkLabel}>Accessible:</span>
+              <div className={itemDetail}>
+                {result.url && <span>{result.url}</span>}
+                <span>
+                  {result.status !== null ? `HTTP ${result.status}` : "—"}
+                </span>
+                <span>
+                  {result.latencyMs !== null ? `${result.latencyMs} ms` : "—"}
+                </span>
                 <span style={{ color: reachColor(result.accessible) }}>
-                  {accessibleLabel(result.accessible)}
+                  accessible: {accessibleLabel(result.accessible)}
                 </span>
-              </span>
-
-              <span className={checkLine}>
-                <Dot state={result.backend} />
-                <span className={checkLabel}>Backend:</span>
                 <span style={{ color: reachColor(result.backend) }}>
-                  {backendLabel(result.backend, result.backendDetail)}
+                  backend: {backendLabel(result.backend, result.backendDetail)}
                 </span>
-              </span>
-            </div>
+              </div>
 
-            <div className={cardMeta}>
-              <span>
-                {result.status !== null ? `HTTP ${result.status}` : "—"}
-              </span>
-              <span>
-                {result.latencyMs !== null ? `${result.latencyMs} ms` : "—"}
-              </span>
-            </div>
-
-            <UptimeBar days={history[result.id] ?? emptyHistory} />
-          </article>
-        ))}
+              <UptimeBar days={history[result.id] ?? emptyHistory} />
+            </article>
+          );
+        })}
       </div>
     </>
   );
