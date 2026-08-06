@@ -28,7 +28,7 @@ import {
 import { PRIDE_FLAGS, findPrideFlag, prideSwatchGradient } from "@/lib/pride";
 import * as s from "@/styles/admin.css";
 
-const FALLBACK_AVATAR = "https://c.stupid.cat/assets/favicon/avatar.png";
+const FALLBACK_AVATAR = "https://m.doughmination.gay/img/avatars/favicon.png";
 
 const PrideSwatch: React.FC<{ label: string }> = ({ label }) => {
   const flag = findPrideFlag(label);

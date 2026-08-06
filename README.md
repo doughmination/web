@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://doughmination.gay/favicon.png" alt="Clove logo" width="150" />
+  <img src="https://m.doughmination.gay/img/avatars/favicon.png" alt="Clove logo" width="150" />
 
   <h1>Web</h1>
 
@@ -24,7 +24,6 @@
 | System | Doughmination System frontend | [doughmination.co.uk](https://doughmination.co.uk) | [`system/`](./system) |
 | Mailbox | Email mailbox | [doughmination.tech](https://doughmination.tech) | [`mailbox/`](./mailbox) |
 | Status | Service status page (public) + PocketID-gated admin | [doughmination.org](https://doughmination.org) | [`status/`](./status) |
-| Fonts | Comic Code font archive (static) | [fonts.doughmination.co.uk](https://fonts.doughmination.co.uk) | [`fonts/`](./fonts) |
 
 ## Repository layout
 
@@ -36,8 +35,6 @@ web/
 ├── system/          Next.js — system frontend (doughmination.co.uk)
 ├── mailbox/         Bun + Hono — email inbox API/UI (doughmination.tech)
 ├── status/          Next.js — service status + PocketID admin (doughmination.org)
-├── fonts/           Static Comic Code font archive
-├── setup/           Windows setup helper (PowerShell)
 ├── compose.yml      Production stack (pulls doughmination/* images)
 ├── dev.sh           Runs all Next.js apps locally in parallel
 └── .env.example     Environment template (mailbox)

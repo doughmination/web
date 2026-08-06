@@ -16,22 +16,22 @@ import { vars } from "./theme.css";
 const comic = "Comic Code";
 
 globalFontFace(comic, {
-  src: "url('https://fonts.doughmination.co.uk/ComicCode/woff2/ComicCode-Regular.woff2') format('woff2'), url('https://fonts.doughmination.co.uk/ComicCode/woff/ComicCode-Regular.woff') format('woff')",
+  src: "url('https://m.doughmination.gay/f/Comic-Code/woff2/ComicCode-Regular.woff2') format('woff2'), url('https://m.doughmination.gay/f/Comic-Code/woff/ComicCode-Regular.woff') format('woff')",
   fontWeight: 400,
   fontStyle: "normal",
 });
 globalFontFace(comic, {
-  src: "url('https://fonts.doughmination.co.uk/ComicCode/woff2/ComicCode-Italic.woff2') format('woff2'), url('https://fonts.doughmination.co.uk/ComicCode/woff/ComicCode-Italic.woff') format('woff')",
+  src: "url('https://m.doughmination.gay/f/Comic-Code/woff2/ComicCode-Italic.woff2') format('woff2'), url('https://m.doughmination.gay/f/Comic-Code/woff/ComicCode-Italic.woff') format('woff')",
   fontWeight: 400,
   fontStyle: "italic",
 });
 globalFontFace(comic, {
-  src: "url('https://fonts.doughmination.co.uk/ComicCode/woff2/ComicCode-Medium.woff2') format('woff2'), url('https://fonts.doughmination.co.uk/ComicCode/woff/ComicCode-Medium.woff') format('woff')",
+  src: "url('https://m.doughmination.gay/f/Comic-Code/woff2/ComicCode-Medium.woff2') format('woff2'), url('https://m.doughmination.gay/f/Comic-Code/woff/ComicCode-Medium.woff') format('woff')",
   fontWeight: 500,
   fontStyle: "normal",
 });
 globalFontFace(comic, {
-  src: "url('https://fonts.doughmination.co.uk/ComicCode/woff2/ComicCode-Bold.woff2') format('woff2'), url('https://fonts.doughmination.co.uk/ComicCode/woff/ComicCode-Bold.woff') format('woff')",
+  src: "url('https://m.doughmination.gay/f/Comic-Code/woff2/ComicCode-Bold.woff2') format('woff2'), url('https://m.doughmination.gay/f/Comic-Code/woff/ComicCode-Bold.woff') format('woff')",
   fontWeight: 700,
   fontStyle: "normal",
 });

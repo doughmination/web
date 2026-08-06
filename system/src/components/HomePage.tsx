@@ -31,7 +31,7 @@ interface UserData {
   display_name?: string;
 }
 
-const FALLBACK_AVATAR = "https://c.stupid.cat/assets/favicon/avatar.png";
+const FALLBACK_AVATAR = "https://m.doughmination.gay/img/avatars/favicon.png";
 
 const MENTAL_STATE_CLASSES: Record<string, string> = {
   safe: site.mentalStateSafe,

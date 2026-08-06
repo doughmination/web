@@ -31,7 +31,7 @@ import * as s from "@/styles/admin.css";
 
 type Member = PluralMember;
 
-const FALLBACK_AVATAR = "https://c.stupid.cat/assets/favicon/avatar.png";
+const FALLBACK_AVATAR = "https://m.doughmination.gay/img/avatars/favicon.png";
 
 // Member-tag add/remove aren't wrapped by the package client, so these two
 // endpoints are called inline off the client's base URL.

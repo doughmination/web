@@ -36,7 +36,7 @@ const EMOJI_SUGGESTIONS = [
   "🍕", "☕", "🎬", "✨", "💭", "😴", "🏃", "🧘",
 ];
 
-const FALLBACK_AVATAR = "https://c.stupid.cat/assets/favicon/avatar.png";
+const FALLBACK_AVATAR = "https://m.doughmination.gay/img/avatars/favicon.png";
 
 // The package client covers setting a status; clearing it uses a DELETE the
 // client doesn't wrap, so this one endpoint is called inline.

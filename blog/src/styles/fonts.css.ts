@@ -11,26 +11,26 @@
 
 import { globalFontFace } from "@vanilla-extract/css";
 
-const CDN = "https://fonts.doughmination.co.uk";
+const CDN = "https://m.doughmination.gay/f";
 
 const COMIC_CODE = [
   {
-    file: "ComicCode-Regular_2022-05-24-151938_hsmz",
+    file: "ComicCode-Regular",
     weight: 400,
     style: "normal",
   },
   {
-    file: "ComicCode-Italic_2022-05-24-151939_rdtu",
+    file: "ComicCode-Italic",
     weight: 400,
     style: "italic",
   },
   {
-    file: "ComicCode-Medium_2022-05-24-151941_ugqm",
+    file: "ComicCode-Medium",
     weight: 500,
     style: "normal",
   },
   {
-    file: "ComicCode-Bold_2022-05-24-152309_zqkm",
+    file: "ComicCode-Bold",
     weight: 700,
     style: "normal",
   },
@@ -38,7 +38,7 @@ const COMIC_CODE = [
 
 for (const { file, weight, style } of COMIC_CODE) {
   globalFontFace("Comic Code", {
-    src: `url('${CDN}/${file}.woff2') format('woff2'), url('${CDN}/${file}.woff') format('woff')`,
+    src: `url('${CDN}/Comic-Code/woff2/${file}.woff2') format('woff2'), url('${CDN}/Comic-Code/woff/${file}.woff') format('woff')`,
     fontWeight: weight,
     fontStyle: style,
     // swap: show fallback text immediately rather than blocking on the webfont.

@@ -71,7 +71,7 @@ export const metadata: Metadata = {
     locale: "en_GB",
     images: [
       {
-        url: "https://doughmination.gay/favicon.png",
+        url: "https://m.doughmination.gay/img/avatars/favicon.png",
         alt: "Clove Twilight logo",
       },
     ],
@@ -83,7 +83,7 @@ export const metadata: Metadata = {
     title: "Clove Twilight",
     description:
       "The homepage and hub for everything Clove Twilight — projects, music, Discord presence, dev stats, and more.",
-    images: ["https://doughmination.gay/favicon.png"],
+    images: ["https://m.doughmination.gay/img/avatars/favicon.png"],
   },
 };
 
@@ -107,8 +107,8 @@ export default function RootLayout({
         {/* Comic Code is served from here (see styles/fonts.css.ts). Warming
             the connection early matters because the @font-face is only
             discovered once Next's CSS chunk has parsed. */}
-        <link rel="preconnect" href="https://fonts.doughmination.co.uk" crossOrigin="" />
-        <link rel="dns-prefetch" href="https://fonts.doughmination.co.uk" />
+        <link rel="preconnect" href="https://m.doughmination.gay" crossOrigin="" />
+        <link rel="dns-prefetch" href="https://m.doughmination.gay" />
       </head>
       <body>
         {/* Active language (localStorage-persisted, browser-detected on first

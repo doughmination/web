@@ -6,7 +6,7 @@
 
 import { globalFontFace } from "@vanilla-extract/css";
 
-const CDN = "https://fonts.doughmination.co.uk";
+const CDN = "https://m.doughmination.gay/f";
 
 /** Comic Code — the site's body/mono face, four cuts. */
 const COMIC_CODE = [

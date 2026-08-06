@@ -21,25 +21,25 @@ import {
 // explicitly (no loop): the Turbopack vanilla-extract plugin can't instrument a
 // top-level loop in a .css.ts, which breaks file-scope setup for the whole graph.
 globalFontFace("Comic Code", {
-  src: "url('https://fonts.doughmination.co.uk/ComicCode/woff2/ComicCode-Regular.woff2') format('woff2'), url('https://fonts.doughmination.co.uk/ComicCode/woff/ComicCode-Regular.woff') format('woff')",
+  src: "url('https://m.doughmination.gay/f/Comic-Code/woff2/ComicCode-Regular.woff2') format('woff2'), url('https://m.doughmination.gay/f/Comic-Code/woff/ComicCode-Regular.woff') format('woff')",
   fontWeight: 400,
   fontStyle: "normal",
   fontDisplay: "swap",
 });
 globalFontFace("Comic Code", {
-  src: "url('https://fonts.doughmination.co.uk/ComicCode/woff2/ComicCode-Italic.woff2') format('woff2'), url('https://fonts.doughmination.co.uk/ComicCode/woff/ComicCode-Italic.woff') format('woff')",
+  src: "url('https://m.doughmination.gay/f/Comic-Code/woff2/ComicCode-Italic.woff2') format('woff2'), url('https://m.doughmination.gay/f/Comic-Code/woff/ComicCode-Italic.woff') format('woff')",
   fontWeight: 400,
   fontStyle: "italic",
   fontDisplay: "swap",
 });
 globalFontFace("Comic Code", {
-  src: "url('https://fonts.doughmination.co.uk/ComicCode/woff2/ComicCode-Medium.woff2') format('woff2'), url('https://fonts.doughmination.co.uk/ComicCode/woff/ComicCode-Medium.woff') format('woff')",
+  src: "url('https://m.doughmination.gay/f/Comic-Code/woff2/ComicCode-Medium.woff2') format('woff2'), url('https://m.doughmination.gay/f/Comic-Code/woff/ComicCode-Medium.woff') format('woff')",
   fontWeight: 500,
   fontStyle: "normal",
   fontDisplay: "swap",
 });
 globalFontFace("Comic Code", {
-  src: "url('https://fonts.doughmination.co.uk/ComicCode/woff2/ComicCode-Bold.woff2') format('woff2'), url('https://fonts.doughmination.co.uk/ComicCode/woff/ComicCode-Bold.woff') format('woff')",
+  src: "url('https://m.doughmination.gay/f/Comic-Code/woff2/ComicCode-Bold.woff2') format('woff2'), url('https://m.doughmination.gay/f/Comic-Code/woff/ComicCode-Bold.woff') format('woff')",
   fontWeight: 700,
   fontStyle: "normal",
   fontDisplay: "swap",

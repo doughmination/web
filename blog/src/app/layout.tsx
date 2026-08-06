@@ -64,10 +64,10 @@ export default function RootLayout({
             discovered once Next's CSS chunk has parsed. */}
         <link
           rel="preconnect"
-          href="https://fonts.doughmination.co.uk"
+          href="https://m.doughmination.gay"
           crossOrigin=""
         />
-        <link rel="dns-prefetch" href="https://fonts.doughmination.co.uk" />
+        <link rel="dns-prefetch" href="https://m.doughmination.gay" />
       </head>
       <body>
         <div className="page">

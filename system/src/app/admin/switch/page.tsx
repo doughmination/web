@@ -28,7 +28,7 @@ import * as sw from "./switch.css";
 
 type Member = PluralMember;
 
-const FALLBACK_AVATAR = "https://c.stupid.cat/assets/favicon/avatar.png";
+const FALLBACK_AVATAR = "https://m.doughmination.gay/img/avatars/favicon.png";
 
 const SwitchManager: React.FC = () => {
   const client = useDoughminationClient();

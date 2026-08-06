@@ -22,8 +22,8 @@ export const metadata: Metadata = {
     canonical: "https://doughmination.co.uk/",
   },
   icons: {
-    icon: "https://c.stupid.cat/assets/favicon/avatar.png",
-    apple: "https://c.stupid.cat/assets/favicon/avatar.png",
+    icon: "https://m.doughmination.gay/img/avatars/favicon.png",
+    apple: "https://m.doughmination.gay/img/avatars/favicon.png",
   },
   appleWebApp: {
     capable: true,
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
       "Real-time plural system tracker. View current fronters and members of the Doughmination System.",
     images: [
       {
-        url: "https://c.stupid.cat/assets/favicon/avatar.png",
+        url: "https://m.doughmination.gay/img/avatars/favicon.png",
         width: 800,
         height: 800,
       },
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     title: "Doughmination System | Plural System Tracker",
     description:
       "Real-time plural system tracker. View current fronters and members of the Doughmination System.",
-    images: ["https://c.stupid.cat/assets/favicon/avatar.png"],
+    images: ["https://m.doughmination.gay/img/avatars/favicon.png"],
     site: "@doughmination",
   },
 };
@@ -73,7 +73,7 @@ export default function RootLayout({
       <head>
         <link
           rel="preconnect"
-          href="https://fonts.doughmination.co.uk"
+          href="https://m.doughmination.gay"
           crossOrigin=""
         />
       </head>

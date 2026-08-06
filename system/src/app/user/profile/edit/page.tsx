@@ -76,7 +76,7 @@ function UserEdit() {
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     console.error("Failed to load avatar preview:", avatarUrl);
     setImageError(true);
-    (e.target as HTMLImageElement).src = "https://c.stupid.cat/assets/favicon/avatar.png";
+    (e.target as HTMLImageElement).src = "https://m.doughmination.gay/img/avatars/favicon.png";
   };
 
   const handleImageLoad = () => {

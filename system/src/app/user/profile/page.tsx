@@ -27,7 +27,7 @@ function UserProfile() {
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     console.error("Failed to load avatar:", userData?.avatar_url);
     setImageError(true);
-    (e.target as HTMLImageElement).src = "https://c.stupid.cat/assets/favicon/avatar.png";
+    (e.target as HTMLImageElement).src = "https://m.doughmination.gay/img/avatars/favicon.png";
   };
 
   const handleImageLoad = () => {

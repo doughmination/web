@@ -42,7 +42,7 @@ interface User {
   avatar_url?: string;
 }
 
-const FALLBACK_AVATAR = "https://c.stupid.cat/assets/favicon/avatar.png";
+const FALLBACK_AVATAR = "https://m.doughmination.gay/img/avatars/favicon.png";
 
 const UserManager: React.FC = () => {
   const client = useDoughminationClient();
