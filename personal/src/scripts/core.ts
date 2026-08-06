@@ -40,7 +40,7 @@ function currentDictionary() {
   }
 }
 
-export function initCore(catSrc: string = "/oneko/classic.png") {
+export function initCore(catSrc: string = "https://m.doughmination.gay/img/oneko/classic.png") {
   /* Ari was here uwu
    * Professional boob lover
    * girls kissing,,, */
@@ -417,7 +417,7 @@ export function initCore(catSrc: string = "/oneko/classic.png") {
 
     function init() {
       // Was read from the <script data-cat> tag; now passed into initCore().
-      let nekoFile = catSrc || "/oneko/classic.png";
+      let nekoFile = catSrc || "https://m.doughmination.gay/img/oneko/classic.png";
 
       if (persistPosition) {
         let storedNeko = JSON.parse(window.localStorage.getItem("oneko"));
@@ -618,7 +618,7 @@ export function initCore(catSrc: string = "/oneko/classic.png") {
     init();
   })();
 
-  const BASE_SPRITE = "/oneko/classic.png";
+  const BASE_SPRITE = "https://m.doughmination.gay/img/oneko/classic.png";
 
   let CAT_MODES = [];
 

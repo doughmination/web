@@ -229,7 +229,7 @@ globalStyle(".ly-lock", {
   fontFamily: "inherit",
   fontSize: "0.72rem",
   letterSpacing: "0.04em",
-  cursor: 'url("/cursor/pointer_0.png"), pointer',
+  cursor: 'url("https://m.doughmination.gay/img/cursor/pointer_0.png"), pointer',
   borderRadius: 999,
   padding: "0.28rem 0.8rem 0.28rem 0.7rem",
   background: vars.surface,

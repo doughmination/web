@@ -606,7 +606,7 @@ globalStyle(".pc-star", {
   alignSelf: "flex-start",
   background: "none",
   border: "none",
-  cursor: 'url("/cursor/pointer_0.png"), pointer',
+  cursor: 'url("https://m.doughmination.gay/img/cursor/pointer_0.png"), pointer',
   fontSize: "0.95rem",
   lineHeight: 1,
   color: vars.textMuted,

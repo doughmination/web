@@ -56,7 +56,7 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: "/favicon.png",
+        url: "https://m.doughmination.gay/img/avatars/favicon.png",
         type: "image/png"
       },
     ],
@@ -139,7 +139,7 @@ export default function RootLayout({
           {/* Persistent chrome, ported into the bundle: nav builder, oneko cat, and
               bg music. Runs once, client-only, via SiteChrome. (Realtime now lives
               in the wrapper's shared socket via Providers, not here.) */}
-          <SiteChrome catSrc="/oneko/classic.png" />
+          <SiteChrome catSrc="https://m.doughmination.gay/img/oneko/classic.png" />
         </LanguageProvider>
       </body>
     </html>

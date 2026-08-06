@@ -144,7 +144,7 @@ export default function GenshinGallery({
                 )}
                 <Model3D
                   src={c.model}
-                  poster="/favicon.png"
+                  poster="https://m.doughmination.gay/img/avatars/favicon.png"
                   alt={t("genshin.modelAlt").replace("{name}", c.name)}
                 />
               </div>

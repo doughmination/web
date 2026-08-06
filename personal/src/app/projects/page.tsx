@@ -53,7 +53,7 @@ type Project = {
 const GIRLS_NETWORK: Project[] = [
   {
     href: "https://security.girlsnetwork.dev",
-    img: "/projects/ghostwire.png",
+    img: "https://m.doughmination.gay/img/projects/ghostwire.png",
     alt: "Ghostwire",
     title: "Ghostwire",
     statusKey: "projects.closedSource",
@@ -62,7 +62,7 @@ const GIRLS_NETWORK: Project[] = [
   },
   {
     href: "https://github.com/Girls-Network/GayBot-v2",
-    img: "/projects/gaybot.png",
+    img: "https://m.doughmination.gay/img/projects/gaybot.png",
     alt: "GayBot",
     title: "GayBot",
     statusKey: "projects.openSource",
@@ -70,7 +70,7 @@ const GIRLS_NETWORK: Project[] = [
   },
   {
     href: "https://github.com/Girls-Network/bansync",
-    img: "/projects/bansync.png",
+    img: "https://m.doughmination.gay/img/projects/bansync.png",
     alt: "BanSync",
     title: "BanSync",
     statusKey: "projects.openSource",
@@ -81,7 +81,7 @@ const GIRLS_NETWORK: Project[] = [
 const PERSONAL: Project[] = [
   {
     href: "https://github.com/doughmination/web/tree/main/mailbox",
-    img: "/favicon.png",
+    img: "https://m.doughmination.gay/img/avatars/favicon.png",
     alt: "Doughmination Mail",
     title: "Doughmination Mail",
     statusKey: "projects.openSource",
@@ -90,7 +90,7 @@ const PERSONAL: Project[] = [
   },
   {
     href: "https://github.com/doughmination/api",
-    img: "/favicon.png",
+    img: "https://m.doughmination.gay/img/avatars/favicon.png",
     alt: "API",
     title: "Doughmination API",
     statusKey: "projects.openSource",
@@ -99,7 +99,7 @@ const PERSONAL: Project[] = [
   },
   {
     href: "https://github.com/doughmination/utils",
-    img: "/favicon.png",
+    img: "https://m.doughmination.gay/img/avatars/favicon.png",
     alt: "Shortcuts Bot",
     title: "Shortcuts Bot",
     statusKey: "projects.openSource",
@@ -107,7 +107,7 @@ const PERSONAL: Project[] = [
   },
   {
     href: "https://github.com/doughmination/cf-error-worker",
-    img: "/projects/cf.png",
+    img: "https://m.doughmination.gay/img/projects/cf.png",
     alt: "CF Error Worker",
     title: "CF Error Worker",
     statusKey: "projects.openSource",
@@ -161,7 +161,7 @@ export default function ProjectsPage() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           className="pfp"
-          src="/favicon.png"
+          src="https://m.doughmination.gay/img/avatars/favicon.png"
           alt="Clove Twilight avatar"
         />
         <h1>Clove Twilight</h1>

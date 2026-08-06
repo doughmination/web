@@ -38,7 +38,7 @@
   background: var(--surface);
   border: 1px solid var(--surface-hi);
   color: var(--text);
-  cursor: url("/cursor/pointer_0.png"), pointer;
+  cursor: url("https://m.doughmination.gay/img/cursor/pointer_0.png"), pointer;
   transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
 }
 
@@ -166,7 +166,7 @@
   border-radius: 999px;
   background: var(--surface-hi);
   outline-offset: 3px;
-  cursor: url("/cursor/pointer_0.png"), pointer;
+  cursor: url("https://m.doughmination.gay/img/cursor/pointer_0.png"), pointer;
   -webkit-appearance: none;
   appearance: none;
 }
@@ -179,7 +179,7 @@
   border-radius: 999px;
   background: var(--accent);
   border: none;
-  cursor: url("/cursor/pointer_0.png"), pointer;
+  cursor: url("https://m.doughmination.gay/img/cursor/pointer_0.png"), pointer;
 }
 
 .volumeSlider::-moz-range-thumb {
@@ -188,7 +188,7 @@
   border-radius: 999px;
   background: var(--accent);
   border: none;
-  cursor: url("/cursor/pointer_0.png"), pointer;
+  cursor: url("https://m.doughmination.gay/img/cursor/pointer_0.png"), pointer;
 }
 
 /* Language: a pill showing the current language; click flows the list down. */
@@ -205,7 +205,7 @@
   color: var(--text);
   font-size: 0.8rem;
   white-space: nowrap;
-  cursor: url("/cursor/pointer_0.png"), pointer;
+  cursor: url("https://m.doughmination.gay/img/cursor/pointer_0.png"), pointer;
   transition: border-color 0.15s ease, background 0.15s ease;
 }
 
@@ -269,7 +269,7 @@
   color: var(--text-soft);
   font-size: 0.75rem;
   white-space: nowrap;
-  cursor: url("/cursor/pointer_0.png"), pointer;
+  cursor: url("https://m.doughmination.gay/img/cursor/pointer_0.png"), pointer;
   transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
 }
 
@@ -309,7 +309,7 @@
   width: 22px;
   height: 22px;
   display: block;
-  background-image: url("/oneko/classic.png");
+  background-image: url("https://m.doughmination.gay/img/oneko/classic.png");
   background-repeat: no-repeat;
   background-size: 176px 88px;
   background-position: -66px -66px;

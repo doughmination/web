@@ -23,7 +23,7 @@
 import { globalStyle } from "@vanilla-extract/css";
 import { vars } from "./themes.css";
 
-const POINTER = 'url("/cursor/pointer_0.png"), pointer';
+const POINTER = 'url("https://m.doughmination.gay/img/cursor/pointer_0.png"), pointer';
 
 globalStyle(".cat-picker", {
   position: "fixed",

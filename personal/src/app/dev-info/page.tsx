@@ -121,7 +121,7 @@ export default function DevInfoPage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             className="pfp"
-            src="/favicon.png"
+            src="https://m.doughmination.gay/img/avatars/favicon.png"
             alt="Clove Twilight avatar"
           />
           <h1>Clove Twilight</h1>
@@ -138,7 +138,7 @@ export default function DevInfoPage() {
                 className={`tech-icon ${color}`}
                 style={
                   {
-                    "--si": `url('/icons/${slug}.svg')`,
+                    "--si": `url('https://m.doughmination.gay/img/icons/${slug}.svg')`,
                   } as CSSProperties
                 }
                 role="img"

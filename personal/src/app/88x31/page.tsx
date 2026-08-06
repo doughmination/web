@@ -263,7 +263,7 @@ function ButtonImg({ b }: { b: Button }) {
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src={`/88x31/${b.img}`}
+      src={`https://m.doughmination.gay/img/88x31/${b.img}`}
       alt={b.alt}
       loading={b.eager ? "eager" : "lazy"}
     />

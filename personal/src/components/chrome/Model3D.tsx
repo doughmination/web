@@ -23,7 +23,7 @@ import type { CSSProperties } from "react";
  * that actually render a model.
  *
  * Usage:
- *   <Model3D src="/models/poc-knot.glb" poster="/assets/x.png" alt="…" />
+ *   <Model3D src="https://m.doughmination.gay/glb/furina.glb" poster="https://m.doughmination.gay/img/avatars/favicon.png" alt="…" />
  */
 
 let mvPromise: Promise<void> | null = null;

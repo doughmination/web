@@ -24,7 +24,7 @@ export default function Home() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             className="pfp"
-            src="/favicon.png"
+            src="https://m.doughmination.gay/img/avatars/favicon.png"
             alt={t("home.title")}
           />
           <h1>{t("home.title")}</h1>

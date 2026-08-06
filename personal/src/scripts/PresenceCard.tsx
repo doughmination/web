@@ -361,7 +361,7 @@ function SpotifyRow({ s, source, t }: { s: Dict; source: "doughmination" | "spot
           <>
             {dm ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img className="pc-brand-logo" src="/music.png" alt="" />
+              <img className="pc-brand-logo" src="https://m.doughmination.gay/img/avatars/music.png" alt="" />
             ) : (
               <Spotify className="pc-brand-logo pc-brand-spotify" aria-hidden="true" />
             )}

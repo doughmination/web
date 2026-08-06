@@ -190,7 +190,7 @@ function NowPlaying({
       <h2 className={s.npTitle_brand}>
         {source === "doughmination" ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img className={s.brandLogo} src="/music.png" alt="" />
+          <img className={s.brandLogo} src="https://m.doughmination.gay/img/avatars/music.png" alt="" />
         ) : (
           <Spotify className={`${s.brandLogo} ${s.brandSpotify}`} aria-hidden="true" />
         )}

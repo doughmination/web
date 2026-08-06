@@ -69,7 +69,7 @@ export function proxy(request: NextRequest): NextResponse {
 }
 
 // Run on everything except Next internals, the API, and files with an
-// extension (favicon.png, /models/*.glb, images, …).
+// extension (favicon.png, https://m.doughmination.gay/glb/*.glb, images, …).
 export const config = {
   matcher: ["/((?!_next|api|.*\\..*).*)"],
 };

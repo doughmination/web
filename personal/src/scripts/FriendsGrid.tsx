@@ -62,47 +62,47 @@ const FRIENDS: Group[] = [
       {
         name: "J",
         user: "real_serial_designationj",
-        img: "/alts/j.png",
+        img: "https://m.doughmination.gay/img/old-pfps/j.png",
         tier: "active-alt",
         discordId: "1500197577336033301"
       },
       {
         name: "Uzi",
         user: "theuzidoorman",
-        img: "/alts/uzi.png",
+        img: "https://m.doughmination.gay/img/old-pfps/uzi.png",
         tier: "active-alt",
         discordId: "526626867973849123"
       },
       {
         name: "estrogenhrt",
         user: "estrogenhrt",
-        img: "/alts/estrogenhrt.png",
+        img: "https://m.doughmination.gay/img/old-pfps/estrogenhrt.png",
         tier: "active-alt",
         discordId: "1025770042245251122"
       },
       {
         name: "Clove Twilight",
         user: "clovetwilight3",
-        img: "/alts/clovetwilight3.png",
+        img: "https://m.doughmination.gay/img/old-pfps/clovetwilight3.png",
         tier: "dead-alt"
       },
       {
         name: "Clove <3",
-        img: "/alts/clove.png",
+        img: "https://m.doughmination.gay/img/old-pfps/clove.png",
         tier: "dead-alt",
         discordId: "1125844710511104030",
       },
       {
         name: "Clove ⛤",
         user: "greenirisluna",
-        img: "/alts/butterfly.png",
+        img: "https://m.doughmination.gay/img/old-pfps/butterfly.png",
         tier: "dead-alt",
         discordId: "514994021970739201",
       },
       {
         name: "Mrow",
         user: "arisgayasswife",
-        img: "/alts/mrow.png",
+        img: "https://m.doughmination.gay/img/old-pfps/mrow.png",
         tier: "dead-alt",
         discordId: "219480349053288450",
       },
