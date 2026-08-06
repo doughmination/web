@@ -60,7 +60,7 @@ export default function VisitorCounter({
   namespace = "dough",
   hitKey = "hits",
   label,
-  imgPath = "/numbers/",
+  imgPath = "https://m.doughmination.gay/img/numbers/",
   imgExt = ".png",
 }: Props) {
   const { t } = useLanguage();
