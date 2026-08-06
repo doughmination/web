@@ -203,7 +203,7 @@ export function initCore(catSrc: string = "https://m.doughmination.gay/img/oneko
     const audio = document.createElement("audio");
     audio.id = "bgm";
     audio.dataset.ctpPersist = ""; /* survives soft navigation, see bottom of file */
-    audio.src = "/sfx/background.mp3";
+    audio.src = "https://m.doughmination.gay/sfx/background.mp3";
     audio.loop = true;
     audio.preload = "auto";
     // Default 0.1 — background music, not the main event — unless a saved
@@ -727,7 +727,7 @@ export function initCore(catSrc: string = "https://m.doughmination.gay/img/oneko
     });
 
     /* ---- squeak / boop sound on click ---- */
-    const boop = new Audio("/sfx/boop.mp3");
+    const boop = new Audio("https://m.doughmination.gay/sfx/boop.mp3");
     boop.preload = "auto";
     function playBoop() {
       try {

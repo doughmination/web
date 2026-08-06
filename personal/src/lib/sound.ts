@@ -27,17 +27,17 @@ function playThrottled(file: string, throttleMs: number) {
 }
 
 export function playClickSound() {
-  play("/sfx/click.mp3");
+  play("https://m.doughmination.gay/sfx/click.mp3");
 }
 
 export function playHoverSound() {
-  playThrottled("/sfx/hover.mp3", 150);
+  playThrottled("https://m.doughmination.gay/sfx/hover.mp3", 150);
 }
 
 export function playOpenSound() {
-  play("/sfx/open.mp3");
+  play("https://m.doughmination.gay/sfx/toggle.mp3");
 }
 
 export function playCloseSound() {
-  play("/sfx/close.mp3");
+  play("https://m.doughmination.gay/sfx/toggle.mp3");
 }

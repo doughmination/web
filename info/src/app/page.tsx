@@ -91,7 +91,7 @@ export default function Page() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               className={avatar}
-              src="/avatar.png"
+              src="https://m.doughmination.gay/img/avatars/favicon.png"
               alt="Clove's avatar"
               width={190}
               height={190}

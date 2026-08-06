@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   },
   alternates: { canonical: SITE_URL },
   icons: {
-    icon: [{ url: "/assets/favicon.png", type: "image/png" }],
+    icon: [{ url: "https://m.doughmination.gay/img/avatars/favicon.png", type: "image/png" }],
   },
   openGraph: {
     type: "website",
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     title: SITE_NAME,
     url: SITE_URL,
     locale: "en_GB",
-    images: [{ url: "/assets/favicon.png", alt: "Clove Twilight logo" }],
+    images: [{ url: "https://m.doughmination.gay/img/avatars/favicon.png", alt: "Clove Twilight logo" }],
   },
   twitter: {
     card: "summary",
