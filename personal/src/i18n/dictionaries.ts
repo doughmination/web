@@ -8,6 +8,10 @@ import en from "./locales/en";
 import ja from "./locales/ja";
 import es from "./locales/es";
 import nl from "./locales/nl";
+import de from "./locales/de";
+import zh from "./locales/zh";
+import pt from "./locales/pt";
+import ko from "./locales/ko";
 import type { Dictionary } from "./locales/en";
 import type { Language } from "./config";
 
@@ -16,4 +20,8 @@ export const dictionaries: Record<Language, Dictionary> = {
   ja,
   es,
   nl,
+  de,
+  zh,
+  pt,
+  ko,
 };

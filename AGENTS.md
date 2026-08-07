@@ -50,3 +50,79 @@ Why it's done this way — don't "simplify" it away:
 
 Per-app env var names are prefixed to avoid clashes in the shared `.env`
 (e.g. `status` uses `STATUS_OIDC_CLIENT_ID`, not `OIDC_CLIENT_ID`).
+
+## Uniform styling (every site)
+
+All the sites — the Next apps (`personal`, `blog`, `info`, `system`, `status`),
+the static ones (`mailbox`, and the separate `cdn` repo) — should look like one
+family. Keep these consistent. **Code them into each site directly; do NOT
+extract a shared npm/theme package.** Duplication across repos is intentional
+here — favour "same code in each repo" over a shared dependency.
+
+### Palette (dark, trans-pink)
+
+The shared token values. In the Next apps these live in each app's Vanilla
+Extract theme; in static sites they're CSS custom properties on `:root`.
+
+```
+--bg:           #0a0b10
+--surface:      #12141c
+--surface-hover:#1b1e2a
+--text:         #f4f6fb
+--muted:        #9aa3c2
+--border:       #232838
+--accent:       #f5a9b8
+```
+
+`viewport.themeColor` (and the static `<meta name="theme-color">`) is `#f5a9b8`.
+
+### Trans-flag gradient title
+
+Every site's main heading uses the same animated trans-flag gradient. Apply it
+to that site's primary title (`.hub-header h1`, `pageTitle`, `.trans-title`,
+etc.) — never a shared component.
+
+```css
+background-image: linear-gradient(90deg, #5BCEFA, #F5A9B8, #ffffff, #F5A9B8, #5BCEFA, #5BCEFA);
+background-size: 200% 100%;
+-webkit-background-clip: text;
+background-clip: text;
+color: transparent;
+/* keyframes slide: backgroundPositionX -> 200% */
+animation: slide 6s linear infinite;
+```
+
+Always add the reduced-motion guard: under
+`@media (prefers-reduced-motion: reduce)` set `animation: none`.
+
+### Font
+
+**Comic Code** everywhere, via `@font-face` from `fonts.doughmination.co.uk`
+(`ComicCode-Regular…woff2` / `ComicCode-Bold…woff2`), falling back to
+`ui-monospace, monospace`. Preconnect to `m.doughmination.gay` in `<head>`.
+
+### Link embeds (Open Graph)
+
+Every site sets Open Graph + a `twitter:card = summary`, plus `theme-color`.
+Fallback image is `https://m.doughmination.gay/img/avatars/favicon.png`. Where a
+page represents a specific thing, make the tags dynamic (Next
+`generateMetadata`) — e.g. `system` member pages (`[member_id]/layout.tsx`,
+which uses `@doughmination/react-api/server` so it works in a server component)
+and `blog` posts. The `api` worker content-negotiates `/`: browsers/crawlers get
+an HTML card, API clients still get JSON.
+
+### UI sounds
+
+Hover / click / toggle sounds, **on by default**, muteable (persisted in
+`localStorage`), silenced under `prefers-reduced-motion`. Audio streams from
+`m.doughmination.gay/sfx/` (`hover.mp3`, `click.mp3`, `toggle.mp3`). Next apps
+use a `SoundFX.tsx` client component mounted in the layout; static sites use a
+`sfx.js` script. **Exception: the `cdn` site has no sounds** — it only *hosts*
+the files for everyone else.
+
+### Shared assets live on the CDN
+
+Images/avatars, `.glb` models and `sfx` are served from `m.doughmination.gay`
+(the `cdn` repo); fonts from `fonts.doughmination.co.uk`. When adding a new
+site, copy the palette + trans title + font + OG + sounds from an existing one
+rather than inventing a new look.

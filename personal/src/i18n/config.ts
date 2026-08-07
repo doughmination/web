@@ -10,7 +10,7 @@
  * exported from locales/en.ts.
  */
 
-export const SUPPORTED_LANGUAGES = ["en", "ja", "es", "nl"] as const;
+export const SUPPORTED_LANGUAGES = ["en", "ja", "es", "nl", "de", "zh", "pt", "ko"] as const;
 
 export type Language = (typeof SUPPORTED_LANGUAGES)[number];
 
@@ -24,6 +24,10 @@ export const LANGUAGE_NAMES: Record<Language, string> = {
   ja: "日本語",
   es: "Español",
   nl: "Nederlands",
+  de: "Deutsch",
+  zh: "简体中文",
+  pt: "Português",
+  ko: "한국어",
 };
 
 // The URL path segment each language lives under. The active language is
@@ -34,6 +38,10 @@ export const LOCALE_PREFIXES: Record<Language, string> = {
   ja: "ja",
   es: "es",
   nl: "nl",
+  de: "de",
+  zh: "zh",
+  pt: "pt",
+  ko: "ko",
 };
 
 // Reverse of LOCALE_PREFIXES: URL segment -> language.
@@ -42,6 +50,10 @@ const PREFIX_TO_LANGUAGE: Record<string, Language> = {
   ja: "ja",
   es: "es",
   nl: "nl",
+  de: "de",
+  zh: "zh",
+  pt: "pt",
+  ko: "ko",
 };
 
 export function isLanguage(value: string): value is Language {
