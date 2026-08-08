@@ -123,6 +123,6 @@ the files for everyone else.
 ### Shared assets live on the CDN
 
 Images/avatars, `.glb` models and `sfx` are served from `m.doughmination.gay`
-(the `cdn` repo); fonts from `fonts.doughmination.co.uk`. When adding a new
+(the `cdn` repo); fonts from `m.doughmination.gay/f`. When adding a new
 site, copy the palette + trans title + font + OG + sounds from an existing one
 rather than inventing a new look.

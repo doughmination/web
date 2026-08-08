@@ -12,6 +12,11 @@ import de from "./locales/de";
 import zh from "./locales/zh";
 import pt from "./locales/pt";
 import ko from "./locales/ko";
+import it from "./locales/it";
+import ru from "./locales/ru";
+import pl from "./locales/pl";
+import tr from "./locales/tr";
+import ar from "./locales/ar";
 import type { Dictionary } from "./locales/en";
 import type { Language } from "./config";
 
@@ -24,4 +29,9 @@ export const dictionaries: Record<Language, Dictionary> = {
   zh,
   pt,
   ko,
+  it,
+  ru,
+  pl,
+  tr,
+  ar,
 };

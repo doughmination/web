@@ -10,7 +10,21 @@
  * exported from locales/en.ts.
  */
 
-export const SUPPORTED_LANGUAGES = ["en", "ja", "es", "nl", "de", "zh", "pt", "ko"] as const;
+export const SUPPORTED_LANGUAGES = [
+  "en",
+  "ja",
+  "es",
+  "nl",
+  "de",
+  "zh",
+  "pt",
+  "ko",
+  "it",
+  "ru",
+  "pl",
+  "tr",
+  "ar",
+] as const;
 
 export type Language = (typeof SUPPORTED_LANGUAGES)[number];
 
@@ -28,6 +42,11 @@ export const LANGUAGE_NAMES: Record<Language, string> = {
   zh: "简体中文",
   pt: "Português",
   ko: "한국어",
+  it: "Italiano",
+  ru: "Русский",
+  pl: "Polski",
+  tr: "Türkçe",
+  ar: "العربية",
 };
 
 // The URL path segment each language lives under. The active language is
@@ -42,6 +61,11 @@ export const LOCALE_PREFIXES: Record<Language, string> = {
   zh: "zh",
   pt: "pt",
   ko: "ko",
+  it: "it",
+  ru: "ru",
+  pl: "pl",
+  tr: "tr",
+  ar: "ar",
 };
 
 // Reverse of LOCALE_PREFIXES: URL segment -> language.
@@ -54,7 +78,24 @@ const PREFIX_TO_LANGUAGE: Record<string, Language> = {
   zh: "zh",
   pt: "pt",
   ko: "ko",
+  it: "it",
+  ru: "ru",
+  pl: "pl",
+  tr: "tr",
+  ar: "ar",
 };
+
+// Languages written right-to-left. LanguageProvider sets <html dir> from this
+// so the whole page mirrors; every other language is left-to-right.
+const RTL_LANGUAGES: ReadonlySet<Language> = new Set(["ar"]);
+
+export function isRtl(language: Language): boolean {
+  return RTL_LANGUAGES.has(language);
+}
+
+export function directionFor(language: Language): "rtl" | "ltr" {
+  return isRtl(language) ? "rtl" : "ltr";
+}
 
 export function isLanguage(value: string): value is Language {
   return (SUPPORTED_LANGUAGES as readonly string[]).includes(value);

@@ -19,7 +19,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo } from "reac
 import type { ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
-import { DEFAULT_LANGUAGE, localeFromPathname, localizedPath, type Language } from "./config";
+import { DEFAULT_LANGUAGE, directionFor, localeFromPathname, localizedPath, type Language } from "./config";
 import { dictionaries } from "./dictionaries";
 import { resolve, type TranslationKey } from "./translate";
 import type { Dictionary } from "./locales/en";
@@ -63,6 +63,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     document.documentElement.lang = lang;
+    document.documentElement.dir = directionFor(lang);
     persist(lang);
   }, [lang]);
 
