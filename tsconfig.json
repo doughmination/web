@@ -1,0 +1,10 @@
+{
+	"extends": "$app/tsconfig",
+	"compilerOptions": {
+		// worker-configuration.d.ts imports the built Worker, so without this
+		// svelte-check type-checks the whole compiled bundle after a build
+		"checkJs": false
+	},
+	"include": ["src", "test", "*"],
+	"exclude": ["src/service-worker"]
+}

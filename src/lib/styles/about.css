@@ -1,0 +1,160 @@
+/* src/lib/styles/about.css
+ * DASL-1.2 — (c) Clove Twilight
+ */
+
+/* About */
+
+.about {
+	width: 100%;
+	max-width: 62rem;
+	margin: 0 auto;
+	padding-inline: 1.5rem;
+}
+
+.sec {
+	margin: 2.5rem 0 0.75rem;
+	color: var(--accent);
+	font-size: clamp(1.5rem, 4vw, 2rem);
+	font-weight: 600;
+	letter-spacing: -0.02em;
+}
+
+.text {
+	max-width: 42rem;
+	margin: 0 0 1.25rem;
+	color: #ddd3e1;
+}
+
+/* Pride flag text */
+
+.trans,
+.poly,
+.fae {
+	position: relative;
+	cursor: help;
+	font-weight: 600;
+	background-clip: text;
+	-webkit-background-clip: text;
+	color: transparent;
+	-webkit-box-decoration-break: clone;
+	box-decoration-break: clone;
+}
+
+.trans {
+	background-image: linear-gradient(
+		90deg,
+		#5bcefa 0 20%,
+		#f5a9b8 20% 40%,
+		#ffffff 40% 60%,
+		#f5a9b8 60% 80%,
+		#5bcefa 80% 100%
+	);
+}
+
+/* 2022 polyamory flag; the dark purple stripe is lifted so it stays readable on the dark background */
+.poly {
+	background-image: linear-gradient(
+		90deg,
+		#009fe3 0 33.33%,
+		#e50051 33.33% 66.66%,
+		#a15ccf 66.66% 100%
+	);
+}
+
+.fae {
+	background-image: linear-gradient(
+		90deg,
+		#97c3a5 0 14.29%,
+		#c3deae 14.29% 28.57%,
+		#f9facd 28.57% 42.86%,
+		#ffffff 42.86% 57.14%,
+		#fca2c4 57.14% 71.43%,
+		#db8ae4 71.43% 85.71%,
+		#a97edd 85.71% 100%
+	);
+}
+
+/* Tooltip, from the data-tooltip attribute */
+
+.trans[data-tooltip]::after,
+.poly[data-tooltip]::after,
+.fae[data-tooltip]::after {
+	content: attr(data-tooltip);
+	position: absolute;
+	bottom: calc(100% + 0.5rem);
+	left: 50%;
+	z-index: 10;
+	width: max-content;
+	max-width: min(24rem, calc(100vw - 2rem));
+	padding: 0.4rem 0.65rem;
+	border: 1px solid var(--line);
+	border-radius: 0.4rem;
+	background: #17151b;
+	color: var(--text);
+	font-size: 0.85rem;
+	font-weight: 400;
+	line-height: 1.4;
+	pointer-events: none;
+	opacity: 0;
+	transform: translate(-50%, 0.25rem);
+	transition:
+		opacity 0.15s ease,
+		transform 0.15s ease;
+}
+
+.trans[data-tooltip]:hover::after,
+.poly[data-tooltip]:hover::after,
+.fae[data-tooltip]:hover::after,
+.trans[data-tooltip]:focus-visible::after,
+.poly[data-tooltip]:focus-visible::after,
+.fae[data-tooltip]:focus-visible::after {
+	opacity: 1;
+	transform: translate(-50%, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.trans[data-tooltip]::after,
+	.poly[data-tooltip]::after,
+	.fae[data-tooltip]::after {
+		transition: none;
+	}
+}
+
+/* Tooltips are desktop only */
+@media (hover: none), (max-width: 48rem) {
+	.trans[data-tooltip]::after,
+	.poly[data-tooltip]::after,
+	.fae[data-tooltip]::after {
+		display: none;
+	}
+
+	.trans,
+	.poly,
+	.fae {
+		cursor: auto;
+	}
+}
+
+/* Project list */
+
+.projects {
+	max-width: 42rem;
+	margin: 0 0 1.25rem;
+	padding: 0;
+	list-style: none;
+}
+
+.projects li {
+	margin-bottom: 0.75rem;
+	padding: 0.75rem 1rem;
+	border: 1px solid var(--line);
+	border-radius: 0.5rem;
+	background: var(--raised);
+	color: var(--muted);
+}
+
+.project-name {
+	display: block;
+	color: var(--text);
+	font-weight: 600;
+}

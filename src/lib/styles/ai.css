@@ -1,0 +1,59 @@
+/* src/lib/styles/ai.css
+ * DASL-1.2 — (c) Clove Twilight
+ */
+
+/* AI */
+
+.models {
+	position: relative;
+	cursor: help;
+}
+
+/* Tooltip, from the data-tooltip attribute */
+
+.models[data-tooltip]::after {
+	content: attr(data-tooltip);
+	position: absolute;
+	bottom: calc(100% + 0.5rem);
+	left: 50%;
+	z-index: 10;
+	width: max-content;
+	max-width: min(24rem, calc(100vw - 2rem));
+	padding: 0.4rem 0.65rem;
+	border: 1px solid var(--line);
+	border-radius: 0.4rem;
+	background: #17151b;
+	color: var(--text);
+	font-size: 0.85rem;
+	font-weight: 400;
+	line-height: 1.4;
+	pointer-events: none;
+	opacity: 0;
+	transform: translate(-50%, 0.25rem);
+	transition:
+		opacity 0.15s ease,
+		transform 0.15s ease;
+}
+
+.models[data-tooltip]:hover::after,
+a:focus-visible > .models[data-tooltip]::after {
+	opacity: 1;
+	transform: translate(-50%, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.models[data-tooltip]::after {
+		transition: none;
+	}
+}
+
+/* Tooltips are desktop only */
+@media (hover: none), (max-width: 48rem) {
+	.models[data-tooltip]::after {
+		display: none;
+	}
+
+	.models {
+		cursor: auto;
+	}
+}

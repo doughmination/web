@@ -1,0 +1,44 @@
+/* src/lib/styles/buttons.css
+ * DASL-1.2 — (c) Clove Twilight
+ */
+
+/* 88x31 buttons */
+
+.button-wall {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 0.6rem;
+	margin: 0;
+	padding: 2rem 0 4rem;
+	list-style: none;
+}
+
+.button-wall a {
+	display: block;
+	line-height: 0;
+}
+
+/* Shown at 1.5x, kept crisp */
+.button-wall img {
+	display: block;
+	width: 132px;
+	height: 46px;
+	border: 1px solid var(--line);
+	image-rendering: pixelated;
+	transition:
+		border-color 0.12s ease,
+		transform 0.12s ease;
+}
+
+.button-wall a:hover img,
+.button-wall a:focus-visible img {
+	border-color: var(--accent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.button-wall a:hover img,
+	.button-wall a:focus-visible img {
+		transform: translateY(-2px);
+	}
+}

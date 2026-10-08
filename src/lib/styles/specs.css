@@ -1,0 +1,66 @@
+/* src/lib/styles/specs.css
+ * DASL-1.2 — (c) Clove Twilight
+ */
+
+/* Hardware specs */
+
+.specs {
+	display: grid;
+	grid-template-columns: max-content 1fr;
+	max-width: 48rem;
+	margin: 0 auto;
+	padding-block: 2rem 4rem;
+}
+
+.spec-row {
+	display: grid;
+	grid-column: 1 / -1;
+	grid-template-columns: subgrid;
+	gap: 2rem;
+	padding-block: 0.85rem;
+	border-bottom: 1px solid var(--line);
+}
+
+.spec-row:last-child {
+	border-bottom: none;
+}
+
+.spec-row dt {
+	color: var(--muted);
+	font-size: 0.7rem;
+	font-weight: 600;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	align-self: center;
+}
+
+.spec-row dd {
+	margin: 0;
+	color: var(--text);
+}
+
+.spec-row a {
+	color: inherit;
+	text-decoration-color: var(--accent-dim);
+	text-underline-offset: 0.2em;
+	transition: color 0.2s ease;
+}
+
+.spec-row a:hover {
+	color: var(--accent);
+}
+
+.spec-sep {
+	margin-inline: 0.5rem;
+	color: var(--muted);
+}
+
+@media (max-width: 640px) {
+	.specs {
+		grid-template-columns: 1fr;
+	}
+
+	.spec-row {
+		gap: 0.25rem;
+	}
+}

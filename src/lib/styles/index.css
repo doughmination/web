@@ -1,0 +1,288 @@
+/* src/lib/styles/index.css
+ * DASL-1.2 — (c) Clove Twilight
+ */
+
+.selfie-box {
+	flex: 0 0 auto;
+	width: min(100%, 14rem);
+	margin: 0;
+	padding: 0.5rem;
+	border: 1px solid var(--line);
+	border-radius: 1rem;
+	background: var(--raised);
+	box-shadow: 0 0 0 4px var(--accent-dim);
+}
+
+@media (min-width: 52rem) {
+	.selfie-box {
+		margin-top: -6rem;
+	}
+}
+
+.selfie {
+	display: block;
+	width: 100%;
+	aspect-ratio: 4 / 5;
+	object-fit: cover;
+	object-position: center 25%;
+	border-radius: 0.6rem;
+}
+
+/* Polaroid-style caption under the photo, inside the frame */
+
+.selfie-box figcaption {
+	padding: 0.45rem 0 0.1rem;
+	color: var(--muted);
+	font-size: 0.8rem;
+	font-style: italic;
+	text-align: center;
+}
+
+/* Discord status badge, sat on the photo's corner like a Discord avatar */
+
+.selfie-photo {
+	position: relative;
+}
+
+.selfie-status {
+	position: absolute;
+	right: -0.6rem;
+	bottom: -0.6rem;
+	width: 1.9rem;
+	height: 1.9rem;
+	border: 0.35rem solid var(--bg);
+	border-radius: 50%;
+	background: var(--status);
+	transition: transform 0.2s ease;
+}
+
+.selfie-status:hover,
+.selfie-status:focus-visible {
+	transform: scale(1.15);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.selfie-status {
+		transition: none;
+	}
+}
+
+/* Cards */
+
+.card-box {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+	gap: 1.25rem;
+	padding-block: 2rem;
+}
+
+.card {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	padding: 1.25rem 1.5rem;
+	border: 1px solid var(--line);
+	border-radius: 1rem;
+	background: var(--raised);
+	transition:
+		border-color 0.2s ease,
+		box-shadow 0.2s ease,
+		transform 0.2s ease;
+}
+
+.card:hover {
+	border-color: rgb(235 69 158 / 40%);
+	box-shadow: 0 0 0 4px var(--accent-dim);
+	transform: translateY(-2px);
+}
+
+.card-tag {
+	margin: 0;
+	color: var(--accent);
+	font-size: 0.7rem;
+	font-weight: 600;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+}
+
+.card-title {
+	margin: 0;
+	font-size: 1.25rem;
+	font-weight: 600;
+	letter-spacing: -0.01em;
+}
+
+.card-body {
+	flex: 1;
+	margin: 0;
+	color: var(--muted);
+	font-size: 0.95rem;
+}
+
+.card-link {
+	align-self: flex-start;
+	margin-top: 0.5rem;
+	font-size: 0.9rem;
+	font-weight: 500;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.card {
+		transition: none;
+	}
+
+	.card:hover {
+		transform: none;
+	}
+}
+
+/* Now strip */
+
+.now {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.6rem;
+	margin: 2rem 0 0;
+	font-size: 0.9rem;
+}
+
+.now-item {
+	display: inline-flex;
+	gap: 0.5rem;
+	align-items: center;
+	min-width: 0;
+	padding: 0.35rem 0.85rem;
+	border: 1px solid var(--line);
+	border-radius: 999px;
+	background: var(--raised);
+	color: var(--muted);
+	text-decoration: none;
+	transition: border-color 0.2s ease;
+}
+
+.now-item:hover {
+	border-color: rgb(235 69 158 / 40%);
+	color: var(--text);
+}
+
+.now-item strong {
+	color: var(--text);
+	font-weight: 500;
+}
+
+.now-icon {
+	display: inline-flex;
+	flex: none;
+	width: 1.1em;
+	height: 1.1em;
+}
+
+.now-icon svg {
+	width: 100%;
+	height: 100%;
+}
+
+.now-muted {
+	opacity: 0.75;
+}
+
+.now-heart {
+	color: mediumvioletred;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.now-item {
+		transition: none;
+	}
+}
+
+/* Current lyric line, hung off the music pill by an accent bar so it reads
+   as part of the same thing. Lines share one grid cell so the outgoing and
+   incoming lines can overlap while they fly */
+
+.now-lyric {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+	margin: 0.75rem 0 0 1rem;
+	padding: 0.2rem 0 0.2rem 1rem;
+	border-left: 3px solid var(--accent);
+	color: var(--text);
+	text-decoration: none;
+}
+
+.now-lyric:hover {
+	color: #fff;
+}
+
+.now-lyric-label {
+	display: inline-flex;
+	gap: 0.4rem;
+	align-items: center;
+	color: var(--accent);
+	font-size: 0.7rem;
+	font-weight: 600;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+}
+
+.now-lyric-stage {
+	display: grid;
+	min-height: 2.6em;
+	overflow: hidden;
+	font-size: clamp(1.05rem, 2.5vw, 1.35rem);
+	font-style: italic;
+	font-weight: 500;
+}
+
+.now-lyric-line {
+	grid-area: 1 / 1;
+	align-self: center;
+	text-wrap: balance;
+}
+
+.now-lyric-gap {
+	color: var(--accent);
+	font-style: normal;
+}
+
+/* Fronting and phone pills. Their contents are one centred flex row so the
+   avatars and icons line up with the text instead of shifting its baseline */
+
+.now-row {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: 0.15rem 0.4rem;
+	align-items: center;
+}
+
+.now-member {
+	display: inline-flex;
+	align-items: center;
+}
+
+.now-member strong {
+	color: var(--member, var(--text));
+}
+
+.now-member .now-muted {
+	margin-left: 0.3em;
+}
+
+.now-avatar {
+	width: 1.25em;
+	height: 1.25em;
+	margin-right: 0.35rem;
+	border-radius: 50%;
+	object-fit: cover;
+}
+
+.now-battery {
+	display: inline-flex;
+	gap: 0.25rem;
+	align-items: center;
+}
+
+.now-battery-low {
+	color: #ed4245;
+}

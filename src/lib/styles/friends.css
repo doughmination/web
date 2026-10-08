@@ -1,0 +1,461 @@
+/* src/lib/styles/friends.css
+ * DASL-1.2 — (c) Clove Twilight
+ */
+
+/* Friends */
+
+.friends {
+	padding-block: 1rem 2rem;
+}
+
+.friend-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(min(100%, 18.5rem), 1fr));
+	gap: 1.25rem;
+	align-items: start;
+	margin-top: 1rem;
+}
+
+.friends-credit {
+	max-width: 60ch;
+	margin: 3rem auto 0;
+	color: var(--muted);
+	font-size: 0.8rem;
+	text-align: center;
+}
+
+/* Card */
+
+.friend-card {
+	min-width: 0;
+	overflow: hidden;
+	border: 1px solid var(--line);
+	border-radius: 1rem;
+	background: var(--raised);
+	transition:
+		border-color 0.2s ease,
+		box-shadow 0.2s ease;
+}
+
+.friend-card:hover {
+	border-color: rgb(235 69 158 / 40%);
+	box-shadow: 0 0 0 4px var(--accent-dim);
+}
+
+.friend-card p {
+	margin: 0;
+}
+
+.friend-card img[hidden] {
+	display: none;
+}
+
+.fc-banner {
+	display: block;
+	width: 100%;
+	height: 5.25rem;
+	object-fit: cover;
+}
+
+.fc-head {
+	display: flex;
+	gap: 0.75rem;
+	align-items: flex-start;
+	padding: 0.85rem 1rem;
+}
+
+.fc-avatar {
+	position: relative;
+	flex: 0 0 auto;
+	width: 3rem;
+	height: 3rem;
+}
+
+.fc-av-img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	background: var(--bg);
+	object-fit: cover;
+}
+
+.fc-av-deco {
+	position: absolute;
+	inset: -12%;
+	width: 124%;
+	height: 124%;
+	pointer-events: none;
+}
+
+.fc-status {
+	position: absolute;
+	right: -0.1rem;
+	bottom: -0.1rem;
+	width: 0.9rem;
+	height: 0.9rem;
+	border: 3px solid var(--bg);
+	border-radius: 50%;
+	background: var(--status);
+}
+
+.fc-id {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.fc-name-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.15rem 0.4rem;
+	align-items: baseline;
+}
+
+.fc-tier {
+	color: var(--muted);
+	font-size: 0.7rem;
+	font-weight: 700;
+	letter-spacing: 0.02em;
+}
+
+[data-tier='wife'] .fc-tier,
+[data-tier='closer'] .fc-tier {
+	color: var(--accent);
+}
+
+[data-tier='close'] .fc-tier {
+	color: #c084fc;
+}
+
+.fc-name {
+	overflow-wrap: anywhere;
+	font-weight: 600;
+	line-height: 1.3;
+	text-decoration: none;
+}
+
+a.fc-name:hover {
+	text-decoration: underline;
+}
+
+.fc-name.name-gradient {
+	background-clip: text;
+	-webkit-background-clip: text;
+	color: transparent;
+}
+
+.fc-tag {
+	display: inline-flex;
+	gap: 0.25rem;
+	align-items: center;
+	padding: 0 0.4rem;
+	border-radius: 0.35rem;
+	background: rgb(255 255 255 / 8%);
+	font-size: 0.7rem;
+	font-weight: 600;
+}
+
+.fc-tag img {
+	width: 0.85rem;
+	height: 0.85rem;
+}
+
+.fc-sub {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.3rem 0.45rem;
+	align-items: center;
+	margin-top: 0.25rem;
+	color: var(--muted);
+	font-size: 0.78rem;
+}
+
+.fc-sub .chip {
+	padding: 0 0.45rem;
+	font-size: 0.72rem;
+}
+
+.fc-status-text {
+	color: var(--status);
+	font-weight: 500;
+}
+
+.fc-platform svg {
+	width: 0.9rem;
+	height: 0.9rem;
+}
+
+.fc-badges {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.3rem;
+	margin-top: 0.45rem;
+}
+
+.fc-badges img {
+	width: 1.1rem;
+	height: 1.1rem;
+	object-fit: contain;
+}
+
+.friend-card .fc-custom {
+	display: flex;
+	gap: 0.35rem;
+	align-items: center;
+	margin-top: 0.45rem;
+	font-size: 0.85rem;
+}
+
+.fc-custom img {
+	width: 1.1rem;
+	height: 1.1rem;
+}
+
+.fc-star {
+	display: grid;
+	flex: 0 0 auto;
+	place-items: center;
+	width: 1.9rem;
+	height: 1.9rem;
+	padding: 0;
+	border: 1px solid var(--line);
+	border-radius: 0.5rem;
+	background: none;
+	color: var(--muted);
+	cursor: pointer;
+}
+
+.fc-star:hover,
+.fc-star:focus-visible {
+	color: var(--text);
+}
+
+.fc-star.on {
+	border-color: rgb(250 168 26 / 50%);
+	color: #faa81a;
+}
+
+.fc-star svg {
+	width: 1rem;
+	height: 1rem;
+}
+
+.fc-bio {
+	max-height: 6.5em;
+	overflow-y: auto;
+	padding: 0 1rem 0.85rem;
+	font-size: 0.85rem;
+	scrollbar-color: rgb(235 69 158 / 40%) transparent;
+}
+
+.fc-connections {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.35rem;
+	padding: 0 1rem 0.85rem;
+}
+
+.fc-conn {
+	display: inline-flex;
+	gap: 0.3rem;
+	align-items: center;
+	max-width: 100%;
+	padding: 0.15rem 0.5rem;
+	border: 1px solid var(--line);
+	border-radius: 999px;
+	font-size: 0.75rem;
+	text-decoration: none;
+}
+
+a.fc-conn:hover,
+a.fc-conn:focus-visible {
+	border-color: rgb(235 69 158 / 40%);
+}
+
+.fc-conn svg {
+	flex: 0 0 auto;
+	width: 0.8rem;
+	height: 0.8rem;
+	color: var(--accent);
+}
+
+.fc-conn-name {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.fc-sections {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	padding: 0.85rem 1rem;
+	border-top: 1px solid var(--line);
+}
+
+.fc-row {
+	display: flex;
+	gap: 0.7rem;
+	align-items: flex-start;
+	text-decoration: none;
+}
+
+.fc-row-img {
+	flex: 0 0 auto;
+	width: 3.25rem;
+	height: 3.25rem;
+	border-radius: 0.5rem;
+	object-fit: cover;
+}
+
+.fc-row-img.fc-stream {
+	width: 5rem;
+	height: auto;
+	aspect-ratio: 16 / 9;
+}
+
+.fc-dot {
+	flex: 0 0 auto;
+	width: 0.5rem;
+	height: 0.5rem;
+	margin-top: 0.4rem;
+	border-radius: 50%;
+	background: var(--accent);
+}
+
+.fc-row-text {
+	flex: 1 1 auto;
+	min-width: 0;
+	line-height: 1.35;
+}
+
+.fc-row-kind {
+	display: flex;
+	gap: 0.3rem;
+	align-items: center;
+	color: var(--accent);
+	font-size: 0.7rem;
+	font-weight: 600;
+}
+
+.fc-row-kind svg {
+	width: 0.8rem;
+	height: 0.8rem;
+}
+
+.fc-row-title,
+.fc-row-sub {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.fc-row-title {
+	font-size: 0.88rem;
+	font-weight: 600;
+}
+
+.fc-row-sub {
+	color: var(--muted);
+	font-size: 0.78rem;
+}
+
+.fc-bar {
+	height: 0.25rem;
+	margin-top: 0.4rem;
+	overflow: hidden;
+	border-radius: 999px;
+	background: var(--line);
+}
+
+.fc-bar div {
+	height: 100%;
+	background: var(--accent);
+	transition: width 1s linear;
+}
+
+.friend-card .fc-times {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 0.15rem;
+	color: var(--muted);
+	font-size: 0.68rem;
+	font-variant-numeric: tabular-nums;
+}
+
+.fc-wishlist {
+	display: flex;
+	flex-direction: column;
+	gap: 0.45rem;
+	max-height: 16rem;
+	overflow-y: auto;
+	padding: 0.85rem 1rem;
+	border-top: 1px solid var(--line);
+	scrollbar-color: rgb(235 69 158 / 40%) transparent;
+}
+
+.fc-wishlist-title {
+	color: var(--accent);
+	font-size: 0.7rem;
+	font-weight: 600;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+}
+
+.fc-wl-item {
+	display: flex;
+	gap: 0.6rem;
+	align-items: center;
+}
+
+.fc-wl-item.owned {
+	opacity: 0.55;
+}
+
+.fc-wl-item img {
+	flex: 0 0 auto;
+	width: 2.25rem;
+	height: 2.25rem;
+	border-radius: 0.4rem;
+	object-fit: contain;
+}
+
+.fc-wl-text {
+	display: flex;
+	flex: 1 1 auto;
+	flex-direction: column;
+	min-width: 0;
+	line-height: 1.3;
+}
+
+.fc-wl-name {
+	overflow: hidden;
+	font-size: 0.85rem;
+	font-weight: 500;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.fc-wl-type {
+	color: var(--muted);
+	font-size: 0.7rem;
+}
+
+.fc-wl-price {
+	color: var(--accent);
+	font-size: 0.8rem;
+	font-weight: 600;
+}
+
+.fc-empty {
+	color: var(--muted);
+	font-size: 0.85rem;
+	font-style: italic;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.friend-card,
+	.fc-bar div {
+		transition: none;
+	}
+}

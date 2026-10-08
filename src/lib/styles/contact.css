@@ -1,0 +1,131 @@
+/* src/lib/styles/contact.css
+ * DASL-1.2 — (c) Clove Twilight
+ */
+
+/* Contact */
+
+.socials {
+	display: flex;
+	flex-direction: column;
+	gap: 1.25rem;
+	padding-block: 2rem;
+}
+
+/* Shared icon badge */
+
+.contact-icon {
+	display: grid;
+	flex: 0 0 auto;
+	place-items: center;
+	width: 2.5rem;
+	height: 2.5rem;
+	border-radius: 0.75rem;
+	background: var(--accent-dim);
+	color: var(--accent);
+}
+
+.contact-icon svg {
+	width: 1.25rem;
+	height: 1.25rem;
+}
+
+.contact-name {
+	margin: 0;
+	color: var(--accent);
+	font-size: 0.7rem;
+	font-weight: 600;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+}
+
+.contact-value {
+	margin: 0;
+	font-weight: 500;
+	overflow-wrap: anywhere;
+}
+
+/* Featured (Discord) */
+
+.contact-featured {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1rem 1.5rem;
+	align-items: center;
+	padding: 1.25rem 1.5rem;
+	border: 1px solid rgb(235 69 158 / 40%);
+	border-radius: 1rem;
+	background:
+		radial-gradient(80% 120% at 0% 0%, rgb(235 69 158 / 12%), transparent 70%), var(--raised);
+	box-shadow: 0 0 0 4px var(--accent-dim);
+}
+
+.contact-featured .contact-text {
+	flex: 1 1 12rem;
+}
+
+.contact-featured .contact-value {
+	font-size: 1.15rem;
+}
+
+.contact-button {
+	padding: 0.5rem 1rem;
+	border-radius: 999px;
+	background: var(--accent);
+	color: #fff;
+	font-size: 0.9rem;
+	font-weight: 600;
+	text-decoration: none;
+	transition: filter 0.15s ease;
+}
+
+.contact-button:hover,
+.contact-button:focus-visible {
+	color: #fff;
+	filter: brightness(1.12);
+}
+
+/* Tiles */
+
+.contact-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+	gap: 1.25rem;
+}
+
+.contact-tile {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	padding: 1.25rem 1.5rem;
+	border: 1px solid var(--line);
+	border-radius: 1rem;
+	background: var(--raised);
+	text-decoration: none;
+	transition:
+		border-color 0.2s ease,
+		box-shadow 0.2s ease,
+		transform 0.2s ease;
+}
+
+.contact-tile:hover,
+.contact-tile:focus-visible {
+	border-color: rgb(235 69 158 / 40%);
+	box-shadow: 0 0 0 4px var(--accent-dim);
+	transform: translateY(-2px);
+}
+
+.contact-tile .contact-value {
+	color: var(--text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.contact-tile,
+	.contact-button {
+		transition: none;
+	}
+
+	.contact-tile:hover,
+	.contact-tile:focus-visible {
+		transform: none;
+	}
+}

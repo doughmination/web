@@ -1,0 +1,162 @@
+/* src/lib/styles/languages.css
+ * DASL-1.2 — (c) Clove Twilight
+ */
+
+/* Languages */
+
+/* Dark categorical steps, validated against --bg (CVD and contrast) */
+.languages {
+	--series-1: #3987e5;
+	--series-2: #d95926;
+	--series-3: #199e70;
+	--series-4: #c98500;
+	--series-5: #d55181;
+	--series-other: #5c5862;
+
+	padding-block: 2rem 3rem;
+}
+
+.lang-heading {
+	margin: 2.5rem 0 0.75rem;
+	color: var(--accent);
+	font-size: clamp(1.25rem, 3.5vw, 1.6rem);
+	font-weight: 600;
+	letter-spacing: -0.02em;
+}
+
+.lang-heading:first-child {
+	margin-top: 0;
+}
+
+.lang-note {
+	margin: 0 0 1.25rem;
+	color: var(--muted);
+	font-size: 0.95rem;
+}
+
+.lang-note.small {
+	margin-top: 1rem;
+	font-size: 0.85rem;
+}
+
+/* Share bar */
+
+.share {
+	display: flex;
+	gap: 2px;
+	height: 1.25rem;
+	margin-top: 3rem;
+}
+
+.share-segment {
+	position: relative;
+	flex-basis: 0;
+	min-width: 4px;
+	outline-offset: 3px;
+	transition: opacity 0.15s ease;
+}
+
+.share-segment:first-child {
+	border-radius: 4px 0 0 4px;
+}
+
+.share-segment:last-child {
+	border-radius: 0 4px 4px 0;
+}
+
+.share-segment:focus-visible {
+	outline: 2px solid var(--text);
+}
+
+.dim {
+	opacity: 0.35;
+}
+
+.share-tip {
+	position: absolute;
+	bottom: calc(100% + 0.5rem);
+	left: 50%;
+	z-index: 10;
+	display: flex;
+	flex-direction: column;
+	width: max-content;
+	max-width: min(16rem, calc(100vw - 2rem));
+	padding: 0.4rem 0.65rem;
+	border: 1px solid var(--line);
+	border-radius: 0.4rem;
+	background: #17151b;
+	color: var(--text);
+	font-size: 0.85rem;
+	line-height: 1.4;
+	pointer-events: none;
+	transform: translateX(-50%);
+}
+
+/* Keep the tooltip on screen at the bar's edges */
+.share-segment:first-child .share-tip {
+	left: 0;
+	transform: none;
+}
+
+.share-segment:last-child .share-tip {
+	right: 0;
+	left: auto;
+	transform: none;
+}
+
+.share-tip-detail {
+	color: var(--muted);
+}
+
+/* Legend */
+
+.share-legend {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem 1.5rem;
+	margin: 1rem 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.share-legend li {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-size: 0.9rem;
+	transition: opacity 0.15s ease;
+}
+
+.swatch {
+	width: 0.75rem;
+	height: 0.75rem;
+	border-radius: 3px;
+}
+
+.share-value {
+	color: var(--muted);
+	font-variant-numeric: tabular-nums;
+}
+
+/* Language cards */
+
+.lang-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+	gap: 1rem;
+}
+
+.lang-card,
+.lang-card:hover {
+	padding: 1rem 1.25rem;
+	border-color: var(--line);
+	box-shadow: none;
+	transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.share-segment,
+	.share-legend li {
+		transition: none;
+	}
+}

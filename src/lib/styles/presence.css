@@ -1,0 +1,196 @@
+/* src/lib/styles/presence.css
+ * DASL-1.2 — (c) Clove Twilight
+ */
+
+/* Presence: shared by the Discord and Friends pages */
+
+[data-status='online'] {
+	--status: #3ba55d;
+}
+[data-status='idle'] {
+	--status: #faa81a;
+}
+[data-status='dnd'] {
+	--status: #ed4245;
+}
+[data-status='offline'] {
+	--status: #80848e;
+}
+[data-status='streaming'] {
+	--status: #9b59b6;
+}
+
+.chip {
+	display: inline-flex;
+	gap: 0.3rem;
+	align-items: center;
+	padding: 0.1rem 0.55rem;
+	border: 1px solid var(--line);
+	border-radius: 999px;
+	background: var(--raised);
+	color: var(--text);
+	font-size: 0.8rem;
+}
+
+.chip svg {
+	width: 0.85rem;
+	height: 0.85rem;
+}
+
+.bio {
+	color: #ddd3e1;
+	overflow-wrap: anywhere;
+}
+
+.bio br {
+	margin: 0;
+}
+
+.bio h3,
+.bio h4,
+.bio h5 {
+	display: inline;
+	margin: 0;
+	font-size: 1.1rem;
+}
+
+.bio blockquote {
+	display: inline-block;
+	margin: 0;
+	padding-left: 0.6rem;
+	border-left: 3px solid var(--line);
+}
+
+.bio small {
+	color: var(--muted);
+	font-size: 0.8rem;
+}
+
+.bio code {
+	padding: 0.05rem 0.3rem;
+	border-radius: 0.3rem;
+	background: rgb(255 255 255 / 8%);
+	font-size: 0.9em;
+}
+
+.bio pre {
+	margin: 0.25rem 0;
+	padding: 0.6rem 0.75rem;
+	overflow-x: auto;
+	border-radius: 0.5rem;
+	background: rgb(0 0 0 / 35%);
+}
+
+.bio pre code {
+	padding: 0;
+	background: none;
+}
+
+.bio-bullet::before {
+	content: '• ';
+	color: var(--accent);
+}
+
+.bio-emoji {
+	width: 1.25em;
+	height: 1.25em;
+	vertical-align: -0.25em;
+}
+
+.spoiler {
+	border-radius: 0.25rem;
+	background: #2b2830;
+	color: transparent;
+	cursor: pointer;
+	transition:
+		color 0.15s ease,
+		background 0.15s ease;
+}
+
+.spoiler * {
+	visibility: hidden;
+}
+
+.spoiler[data-revealed='true'] {
+	background: rgb(255 255 255 / 8%);
+	color: inherit;
+	cursor: auto;
+}
+
+.spoiler[data-revealed='true'] * {
+	visibility: visible;
+}
+
+/* Discord display name fonts, picked by display_name_styles.font_id */
+
+@font-face {
+	font-family: 'DDN 8Bit';
+	src: url('../fonts/discord/8Bit.woff2') format('woff2');
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'DDN Jellybean';
+	src: url('../fonts/discord/Jellybean.woff2') format('woff2');
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'DDN Medieval';
+	src: url('../fonts/discord/Medieval.woff2') format('woff2');
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'DDN Modern';
+	src: url('../fonts/discord/Modern.woff2') format('woff2');
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'DDN Sakura';
+	src: url('../fonts/discord/Sakura.woff2') format('woff2');
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'DDN Tempo';
+	src: url('../fonts/discord/Tempo.woff2') format('woff2');
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'DDN Vampyre';
+	src: url('../fonts/discord/Vampyre.woff2') format('woff2');
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'DDN gg sans';
+	src: url('../fonts/discord/gg sans.woff2') format('woff2');
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'DDN Monkey Bars';
+	src: url('../fonts/discord/MonkeyBars.woff2') format('woff2');
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'DDN Mainframe';
+	src: url('../fonts/discord/Mainframe.woff2') format('woff2');
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'DDN Headbang';
+	src: url('../fonts/discord/Headbang.woff2') format('woff2');
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'DDN Journal';
+	src: url('../fonts/discord/Journal.woff2') format('woff2');
+	font-display: swap;
+}
