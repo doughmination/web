@@ -68,13 +68,57 @@
 		}
 	});
 
+	// schema.org structured data (JSON-LD) for search engines
+	const structuredData = $derived({
+		'@context': 'https://schema.org',
+		'@graph': [
+			{
+				'@type': 'Person',
+				'@id': websiteUrl + '/#person',
+				name: 'Clove Twilight',
+				url: websiteUrl + '/',
+				image: websiteUrl + '/favicon.png',
+				jobTitle: 'Software Developer',
+				sameAs: [
+					'https://github.com/doughmination',
+					'https://x.com/DoughminCEO',
+					'https://bsky.app/profile/doughmination.gay',
+					'https://uk.linkedin.com/in/estrogen',
+					'https://www.twitch.tv/doughminationgaming',
+					'https://www.youtube.com/@CloveTwiGaming'
+				]
+			},
+			{
+				'@type': 'WebSite',
+				'@id': websiteUrl + '/#website',
+				name: 'Clove Twilight',
+				url: websiteUrl + '/',
+				inLanguage: 'en-GB',
+				publisher: { '@id': websiteUrl + '/#person' }
+			},
+			{
+				'@type': isHome ? 'ProfilePage' : 'WebPage',
+				'@id': pageUrl,
+				name: title,
+				description: description,
+				url: pageUrl,
+				inLanguage: 'en-GB',
+				isPartOf: { '@id': websiteUrl + '/#website' },
+				about: { '@id': websiteUrl + '/#person' }
+			}
+		]
+	});
+
 	// Escape "<" so the JSON can't close the script tag early
-	const embedJson = $derived(JSON.stringify(componentEmbed).replace(/</g, '\\u003c'));
+	const toJson = (data: unknown) => JSON.stringify(data).replace(/</g, '\\u003c');
 
 	// Split closing tag so it doesn't end this script block
 	const closingTag = '</' + 'script>';
 	const embedTag = $derived(
-		`<script id="discord:component-embed" type="application/json">${embedJson}${closingTag}`
+		`<script id="discord:component-embed" type="application/json">${toJson(componentEmbed)}${closingTag}`
+	);
+	const ldTag = $derived(
+		`<script type="application/ld+json">${toJson(structuredData)}${closingTag}`
 	);
 </script>
 
@@ -92,4 +136,6 @@
 
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -- built from page props, "<" escaped -->
 	{@html embedTag}
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -- built from page props, "<" escaped -->
+	{@html ldTag}
 </svelte:head>
