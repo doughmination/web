@@ -2,23 +2,57 @@
  * DASL-1.2 — (c) Clove Twilight
  */
 
+/* Sits in the page flow; margin-top: auto pins it to the bottom of short pages */
 footer {
-	position: absolute;
-	justify-content: center;
-	bottom: 0;
-	left: 0;
-	right: 0;
 	display: flex;
+	flex-wrap: wrap;
+	gap: 1rem 1.5rem;
 	align-items: center;
+	justify-content: space-between;
+	width: 100%;
 	max-width: 62rem;
-	height: 50px;
-	margin: 0 auto;
-	padding-inline: 1.5rem;
+	margin: auto auto 0;
+	padding: 1.25rem 1.5rem;
+	border-top: 1px solid var(--line);
+	color: var(--muted);
+	font-size: 0.85rem;
 }
 
+.footer-line {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.25rem 0.75rem;
+	align-items: center;
+	margin: 0;
+}
+
+.footer-line > span {
+	display: inline-flex;
+	gap: 0.4em;
+	align-items: center;
+}
+
+/* Dot between items, skipped on the first */
+.footer-line > span + span::before {
+	content: '·';
+	margin-right: 0.75rem;
+	color: var(--line);
+}
+
+.footer-brand img {
+	border-radius: 50%;
+}
+
+/* Heart */
+
 .beat {
-	color: mediumvioletred;
+	color: var(--accent);
 	animation: beat 1.2s ease-in-out infinite;
+}
+
+.beat svg {
+	width: 1em;
+	height: 1em;
 }
 
 /* Two quick pulses, then a rest, like a heartbeat */
@@ -37,32 +71,9 @@ footer {
 	}
 }
 
-@media (prefers-reduced-motion: reduce) {
-	.beat {
-		animation: none;
-	}
-}
-
-.subtext {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.3em;
-	margin-left: 1rem;
-	color: var(--muted);
-	font-size: 0.8rem;
-}
-
-.subtext svg {
-	width: 1em;
-	height: 1em;
-}
-
-/* "Not by AI" badge, tucked into the bottom-right corner of the page */
+/* "Not by AI" badge */
 
 .no-ai {
-	position: absolute;
-	right: 0;
-	bottom: 0;
 	line-height: 0;
 }
 
@@ -72,7 +83,7 @@ footer {
 }
 
 .no-ai:hover img {
-	filter: drop-shadow(0 0 6px rgb(235 69 158 / 55%));
+	filter: drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 55%, transparent));
 }
 
 .no-ai:focus-visible {
@@ -80,18 +91,25 @@ footer {
 	outline-offset: 2px;
 }
 
-/* Too narrow to share a row with the footer, so it sits just above it */
-@media (max-width: 60rem) {
-	body::after {
-		height: calc(50px + 42px + 0.5rem);
+/* Narrow screens: stack and centre */
+@media (max-width: 40rem) {
+	footer,
+	.footer-line {
+		flex-direction: column;
+		justify-content: center;
+		text-align: center;
 	}
 
-	.no-ai {
-		bottom: 50px;
+	.footer-line > span + span::before {
+		content: none;
 	}
 }
 
 @media (prefers-reduced-motion: reduce) {
+	.beat {
+		animation: none;
+	}
+
 	.no-ai img {
 		transition: none;
 	}

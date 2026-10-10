@@ -32,12 +32,6 @@ main {
 	flex-direction: column;
 }
 
-body::after {
-	content: '';
-	display: block;
-	height: 50px;
-}
-
 a {
 	color: var(--text);
 	text-decoration-color: rgb(235 69 158 / 55%);
