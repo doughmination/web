@@ -6,11 +6,11 @@
 	import Meta from '#lib/components/Meta.svelte';
 	import '#lib/styles/index.css';
 	import '#lib/styles/presence.css';
-	import selfie from '#lib/assets/selfie.avif';
 	import { untrack } from 'svelte';
 	import { fly } from 'svelte/transition';
 	import ListeningIcon from '#lib/components/ListeningIcon.svelte';
 	import LyricWords from '#lib/components/LyricWords.svelte';
+	import SelfieDust from '#lib/components/SelfieDust.svelte';
 	import { STATUS_LABEL, clamp, subscribePresence, type Presence } from '#lib/scripts/discord.ts';
 	import {
 		fetchLyrics,
@@ -41,6 +41,8 @@
 	let phone = $state<Device | null>(null);
 
 	let reduceMotion = $state(false);
+	// Hover, keyboard focus or a tap on phones swaps to the real selfie
+	let revealed = $state(false);
 	let lyricsRequest = 0;
 
 	$effect(() => {
@@ -156,9 +158,28 @@
 				Looking for the old site? It&apos;s still up at
 				<a href="https://v1.doughmination.gay">v1.doughmination.gay</a>.
 			</p>
-			<figure class="selfie-box">
+			<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+			<figure
+				class="selfie-box"
+				class:revealed
+				onpointerenter={(e) => e.pointerType !== 'touch' && (revealed = true)}
+				onpointerleave={(e) => e.pointerType !== 'touch' && (revealed = false)}
+				onpointerup={(e) => e.pointerType === 'touch' && (revealed = !revealed)}
+				onfocusin={() => (revealed = true)}
+				onfocusout={() => (revealed = false)}
+			>
 				<div class="selfie-photo">
-					<img class="selfie" src={selfie} alt="Clove&apos;s face" width="560" height="996" />
+					<SelfieDust
+						{revealed}
+						from={{
+							src: '/pixel-image.avif',
+							alt: 'Pixel art portrait of Clove',
+							width: 560,
+							height: 700
+						}}
+						to={{ src: '/selfie.avif', alt: '', width: 560, height: 996, focusY: 0.25 }}
+					/>
+
 					{#if status}
 						<a
 							class="selfie-status"
@@ -169,7 +190,13 @@
 						></a>
 					{/if}
 				</div>
-				<figcaption>My fave selfie ♡</figcaption>
+
+				<figcaption>
+					<span class="selfie-caption">Pixel art ♡</span>
+					<span class="selfie-caption selfie-caption-hover" aria-hidden="true"
+						>My fave selfie ♡</span
+					>
+				</figcaption>
 			</figure>
 		</div>
 		<p class="now">

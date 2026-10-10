@@ -19,19 +19,50 @@
 	}
 }
 
+/* Pixel art and the real selfie are stacked. SelfieDust blows one into the
+   other as dust on a canvas behind them. No overflow: hidden here, or the
+   status badge on the corner and the flying dust get clipped */
+
+.selfie-photo {
+	position: relative;
+	aspect-ratio: 4 / 5;
+}
+
+.selfie-stack {
+	position: absolute;
+	inset: 0;
+}
+
+.selfie-dust {
+	position: absolute;
+	pointer-events: none;
+}
+
 .selfie {
+	position: absolute;
+	inset: 0;
 	display: block;
 	width: 100%;
-	height: auto;
-	aspect-ratio: 4 / 5;
+	height: 100%;
 	object-fit: cover;
-	object-position: center 25%;
 	border-radius: 0.6rem;
 }
 
-/* Polaroid-style caption under the photo, inside the frame */
+.selfie-pixel {
+	image-rendering: pixelated;
+}
+
+/* No canvas (reduced motion, or the images failed to load): plain crossfade */
+
+.selfie-fade .selfie {
+	transition: opacity 350ms ease;
+}
+
+/* Polaroid-style caption under the photo, inside the frame. Both captions
+   share one grid cell so swapping them doesn't shift the layout */
 
 .selfie-box figcaption {
+	display: grid;
 	padding: 0.45rem 0 0.1rem;
 	color: var(--muted);
 	font-size: 0.8rem;
@@ -39,16 +70,27 @@
 	text-align: center;
 }
 
-/* Discord status badge, sat on the photo's corner like a Discord avatar */
-
-.selfie-photo {
-	position: relative;
+.selfie-caption {
+	grid-area: 1 / 1;
+	transition: opacity 350ms ease;
 }
+
+.selfie-caption-hover,
+.selfie-box.revealed .selfie-caption:not(.selfie-caption-hover) {
+	opacity: 0;
+}
+
+.selfie-box.revealed .selfie-caption-hover {
+	opacity: 1;
+}
+
+/* Discord status badge, sat on the photo's corner like a Discord avatar */
 
 .selfie-status {
 	position: absolute;
 	right: -0.6rem;
 	bottom: -0.6rem;
+	z-index: 2;
 	width: 1.9rem;
 	height: 1.9rem;
 	border: 0.35rem solid var(--bg);
@@ -63,6 +105,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+	.selfie-caption,
 	.selfie-status {
 		transition: none;
 	}
