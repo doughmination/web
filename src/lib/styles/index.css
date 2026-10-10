@@ -22,6 +22,7 @@
 .selfie {
 	display: block;
 	width: 100%;
+	height: auto;
 	aspect-ratio: 4 / 5;
 	object-fit: cover;
 	object-position: center 25%;
@@ -183,7 +184,7 @@
 }
 
 .now-muted {
-	opacity: 0.75;
+	opacity: 0.85;
 }
 
 .now-heart {

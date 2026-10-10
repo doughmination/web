@@ -6,7 +6,7 @@
 	import Meta from '#lib/components/Meta.svelte';
 	import '#lib/styles/index.css';
 	import '#lib/styles/presence.css';
-	import selfie from '#lib/assets/selfie.png';
+	import selfie from '#lib/assets/selfie.avif';
 	import { untrack } from 'svelte';
 	import { fly } from 'svelte/transition';
 	import ListeningIcon from '#lib/components/ListeningIcon.svelte';
@@ -158,7 +158,7 @@
 			</p>
 			<figure class="selfie-box">
 				<div class="selfie-photo">
-					<img class="selfie" src={selfie} alt="Clove&apos;s face" />
+					<img class="selfie" src={selfie} alt="Clove&apos;s face" width="560" height="996" />
 					{#if status}
 						<a
 							class="selfie-status"
@@ -202,7 +202,7 @@
 							<span class="now-member" style:--member={member.color ? '#' + member.color : null}>
 								{#if member.avatar_url}<img
 										class="now-avatar"
-										src={member.avatar_url}
+										src={member.avatar_url.replace(/([?&]size=)\d+/, '$164')}
 										alt=""
 										width="20"
 										height="20"

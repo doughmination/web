@@ -65,7 +65,7 @@
 		background:
 			linear-gradient(rgb(11 10 13 / 30%), var(--bg)),
 			radial-gradient(70% 60% at 20% 30%, rgb(235 69 158 / 12%), transparent 70%),
-			url('../assets/background.png') center / cover no-repeat;
+			url('../assets/background.avif') center / cover no-repeat;
 	}
 
 	.eyebrow {

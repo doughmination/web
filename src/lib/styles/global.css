@@ -26,6 +26,12 @@ body {
 	line-height: 1.6;
 }
 
+/* Keeps page sections laid out as before they were wrapped in <main> */
+main {
+	display: flex;
+	flex-direction: column;
+}
+
 body::after {
 	content: '';
 	display: block;

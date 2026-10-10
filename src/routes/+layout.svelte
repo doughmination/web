@@ -11,12 +11,14 @@
 	import Footer from '#lib/components/Footer.svelte';
 	import BetaWarning from '#lib/components/BetaWarning.svelte';
 	import { websiteUrl } from '#lib';
+	import background from '#lib/assets/background.avif';
 </script>
 
 <svelte:head>
 	<link rel="icon" href="/favicon.ico" sizes="32x32" />
 	<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 	<link rel="apple-touch-icon" href="/favicon.png" />
+	<link rel="preload" as="image" href={background} type="image/avif" fetchpriority="high" />
 
 	<meta property="og:site_name" content="Clove Twilight" />
 	<meta property="og:type" content="website" />
@@ -31,5 +33,7 @@
 
 <BetaWarning />
 <Header />
-{@render children()}
+<main>
+	{@render children()}
+</main>
 <Footer />
