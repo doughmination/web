@@ -4,7 +4,7 @@ exec 2>&1
 cd /srv/clove/web || exit 1
 
 export HOST=127.0.0.1
-export PORT=3000
+export PORT=3100
 export NODE_ENV=production
 
 exec node build/index.js
