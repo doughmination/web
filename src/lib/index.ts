@@ -4,7 +4,7 @@
 
 // This files contains all the constants used over each page
 
-export const discordId = '1025770042245251122';
+export const discordId = '1464890289922641993';
 
 export const websiteDomain = 'doughmination.gay';
 
