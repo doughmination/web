@@ -7,4 +7,4 @@ export HOST=127.0.0.1
 export PORT=3100
 export NODE_ENV=production
 
-exec node build/index.js
+exec /home/clove/.nvm/versions/node/v26.11.1/bin/node build/index.js
