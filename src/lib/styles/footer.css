@@ -114,3 +114,9 @@ footer {
 		transition: none;
 	}
 }
+
+@media print {
+	footer {
+		display: none;
+	}
+}

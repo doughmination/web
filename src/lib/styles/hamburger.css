@@ -102,3 +102,9 @@ header nav {
 		transition: none;
 	}
 }
+
+@media print {
+	.hamburger {
+		display: none;
+	}
+}

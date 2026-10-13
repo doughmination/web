@@ -21,7 +21,8 @@
 			{ href: '/music', label: 'Music' },
 			{ href: '/friends', label: 'Friends' },
 			{ href: '/88x31', label: '88x31' },
-			{ href: '/contact', label: 'Contact' }
+			{ href: '/contact', label: 'Contact' },
+			{ href: '/cv', label: 'CV' }
 		]
 	}: { links?: NavLink[] } = $props();
 

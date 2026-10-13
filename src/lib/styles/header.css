@@ -86,3 +86,9 @@ header nav a:hover {
 	height: 1.2em;
 	flex-shrink: 0;
 }
+
+@media print {
+	header{
+		display: none;
+	}
+}

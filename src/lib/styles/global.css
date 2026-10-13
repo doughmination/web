@@ -107,3 +107,15 @@ br {
 	margin: 0 auto;
 	padding-inline: 1.5rem;
 }
+
+@media print {
+	.hero {
+		display: none;
+	}
+	.lede {
+		display: none;
+	}
+	.wrap {
+		display: none;
+	}
+}
