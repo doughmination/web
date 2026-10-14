@@ -18,8 +18,8 @@ export function GET() {
 		.map((path) => `\t<url>\n\t\t<loc>${websiteUrl}${path}</loc>\n\t</url>`)
 		.join('\n');
 
-	const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+	const xml = `<?xml version='1.0' encoding='UTF-8'?>
+<urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
 ${urls}
 </urlset>
 `;

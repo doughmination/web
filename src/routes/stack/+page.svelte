@@ -71,7 +71,7 @@
 	} from '#lib/scripts/heatmap.ts';
 
 	// Any icon from https://simpleicons.org works: import it as Si + the slug in
-	// PascalCase (e.g. "nodedotjs" -> SiNodedotjs), and copy its brand hex from
+	// PascalCase (e.g. 'nodedotjs' -> SiNodedotjs), and copy its brand hex from
 	// the same page into `color`
 	type Tool = { name: string; icon: typeof SiGit; color: string };
 	type Group = { name: string; tools: Tool[] };

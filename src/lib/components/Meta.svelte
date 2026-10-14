@@ -109,16 +109,16 @@
 		]
 	});
 
-	// Escape "<" so the JSON can't close the script tag early
+	// Escape '<' so the JSON can't close the script tag early
 	const toJson = (data: unknown) => JSON.stringify(data).replace(/</g, '\\u003c');
 
 	// Split closing tag so it doesn't end this script block
 	const closingTag = '</' + 'script>';
 	const embedTag = $derived(
-		`<script id="discord:component-embed" type="application/json">${toJson(componentEmbed)}${closingTag}`
+		`<script id='discord:component-embed' type='application/json'>${toJson(componentEmbed)}${closingTag}`
 	);
 	const ldTag = $derived(
-		`<script type="application/ld+json">${toJson(structuredData)}${closingTag}`
+		`<script type='application/ld+json'>${toJson(structuredData)}${closingTag}`
 	);
 </script>
 
@@ -134,8 +134,8 @@
 	<meta name="twitter:title" content={title} />
 	<meta name="twitter:description" content={description} />
 
-	<!-- eslint-disable-next-line svelte/no-at-html-tags -- built from page props, "<" escaped -->
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -- built from page props, '<' escaped -->
 	{@html embedTag}
-	<!-- eslint-disable-next-line svelte/no-at-html-tags -- built from page props, "<" escaped -->
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -- built from page props, '<' escaped -->
 	{@html ldTag}
 </svelte:head>

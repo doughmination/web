@@ -282,7 +282,7 @@ function parseLrc(text: string): LyricLine[] {
 		const stamps = [...line.matchAll(tag)];
 		if (!stamps.length) continue;
 		const last = stamps.at(-1)!;
-		// Drop duet voice markers like "v1:" that some uploads put before the word tags
+		// Drop duet voice markers like 'v1:' that some uploads put before the word tags
 		const rest = line
 			.slice(last.index + last[0].length)
 			.trim()

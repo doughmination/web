@@ -57,9 +57,10 @@
 		sentient&comma; and cannot capture the emotions that a real person can&comma; and I personally
 		feel emotion is the primary basis of art.
 	</p>
-	<h1 class='sec'>Want the Badge?</h1>
-	<p class='text'>
-		You can get the badge from <a href='https://notbyai.fyi/'>not by AI</a> by downloading the Writer package.
-		By using the badge, you follow the <a href='https://notbyai.fyi/not-by-ai-90-rule'>Not By AI 90% Rule</a>.
+	<h1 class="sec">Want the Badge?</h1>
+	<p class="text">
+		You can get the badge from <a href="https://notbyai.fyi/">not by AI</a> by downloading the
+		Writer package. By using the badge, you follow the
+		<a href="https://notbyai.fyi/not-by-ai-90-rule">Not By AI 90% Rule</a>.
 	</p>
 </section>

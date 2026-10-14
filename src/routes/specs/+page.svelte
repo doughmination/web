@@ -91,7 +91,7 @@
 			term: 'Monitor',
 			parts: [
 				{
-					label: 'Gigabyte G34WQCP 34" 3440 x 1440 180 Hz Curved',
+					label: 'Gigabyte G34WQCP 34\' 3440 x 1440 180 Hz Curved',
 					href: 'https://uk.pcpartpicker.com/product/XpVfrH/gigabyte-g34wqcp-340-3440-x-1440-180-hz-curved-monitor-g34wqcp'
 				}
 			]

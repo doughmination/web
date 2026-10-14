@@ -33,7 +33,7 @@
 				},
 				{
 					title: 'Doughmination API',
-					bio: "My personal API, which I don't mind people hooking into",
+					bio: 'My personal API, which I don\'t mind people hooking into',
 					href: 'https://github.com/doughmination/api',
 					live: 'https://doughmination.uk',
 					img: 'favicons/favicon.png'

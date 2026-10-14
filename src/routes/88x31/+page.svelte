@@ -68,7 +68,7 @@
 		{
 			href: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
 			img: 'no.png',
-			alt: "Don't click here, no!"
+			alt: 'Don't click here, no!'
 		},
 		{ href: 'https://www.minecraft.net', img: 'minecraft.png', alt: 'Minecraft' },
 		{ img: 'pokemon.png', alt: 'Pokémon' },

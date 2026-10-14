@@ -23,8 +23,10 @@
 				{#if notFound}
 					The page you&apos;re looking for doesn&apos;t exist or has been moved.
 				{:else if serverError}
-					Something went wrong on the server while processing your request.
-					Please try again in a little while. If the problem persists, <a href='mailto:clove@doughmination.gay'>contact the site administrator</a> and include any relevant details about what you were doing.
+					Something went wrong on the server while processing your request. Please try again in a
+					little while. If the problem persists, <a href="mailto:clove@doughmination.gay"
+						>contact the site administrator</a
+					> and include any relevant details about what you were doing.
 				{:else}
 					{page.error?.message}
 				{/if}

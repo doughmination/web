@@ -262,18 +262,18 @@ export function pickListening(
 // display_name_styles.font_id -> @font-face family from presence.css
 // (IDs from https://docs.discord.food/resources/user; 1, 2, 5 and 9 are deprecated)
 export const NAME_FONTS: Record<number, string> = {
-	3: "'DDN Sakura', cursive",
-	4: "'DDN Jellybean', cursive",
-	6: "'DDN Modern', sans-serif",
-	7: "'DDN Medieval', serif",
-	8: "'DDN 8Bit', monospace",
-	10: "'DDN Vampyre', serif",
-	11: "'DDN gg sans', sans-serif",
-	12: "'DDN Tempo', serif",
-	13: "'DDN Monkey Bars', sans-serif",
-	14: "'DDN Mainframe', sans-serif",
-	15: "'DDN Headbang', serif",
-	16: "'DDN Journal', cursive"
+	3: '"DDN Sakura", cursive',
+	4: '"DDN Jellybean", cursive',
+	6: '"DDN Modern", sans-serif',
+	7: '"DDN Medieval", serif',
+	8: '"DDN 8Bit", monospace',
+	10: '"DDN Vampyre", serif',
+	11: '"DDN gg sans", sans-serif',
+	12: '"DDN Tempo", serif',
+	13: '"DDN Monkey Bars", sans-serif',
+	14: '"DDN Mainframe", sans-serif',
+	15: '"DDN Headbang", serif',
+	16: '"DDN Journal", cursive'
 };
 
 export function findCollectible(
@@ -423,7 +423,7 @@ function esc(s: string): string {
 		.replace(/&/g, '&amp;')
 		.replace(/</g, '&lt;')
 		.replace(/>/g, '&gt;')
-		.replace(/"/g, '&quot;')
+		.replace(/'/g, '&quot;')
 		.replace(/'/g, '&#39;');
 }
 
@@ -440,7 +440,7 @@ const DELIMS: { open: string; wrap: [string, string] }[] = [
 	{
 		open: '||',
 		wrap: [
-			"<span class='spoiler' role='button' tabindex='0' aria-label='Spoiler, click to reveal'>",
+			'<span class="spoiler" role="button" tabindex="0" aria-label="Spoiler, click to reveal">',
 			'</span>'
 		]
 	},
