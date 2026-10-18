@@ -56,7 +56,7 @@
 		<span
 			class='trans'
 			tabindex='0'
-			data-tooltip='Transgender, often shortened to trans, is an umbrella term that describes an individual whose gender identity differs from their assigned gender at birth (AGAB). Infants are assigned a sex based on the appearance of their external genitalia, usually only on that basis, and that assignment is recorded on their birth certificate. The birth assignment—generally defaulting to assigned male at birth (AMAB) or assigned female at birth (AFAB)—assumes that the individual's gender identity will correspond to their assigned sex. A person's gender identity—their sense of gender—usually develops when they are very young. The realisation that their gender is different from what they were assigned can occur as early as three years old or in childhood prior to the onset of puberty. It may also happen later in life.'
+			data-tooltip='Transgender, often shortened to trans, is an umbrella term that describes an individual whose gender identity differs from their assigned gender at birth (AGAB). Infants are assigned a sex based on the appearance of their external genitalia, usually only on that basis, and that assignment is recorded on their birth certificate. The birth assignment—generally defaulting to assigned male at birth (AMAB) or assigned female at birth (AFAB)—assumes that the individuals gender identity will correspond to their assigned sex. A persons gender identity—their sense of gender—usually develops when they are very young. The realisation that their gender is different from what they were assigned can occur as early as three years old or in childhood prior to the onset of puberty. It may also happen later in life.'
 			>Transgender</span
 		> Woman from the UK.
 	</p>
