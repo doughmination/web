@@ -172,12 +172,12 @@
 					<SelfieDust
 						{revealed}
 						from={{
-							src: '/pixel-image.avif',
-							alt: 'Pixel art portrait of Clove',
-							width: 560,
-							height: 700
+							src: '/avatar.avif',
+							alt: 'Selfie of Clove',
+							width: 400,
+							height: 400
 						}}
-						to={{ src: '/selfie.avif', alt: '', width: 560, height: 996, focusY: 0.25 }}
+						to={{ src: '/avatar.avif', alt: '', width: 400, height: 400 }}
 					/>
 
 					{#if status}
