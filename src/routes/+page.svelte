@@ -31,7 +31,7 @@
 
 	import { discordId } from '#lib';
 
-	const PHONE = 'pixel';
+	const PHONE = 'S26';
 
 	let presence = $state<Presence | null>(null);
 	let lastPlayed = $state<Scrobble | null>(null);
