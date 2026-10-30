@@ -18,6 +18,9 @@
 		<span>{websiteDomain}</span>
 	</a>
 	<nav>
+		<a href="https://auth.doughmination.gay" target="_blank"
+			><iconsax-icon name="key" type="bulk" size="24" class="nav-icon"></iconsax-icon>Apps</a
+		>
 		<a href="https://github.com/doughmination" target="_blank"
 			><SiGithub class="nav-icon" />GitHub</a
 		>
