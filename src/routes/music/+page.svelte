@@ -3,6 +3,7 @@
 -->
 
 <script lang="ts">
+	import IcMusicNote from '~icons/ic/outline-music-note';
 	import Meta from '#lib/components/Meta.svelte';
 	import '#lib/styles/music.css';
 	import { untrack } from 'svelte';
@@ -185,9 +186,7 @@
 				onerror={hideBroken}
 			/>
 		{:else}
-			<span class="mu-art mu-art-blank" aria-hidden="true"
-				><iconsax-icon name="music" type="bulk" size="24"></iconsax-icon></span
-			>
+			<span class="mu-art mu-art-blank" aria-hidden="true"><IcMusicNote /></span>
 		{/if}
 		<div class="mu-meta">
 			<p class="mu-state">
@@ -259,13 +258,7 @@
 				<p class="mu-note">{lyrics.text}</p>
 			{:else if lyrics.kind === 'instrumental'}
 				<p class="mu-note">
-					<iconsax-icon name="music" type="bulk" size="24" aria-hidden="true"
-					></iconsax-icon>Instrumental<iconsax-icon
-						name="music"
-						type="bulk"
-						size="24"
-						aria-hidden="true"
-					></iconsax-icon>
+					<IcMusicNote aria-hidden="true" />Instrumental<IcMusicNote aria-hidden="true" />
 				</p>
 			{:else if lyrics.kind === 'synced'}
 				{#each lyrics.lines as line, i (i)}
@@ -300,9 +293,7 @@
 						{#if r.art}
 							<img class="mu-recent-art" src={r.art} alt="" loading="lazy" />
 						{:else}
-							<span class="mu-recent-art mu-art-blank" aria-hidden="true"
-								><iconsax-icon name="music" type="bulk" size="24"></iconsax-icon></span
-							>
+							<span class="mu-recent-art mu-art-blank" aria-hidden="true"><IcMusicNote /></span>
 						{/if}
 						<span class="mu-recent-text">
 							<span class="mu-recent-name">{r.name}</span>
@@ -331,9 +322,7 @@
 						{#if topArt[a.name]}
 							<img class="mu-top-art" src={topArt[a.name]} alt="" referrerpolicy="no-referrer" />
 						{:else}
-							<span class="mu-top-art mu-art-blank" aria-hidden="true"
-								><iconsax-icon name="music" type="bulk" size="24"></iconsax-icon></span
-							>
+							<span class="mu-top-art mu-art-blank" aria-hidden="true"><IcMusicNote /></span>
 						{/if}
 						<span class="mu-top-text">
 							<span class="mu-top-name">{a.name}</span>

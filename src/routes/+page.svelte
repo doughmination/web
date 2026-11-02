@@ -3,6 +3,15 @@
 -->
 
 <script lang="ts">
+	import IcBattery4Bar from '~icons/ic/outline-battery-4-bar';
+	import IcBatteryAlert from '~icons/ic/outline-battery-alert';
+	import IcBatteryChargingFull from '~icons/ic/outline-battery-charging-full';
+	import IcBatteryFull from '~icons/ic/outline-battery-full';
+	import IcBatteryUnknown from '~icons/ic/outline-battery-unknown';
+	import IcFavorite from '~icons/ic/outline-favorite';
+	import IcMusicNote from '~icons/ic/outline-music-note';
+	import IcPeople from '~icons/ic/outline-people';
+	import IcSmartphone from '~icons/ic/outline-smartphone';
 	import Meta from '#lib/components/Meta.svelte';
 	import '#lib/styles/index.css';
 	import '#lib/styles/presence.css';
@@ -119,13 +128,13 @@
 	const lineText = $derived(line?.text ?? '');
 	const flyMs = $derived(reduceMotion ? 0 : 450);
 
-	const batteryIcon = $derived.by(() => {
+	const BatteryIcon = $derived.by(() => {
 		const level = phone?.level;
-		if (phone?.charging) return 'battery-charging';
-		if (level == null) return 'battery-empty';
-		if (level >= 80) return 'battery-full';
-		if (level >= 35) return 'battery-2bars';
-		return 'battery-empty-1';
+		if (phone?.charging) return IcBatteryChargingFull;
+		if (level == null) return IcBatteryUnknown;
+		if (level >= 80) return IcBatteryFull;
+		if (level >= 35) return IcBattery4Bar;
+		return IcBatteryAlert;
 	});
 </script>
 
@@ -209,9 +218,7 @@
 				</a>
 			{:else if lastPlayed}
 				<a class="now-item" href="/music">
-					<span class="now-icon" aria-hidden="true"
-						><iconsax-icon name="music" type="bulk" size="24"></iconsax-icon></span
-					>
+					<span class="now-icon" aria-hidden="true"><IcMusicNote /></span>
 					<span>
 						Last played <strong>{lastPlayed.name}</strong>{#if lastPlayed.artist}&nbsp;— {lastPlayed.artist}{/if}
 						{#if lastPlayed.uts}<span class="now-muted">· {timeAgo(lastPlayed.uts, now)}</span>{/if}
@@ -220,9 +227,7 @@
 			{/if}
 			{#if fronters.length}
 				<span class="now-item" title="Currently fronting">
-					<span class="now-icon" aria-hidden="true"
-						><iconsax-icon name="profile-2user" type="bulk" size="24"></iconsax-icon></span
-					>
+					<span class="now-icon" aria-hidden="true"><IcPeople /></span>
 					<span class="now-row">
 						Fronting
 						{#each fronters as member, i (member.id)}
@@ -247,9 +252,7 @@
 					class="now-item"
 					title="Phone, updated {timeAgo(Math.floor(Date.parse(phone.updated_at) / 1000), now)}"
 				>
-					<span class="now-icon" aria-hidden="true"
-						><iconsax-icon name="mobile" type="bulk" size="24"></iconsax-icon></span
-					>
+					<span class="now-icon" aria-hidden="true"><IcSmartphone /></span>
 					<span class="now-row">
 						Phone
 						{#if phone.level != null}
@@ -257,9 +260,7 @@
 								class="now-battery"
 								class:now-battery-low={phone.level < 20 && !phone.charging}
 							>
-								<span class="now-icon" aria-hidden="true"
-									><iconsax-icon name={batteryIcon} type="bulk" size="24"></iconsax-icon></span
-								>{phone.level}%
+								<span class="now-icon" aria-hidden="true"><BatteryIcon /></span>{phone.level}%
 							</strong>
 						{/if}
 						{#if phone.charging}<span class="now-muted">· charging</span>{/if}
@@ -269,18 +270,14 @@
 				</span>
 			{/if}
 			<a class="now-item" href="https://bwah.dev" target="_blank" rel="noopener">
-				<span class="now-icon now-heart" aria-hidden="true"
-					><iconsax-icon name="heart" type="bulk" size="24"></iconsax-icon></span
-				>
+				<span class="now-icon now-heart" aria-hidden="true"><IcFavorite /></span>
 				<span>In a relationship with <strong>Aria</strong></span>
 			</a>
 		</p>
 		{#if synced}
 			<a class="now-lyric" href="/music">
 				<span class="now-lyric-label">
-					<span class="now-icon" aria-hidden="true"
-						><iconsax-icon name="music" type="bulk" size="24"></iconsax-icon></span
-					>
+					<span class="now-icon" aria-hidden="true"><IcMusicNote /></span>
 					Lyrics
 				</span>
 				<span class="now-lyric-stage">

@@ -3,6 +3,14 @@
 -->
 
 <script lang="ts">
+	import IcChevronRight from '~icons/ic/outline-chevron-right';
+	import IcDesktopWindows from '~icons/ic/outline-desktop-windows';
+	import IcDiamond from '~icons/ic/outline-diamond';
+	import IcLanguage from '~icons/ic/outline-language';
+	import IcLink from '~icons/ic/outline-link';
+	import IcSchedule from '~icons/ic/outline-schedule';
+	import IcSmartphone from '~icons/ic/outline-smartphone';
+	import IcVerified from '~icons/ic/outline-verified';
 	import Meta from '#lib/components/Meta.svelte';
 	import '#lib/styles/presence.css';
 	import '#lib/styles/discord.css';
@@ -79,9 +87,9 @@
 
 	const platforms = $derived(
 		[
-			presence?.platform.desktop && { label: 'Desktop', icon: 'monitor' },
-			presence?.platform.mobile && { label: 'Mobile', icon: 'mobile' },
-			presence?.platform.web && { label: 'Web', icon: 'global' }
+			presence?.platform.desktop && { label: 'Desktop', icon: IcDesktopWindows },
+			presence?.platform.mobile && { label: 'Mobile', icon: IcSmartphone },
+			presence?.platform.web && { label: 'Web', icon: IcLanguage }
 		].filter((p) => !!p)
 	);
 
@@ -192,8 +200,7 @@
 								class="chip"
 								title="{record.timezone?.timezone ?? ''} ({fmtUtcOffset(tzOffset)})"
 							>
-								<iconsax-icon name="clock" type="bulk" size="24" aria-hidden="true"
-								></iconsax-icon>{fmtClock(now, tzOffset)}
+								<IcSchedule aria-hidden="true" />{fmtClock(now, tzOffset)}
 							</span>
 						{/if}
 						{#if nitro}
@@ -210,15 +217,13 @@
 								title="Boosting since {fmtMonthYear(user.premium.guild_since)}"
 								aria-label="Server booster"
 							>
-								<iconsax-icon name="diamonds" type="bulk" size="24" aria-hidden="true"
-								></iconsax-icon>
+								<IcDiamond aria-hidden="true" />
 							</span>
 						{/if}
 						{#if platforms.length}
 							<span class="platforms">
 								{#each platforms as p (p.label)}
-									<iconsax-icon name={p.icon} type="bulk" size="24" aria-label={p.label} role="img"
-									></iconsax-icon>
+									<p.icon aria-label={p.label} role="img" />
 								{/each}
 							</span>
 						{/if}
@@ -436,13 +441,7 @@
 				>
 					<span>Connections</span>
 					<span class="panel-count">{connections.length}</span>
-					<iconsax-icon
-						name="arrow-right-02"
-						type="bulk"
-						size="24"
-						class="chevron"
-						aria-hidden="true"
-					></iconsax-icon>
+					<IcChevronRight class="chevron" aria-hidden="true" />
 				</button>
 				<div id="discord-connections" hidden={!connectionsOpen}>
 					{#if connections.length}
@@ -456,23 +455,14 @@
 									target={href ? '_blank' : undefined}
 									rel={href ? 'noopener' : undefined}
 								>
-									<span class="conn-icon"
-										><iconsax-icon name="link" type="bulk" size="24" aria-hidden="true"
-										></iconsax-icon></span
-									>
+									<span class="conn-icon"><IcLink aria-hidden="true" /></span>
 									<span class="conn-text">
 										<span class="conn-type">{c.type}</span>
 										<span class="conn-name">{c.name}</span>
 									</span>
 									{#if c.verified}
 										<span class="conn-check" title="Verified"
-											><iconsax-icon
-												name="verify"
-												type="bulk"
-												size="24"
-												aria-label="Verified"
-												role="img"
-											></iconsax-icon></span
+											><IcVerified aria-label="Verified" role="img" /></span
 										>
 									{/if}
 								</svelte:element>
@@ -494,13 +484,7 @@
 				>
 					<span>Wishlist</span>
 					<span class="panel-count">{wishlist.length}</span>
-					<iconsax-icon
-						name="arrow-right-02"
-						type="bulk"
-						size="24"
-						class="chevron"
-						aria-hidden="true"
-					></iconsax-icon>
+					<IcChevronRight class="chevron" aria-hidden="true" />
 				</button>
 				<div id="discord-wishlist" hidden={!wishlistOpen}>
 					{#if wishlist.length}

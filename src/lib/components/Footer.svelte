@@ -5,6 +5,7 @@
 <script lang="ts">
 	import '#lib/styles/footer.css';
 	import { websiteDomain } from '#lib';
+	import IcFavorite from '~icons/ic/outline-favorite';
 </script>
 
 <footer>
@@ -16,7 +17,7 @@
 
 		<span>
 			made fully by hand with zero AI-generated code
-			<iconsax-icon name="heart" type="bulk" size="16" class="beat"></iconsax-icon>
+			<IcFavorite class="beat" />
 		</span>
 
 		<span>Clove Twilight &copy; 2026</span>

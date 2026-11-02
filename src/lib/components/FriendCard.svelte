@@ -14,6 +14,14 @@
 </script>
 
 <script lang="ts">
+	import IcDesktopWindows from '~icons/ic/outline-desktop-windows';
+	import IcDiamond from '~icons/ic/outline-diamond';
+	import IcLanguage from '~icons/ic/outline-language';
+	import IcLink from '~icons/ic/outline-link';
+	import IcSchedule from '~icons/ic/outline-schedule';
+	import IcSmartphone from '~icons/ic/outline-smartphone';
+	import IcStar from '~icons/ic/outline-star';
+	import IcVerified from '~icons/ic/outline-verified';
 	import ListeningIcon from '#lib/components/ListeningIcon.svelte';
 	import {
 		pickListening,
@@ -86,9 +94,9 @@
 
 	const platforms = $derived(
 		[
-			presence?.platform.desktop && { label: 'Desktop', icon: 'monitor' },
-			presence?.platform.mobile && { label: 'Mobile', icon: 'mobile' },
-			presence?.platform.web && { label: 'Web', icon: 'global' }
+			presence?.platform.desktop && { label: 'Desktop', icon: IcDesktopWindows },
+			presence?.platform.mobile && { label: 'Mobile', icon: IcSmartphone },
+			presence?.platform.web && { label: 'Web', icon: IcLanguage }
 		].filter((p) => !!p)
 	);
 
@@ -158,8 +166,7 @@
 				{#if pronouns}<span class="chip">{pronouns}</span>{/if}
 				{#if tzOffset != null}
 					<span class="chip" title="{record?.timezone?.timezone ?? ''} ({fmtUtcOffset(tzOffset)})">
-						<iconsax-icon name="clock" type="bulk" size="24" aria-hidden="true"
-						></iconsax-icon>{fmtClock(now, tzOffset)}
+						<IcSchedule aria-hidden="true" />{fmtClock(now, tzOffset)}
 					</span>
 				{/if}
 				{#if nitro}
@@ -176,18 +183,11 @@
 						title="Boosting since {fmtMonthYear(user.premium.guild_since)}"
 						aria-label="Server booster"
 					>
-						<iconsax-icon name="diamonds" type="bulk" size="24" aria-hidden="true"></iconsax-icon>
+						<IcDiamond aria-hidden="true" />
 					</span>
 				{/if}
 				{#each platforms as p (p.label)}
-					<iconsax-icon
-						name={p.icon}
-						type="bulk"
-						size="24"
-						class="fc-platform"
-						aria-label={p.label}
-						role="img"
-					></iconsax-icon>
+					<p.icon class="fc-platform" aria-label={p.label} role="img" />
 				{/each}
 			</div>
 
@@ -240,7 +240,7 @@
 				aria-expanded={wishlistOpen}
 				onclick={() => (wishlistOpen = !wishlistOpen)}
 			>
-				<iconsax-icon name="star" type="bulk" size="24" aria-hidden="true"></iconsax-icon>
+				<IcStar aria-hidden="true" />
 			</button>
 		{/if}
 	</div>
@@ -265,16 +265,9 @@
 					rel={href ? 'noopener' : undefined}
 					title={c.type}
 				>
-					<iconsax-icon name="link" type="bulk" size="24" aria-hidden="true"></iconsax-icon>
+					<IcLink aria-hidden="true" />
 					<span class="fc-conn-name">{c.name}</span>
-					{#if c.verified}<iconsax-icon
-							name="verify"
-							type="bulk"
-							size="24"
-							class="fc-conn-check"
-							aria-label="Verified"
-							role="img"
-						></iconsax-icon>{/if}
+					{#if c.verified}<IcVerified class="fc-conn-check" aria-label="Verified" role="img" />{/if}
 				</svelte:element>
 			{/each}
 		</div>

@@ -3,6 +3,7 @@
 -->
 
 <script lang="ts">
+	import IcSportsEsports from '~icons/ic/outline-sports-esports';
 	import { SiSpotify } from 'simple-icons';
 
 	// Decorative: the text next to it always names the app
@@ -13,7 +14,7 @@
 	{#if source === 'spotify'}
 		<SiSpotify color="#1db954" title="Spotify" />
 	{:else}
-		<iconsax-icon name="game" type="bulk" size="24"></iconsax-icon>
+		<IcSportsEsports />
 	{/if}
 </span>
 

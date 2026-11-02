@@ -6,12 +6,6 @@
 	box-sizing: border-box;
 }
 
-/* <iconsax-icon> renders its <svg> inside itself, so size that via `... svg` selectors */
-iconsax-icon {
-	display: inline-flex;
-	flex-shrink: 0;
-}
-
 html {
 	height: 100%;
 }

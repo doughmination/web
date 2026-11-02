@@ -3,6 +3,9 @@
 -->
 
 <script lang="ts">
+	import IcCall from '~icons/ic/outline-call';
+	import IcEmail from '~icons/ic/outline-email';
+	import IcWork from '~icons/ic/outline-work';
 	import Meta from '#lib/components/Meta.svelte';
 	import {
 		SiX,
@@ -29,13 +32,13 @@
 			name: 'Email',
 			value: `clove@${websiteDomain}`,
 			href: `mailto:clove@${websiteDomain}`,
-			iconsax: 'sms'
+			icon: IcEmail
 		},
 		{
 			name: 'Phone',
 			value: '+44 7562 523118',
 			href: 'tel:+447562523118',
-			iconsax: 'call'
+			icon: IcCall
 		},
 		{
 			name: 'Twitter',
@@ -47,7 +50,7 @@
 			name: 'LinkedIn',
 			value: 'estrogenhrt',
 			href: 'https://uk.linkedin.com/in/estrogen',
-			iconsax: 'briefcase'
+			icon: IcWork
 		},
 		{
 			name: 'Twitch',
@@ -120,10 +123,7 @@
 	<div class="contact-grid">
 		{#each others as c (c.name)}
 			<a class="contact-tile" href={c.href}>
-				<span class="contact-icon"
-					>{#if c.iconsax}<iconsax-icon name={c.iconsax} type="bulk" size="24"
-						></iconsax-icon>{:else if c.icon}<c.icon />{/if}</span
-				>
+				<span class="contact-icon"><c.icon /></span>
 				<p class="contact-name">{c.name}</p>
 				<p class="contact-value">{c.value}</p>
 			</a>

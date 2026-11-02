@@ -3,6 +3,8 @@
 -->
 
 <script lang="ts">
+	import IcCancel from '~icons/ic/outline-cancel';
+	import IcMenu from '~icons/ic/outline-menu';
 	import '#lib/styles/hamburger.css';
 	import { page } from '$app/state';
 
@@ -55,15 +57,14 @@
 	aria-controls="hamburger-menu"
 	onclick={() => (open = true)}
 >
-	<iconsax-icon name="textalign-justifycenter" type="bulk" size="24" class="nav-icon"
-	></iconsax-icon>
+	<IcMenu class="nav-icon" />
 </button>
 
 <div class="hamburger-backdrop" class:open onclick={close} aria-hidden="true"></div>
 
 <nav id="hamburger-menu" class="hamburger-drawer" class:open aria-label="Pages" inert={!open}>
 	<button class="hamburger hamburger-close" type="button" aria-label="Close menu" onclick={close}>
-		<iconsax-icon name="close-circle" type="bulk" size="24" class="nav-icon"></iconsax-icon>
+		<IcCancel class="nav-icon" />
 	</button>
 	<ul>
 		{#each links as link (link.href)}
