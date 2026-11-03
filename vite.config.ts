@@ -16,7 +16,8 @@ export default defineConfig({
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
 			adapter: adapter(),
-			inspector: true
+			// Inspector breaks under Deno's symlinked node_modules (its CSS fails to load)
+			inspector: false
 		}),
 		// Turns each `~icons/<set>/<name>` import into an inline-SVG Svelte component at build time
 		Icons({ compiler: 'svelte', scale: 1 })

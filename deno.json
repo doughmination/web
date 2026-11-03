@@ -1,0 +1,7 @@
+{
+  "overrides": {
+    "@icons-pack/svelte-simple-icons": {
+      "@sveltejs/kit": "3.1.0"
+    }
+  }
+}
