@@ -15,7 +15,7 @@ import { error, redirect, type Cookies, type RequestEvent } from '@sveltejs/kit'
 import { dev } from '$app/env';
 import { SESSION_SECRET, SSO_CLIENT_ID, SSO_CLIENT_SECRET, SSO_ISSUER } from '$app/env/private';
 
-import { authUrl } from '#lib';
+import { authUrl, websiteUrl } from '#lib';
 
 const SESSION_COOKIE = 'admin_session';
 const LOGIN_COOKIE = 'admin_login';
@@ -91,7 +91,8 @@ const cookieOptions = (maxAge: number) =>
 
 // ---- Flow ---------------------------------------------------------------------
 
-const redirectUri = (url: URL) => `${url.origin}/admin/callback`;
+// Fixed in production rather than taken from the request's Host header
+const redirectUri = (url: URL) => `${dev ? url.origin : websiteUrl}/admin/callback`;
 
 /** Start sign-in: remember state + PKCE verifier, then send the browser to the SSO. */
 export async function beginLogin({ url, cookies }: RequestEvent): Promise<never> {
@@ -116,7 +117,7 @@ export async function beginLogin({ url, cookies }: RequestEvent): Promise<never>
 		code_challenge: b64url(createHash('sha256').update(verifier).digest()),
 		code_challenge_method: 'S256'
 	}).toString();
-	redirect(303, target.toString());
+	redirect(303, target.toString(), { external: true });
 }
 
 /** Finish sign-in: check state, swap the code for tokens and open a session. */
