@@ -5,7 +5,7 @@
 // Contribution heatmap: daily counts from every Git host I use, merged into
 // GitHub-style weeks (Sunday to Saturday, UTC)
 
-import { API_BASE } from '#lib/scripts/discord.ts';
+import { apiData } from '#lib/scripts/api.ts';
 import { cached } from '#lib/scripts/cache.ts';
 
 export interface Day {
@@ -84,10 +84,7 @@ export function fetchContributions(): Promise<Contributions> {
 }
 
 async function loadContributions(): Promise<Contributions> {
-	const res = await fetch(`${API_BASE}/v2/contribapi`);
-	const body = (await res.json()) as { success: boolean; data?: Record<string, SourceDay[]> };
-	if (!body.success || !body.data) throw new Error(`Request failed (${res.status})`);
-	const weeks = toWeeks(body.data);
+	const weeks = toWeeks(await apiData<Record<string, SourceDay[]>>('/v2/contribapi'));
 	const total = weeks.flat().reduce((sum, day) => sum + day.contributions, 0);
 	return { weeks, total, since: weeks[0]?.[0]?.date ?? null };
 }

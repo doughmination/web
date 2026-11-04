@@ -43,7 +43,7 @@
 		type Presence
 	} from '#lib/scripts/discord.ts';
 
-	import { discordId } from '#lib';
+	import { discordId, apiBase, discordCdn } from '#lib';
 
 	let record = $state<DiscordRecord | null>(null);
 	let livePresence = $state<Presence | null>(null);
@@ -112,8 +112,8 @@
 />
 
 <svelte:head>
-	<link rel="preconnect" href="https://doughmination.uk" crossorigin="" />
-	<link rel="preconnect" href="https://cdn.discordapp.com" />
+	<link rel="preconnect" href={apiBase} crossorigin="" />
+	<link rel="preconnect" href={discordCdn} />
 </svelte:head>
 
 <section class="hero">

@@ -5,7 +5,16 @@
 <script lang="ts">
 	import { page } from '$app/state';
 
-	import { websiteDomain, websiteUrl } from '#lib';
+	import {
+		websiteDomain,
+		websiteUrl,
+		githubUrl,
+		twitterUrl,
+		blueskyUrl,
+		linkedinUrl,
+		twitchUrl,
+		youtubeUrl
+	} from '#lib';
 
 	// Matches --accent in theme.css
 	const accentColour = 0xeb459e;
@@ -79,14 +88,7 @@
 				url: websiteUrl + '/',
 				image: websiteUrl + '/favicon.png',
 				jobTitle: 'Software Developer',
-				sameAs: [
-					'https://github.com/doughmination',
-					'https://x.com/DoughminCEO',
-					'https://bsky.app/profile/doughmination.gay',
-					'https://uk.linkedin.com/in/estrogen',
-					'https://www.twitch.tv/doughminationgaming',
-					'https://www.youtube.com/@CloveTwiGaming'
-				]
+				sameAs: [githubUrl, twitterUrl, blueskyUrl, linkedinUrl, twitchUrl, youtubeUrl]
 			},
 			{
 				'@type': 'WebSite',

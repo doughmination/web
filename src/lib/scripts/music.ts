@@ -7,7 +7,16 @@
 import { pickListening, type Presence } from '#lib/scripts/discord.ts';
 import { cached } from '#lib/scripts/cache.ts';
 
-import { lfmApi, lfmUser, lmfKey, lfmPlaceholder, lrcLibHosts, tadbApi } from '#lib';
+import {
+	lfmApi,
+	lfmUser,
+	lmfKey,
+	lfmPlaceholder,
+	lrcLibHosts,
+	tadbApi,
+	websiteDomain,
+	websiteUrl
+} from '#lib';
 
 const ART_CACHE_PREFIX = 'dough:artimg:';
 const DAY = 86_400_000;
@@ -225,7 +234,7 @@ function lrclibGet(params: Record<string, string>) {
 	const qs = new URLSearchParams(params);
 	return fromAnyHost(async (host) => {
 		const res = await fetch(`${host}/api/get?${qs}`, {
-			headers: { 'X-User-Agent': 'doughmination.gay music (https://doughmination.gay)' }
+			headers: { 'X-User-Agent': `${websiteDomain} music (${websiteUrl})` }
 		});
 		return res.ok ? ((await res.json()) as LrclibRecord) : null;
 	});

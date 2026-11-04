@@ -7,8 +7,8 @@
 
 import { cached, invalidateOn } from '#lib/scripts/cache.ts';
 
-export const API_BASE = 'https://doughmination.uk';
-export const WS_URL = 'wss://doughmination.uk/v2/ws';
+import { wsUrl, discordCdn } from '#lib';
+import { apiData } from '#lib/scripts/api.ts';
 
 export type Status = 'online' | 'idle' | 'dnd' | 'offline';
 
@@ -103,20 +103,10 @@ export interface DiscordRecord {
 
 // Live presence comes over the socket, so the rest of the record can be kept a while
 export function fetchUser(id: string): Promise<DiscordRecord> {
-	return cached(
-		`discord:${id}`,
-		async () => {
-			const res = await fetch(`${API_BASE}/v2/discord/users/${id}`);
-			const body = (await res.json()) as {
-				success: boolean;
-				data?: DiscordRecord;
-				error?: { message?: string };
-			};
-			if (!body.success) throw new Error(body.error?.message ?? `Request failed (${res.status})`);
-			return body.data as DiscordRecord;
-		},
-		{ ttl: 10 * 60_000, events: ['reconnect'] }
-	);
+	return cached(`discord:${id}`, () => apiData<DiscordRecord>(`/v2/discord/users/${id}`), {
+		ttl: 10 * 60_000,
+		events: ['reconnect']
+	});
 }
 
 // ---- Live socket ----------------------------------------------------------
@@ -158,7 +148,7 @@ function emitEvent(type: string) {
 }
 
 function connect() {
-	ws = new WebSocket(WS_URL);
+	ws = new WebSocket(wsUrl);
 
 	ws.onopen = () => {
 		if (retry) emitEvent('reconnect');
@@ -316,11 +306,11 @@ export function assetUrl(appId: string | undefined, asset: string | undefined): 
 	if (!asset) return null;
 	if (asset.startsWith('mp:')) return 'https://media.discordapp.net/' + asset.slice(3);
 	if (!appId) return null;
-	return `https://cdn.discordapp.com/app-assets/${appId}/${asset}.png`;
+	return `${discordCdn}/app-assets/${appId}/${asset}.png`;
 }
 
 export function emojiUrl(id: string, animated: boolean): string {
-	return `https://cdn.discordapp.com/emojis/${id}.${animated ? 'gif' : 'png'}?size=32`;
+	return `${discordCdn}/emojis/${id}.${animated ? 'gif' : 'png'}?size=32`;
 }
 
 export function intToHex(n: number): string {

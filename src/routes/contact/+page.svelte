@@ -19,7 +19,15 @@
 		SiTumblr
 	} from 'simple-icons';
 	import '#lib/styles/contact.css';
-	import { discordId, websiteDomain } from '#lib';
+	import {
+		discordId,
+		contactEmail,
+		twitterUrl,
+		blueskyUrl,
+		linkedinUrl,
+		twitchUrl,
+		youtubeUrl
+	} from '#lib';
 
 	const contacts = [
 		{
@@ -30,8 +38,8 @@
 		},
 		{
 			name: 'Email',
-			value: `clove@${websiteDomain}`,
-			href: `mailto:clove@${websiteDomain}`,
+			value: contactEmail,
+			href: `mailto:${contactEmail}`,
 			icon: IcEmail
 		},
 		{
@@ -43,25 +51,25 @@
 		{
 			name: 'Twitter',
 			value: '@DoughminCEO',
-			href: 'https://x.com/DoughminCEO',
+			href: twitterUrl,
 			icon: SiX
 		},
 		{
 			name: 'LinkedIn',
 			value: 'estrogenhrt',
-			href: 'https://uk.linkedin.com/in/estrogen',
+			href: linkedinUrl,
 			icon: IcWork
 		},
 		{
 			name: 'Twitch',
 			value: 'doughminationgaming',
-			href: 'https://www.twitch.tv/doughminationgaming',
+			href: twitchUrl,
 			icon: SiTwitch
 		},
 		{
 			name: 'Bluesky',
 			value: '@doughmination.gay',
-			href: 'https://bsky.app/profile/doughmination.gay',
+			href: blueskyUrl,
 			icon: SiBluesky
 		},
 		{
@@ -79,7 +87,7 @@
 		{
 			name: 'YouTube',
 			value: '@CloveTwiGaming',
-			href: 'https://www.youtube.com/@CloveTwiGaming',
+			href: youtubeUrl,
 			icon: SiYoutube
 		},
 		{

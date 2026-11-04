@@ -38,7 +38,7 @@
 		type Member
 	} from '#lib/scripts/plural.ts';
 
-	import { discordId } from '#lib';
+	import { discordId, lrcLibHosts } from '#lib';
 
 	const PHONE = 'S26';
 
@@ -144,7 +144,7 @@
 />
 
 <svelte:head>
-	<link rel="preconnect" href="https://lyrics.doughmination.gay" crossorigin="" />
+	<link rel="preconnect" href={lrcLibHosts[0]} crossorigin="" />
 </svelte:head>
 
 <section class="hero">

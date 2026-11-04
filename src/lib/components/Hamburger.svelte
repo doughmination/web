@@ -23,6 +23,7 @@
 			{ href: '/music', label: 'Music' },
 			{ href: '/friends', label: 'Friends' },
 			{ href: '/88x31', label: '88x31' },
+			{ href: '/guestbook', label: 'Guestbook' },
 			{ href: '/contact', label: 'Contact' },
 			{ href: '/cv', label: 'CV' }
 		]

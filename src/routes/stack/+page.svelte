@@ -5,6 +5,7 @@
 <script lang="ts">
 	import Meta from '#lib/components/Meta.svelte';
 	import '#lib/styles/stack.css';
+	import { apiBase } from '#lib';
 	import {
 		SiArchlinux,
 		SiArduino,
@@ -202,7 +203,7 @@
 />
 
 <svelte:head>
-	<link rel="preconnect" href="https://doughmination.uk" crossorigin="" />
+	<link rel="preconnect" href={apiBase} crossorigin="" />
 </svelte:head>
 
 <section class="hero">

@@ -5,6 +5,7 @@
 <script lang="ts">
 	import Meta from '#lib/components/Meta.svelte';
 	import '#lib/styles/projects.css';
+	import { apiBase, authUrl, githubUrl, mediaBase } from '#lib';
 
 	type Project = {
 		title: string;
@@ -18,7 +19,7 @@
 
 	type Group = { heading: string; projects: Project[] };
 
-	const IMG_BASE = 'https://m.doughmination.gay/';
+	const IMG_BASE = mediaBase + '/';
 
 	const GROUPS: Group[] = [
 		{
@@ -27,21 +28,21 @@
 				{
 					title: 'Doughmination Auth',
 					bio: 'A public auth server, which is my auth for all my projects',
-					href: 'https://github.com/doughmination/auth-server',
-					live: 'https://auth.doughmination.gay',
+					href: githubUrl + '/auth-server',
+					live: authUrl,
 					img: 'favicons/favicon.png'
 				},
 				{
 					title: 'Doughmination API',
-					bio: 'My personal API, which I don\'t mind people hooking into',
-					href: 'https://github.com/doughmination/api',
-					live: 'https://doughmination.uk',
+					bio: "My personal API, which I don't mind people hooking into",
+					href: githubUrl + '/api',
+					live: apiBase,
 					img: 'favicons/favicon.png'
 				},
 				{
 					title: 'Doughmination Mail',
 					bio: 'My personal inbox',
-					href: 'https://github.com/doughmination/email',
+					href: githubUrl + '/email',
 					img: 'favicons/favicon.png'
 				}
 			]
@@ -84,7 +85,7 @@
 />
 
 <svelte:head>
-	<link rel="preconnect" href="https://m.doughmination.gay" crossorigin="" />
+	<link rel="preconnect" href={mediaBase} crossorigin="" />
 </svelte:head>
 
 <section class="hero">

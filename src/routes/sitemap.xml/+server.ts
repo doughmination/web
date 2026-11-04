@@ -10,7 +10,7 @@ export const prerender = true;
 // Redirect-only routes (invite, dev-info) have no +page.svelte and are skipped.
 const pages = Object.keys(import.meta.glob('../**/+page.svelte'))
 	.map((file) => file.replace(/^\.\.|\/\+page\.svelte$/g, '') || '/')
-	.filter((path) => !path.includes('['))
+	.filter((path) => !path.includes('[') && !path.startsWith('/admin'))
 	.sort();
 
 export function GET() {

@@ -7,4 +7,9 @@ export HOST=127.0.0.1
 export PORT=3100
 export NODE_ENV=production
 
-exec /home/clove/.nvm/versions/node/v26.11.1/bin/node build/index.js
+# Public URL behind the proxy: SvelteKit needs it for form actions (CSRF check)
+# and to build the SSO redirect URI
+export ORIGIN=https://doughmination.gay
+
+# Secrets (SSO client, session secret, guestbook key) live in /srv/clove/web/.env
+exec /home/clove/.nvm/versions/node/v26.11.1/bin/node --env-file-if-exists=.env build/index.js

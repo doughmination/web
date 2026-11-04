@@ -23,6 +23,7 @@
 	import IcStar from '~icons/ic/outline-star';
 	import IcVerified from '~icons/ic/outline-verified';
 	import ListeningIcon from '#lib/components/ListeningIcon.svelte';
+	import { discordCdn } from '#lib';
 	import {
 		pickListening,
 		assetUrl,
@@ -82,7 +83,7 @@
 		user ? user.display_name || user.global_name || user.username : friend.name
 	);
 	const handle = $derived(user?.username ?? '');
-	const avatar = $derived(user?.avatar_url ?? 'https://cdn.discordapp.com/embed/avatars/0.png');
+	const avatar = $derived(user?.avatar_url ?? `${discordCdn}/embed/avatars/0.png`);
 	const gradient = $derived(nameGradient(user?.display_name_styles?.colors));
 	const decoration = $derived(findCollectible(record, 'avatar_decoration'));
 	const pronouns = $derived(user?.pronouns || record?.pronoundb || '');

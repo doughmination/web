@@ -25,7 +25,7 @@
 		type Track
 	} from '#lib/scripts/music.ts';
 
-	import { discordId } from '#lib';
+	import { discordId, apiBase, lfmApi, lrcLibHosts } from '#lib';
 
 	const SCROLL_KEYS = ['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '];
 
@@ -156,9 +156,9 @@
 />
 
 <svelte:head>
-	<link rel="preconnect" href="https://doughmination.uk" crossorigin="" />
-	<link rel="preconnect" href="https://ws.audioscrobbler.com" crossorigin="" />
-	<link rel="preconnect" href="https://lyrics.doughmination.gay" crossorigin="" />
+	<link rel="preconnect" href={apiBase} crossorigin="" />
+	<link rel="preconnect" href={new URL(lfmApi).origin} crossorigin="" />
+	<link rel="preconnect" href={lrcLibHosts[0]} crossorigin="" />
 </svelte:head>
 
 <section class="hero">

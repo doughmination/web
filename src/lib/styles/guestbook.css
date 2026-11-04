@@ -1,0 +1,230 @@
+/* src/lib/styles/guestbook.css
+ * DASL-1.2 — (c) Clove Twilight
+ */
+
+/* Guestbook (also used by the admin page) */
+
+.guestbook {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+	padding-block: 2rem;
+}
+
+/* Form */
+
+.gb-form {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	padding: 1.25rem 1.5rem;
+	border: 1px solid var(--line);
+	border-radius: 1rem;
+	background: var(--raised);
+}
+
+.gb-row {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+	gap: 1rem;
+}
+
+.gb-form label {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 0.4rem;
+}
+
+.gb-form label > span {
+	color: var(--accent);
+	font-size: 0.7rem;
+	font-weight: 600;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+}
+
+.gb-form label em {
+	color: var(--muted);
+	font-style: normal;
+	text-transform: none;
+	letter-spacing: normal;
+}
+
+.gb-form input,
+.gb-form textarea {
+	padding: 0.6rem 0.75rem;
+	border: 1px solid var(--line);
+	border-radius: 0.6rem;
+	background: rgb(0 0 0 / 25%);
+	color: var(--text);
+	font: inherit;
+}
+
+.gb-form textarea {
+	resize: vertical;
+}
+
+.gb-form input:focus-visible,
+.gb-form textarea:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 1px;
+}
+
+.gb-count {
+	align-self: flex-end;
+	color: var(--muted);
+	font-size: 0.75rem;
+}
+
+.gb-trap {
+	position: absolute !important;
+	left: -10000px;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+}
+
+.gb-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem 1rem;
+	align-items: center;
+}
+
+.guestbook button,
+.gb-link {
+	padding: 0.5rem 1rem;
+	border: 0;
+	border-radius: 999px;
+	background: var(--accent);
+	color: #fff;
+	font: inherit;
+	font-size: 0.9rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: filter 0.15s ease;
+}
+
+.guestbook button:hover,
+.gb-link:hover {
+	filter: brightness(1.1);
+}
+
+.guestbook button:disabled {
+	opacity: 0.6;
+	cursor: progress;
+}
+
+.gb-notice {
+	margin: 0;
+	font-size: 0.9rem;
+}
+
+.gb-notice.ok {
+	color: var(--accent);
+}
+
+.gb-notice.error {
+	color: #f38ba8;
+}
+
+.gb-hint {
+	margin: 0;
+	color: var(--muted);
+	font-size: 0.85rem;
+}
+
+/* Entries */
+
+.gb-empty {
+	color: var(--muted);
+}
+
+.gb-entries {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.gb-entry {
+	padding: 1rem 1.25rem;
+	border: 1px solid var(--line);
+	border-radius: 1rem;
+	background: var(--raised);
+}
+
+.gb-entry.pending {
+	border-color: rgb(235 69 158 / 40%);
+}
+
+.gb-meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.25rem 0.75rem;
+	align-items: baseline;
+	margin: 0 0 0.4rem;
+}
+
+.gb-meta time,
+.gb-site {
+	color: var(--muted);
+	font-size: 0.8rem;
+	overflow-wrap: anywhere;
+}
+
+.gb-message {
+	margin: 0;
+	white-space: pre-line;
+	overflow-wrap: anywhere;
+}
+
+.gb-flagged {
+	margin: 0.5rem 0 0;
+	color: var(--accent);
+	font-size: 0.8rem;
+}
+
+.gb-more {
+	align-self: center;
+}
+
+/* Admin */
+
+.gb-tabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+
+.guestbook .gb-tabs button {
+	border: 1px solid var(--line);
+	background: var(--raised);
+	color: var(--text);
+}
+
+.guestbook .gb-tabs button.active {
+	border-color: var(--accent);
+	background: var(--accent-dim);
+	color: var(--accent);
+}
+
+.gb-entry-actions {
+	display: flex;
+	gap: 0.5rem;
+	margin-top: 0.75rem;
+}
+
+.guestbook .gb-entry-actions button {
+	padding: 0.35rem 0.85rem;
+	font-size: 0.8rem;
+}
+
+.guestbook button.danger {
+	background: transparent;
+	border: 1px solid #f38ba8;
+	color: #f38ba8;
+}

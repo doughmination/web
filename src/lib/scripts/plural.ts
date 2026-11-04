@@ -5,7 +5,7 @@
 // Fronting and device state from the Doughmination API
 // (https://doughmination.uk, see /docs there)
 
-import { API_BASE } from '#lib/scripts/discord.ts';
+import { api } from '#lib/scripts/api.ts';
 import { cached } from '#lib/scripts/cache.ts';
 
 export interface Member {
@@ -30,20 +30,11 @@ export interface Device {
 	updated_at: string;
 }
 
-// Unlike the Discord routes, these return the payload bare rather than in
-// a { success, data } envelope, and errors as { detail }
-async function get<T>(path: string): Promise<T> {
-	const res = await fetch(API_BASE + path);
-	const body = (await res.json()) as T & { detail?: string };
-	if (!res.ok) throw new Error(body?.detail ?? `Request failed (${res.status})`);
-	return body as T;
-}
-
 // Both are kept until the socket says they've changed
 export function fetchFronters(): Promise<Member[]> {
 	return cached(
 		'fronters',
-		async () => (await get<{ members: Member[] }>('/v2/plural/fronters')).members ?? [],
+		async () => (await api<{ members: Member[] }>('/v2/plural/fronters')).members ?? [],
 		{ events: ['fronters_update', 'reconnect'] }
 	);
 }
@@ -51,7 +42,7 @@ export function fetchFronters(): Promise<Member[]> {
 export function fetchDevice(device: string): Promise<Device> {
 	return cached(
 		`device:${device}`,
-		() => get<Device>(`/v2/devices/${encodeURIComponent(device)}`),
+		() => api<Device>(`/v2/devices/${encodeURIComponent(device)}`),
 		{
 			events: ['device_update', 'reconnect']
 		}

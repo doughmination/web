@@ -5,6 +5,7 @@
 <script lang="ts">
 	import Meta from '#lib/components/Meta.svelte';
 	import '#lib/styles/buttons.css';
+	import { mediaBase, apiBase } from '#lib';
 
 	type Button = {
 		img: string;
@@ -14,12 +15,12 @@
 		eager?: boolean;
 	};
 
-	const BUTTON_BASE = 'https://m.doughmination.gay/img/88x31/';
+	const BUTTON_BASE = `${mediaBase}/img/88x31/`;
 
 	const BUTTONS: Button[] = [
 		{ href: 'https://www.monsterenergy.com/', img: 'monster.png', alt: 'MONSTER' },
 		{
-			href: 'https://doughmination.uk',
+			href: apiBase,
 			img: 'doughmination.png',
 			alt: 'Doughmination',
 			eager: true
@@ -95,7 +96,7 @@
 />
 
 <svelte:head>
-	<link rel="preconnect" href="https://m.doughmination.gay" crossorigin="" />
+	<link rel="preconnect" href={mediaBase} crossorigin="" />
 </svelte:head>
 
 <section class="hero">

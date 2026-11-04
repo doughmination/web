@@ -6,6 +6,7 @@
 	import Meta from '#lib/components/Meta.svelte';
 	import '#lib/styles/presence.css';
 	import '#lib/styles/friends.css';
+	import { apiBase, discordCdn } from '#lib';
 	import FriendCard, { type Friend } from '#lib/components/FriendCard.svelte';
 	import {
 		fetchUser,
@@ -48,8 +49,8 @@
 <Meta title="Friends" description="Friends of Clove Twilight, with their live Discord presence." />
 
 <svelte:head>
-	<link rel="preconnect" href="https://doughmination.uk" crossorigin="" />
-	<link rel="preconnect" href="https://cdn.discordapp.com" />
+	<link rel="preconnect" href={apiBase} crossorigin="" />
+	<link rel="preconnect" href={discordCdn} />
 </svelte:head>
 
 <section class="hero">
@@ -76,6 +77,6 @@
 	</div>
 
 	<p class="friends-credit">
-		Presence data is served by <a href="https://doughmination.uk">the Doughmination API</a>.
+		Presence data is served by <a href={apiBase}>the Doughmination API</a>.
 	</p>
 </div>
