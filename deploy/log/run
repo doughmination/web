@@ -1,0 +1,7 @@
+#!/bin/sh
+# runit log service for clove-web: everything the site prints ends up here,
+# timestamped and rotated by svlogd
+LOG_DIR=/var/log/clove-web
+
+mkdir -p "$LOG_DIR"
+exec svlogd -tt "$LOG_DIR"

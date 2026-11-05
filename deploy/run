@@ -11,5 +11,14 @@ export NODE_ENV=production
 # and to build the SSO redirect URI
 export ORIGIN=https://doughmination.gay
 
-# Secrets (SSO client, session secret, guestbook key) live in /srv/clove/web/.env
-exec /home/clove/.nvm/versions/node/v26.11.1/bin/node --env-file-if-exists=.env build/index.js
+# Run as clove rather than root. chpst doesn't change HOME, so set it for Deno's cache
+export HOME=/home/clove
+
+# Secrets (SSO client, session secret, guestbook key) live in /srv/clove/web/.env,
+# which Deno skips if it's missing. Reads are limited to this folder
+exec chpst -u clove /usr/bin/deno run \
+	--allow-net \
+	--allow-env \
+	--allow-read=. \
+	--env-file=.env \
+	build/index.js
