@@ -3,20 +3,21 @@
 -->
 
 <script lang="ts">
+	import type { SVGAttributes } from 'svelte/elements';
+
 	// Simple Icons dropped Java over Oracle's trademark rules, so this mirrors
-	// the package's icon components with the old coffee cup path
-	let { color = 'currentColor', size = 24, title = 'Java', ...rest } = $props();
+	// the `~icons/simple-icons/*` components with the old coffee cup path
+	let props: SVGAttributes<SVGSVGElement> = $props();
 </script>
 
 <svg
 	xmlns="http://www.w3.org/2000/svg"
-	width={size}
-	height={size}
-	fill={color}
+	width="1em"
+	height="1em"
+	fill="currentColor"
 	viewBox="0 0 502.632 502.632"
-	{...rest}
+	{...props}
 >
-	<title>{title}</title>
 	<path
 		d="M240.864,269.894c0,0-28.02-53.992-26.985-93.445c0.755-28.193,64.324-56.062,89.281-96.529 C328.074,39.431,300.054,0,300.054,0s6.234,29.077-10.376,59.147c-16.609,30.113-77.914,47.779-101.749,99.679 S240.864,269.894,240.864,269.894z"
 	/>

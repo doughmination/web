@@ -7,7 +7,9 @@
 	import IcCall from '~icons/ic/outline-call';
 	import IcKey from '~icons/ic/outline-key';
 	import Hamburger from '#lib/components/Hamburger.svelte';
-	import { SiGithub, SiDiscord } from 'simple-icons';
+	import NowPlaying from '#lib/components/NowPlaying.svelte';
+	import SiGithub from '~icons/simple-icons/github';
+	import SiDiscord from '~icons/simple-icons/discord';
 	import '#lib/styles/header.css';
 	import { authUrl, githubUrl, websiteDomain } from '#lib';
 </script>
@@ -18,14 +20,25 @@
 <header>
 	<a class="brand" href="/">
 		<img src="/favicon.svg" alt="Site Favicon" width="32" height="32" />
-		<span>{websiteDomain}</span>
+		<span class="brand-name">{websiteDomain}</span>
 	</a>
 	<nav>
-		<a href={authUrl} target="_blank"><IcKey class="nav-icon" />Apps</a>
-		<a href={githubUrl} target="_blank"><SiGithub class="nav-icon" />GitHub</a>
-		<a href="/contact"><IcCall class="nav-icon" />Contact</a>
-		<a href="/invite"> <SiDiscord class="nav-icon" />Discord Server</a>
-		<a href="/blog"><IcArticle class="nav-icon" />Blog</a>
+		<a href={authUrl} target="_blank" title="Apps"
+			><IcKey class="nav-icon" /><span class="nav-label">Apps</span></a
+		>
+		<a href={githubUrl} target="_blank" title="GitHub"
+			><SiGithub class="nav-icon" /><span class="nav-label">GitHub</span></a
+		>
+		<a href="/contact" title="Contact"
+			><IcCall class="nav-icon" /><span class="nav-label">Contact</span></a
+		>
+		<a href="/invite" title="Discord Server"
+			><SiDiscord class="nav-icon" /><span class="nav-label">Discord Server</span></a
+		>
+		<a href="/blog" title="Blog"
+			><IcArticle class="nav-icon" /><span class="nav-label">Blog</span></a
+		>
 		<Hamburger />
 	</nav>
+	<NowPlaying />
 </header>

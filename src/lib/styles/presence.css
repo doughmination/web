@@ -4,21 +4,7 @@
 
 /* Presence: shared by the Discord and Friends pages */
 
-[data-status='online'] {
-	--status: #3ba55d;
-}
-[data-status='idle'] {
-	--status: #faa81a;
-}
-[data-status='dnd'] {
-	--status: #ed4245;
-}
-[data-status='offline'] {
-	--status: #80848e;
-}
-[data-status='streaming'] {
-	--status: #9b59b6;
-}
+/* Status colours ([data-status]) live in theme.css, since the header uses them too */
 
 .chip {
 	display: inline-flex;

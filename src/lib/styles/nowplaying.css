@@ -1,0 +1,145 @@
+/* src/lib/styles/nowplaying.css
+ * DASL-1.2 — (c) Clove Twilight
+ */
+
+/* Now playing / status pill, hanging just under the hamburger. It's absolutely
+   placed so it never pushes the page down when it appears or goes away */
+
+.now-playing {
+	position: absolute;
+	top: calc(100% - 0.4rem);
+	right: 1.5rem;
+	display: flex;
+	gap: 0.55rem;
+	align-items: center;
+	max-width: min(22rem, calc(100% - 3rem));
+	min-height: 2.25rem;
+	padding: 0.25rem 0.85rem 0.25rem 0.3rem;
+	overflow: hidden;
+	border: 1px solid var(--line);
+	border-radius: 999px;
+	background: rgb(11 10 13 / 72%);
+	backdrop-filter: blur(10px);
+	color: var(--muted);
+	font-size: 0.8rem;
+	line-height: 1.3;
+	text-decoration: none;
+	transition:
+		border-color 0.2s ease,
+		color 0.2s ease;
+}
+
+.now-playing:hover {
+	border-color: rgb(235 69 158 / 45%);
+	color: var(--text);
+}
+
+.np-art {
+	flex: none;
+	border-radius: 50%;
+	object-fit: cover;
+}
+
+.np-text {
+	min-width: 0;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.np-text strong {
+	color: var(--text);
+	font-weight: 600;
+}
+
+.np-muted {
+	color: var(--muted);
+}
+
+/* Status-only version: just a dot, so leave the art's padding to it */
+
+.now-playing[data-status] {
+	padding-left: 0.8rem;
+}
+
+.np-dot {
+	flex: none;
+	width: 0.55rem;
+	height: 0.55rem;
+	border-radius: 50%;
+	background: var(--status);
+	box-shadow: 0 0 0.5rem var(--status);
+}
+
+/* Little bouncing equaliser */
+
+.np-eq {
+	display: inline-flex;
+	flex: none;
+	gap: 2px;
+	align-items: flex-end;
+	height: 0.8rem;
+}
+
+.np-eq i {
+	width: 3px;
+	height: 100%;
+	border-radius: 1px;
+	background: var(--accent);
+	transform-origin: bottom;
+	animation: eq 0.9s ease-in-out infinite alternate;
+}
+
+.np-eq i:nth-child(2) {
+	animation-duration: 0.7s;
+	animation-delay: -0.3s;
+}
+
+.np-eq i:nth-child(3) {
+	animation-duration: 1.1s;
+	animation-delay: -0.6s;
+}
+
+@keyframes eq {
+	from {
+		transform: scaleY(0.25);
+	}
+	to {
+		transform: scaleY(1);
+	}
+}
+
+/* Song progress, as a thin line along the bottom edge */
+
+.np-progress {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	height: 2px;
+	background: var(--accent);
+	transform: scaleX(var(--progress));
+	transform-origin: left;
+	transition: transform 1s linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.np-eq i {
+		animation: none;
+		transform: scaleY(0.6);
+	}
+
+	.np-eq i:nth-child(2) {
+		transform: scaleY(1);
+	}
+
+	.np-progress {
+		transition: none;
+	}
+}
+
+@media print {
+	.now-playing {
+		display: none;
+	}
+}

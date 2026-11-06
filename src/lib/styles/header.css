@@ -36,7 +36,9 @@
 
 header {
 	position: relative;
-	z-index: 2;
+	/* The hamburger drawer lives in here, so the whole header has to stack above
+	   page content (e.g. the z-index 10 tooltips and the homepage status badge) */
+	z-index: 20;
 	display: flex;
 	flex-wrap: wrap;
 	gap: 1rem 1.5rem;
@@ -85,6 +87,59 @@ header nav a:hover {
 	width: 1.2em;
 	height: 1.2em;
 	flex-shrink: 0;
+}
+
+/* Narrow screens: the nav goes icon-only (labels stay for screen readers and
+   the hover title), then the domain name goes too, so the hamburger never
+   gets pushed off the edge */
+
+.nav-label,
+.brand-name {
+	white-space: nowrap;
+}
+
+@media (max-width: 52rem) {
+	header nav {
+		gap: 1.1rem;
+		align-items: center;
+	}
+
+	header nav a {
+		font-size: 1.05rem;
+	}
+
+	.nav-label {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+	}
+}
+
+@media (max-width: 30rem) {
+	header {
+		flex-wrap: nowrap;
+		column-gap: 1rem;
+		padding-inline: 1rem;
+	}
+
+	header nav {
+		gap: 0.85rem;
+	}
+
+	.brand-name {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+	}
+
+	header .now-playing {
+		right: 1rem;
+		max-width: calc(100% - 2rem);
+	}
 }
 
 @media print {

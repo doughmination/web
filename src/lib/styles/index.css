@@ -307,3 +307,38 @@
 .now-battery-low {
 	color: #ed4245;
 }
+
+/* The badge breathes while I'm around: a ring ripples out when online, and a
+   soft glow pulses while streaming */
+
+@media (prefers-reduced-motion: no-preference) {
+	.selfie-status[data-status='online']::after {
+		content: '';
+		position: absolute;
+		inset: -0.35rem;
+		border-radius: 50%;
+		box-shadow: 0 0 0 0 var(--status);
+		animation: status-ripple 2.4s ease-out infinite;
+		pointer-events: none;
+	}
+
+	.selfie-status[data-status='streaming'] {
+		animation: status-glow 2s ease-in-out infinite;
+	}
+}
+
+@keyframes status-ripple {
+	0% {
+		box-shadow: 0 0 0 0 color-mix(in srgb, var(--status) 70%, transparent);
+	}
+	70%,
+	100% {
+		box-shadow: 0 0 0 0.6rem transparent;
+	}
+}
+
+@keyframes status-glow {
+	50% {
+		box-shadow: 0 0 1.1rem 0.2rem color-mix(in srgb, var(--status) 60%, transparent);
+	}
+}

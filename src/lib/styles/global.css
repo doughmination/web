@@ -113,3 +113,39 @@ br {
 		display: none;
 	}
 }
+
+/* Page transitions (started in +layout.svelte): the header and footer stay put
+   while the page content fades out and the new one rises in */
+
+main {
+	view-transition-name: main;
+}
+
+::view-transition-old(main) {
+	animation: page-out 0.15s ease-in both;
+}
+
+::view-transition-new(main) {
+	animation: page-in 0.3s ease-out both;
+}
+
+@keyframes page-out {
+	to {
+		opacity: 0;
+	}
+}
+
+@keyframes page-in {
+	from {
+		opacity: 0;
+		transform: translateY(0.75rem);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	::view-transition-group(*),
+	::view-transition-old(*),
+	::view-transition-new(*) {
+		animation: none !important;
+	}
+}

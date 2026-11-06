@@ -4,7 +4,7 @@
 
 <script lang="ts">
 	import IcSportsEsports from '~icons/ic/outline-sports-esports';
-	import { SiSpotify } from 'simple-icons';
+	import SiSpotify from '~icons/simple-icons/spotify';
 
 	// Decorative: the text next to it always names the app
 	let { source }: { source: 'doughmination' | 'spotify' } = $props();
@@ -12,7 +12,7 @@
 
 <span class="listening-icon" aria-hidden="true">
 	{#if source === 'spotify'}
-		<SiSpotify color="#1db954" title="Spotify" />
+		<SiSpotify style="color: #1db954" />
 	{:else}
 		<IcSportsEsports />
 	{/if}

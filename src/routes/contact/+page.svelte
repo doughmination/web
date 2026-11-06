@@ -7,17 +7,15 @@
 	import IcEmail from '~icons/ic/outline-email';
 	import IcWork from '~icons/ic/outline-work';
 	import Meta from '#lib/components/Meta.svelte';
-	import {
-		SiX,
-		SiDiscord,
-		SiTwitch,
-		SiTiktok,
-		SiYoutube,
-		SiBluesky,
-		SiInstagram,
-		SiReddit,
-		SiTumblr
-	} from 'simple-icons';
+	import SiX from '~icons/simple-icons/x';
+	import SiDiscord from '~icons/simple-icons/discord';
+	import SiTwitch from '~icons/simple-icons/twitch';
+	import SiTiktok from '~icons/simple-icons/tiktok';
+	import SiYoutube from '~icons/simple-icons/youtube';
+	import SiBluesky from '~icons/simple-icons/bluesky';
+	import SiInstagram from '~icons/simple-icons/instagram';
+	import SiReddit from '~icons/simple-icons/reddit';
+	import SiTumblr from '~icons/simple-icons/tumblr';
 	import '#lib/styles/contact.css';
 	import {
 		discordId,

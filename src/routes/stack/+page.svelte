@@ -6,62 +6,65 @@
 	import Meta from '#lib/components/Meta.svelte';
 	import '#lib/styles/stack.css';
 	import { apiBase } from '#lib';
-	import {
-		SiArchlinux,
-		SiArduino,
-		SiBootstrap,
-		SiBun,
-		SiCloudflare,
-		SiCloudflarepages,
-		SiCss,
-		SiDocker,
-		SiEjs,
-		SiElectron,
-		SiEslint,
-		SiExpress,
-		SiFastapi,
-		SiFfmpeg,
-		SiGit,
-		SiGitea,
-		SiGithub,
-		SiGithubactions,
-		SiGnubash,
-		SiGo,
-		SiGradle,
-		SiHtml5,
-		SiInkscape,
-		SiInsomnia,
-		SiJavascript,
-		SiJsonwebtokens,
-		SiKotlin,
-		SiLatex,
-		SiLucide,
-		SiMarkdown,
-		SiMysql,
-		SiNextdotjs,
-		SiNginx,
-		SiNodedotjs,
-		SiNodemon,
-		SiNpm,
-		SiPnpm,
-		SiPostgresql,
-		SiPrettier,
-		SiPython,
-		SiRaspberrypi,
-		SiReact,
-		SiRedis,
-		SiSimpleicons,
-		SiSqlite,
-		SiSvelte,
-		SiTailwindcss,
-		SiTypescript,
-		SiVercel,
-		SiVite,
-		SiVscodium,
-		SiVuedotjs,
-		SiWordpress
-	} from 'simple-icons';
+	import SiArchlinux from '~icons/simple-icons/archlinux';
+	import SiArduino from '~icons/simple-icons/arduino';
+	import SiBootstrap from '~icons/simple-icons/bootstrap';
+	import SiBun from '~icons/simple-icons/bun';
+	import SiClaude from '~icons/simple-icons/claude';
+	import SiCloudflare from '~icons/simple-icons/cloudflare';
+	import SiCloudflarepages from '~icons/simple-icons/cloudflarepages';
+	import SiCss from '~icons/simple-icons/css';
+	import SiDeno from '~icons/simple-icons/deno';
+	import SiDocker from '~icons/simple-icons/docker';
+	import SiEjs from '~icons/simple-icons/ejs';
+	import SiElectron from '~icons/simple-icons/electron';
+	import SiEslint from '~icons/simple-icons/eslint';
+	import SiExpress from '~icons/simple-icons/express';
+	import SiFastapi from '~icons/simple-icons/fastapi';
+	import SiFfmpeg from '~icons/simple-icons/ffmpeg';
+	import SiGit from '~icons/simple-icons/git';
+	import SiGitea from '~icons/simple-icons/gitea';
+	import SiGithub from '~icons/simple-icons/github';
+	import SiGithubactions from '~icons/simple-icons/githubactions';
+	import SiGnubash from '~icons/simple-icons/gnubash';
+	import SiGo from '~icons/simple-icons/go';
+	import SiGradle from '~icons/simple-icons/gradle';
+	import SiHtml5 from '~icons/simple-icons/html5';
+	import SiInkscape from '~icons/simple-icons/inkscape';
+	import SiInsomnia from '~icons/simple-icons/insomnia';
+	import SiJavascript from '~icons/simple-icons/javascript';
+	import SiJsonwebtokens from '~icons/simple-icons/jsonwebtokens';
+	import SiKotlin from '~icons/simple-icons/kotlin';
+	import SiLatex from '~icons/simple-icons/latex';
+	import SiLucide from '~icons/simple-icons/lucide';
+	import SiMarkdown from '~icons/simple-icons/markdown';
+	import SiMysql from '~icons/simple-icons/mysql';
+	import SiNextdotjs from '~icons/simple-icons/nextdotjs';
+	import SiNginx from '~icons/simple-icons/nginx';
+	import SiNodedotjs from '~icons/simple-icons/nodedotjs';
+	import SiNodemon from '~icons/simple-icons/nodemon';
+	import SiNpm from '~icons/simple-icons/npm';
+	import SiOpenai from '~icons/simple-icons/openai';
+	import SiPnpm from '~icons/simple-icons/pnpm';
+	import SiPostgresql from '~icons/simple-icons/postgresql';
+	import SiPrettier from '~icons/simple-icons/prettier';
+	import SiPython from '~icons/simple-icons/python';
+	import SiRaspberrypi from '~icons/simple-icons/raspberrypi';
+	import SiReact from '~icons/simple-icons/react';
+	import SiRedis from '~icons/simple-icons/redis';
+	import SiSimpleicons from '~icons/simple-icons/simpleicons';
+	import SiSqlite from '~icons/simple-icons/sqlite';
+	import SiSvelte from '~icons/simple-icons/svelte';
+	import SiTailwindcss from '~icons/simple-icons/tailwindcss';
+	import SiTypescript from '~icons/simple-icons/typescript';
+	import SiVercel from '~icons/simple-icons/vercel';
+	import SiVite from '~icons/simple-icons/vite';
+	import SiVscodium from '~icons/simple-icons/vscodium';
+	import SiVuedotjs from '~icons/simple-icons/vuedotjs';
+	import SiWordpress from '~icons/simple-icons/wordpress';
 	import SiJavaOracle from '#lib/components/SiJavaOracle.svelte';
+	import type { Component } from 'svelte';
+	import type { SVGAttributes } from 'svelte/elements';
 	import {
 		fetchContributions,
 		level,
@@ -71,10 +74,10 @@
 		type Contributions
 	} from '#lib/scripts/heatmap.ts';
 
-	// Any icon from https://simpleicons.org works: import it as Si + the slug in
-	// PascalCase (e.g. 'nodedotjs' -> SiNodedotjs), and copy its brand hex from
+	// Any icon from https://simpleicons.org works: import it from
+	// '~icons/simple-icons/<slug>' (e.g. 'nodedotjs'), and copy its brand hex from
 	// the same page into `color`
-	type Tool = { name: string; icon: typeof SiGit; color: string };
+	type Tool = { name: string; icon: Component<SVGAttributes<SVGSVGElement>>; color: string };
 	type Group = { name: string; tools: Tool[] };
 
 	// What this website itself is built with, shown above everything else
@@ -84,7 +87,7 @@
 			{ name: 'Svelte', icon: SiSvelte, color: '#FF3E00' },
 			{ name: 'TypeScript', icon: SiTypescript, color: '#3178C6' },
 			{ name: 'Vite', icon: SiVite, color: '#9135FF' },
-			{ name: 'Bun', icon: SiBun, color: '#FBF0DF' },
+			{ name: 'Deno', icon: SiDeno, color: '#ffffff' },
 			{ name: 'Lucide', icon: SiLucide, color: '#F56565' },
 			{ name: 'Simple Icons', icon: SiSimpleicons, color: '#EEEEEE' },
 			{ name: 'Cloudflare Pages', icon: SiCloudflarepages, color: '#F38020' },
@@ -124,10 +127,18 @@
 			]
 		},
 		{
+			name: 'Aritificial Intelligence',
+			tools: [
+				{ name: 'Claude', icon: SiClaude, color: '#D97757' },
+				{ name: 'ChatGPT', icon: SiOpenai, color: '#ffffff' }
+			]
+		},
+		{
 			name: 'Backend & Data',
 			tools: [
 				{ name: 'Node.js', icon: SiNodedotjs, color: '#5FA04E' },
 				{ name: 'Bun', icon: SiBun, color: '#FBF0DF' },
+				{ name: 'Deno', icon: SiDeno, color: '#ffffff' },
 				{ name: 'Express', icon: SiExpress, color: '#ffffff' },
 				{ name: 'FastAPI', icon: SiFastapi, color: '#009688' },
 				{ name: 'JWT', icon: SiJsonwebtokens, color: '#ffffff' },
@@ -219,7 +230,7 @@
 	<ul class="stack-grid">
 		{#each group.tools as tool (tool.name)}
 			<li class="stack-tool" style:--brand={tool.color}>
-				<tool.icon class="stack-icon" title={tool.name} aria-hidden="true" />
+				<tool.icon class="stack-icon" aria-hidden="true" />
 				<span>{tool.name}</span>
 			</li>
 		{/each}

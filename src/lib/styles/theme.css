@@ -16,3 +16,21 @@
 	background: var(--bg);
 	color: var(--text);
 }
+
+/* Discord status colours, for anything with a data-status attribute */
+
+[data-status='online'] {
+	--status: #3ba55d;
+}
+[data-status='idle'] {
+	--status: #faa81a;
+}
+[data-status='dnd'] {
+	--status: #ed4245;
+}
+[data-status='offline'] {
+	--status: #80848e;
+}
+[data-status='streaming'] {
+	--status: #9b59b6;
+}
