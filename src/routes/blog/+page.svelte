@@ -32,6 +32,13 @@
 							<time datetime={post.date}>{fmtPostDate(post.date)}</time>
 							<span aria-hidden="true">·</span>
 							<span>{post.user}</span>
+							{#if post.updated}
+								<span aria-hidden="true">·</span>
+								<span>
+									Updated
+									<time datetime={post.updated}>{fmtPostDate(post.updated)}</time>
+								</span>
+							{/if}
 						</span>
 						<span class="post-card-excerpt">{post.excerpt}</span>
 						<span class="post-tags">

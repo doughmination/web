@@ -180,6 +180,39 @@
 	letter-spacing: -0.02em;
 }
 
+.post-body h2,
+.post-body h3 {
+	scroll-margin-top: 1.5rem;
+}
+
+/* Link icon added next to each heading by headingAnchors.ts */
+.post-body .heading-anchor {
+	display: inline-flex;
+	margin-left: 0.4em;
+	vertical-align: middle;
+	color: var(--muted);
+	font-size: 0.75em;
+	opacity: 0;
+	transition: opacity 0.15s;
+}
+
+.post-body h2:hover .heading-anchor,
+.post-body h3:hover .heading-anchor,
+.post-body .heading-anchor:focus-visible {
+	opacity: 1;
+}
+
+.post-body .heading-anchor:hover {
+	color: var(--accent);
+}
+
+/* Touch screens can't hover, so the icon stays faintly visible there */
+@media (hover: none) {
+	.post-body .heading-anchor {
+		opacity: 0.6;
+	}
+}
+
 .post-body p {
 	margin: 0 0 1.25rem;
 }

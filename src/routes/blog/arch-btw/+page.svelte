@@ -8,8 +8,9 @@
 	export const metadata: PostMeta = {
 		title: 'I Use Arch, BTW (But Artix Is Better)',
 		excerpt:
-			'Ubuntu, Debian, Fedora, EndeavourOS, NixOS, and finally Arch. Why it stuck, and why I think Artix does it even better.',
+			'Ubuntu, Debian, Fedora, EndeavourOS, NixOS, and finally Arch. Why it stuck, why I think Artix does it even better, and how Void Linux snuck up on me.',
 		date: '2026-11-05',
+		updated: '2026-11-08',
 		user: 'Clove',
 		tags: ['Linux', 'Personal', 'Tooling']
 	};
@@ -172,6 +173,81 @@ exec my-app serve</code
 		bit I care about most.
 	</p>
 
+	<h2>Update: I Think I Kinda Fell in Love with Void</h2>
+
+	<p>
+		Okay, so, plot twist number two. Since writing this, I've been experimenting with
+		<a href="https://voidlinux.org" rel="noopener noreferrer" target="_blank">Void Linux</a>. It
+		was only meant to be an experiment. Instead, I've gotten way more attached to it than I
+		expected. In my own words, at the time: "I think I kinda fell in love with Void tho... it just
+		works."
+	</p>
+
+	<p>
+		And that's honestly the biggest thing. Once it's properly configured, Void has been surprisingly
+		straightforward and reliable. It just works.
+	</p>
+
+	<h3>runit, Again</h3>
+
+	<p>
+		If you read the Artix bit above, you already know how I feel about runit. Void uses runit out of
+		the box instead of systemd, so it's the same lightweight, simple setup: services are scripts,
+		and I get direct control over them without a pile of extra complexity on top. It felt like
+		coming home.
+	</p>
+
+	<h3>XBPS</h3>
+
+	<p>
+		Void has its own package manager, XBPS, and I really like it. It's fast, light and fairly
+		straightforward. Between <code>xbps-install</code>, <code>xbps-query</code> and the rest of the
+		<code>xbps-*</code> tools, it's just been a pleasant thing to use.
+	</p>
+
+	<h3>Building It by Hand</h3>
+
+	<p>
+		Remember how I said I don't know how to do a manual Artix install yet? Well, with Void I've been
+		doing everything by hand, and I genuinely love it. No graphical installer holding my hand. I
+		start with a minimal base and build exactly the system I want, without packages or services I
+		didn't ask for.
+	</p>
+
+	<p>
+		That means I've been manually setting up partitions, filesystems, services, networking,
+		bootloaders, kernels and initramfs images. Turns out that's an amazing way to learn how Linux
+		actually works under the hood, and Void has been a great distro to learn and experiment on.
+	</p>
+
+	<p>
+		My current setup is a multi-boot with Void alongside Arch. Limine is the bootloader, each
+		distro gets its own root partition, and they both share one <code>/home</code> partition. So I
+		can hop between them and still have all my files and configs wherever I go. It's a little
+		chaotic, and I love it.
+	</p>
+
+	<p>
+		On the desktop side, I've been playing with SwayFX, including some custom configs. Void doesn't feel like it's trying to tell me how to use my computer. It's
+		lightweight, it's uncluttered, and I get to pick the services, the apps and what my desktop
+		looks and feels like.
+	</p>
+
+	<h3>It's Not Flawless</h3>
+
+	<p>
+		I'm not going to pretend it's all been smooth. I've had DNS issues, networking problems,
+		services that wouldn't behave, and yes, a kernel panic. But honestly? Getting all of that
+		working has been really satisfying, and I've learned a lot from it. Breaking things and fixing
+		them is half the fun.
+	</p>
+
+	<p>
+		None of this means Void is objectively better than Arch, Artix or anything else. It's just the
+		one that's clicked for me right now. Who knows where I'll be next month, but right now, Void has
+		my heart.
+	</p>
+
 	<h2>So, Which Distro Should You Use?</h2>
 
 	<p>Whichever one has trade-offs you're happy to live with. Roughly:</p>
@@ -194,6 +270,10 @@ exec my-app serve</code
 		</li>
 		<li>
 			<strong>Artix</strong> if you want all of that, without systemd.
+		</li>
+		<li>
+			<strong>Void</strong> if you want runit out of the box, a minimal base, and you actually enjoy
+			building your system by hand.
 		</li>
 	</ul>
 

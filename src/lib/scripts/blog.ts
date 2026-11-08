@@ -9,6 +9,8 @@ export interface PostMeta {
 	excerpt: string;
 	// YYYY-MM-DD
 	date: string;
+	// YYYY-MM-DD, set when a post is edited after it went up
+	updated?: string;
 	user: string;
 	tags: string[];
 	// Content warning shown before the post, which stays hidden until the reader chooses to continue

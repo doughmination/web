@@ -10,6 +10,7 @@
 	import IcWarningAmber from '~icons/ic/outline-warning-amber';
 	import IcInfo from '~icons/ic/outline-info';
 	import { fmtPostDate, type PostMeta } from '#lib/scripts/blog.ts';
+	import { headingAnchors } from '#lib/scripts/headingAnchors.ts';
 	import '#lib/styles/blog.css';
 
 	let { meta, children }: { meta: PostMeta; children: Snippet } = $props();
@@ -30,6 +31,13 @@
 			<time datetime={meta.date}>{fmtPostDate(meta.date)}</time>
 			<span aria-hidden="true">·</span>
 			<span>{meta.user}</span>
+			{#if meta.updated}
+				<span aria-hidden="true">·</span>
+				<span>
+					Last updated
+					<time datetime={meta.updated}>{fmtPostDate(meta.updated)}</time>
+				</span>
+			{/if}
 		</p>
 		{#if meta.tags.length}
 			<ul class="post-tags">
@@ -64,7 +72,7 @@
 			</div>
 		{/if}
 
-		<article class="post-body">
+		<article class="post-body" use:headingAnchors>
 			{@render children()}
 		</article>
 	{/if}
