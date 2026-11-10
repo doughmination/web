@@ -8,6 +8,7 @@
 	import IcKey from '~icons/ic/outline-key';
 	import Hamburger from '#lib/components/Hamburger.svelte';
 	import NowPlaying from '#lib/components/NowPlaying.svelte';
+	import SearchPalette from '#lib/components/SearchPalette.svelte';
 	import SiGithub from '~icons/simple-icons/github';
 	import SiDiscord from '~icons/simple-icons/discord';
 	import '#lib/styles/header.css';
@@ -38,6 +39,7 @@
 		<a href="/blog" title="Blog"
 			><IcArticle class="nav-icon" /><span class="nav-label">Blog</span></a
 		>
+		<SearchPalette />
 		<Hamburger />
 	</nav>
 	<NowPlaying />

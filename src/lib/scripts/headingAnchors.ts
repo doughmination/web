@@ -5,15 +5,7 @@
 import { mount, unmount } from 'svelte';
 import IcLink from '~icons/ic/outline-link';
 
-// "Update: I Think I Kinda Fell…" → "update-i-think-i-kinda-fell"
-function slugify(text: string): string {
-	return text
-		.toLowerCase()
-		.normalize('NFKD')
-		.replace(/[\u0300-\u036f]/g, '')
-		.replace(/[^a-z0-9]+/g, '-')
-		.replace(/^-+|-+$/g, '');
-}
+import { slugify } from '#lib/scripts/slugify.ts';
 
 // Gives each h2/h3 in a post an id and a hover link to it, so sections can be shared
 export function headingAnchors(container: HTMLElement) {
