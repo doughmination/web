@@ -12,7 +12,6 @@ import {
 	youtubeUrl
 } from '#lib';
 import type { PostMeta } from '#lib/scripts/blog.ts';
-import { PROJECT_GROUPS } from '#lib/scripts/projects.ts';
 import type { SearchItem } from '#lib/scripts/search.ts';
 import { slugify } from '#lib/scripts/slugify.ts';
 
@@ -144,18 +143,6 @@ function postItems(): SearchItem[] {
 	return items;
 }
 
-function projectItems(): SearchItem[] {
-	return PROJECT_GROUPS.flatMap((group) =>
-		group.projects.map((project) => ({
-			kind: 'project' as const,
-			title: project.title,
-			url: project.href ?? project.live ?? '/projects',
-			description: project.bio,
-			parent: group.heading
-		}))
-	);
-}
-
 const LINKS: SearchItem[] = [
 	{
 		kind: 'link',
@@ -205,7 +192,7 @@ const LINKS: SearchItem[] = [
 ];
 
 export function GET() {
-	const items = [...pageItems(), ...postItems(), ...projectItems(), ...LINKS];
+	const items = [...pageItems(), ...postItems(), ...LINKS];
 
 	return new Response(JSON.stringify(items), {
 		headers: {
