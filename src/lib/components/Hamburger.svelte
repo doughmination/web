@@ -20,7 +20,6 @@
 			{ href: '/specs', label: 'Specs' },
 			{ href: '/projects', label: 'Projects' },
 			{ href: '/discord', label: 'Discord' },
-			{ href: '/music', label: 'Music' },
 			{ href: '/friends', label: 'Friends' },
 			{ href: '/88x31', label: '88x31' },
 			{ href: '/guestbook', label: 'Guestbook' },

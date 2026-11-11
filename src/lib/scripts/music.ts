@@ -2,24 +2,11 @@
  * DASL-1.2 — (c) Clove Twilight
  */
 
-// Music page: Last.fm scrobbles, LRCLIB lyrics and TheAudioDB artist images
+// Live track from Discord presence and its LRCLIB lyrics
 
 import { pickListening, type Presence } from '#lib/scripts/discord.ts';
-import { cached } from '#lib/scripts/cache.ts';
 
-import {
-	lfmApi,
-	lfmUser,
-	lmfKey,
-	lfmPlaceholder,
-	lrcLibHosts,
-	tadbApi,
-	websiteDomain,
-	websiteUrl
-} from '#lib';
-
-const ART_CACHE_PREFIX = 'dough:artimg:';
-const DAY = 86_400_000;
+import { lrcLibHosts, websiteDomain, websiteUrl } from '#lib';
 
 export interface Track {
 	song: string;
@@ -31,8 +18,8 @@ export interface Track {
 	end: number | null;
 	duration: number;
 	live: boolean;
-	// Which app a live track is playing in; null for Last.fm scrobbles
-	source: 'doughmination' | 'spotify' | null;
+	// Which app the track is playing in
+	source: 'doughmination' | 'spotify';
 }
 
 export interface LyricWord {
@@ -55,97 +42,6 @@ export type Lyrics =
 	| { kind: 'synced'; lines: LyricLine[] }
 	| { kind: 'plain'; lines: string[] };
 
-export interface Scrobble {
-	name: string;
-	artist: string;
-	album: string;
-	url: string;
-	art: string;
-	playing: boolean;
-	uts: number | null;
-}
-
-export interface TopArtist {
-	name: string;
-	url: string;
-	plays: number;
-}
-
-// ---- Last.fm --------------------------------------------------------------
-
-interface LfmImage {
-	'#text'?: string;
-}
-
-interface LfmTrack {
-	name: string;
-	url?: string;
-	artist?: { '#text'?: string; name?: string };
-	album?: { '#text'?: string };
-	image?: LfmImage[];
-	date?: { uts: string };
-	'@attr'?: { nowplaying?: string };
-}
-
-async function lastfm<T>(method: string, params: Record<string, string> = {}): Promise<T> {
-	const qs = new URLSearchParams({
-		method,
-		user: lfmUser,
-		api_key: lmfKey,
-		format: 'json',
-		...params
-	});
-	const res = await fetch(`${lfmApi}?${qs}`);
-	if (!res.ok) throw new Error(`Last.fm ${res.status}`);
-	return (await res.json()) as T;
-}
-
-function lfmArt(images: LfmImage[] | undefined): string {
-	const url = images?.at(-1)?.['#text'] ?? '';
-	return url.includes(lfmPlaceholder) ? '' : url;
-}
-
-// Last.fm sends a bare object instead of an array when there's only one item
-function asArray<T>(x: T | T[] | undefined): T[] {
-	return x === undefined ? [] : Array.isArray(x) ? x : [x];
-}
-
-// Scrobbles change as songs end, so these are only kept briefly
-export function fetchRecent(limit: number): Promise<Scrobble[]> {
-	return cached(`lastfm:recent:${limit}`, () => loadRecent(limit), { ttl: 30_000 });
-}
-
-async function loadRecent(limit: number): Promise<Scrobble[]> {
-	const data = await lastfm<{ recenttracks?: { track?: LfmTrack | LfmTrack[] } }>(
-		'user.getrecenttracks',
-		{ limit: String(limit) }
-	);
-	return asArray(data.recenttracks?.track).map((t) => ({
-		name: t.name,
-		artist: t.artist?.['#text'] || t.artist?.name || '',
-		album: t.album?.['#text'] ?? '',
-		url: t.url ?? '',
-		art: lfmArt(t.image),
-		playing: t['@attr']?.nowplaying === 'true',
-		uts: t.date ? Number(t.date.uts) : null
-	}));
-}
-
-export function fetchTopArtists(limit: number): Promise<TopArtist[]> {
-	return cached(`lastfm:top:${limit}`, () => loadTopArtists(limit), { ttl: 30 * 60_000 });
-}
-
-async function loadTopArtists(limit: number): Promise<TopArtist[]> {
-	const data = await lastfm<{
-		topartists?: { artist?: { name: string; url: string; playcount: string }[] };
-	}>('user.gettopartists', { period: '7day', limit: String(limit) });
-	return (data.topartists?.artist ?? []).map((a) => ({
-		name: a.name,
-		url: a.url,
-		plays: Number(a.playcount)
-	}));
-}
-
 // ---- Tracks ---------------------------------------------------------------
 
 export function trackFromPresence(p: Presence | null): Track | null {
@@ -165,21 +61,6 @@ export function trackFromPresence(p: Presence | null): Track | null {
 		duration: start && end ? end - start : 0,
 		live: true,
 		source: listening.source
-	};
-}
-
-export function trackFromScrobble(s: Scrobble): Track {
-	return {
-		song: s.name,
-		artist: s.artist,
-		album: s.album,
-		art: s.art,
-		url: s.url,
-		start: null,
-		end: null,
-		duration: 0,
-		live: false,
-		source: null
 	};
 }
 
@@ -379,36 +260,78 @@ export async function fetchLyrics(track: Track): Promise<Lyrics> {
 	return lyrics;
 }
 
-// ---- Artist images --------------------------------------------------------
+// ---- Album art tint -------------------------------------------------------
 
-// Cached in localStorage: hits for 30 days, misses for 3
-export async function artistImage(name: string): Promise<string> {
-	const key = ART_CACHE_PREFIX + name.toLowerCase();
+const TINT_SIZE = 24;
+const HUE_BUCKETS = 12;
+const tintCache = new Map<string, string | null>();
+
+function loadForCanvas(url: string): Promise<HTMLImageElement> {
+	return new Promise((resolve, reject) => {
+		const img = new Image();
+		// Without CORS the canvas can't be read back, so the load fails instead
+		img.crossOrigin = 'anonymous';
+		img.onload = () => resolve(img);
+		img.onerror = reject;
+		img.src = url;
+	});
+}
+
+// The cover's most vivid hue, at a fixed lightness so it reads on the dark page.
+// Null when the cover is close to greyscale or its host won't allow reading it
+export async function artTint(url: string): Promise<string | null> {
+	const hit = tintCache.get(url);
+	if (hit !== undefined) return hit;
+	let tint: string | null = null;
 	try {
-		const hit = JSON.parse(localStorage.getItem(key) ?? 'null') as {
-			url: string;
-			ts: number;
-		} | null;
-		if (hit && Date.now() - hit.ts < (hit.url ? 30 : 3) * DAY) return hit.url;
+		tint = vividHue(await loadForCanvas(url));
 	} catch {
-		// Storage unavailable, fetch it fresh
+		// Keep the site's own accent
 	}
-	let url = '';
-	try {
-		const res = await fetch(`${tadbApi}/search.php?s=${encodeURIComponent(name)}`);
-		if (res.ok) {
-			const data = (await res.json()) as { artists?: { strArtistThumb?: string }[] | null };
-			url = data.artists?.[0]?.strArtistThumb ?? '';
-		}
-	} catch {
-		// Leave the placeholder in place
+	tintCache.set(url, tint);
+	return tint;
+}
+
+function vividHue(img: HTMLImageElement): string | null {
+	const canvas = document.createElement('canvas');
+	canvas.width = TINT_SIZE;
+	canvas.height = TINT_SIZE;
+	const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
+	ctx.drawImage(img, 0, 0, TINT_SIZE, TINT_SIZE);
+	const pixels = ctx.getImageData(0, 0, TINT_SIZE, TINT_SIZE).data;
+
+	// Colourfulness per slice of the hue wheel, with the hue kept as a vector
+	// so reds either side of 0° average properly
+	const weight = new Array<number>(HUE_BUCKETS).fill(0);
+	const sumX = new Array<number>(HUE_BUCKETS).fill(0);
+	const sumY = new Array<number>(HUE_BUCKETS).fill(0);
+
+	for (let i = 0; i < pixels.length; i += 4) {
+		const red = pixels[i] / 255;
+		const green = pixels[i + 1] / 255;
+		const blue = pixels[i + 2] / 255;
+		const max = Math.max(red, green, blue);
+		const chroma = max - Math.min(red, green, blue);
+		if (chroma < 0.08) continue;
+
+		let hue: number;
+		if (max === red) hue = ((green - blue) / chroma + 6) % 6;
+		else if (max === green) hue = (blue - red) / chroma + 2;
+		else hue = (red - green) / chroma + 4;
+
+		const bucket = Math.floor((hue / 6) * HUE_BUCKETS) % HUE_BUCKETS;
+		const angle = (hue / 6) * 2 * Math.PI;
+		weight[bucket] += chroma;
+		sumX[bucket] += Math.cos(angle) * chroma;
+		sumY[bucket] += Math.sin(angle) * chroma;
 	}
-	try {
-		localStorage.setItem(key, JSON.stringify({ url, ts: Date.now() }));
-	} catch {
-		// Storage unavailable
-	}
-	return url;
+
+	const best = weight.indexOf(Math.max(...weight));
+	// Too little colour to call it a tint
+	if (weight[best] / (TINT_SIZE * TINT_SIZE) < 0.02) return null;
+
+	const degrees = (Math.atan2(sumY[best], sumX[best]) * 180) / Math.PI;
+	return `hsl(${Math.round((degrees + 360) % 360)} 75% 68%)`;
 }
 
 // ---- Formatting -----------------------------------------------------------

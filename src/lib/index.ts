@@ -46,14 +46,4 @@ export const youtubeUrl = 'https://www.youtube.com/@CloveTwiGaming';
 
 // Music
 
-export const lfmApi = 'https://ws.audioscrobbler.com/2.0/';
-
-export const lfmUser = 'Real_AlexTLM';
-
-export const lmfKey = '768e8bd0d366f4d6c7874740ca6610ad';
-
-export const lfmPlaceholder = '2a96cbd8b46e442fc41c2b86b821562f';
-
 export const lrcLibHosts = [`https://lyrics.${websiteDomain}`, 'https://lrclib.net'];
-
-export const tadbApi = 'https://www.theaudiodb.com/api/v1/json/123';

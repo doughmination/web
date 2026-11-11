@@ -3,66 +3,86 @@
  */
 
 /* Now playing / status pill, hanging just under the hamburger. It's absolutely
-   placed so it never pushes the page down when it appears or goes away */
+   placed so it never pushes the page down when it appears or goes away.
+   --accent is swapped for a colour from the album cover while a song plays */
 
 .now-playing {
 	position: absolute;
 	top: calc(100% - 0.4rem);
 	right: 1.5rem;
 	display: flex;
-	gap: 0.55rem;
-	align-items: center;
 	max-width: min(22rem, calc(100% - 3rem));
 	min-height: 2.25rem;
-	padding: 0.25rem 0.85rem 0.25rem 0.3rem;
 	overflow: hidden;
-	border: 1px solid var(--line);
+	border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--line));
 	border-radius: 999px;
-	background: rgb(11 10 13 / 72%);
+	background: color-mix(in srgb, var(--accent) 7%, rgb(11 10 13 / 72%));
 	backdrop-filter: blur(10px);
 	color: var(--muted);
 	font-size: 0.8rem;
 	line-height: 1.3;
-	text-decoration: none;
 	transition:
 		border-color 0.2s ease,
 		color 0.2s ease;
 }
 
 .now-playing:hover {
-	border-color: rgb(235 69 158 / 45%);
+	border-color: color-mix(in srgb, var(--accent) 55%, transparent);
 	color: var(--text);
 }
 
-.np-art {
+/* The whole pill is the link, apart from the hide button on its corner */
+
+.pill-link,
+.pill-link:hover {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	justify-content: center;
+	min-width: 0;
+	padding: 0.25rem 0.5rem 0.25rem 0.3rem;
+	color: inherit;
+	text-decoration: none;
+}
+
+.pill-row {
+	display: flex;
+	gap: 0.55rem;
+	align-items: center;
+	min-width: 0;
+	/* Room for the hide button */
+	padding-right: 1.6rem;
+}
+
+.pill-art {
 	flex: none;
 	border-radius: 50%;
 	object-fit: cover;
 }
 
-.np-text {
+.pill-text {
 	min-width: 0;
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }
 
-.np-text strong {
+.pill-text strong {
 	color: var(--text);
 	font-weight: 600;
 }
 
-.np-muted {
+.pill-muted {
 	color: var(--muted);
 }
 
 /* Status-only version: just a dot, so leave the art's padding to it */
 
-.now-playing[data-status] {
+.now-playing[data-status] .pill-link {
 	padding-left: 0.8rem;
 }
 
-.np-dot {
+.pill-dot {
 	flex: none;
 	width: 0.55rem;
 	height: 0.55rem;
@@ -71,9 +91,122 @@
 	box-shadow: 0 0 0.5rem var(--status);
 }
 
+/* Hide button, pinned to the top row so it stays put when a lyric line
+   makes the pill taller */
+
+.pill-hide {
+	position: absolute;
+	top: 0;
+	right: 0.3rem;
+	display: grid;
+	place-items: center;
+	width: 1.75rem;
+	height: 2.25rem;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: var(--muted);
+	font-size: 0.95rem;
+	cursor: pointer;
+}
+
+.pill-hide:hover {
+	color: var(--text);
+}
+
+/* The pill clips its overflow, so focus rings sit just inside the edge */
+
+.pill-link:focus-visible,
+.pill-hide:focus-visible,
+.pill-collapsed:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: -3px;
+	border-radius: 999px;
+}
+
+/* Tucked away: a small round button that brings it back */
+
+.pill-collapsed {
+	place-items: center;
+	display: grid;
+	width: 2.25rem;
+	height: 2.25rem;
+	padding: 0;
+	font-size: 1.05rem;
+	cursor: pointer;
+}
+
+/* A song gets a small card rather than a pill: the song on top, its current
+   lyric line underneath. Width and height are both fixed, so it never
+   resizes as lines change or when a song has no lyrics to follow */
+
+.pill-song {
+	width: 22rem;
+	border-radius: 1.1rem;
+}
+
+.pill-song .pill-link {
+	padding-bottom: 0.5rem;
+}
+
+/* The card is wider than a short title, so the equaliser sits at the far end */
+
+.pill-song .pill-eq {
+	margin-left: auto;
+}
+
+.pill-lyric {
+	display: grid;
+	height: 2.6em;
+	margin-top: 0.3rem;
+	padding: 0 0.35rem 0 0.5rem;
+	overflow: hidden;
+	color: var(--text);
+	font-size: 0.85rem;
+	font-style: italic;
+	font-weight: 500;
+}
+
+/* Two lines at most; anything longer is cut with an ellipsis */
+
+.pill-lyric-line {
+	display: -webkit-box;
+	grid-area: 1 / 1;
+	align-self: center;
+	min-width: 0;
+	overflow: hidden;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+	text-wrap: balance;
+}
+
+.pill-lyric-gap {
+	color: var(--accent);
+	font-style: normal;
+}
+
+.pill-lyric-note {
+	color: var(--muted);
+}
+
+/* Narrow screens: the card spans the page, so the lyric stays on one line to
+   keep it inside the hero's top padding, clear of the heading below */
+
+@media (max-width: 40rem) {
+	.pill-lyric {
+		height: 1.3em;
+	}
+
+	.pill-lyric-line {
+		-webkit-line-clamp: 1;
+		line-clamp: 1;
+	}
+}
+
 /* Little bouncing equaliser */
 
-.np-eq {
+.pill-eq {
 	display: inline-flex;
 	flex: none;
 	gap: 2px;
@@ -81,7 +214,7 @@
 	height: 0.8rem;
 }
 
-.np-eq i {
+.pill-eq i {
 	width: 3px;
 	height: 100%;
 	border-radius: 1px;
@@ -90,12 +223,12 @@
 	animation: eq 0.9s ease-in-out infinite alternate;
 }
 
-.np-eq i:nth-child(2) {
+.pill-eq i:nth-child(2) {
 	animation-duration: 0.7s;
 	animation-delay: -0.3s;
 }
 
-.np-eq i:nth-child(3) {
+.pill-eq i:nth-child(3) {
 	animation-duration: 1.1s;
 	animation-delay: -0.6s;
 }
@@ -111,7 +244,7 @@
 
 /* Song progress, as a thin line along the bottom edge */
 
-.np-progress {
+.pill-progress {
 	position: absolute;
 	right: 0;
 	bottom: 0;
@@ -121,19 +254,20 @@
 	transform: scaleX(var(--progress));
 	transform-origin: left;
 	transition: transform 1s linear;
+	pointer-events: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.np-eq i {
+	.pill-eq i {
 		animation: none;
 		transform: scaleY(0.6);
 	}
 
-	.np-eq i:nth-child(2) {
+	.pill-eq i:nth-child(2) {
 		transform: scaleY(1);
 	}
 
-	.np-progress {
+	.pill-progress {
 		transition: none;
 	}
 }

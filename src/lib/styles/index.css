@@ -217,56 +217,6 @@
 	}
 }
 
-/* Current lyric line, hung off the music pill by an accent bar so it reads
-   as part of the same thing. Lines share one grid cell so the outgoing and
-   incoming lines can overlap while they fly */
-
-.now-lyric {
-	display: flex;
-	flex-direction: column;
-	gap: 0.35rem;
-	margin: 0.75rem 0 0 1rem;
-	padding: 0.2rem 0 0.2rem 1rem;
-	border-left: 3px solid var(--accent);
-	color: var(--text);
-	text-decoration: none;
-}
-
-.now-lyric:hover {
-	color: #fff;
-}
-
-.now-lyric-label {
-	display: inline-flex;
-	gap: 0.4rem;
-	align-items: center;
-	color: var(--accent);
-	font-size: 0.7rem;
-	font-weight: 600;
-	letter-spacing: 0.14em;
-	text-transform: uppercase;
-}
-
-.now-lyric-stage {
-	display: grid;
-	min-height: 2.6em;
-	overflow: hidden;
-	font-size: clamp(1.05rem, 2.5vw, 1.35rem);
-	font-style: italic;
-	font-weight: 500;
-}
-
-.now-lyric-line {
-	grid-area: 1 / 1;
-	align-self: center;
-	text-wrap: balance;
-}
-
-.now-lyric-gap {
-	color: var(--accent);
-	font-style: normal;
-}
-
 /* Fronting and phone pills. Their contents are one centred flex row so the
    avatars and icons line up with the text instead of shifting its baseline */
 

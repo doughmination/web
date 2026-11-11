@@ -9,27 +9,14 @@
 	import IcBatteryFull from '~icons/ic/outline-battery-full';
 	import IcBatteryUnknown from '~icons/ic/outline-battery-unknown';
 	import IcFavorite from '~icons/ic/outline-favorite';
-	import IcMusicNote from '~icons/ic/outline-music-note';
 	import IcPeople from '~icons/ic/outline-people';
 	import IcSmartphone from '~icons/ic/outline-smartphone';
 	import Meta from '#lib/components/Meta.svelte';
 	import '#lib/styles/index.css';
 	import '#lib/styles/presence.css';
-	import { untrack } from 'svelte';
-	import { fly } from 'svelte/transition';
-	import ListeningIcon from '#lib/components/ListeningIcon.svelte';
-	import LyricWords from '#lib/components/LyricWords.svelte';
 	import SelfieDust from '#lib/components/SelfieDust.svelte';
-	import { STATUS_LABEL, clamp, subscribePresence, type Presence } from '#lib/scripts/discord.ts';
-	import {
-		fetchLyrics,
-		fetchRecent,
-		timeAgo,
-		trackFromPresence,
-		trackKey,
-		type Lyrics,
-		type Scrobble
-	} from '#lib/scripts/music.ts';
+	import { STATUS_LABEL, subscribePresence, type Presence } from '#lib/scripts/discord.ts';
+	import { timeAgo } from '#lib/scripts/music.ts';
 	import {
 		fetchDevice,
 		fetchFronters,
@@ -38,30 +25,19 @@
 		type Member
 	} from '#lib/scripts/plural.ts';
 
-	import { discordId, lrcLibHosts } from '#lib';
+	import { discordId } from '#lib';
 
 	const PHONE = 'S26';
 
 	let presence = $state<Presence | null>(null);
-	let lastPlayed = $state<Scrobble | null>(null);
 	let now = $state(Date.now());
-	let lyrics = $state<Lyrics | null>(null);
 	let fronters = $state<Member[]>([]);
 	let phone = $state<Device | null>(null);
 
-	let reduceMotion = $state(false);
 	// Hover, keyboard focus or a tap on phones swaps to the real selfie
 	let revealed = $state(false);
-	let lyricsRequest = 0;
 
 	$effect(() => {
-		reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-		fetchRecent(1)
-			.then(([last]) => (lastPlayed = last ?? null))
-			.catch(() => {
-				// The strip just leaves the music part out
-			});
 		// Fronting and phone pills are left out if these fail
 		const loadFronters = () =>
 			fetchFronters()
@@ -91,42 +67,7 @@
 		};
 	});
 
-	const live = $derived(trackFromPresence(presence));
 	const status = $derived(presence ? (presence.streaming ? 'streaming' : presence.status) : null);
-	const key = $derived(trackKey(live));
-
-	// Only reload lyrics when the song itself changes, not on every presence update
-	$effect(() => {
-		const request = ++lyricsRequest;
-		const current = untrack(() => live);
-		lyrics = null;
-		if (!key || !current) return;
-		fetchLyrics(current).then((l) => {
-			if (request === lyricsRequest) lyrics = l;
-		});
-	});
-
-	const synced = $derived(lyrics?.kind === 'synced' && live?.start && live.end ? lyrics : null);
-
-	// Tick fast only while there's a line to follow, faster still for word-by-word lyrics
-	$effect(() => {
-		if (!synced) return;
-		const ms = synced.lines.some((l) => l.words) ? 100 : 250;
-		const tick = setInterval(() => (now = Date.now()), ms);
-		return () => clearInterval(tick);
-	});
-
-	const position = $derived(live?.start ? clamp(now - live.start, 0, live.duration) : 0);
-
-	const activeLine = $derived.by(() => {
-		if (!synced || !live?.start) return -1;
-		const at = position;
-		return synced.lines.findLastIndex((line) => line.t <= at);
-	});
-
-	const line = $derived(synced && activeLine >= 0 ? synced.lines[activeLine] : null);
-	const lineText = $derived(line?.text ?? '');
-	const flyMs = $derived(reduceMotion ? 0 : 450);
 
 	const BatteryIcon = $derived.by(() => {
 		const level = phone?.level;
@@ -142,10 +83,6 @@
 	title="Clove Twilight"
 	description="Clove Twilight, an AI-neutral software developer and music enthusiast. Projects, languages, live Discord presence and more."
 />
-
-<svelte:head>
-	<link rel="preconnect" href={lrcLibHosts[0]} crossorigin="" />
-</svelte:head>
 
 <section class="hero">
 	<div class="wrap">
@@ -209,22 +146,6 @@
 			</figure>
 		</div>
 		<p class="now">
-			{#if live?.source}
-				<a class="now-item" href="/music">
-					<ListeningIcon source={live.source} />
-					<span
-						>Listening to <strong>{live.song}</strong>{#if live.artist}&nbsp;— {live.artist}{/if}</span
-					>
-				</a>
-			{:else if lastPlayed}
-				<a class="now-item" href="/music">
-					<span class="now-icon" aria-hidden="true"><IcMusicNote /></span>
-					<span>
-						Last played <strong>{lastPlayed.name}</strong>{#if lastPlayed.artist}&nbsp;— {lastPlayed.artist}{/if}
-						{#if lastPlayed.uts}<span class="now-muted">· {timeAgo(lastPlayed.uts, now)}</span>{/if}
-					</span>
-				</a>
-			{/if}
 			{#if fronters.length}
 				<span class="now-item" title="Currently fronting">
 					<span class="now-icon" aria-hidden="true"><IcPeople /></span>
@@ -274,25 +195,5 @@
 				<span>In a relationship with <strong>Aria</strong></span>
 			</a>
 		</p>
-		{#if synced}
-			<a class="now-lyric" href="/music">
-				<span class="now-lyric-label">
-					<span class="now-icon" aria-hidden="true"><IcMusicNote /></span>
-					Lyrics
-				</span>
-				<span class="now-lyric-stage">
-					{#key activeLine}
-						<span
-							class="now-lyric-line"
-							class:now-lyric-gap={!lineText}
-							in:fly={{ y: 14, duration: flyMs, delay: flyMs / 3 }}
-							out:fly={{ y: -14, duration: flyMs }}
-							>{#if line?.words}<LyricWords words={line.words} at={position} />{:else}{lineText ||
-									'♪'}{/if}</span
-						>
-					{/key}
-				</span>
-			</a>
-		{/if}
 	</div>
 </section>
