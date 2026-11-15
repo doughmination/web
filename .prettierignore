@@ -10,3 +10,6 @@ bun.lockb
 
 # Keeps single-quoted strings with escaped apostrophes
 src/routes/languages/+page.svelte
+
+# Build output
+/.deno-deploy

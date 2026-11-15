@@ -2,19 +2,21 @@
   "version": "5",
   "specifiers": {
     "jsr:@deno/installer-shell-setup@*": "0.3.4",
+    "npm:@deno/svelte-adapter@~0.2.2": "0.2.2_@sveltejs+kit@3.1.1",
     "npm:@eslint/js@^10.0.1": "10.0.1_eslint@10.14.0",
     "npm:@giscus/svelte@^3.1.0": "3.1.0_svelte@5.57.3",
     "npm:@iconify-json/ic@^1.2.4": "1.2.4",
     "npm:@iconify-json/simple-icons@^1.2.101": "1.2.101",
-    "npm:@sveltejs/adapter-node@^6.0.1": "6.0.1_@sveltejs+kit@3.1.1_@sveltejs+vite-plugin-svelte@7.3.1_@types+node@24.19.2_svelte@5.57.3_typescript@6.0.3_vite@8.3.6_yaml@2.9.1",
     "npm:@sveltejs/kit@^3.1.1": "3.1.1_@sveltejs+vite-plugin-svelte@7.3.1_svelte@5.57.3_typescript@6.0.3_vite@8.3.6_@types+node@24.19.2_yaml@2.9.1",
     "npm:@sveltejs/vite-plugin-svelte@^7.3.1": "7.3.1_svelte@5.57.3_vite@8.3.6_@types+node@24.19.2_yaml@2.9.1",
     "npm:@types/node@^24.19.2": "24.19.2",
     "npm:eslint-config-prettier@^10.1.8": "10.1.8_eslint@10.14.0",
     "npm:eslint-plugin-svelte@^3.24.0": "3.24.0_eslint@10.14.0_svelte@5.57.3",
+    "npm:eslint@*": "10.14.0",
     "npm:eslint@^10.14.0": "10.14.0",
     "npm:globals@^17.14.0": "17.14.0",
     "npm:prettier-plugin-svelte@^4.1.1": "4.1.1_prettier@3.9.10_svelte@5.57.3",
+    "npm:prettier@*": "3.9.10",
     "npm:prettier@^3.9.10": "3.9.10",
     "npm:svelte-check@^4.7.8": "4.7.8_svelte@5.57.3_typescript@6.0.3",
     "npm:svelte@^5.57.3": "5.57.3",
@@ -58,6 +60,19 @@
       "dependencies": [
         "hashery",
         "keyv"
+      ]
+    },
+    "@deno/experimental-route-config@0.0.5": {
+      "integrity": "sha512-0PN4qij3sC3Qm8WbiOBGlOQz8WtB0AENGkzsTHOYyPenf40iW7OGFid8QT3L8lGApnz3t6ufET0c2XgagV8Jjw==",
+      "dependencies": [
+        "urlpattern-polyfill"
+      ]
+    },
+    "@deno/svelte-adapter@0.2.2_@sveltejs+kit@3.1.1": {
+      "integrity": "sha512-gskRCtFrgQSFvsMNqIHOsYNu1dRTs/jnMte9RYA+mVfu2Yh+yPv+mFh8F4BZBCRs/jyB35VN3CDxUQGenJeGsg==",
+      "dependencies": [
+        "@deno/experimental-route-config",
+        "@sveltejs/kit"
       ]
     },
     "@eslint-community/eslint-utils@4.10.1_eslint@10.14.0": {
@@ -300,12 +315,6 @@
       "integrity": "sha512-wgKggnhZVL9Bfx1OaKKTrYY9BFRk6C8UAkQNUcIv1+llzYrIqy+RZm5HPKzn0NpEBvTVhTqB4kQyllZywsRBRQ==",
       "dependencies": [
         "acorn"
-      ]
-    },
-    "@sveltejs/adapter-node@6.0.1_@sveltejs+kit@3.1.1_@sveltejs+vite-plugin-svelte@7.3.1_@types+node@24.19.2_svelte@5.57.3_typescript@6.0.3_vite@8.3.6_yaml@2.9.1": {
-      "integrity": "sha512-Pt/YcMakEkTjdQXaAvxrjrDnoGX4zU7pAZICnoLfpI+CawLGigq5upjFW9rVK2QY7yfpR1xeRG/kgI+syzPB3w==",
-      "dependencies": [
-        "@sveltejs/kit"
       ]
     },
     "@sveltejs/kit@3.1.1_@sveltejs+vite-plugin-svelte@7.3.1_svelte@5.57.3_typescript@6.0.3_vite@8.3.6_@types+node@24.19.2_yaml@2.9.1": {
@@ -1287,6 +1296,9 @@
         "punycode"
       ]
     },
+    "urlpattern-polyfill@10.1.0": {
+      "integrity": "sha512-IGjKp/o0NL3Bso1PymYURCJxMPNAf/ILOpendP9f5B6e1rTJgdgiOvgfoT8VxCAdY+Wisb9uhGaJJf3yZ2V9nw=="
+    },
     "util-deprecate@1.0.2": {
       "integrity": "sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw=="
     },
@@ -1347,30 +1359,28 @@
     }
   },
   "workspace": {
-    "packageJson": {
-      "dependencies": [
-        "npm:@eslint/js@^10.0.1",
-        "npm:@giscus/svelte@^3.1.0",
-        "npm:@iconify-json/ic@^1.2.4",
-        "npm:@iconify-json/simple-icons@^1.2.101",
-        "npm:@sveltejs/adapter-node@^6.0.1",
-        "npm:@sveltejs/kit@^3.1.1",
-        "npm:@sveltejs/vite-plugin-svelte@^7.3.1",
-        "npm:@types/node@^24.19.2",
-        "npm:eslint-config-prettier@^10.1.8",
-        "npm:eslint-plugin-svelte@^3.24.0",
-        "npm:eslint@^10.14.0",
-        "npm:globals@^17.14.0",
-        "npm:prettier-plugin-svelte@^4.1.1",
-        "npm:prettier@^3.9.10",
-        "npm:svelte-check@^4.7.8",
-        "npm:svelte@^5.57.3",
-        "npm:typescript-eslint@^8.72.1",
-        "npm:typescript@^6.0.3",
-        "npm:unplugin-icons@24",
-        "npm:vite@^8.3.6",
-        "npm:yaml@^2.9.1"
-      ]
-    }
+    "dependencies": [
+      "npm:@deno/svelte-adapter@~0.2.2",
+      "npm:@eslint/js@^10.0.1",
+      "npm:@giscus/svelte@^3.1.0",
+      "npm:@iconify-json/ic@^1.2.4",
+      "npm:@iconify-json/simple-icons@^1.2.101",
+      "npm:@sveltejs/kit@^3.1.1",
+      "npm:@sveltejs/vite-plugin-svelte@^7.3.1",
+      "npm:@types/node@^24.19.2",
+      "npm:eslint-config-prettier@^10.1.8",
+      "npm:eslint-plugin-svelte@^3.24.0",
+      "npm:eslint@^10.14.0",
+      "npm:globals@^17.14.0",
+      "npm:prettier-plugin-svelte@^4.1.1",
+      "npm:prettier@^3.9.10",
+      "npm:svelte-check@^4.7.8",
+      "npm:svelte@^5.57.3",
+      "npm:typescript-eslint@^8.72.1",
+      "npm:typescript@^6.0.3",
+      "npm:unplugin-icons@24",
+      "npm:vite@^8.3.6",
+      "npm:yaml@^2.9.1"
+    ]
   }
 }

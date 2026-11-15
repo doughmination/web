@@ -3,7 +3,13 @@
 	"compilerOptions": {
 		// worker-configuration.d.ts imports the built Worker, so without this
 		// svelte-check type-checks the whole compiled bundle after a build
-		"checkJs": false
+		"checkJs": false,
+
+		// Mirrors the `#lib` alias in vite.config.ts, since there is no package.json imports field
+		"paths": {
+			"#lib": ["./src/lib/index.ts"],
+			"#lib/*": ["./src/lib/*"]
+		}
 	},
 	"include": ["src", "test", "*"],
 	"exclude": ["src/service-worker"]

@@ -21,4 +21,4 @@ exec chpst -u clove /usr/bin/deno run \
 	--allow-env \
 	--allow-read=. \
 	--env-file=.env \
-	build/index.js
+	deploy/server.ts

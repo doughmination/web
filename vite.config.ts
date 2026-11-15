@@ -2,12 +2,52 @@
  * DASL-1.2 — (c) Clove Twilight
  */
 
-import adapter from '@sveltejs/adapter-node';
+import denoAdapter from '@deno/svelte-adapter';
+import type { Adapter } from '@sveltejs/kit';
 import { sveltekit } from '@sveltejs/kit/vite';
+import { readFile, writeFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import Icons from 'unplugin-icons/vite';
 
+// The Deno adapter writes prerendered endpoints (sitemap.xml, search.json) but never routes them
+function adapter(): Adapter {
+	const base = denoAdapter();
+
+	return {
+		...base,
+		async adapt(builder) {
+			await base.adapt(builder);
+
+			const deployFile = '.deno-deploy/deploy.json';
+			const deployConfig = JSON.parse(await readFile(deployFile, 'utf8'));
+
+			for (const pathname of builder.prerendered.assets.keys()) {
+				deployConfig.staticFiles.push({
+					source: pathname,
+					destination: `.deno-deploy/static${pathname}`
+				});
+			}
+
+			await writeFile(deployFile, JSON.stringify(deployConfig, null, 2));
+		}
+	};
+}
+
 export default defineConfig({
+	resolve: {
+		// Kit 3 only reads `#lib` from package.json imports, which this project no longer has
+		alias: [
+			{
+				find: /^#lib$/,
+				replacement: fileURLToPath(new URL('./src/lib/index.ts', import.meta.url))
+			},
+			{
+				find: /^#lib\//,
+				replacement: fileURLToPath(new URL('./src/lib/', import.meta.url))
+			}
+		]
+	},
 	plugins: [
 		sveltekit({
 			compilerOptions: {
