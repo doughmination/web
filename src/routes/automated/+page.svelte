@@ -59,8 +59,8 @@
 		The comment came from my account&comma; and I approved it myself. The wording is a
 		template&comma; but the decision wasn&apos;t automatic.
 		<br />
-		If you think it got something wrong&comma; reply on the pull request and I&apos;ll take a look. For
-		an NS record closure&comma; you&apos;re welcome to open a new pull request with other record types&comma;
+		If you think it got something wrong&comma; drop me a message and I&apos;ll take a look. For an NS
+		record closure&comma; you&apos;re welcome to open a new pull request with other record types&comma;
 		such as <code>A</code>&comma; <code>AAAA</code>&comma; <code>CNAME</code>&comma;
 		<code>MX</code> or <code>TXT</code>. See the
 		<a href="https://docs.is-a.dev/faq/#who-can-use-ns-records">is-a.dev docs</a> for more.
