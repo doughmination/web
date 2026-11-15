@@ -22,6 +22,10 @@ export const apiBase = 'https://doughmination.uk';
 
 export const wsUrl = 'wss://doughmination.uk/v2/ws';
 
+// Plural System
+
+export const pluralBase = 'https://doughmination.co.uk/api';
+
 // Discord
 
 export const discordId = '1464890289922641993';

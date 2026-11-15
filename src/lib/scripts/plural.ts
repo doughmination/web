@@ -4,9 +4,19 @@
 
 // Fronting and device state from the Doughmination API
 // (https://doughmination.uk, see /docs there)
-
-import { api } from '#lib/scripts/api.ts';
+import { ApiError, type ErrorBody, errorMessage } from '#lib/scripts/errors';
 import { cached } from '#lib/scripts/cache.ts';
+import { pluralBase } from '#lib';
+
+async function pluralApi<T>(path: string, init?: RequestInit): Promise<T> {
+	const res = await fetch(pluralBase + path, {
+		...init,
+		headers: { ...(init?.body ? { 'Content-Type': 'application/json' } : {}), ...init?.headers }
+	});
+	const body = (await res.json().catch(() => null)) as (T & ErrorBody) | null;
+	if (!res.ok) throw new ApiError(errorMessage(body, res.status), res.status);
+	return body as T;
+}
 
 export interface Member {
 	id: string;
@@ -19,33 +29,12 @@ export interface Member {
 	status: { text: string; emoji: string | null; updated_at: string } | null;
 }
 
-export interface Device {
-	device: string;
-	level?: number;
-	charging?: boolean;
-	lowPowerMode?: boolean;
-	wifi?: string;
-	watch?: boolean;
-	airpods?: boolean;
-	updated_at: string;
-}
-
 // Both are kept until the socket says they've changed
 export function fetchFronters(): Promise<Member[]> {
 	return cached(
 		'fronters',
-		async () => (await api<{ members: Member[] }>('/v2/plural/fronters')).members ?? [],
+		async () => (await pluralApi<{ members: Member[] }>('/plural/fronters')).members ?? [],
 		{ events: ['fronters_update', 'reconnect'] }
-	);
-}
-
-export function fetchDevice(device: string): Promise<Device> {
-	return cached(
-		`device:${device}`,
-		() => api<Device>(`/v2/devices/${encodeURIComponent(device)}`),
-		{
-			events: ['device_update', 'reconnect']
-		}
 	);
 }
 

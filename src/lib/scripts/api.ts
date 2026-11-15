@@ -7,21 +7,18 @@
 // { detail } / { error }, or wrap it in a { success, data, error } envelope.
 
 import { apiBase } from '#lib';
+import { cached } from '#lib/scripts/cache.ts';
+import { ApiError, type ErrorBody, errorMessage } from '#lib/scripts/errors';
 
-export class ApiError extends Error {
-	constructor(
-		message: string,
-		readonly status: number
-	) {
-		super(message);
-	}
-}
-
-type ErrorBody = { detail?: string; error?: string | { message?: string } };
-
-function errorMessage(body: ErrorBody | null, status: number): string {
-	const error = typeof body?.error === 'string' ? body.error : body?.error?.message;
-	return body?.detail ?? error ?? `Request failed (${status})`;
+export interface Device {
+	device: string;
+	level?: number;
+	charging?: boolean;
+	lowPowerMode?: boolean;
+	wifi?: string;
+	watch?: boolean;
+	airpods?: boolean;
+	updated_at: string;
 }
 
 /** A bare-payload route. Throws ApiError on any non-2xx response. */
@@ -40,4 +37,14 @@ export async function apiData<T>(path: string, init?: RequestInit): Promise<T> {
 	const body = await api<{ success: boolean; data?: T } & ErrorBody>(path, init);
 	if (!body.success || body.data === undefined) throw new ApiError(errorMessage(body, 200), 200);
 	return body.data;
+}
+
+export function fetchDevice(device: string): Promise<Device> {
+	return cached(
+		`device:${device}`,
+		() => api<Device>(`/v2/devices/${encodeURIComponent(device)}`),
+		{
+			events: ['device_update', 'reconnect']
+		}
+	);
 }

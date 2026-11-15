@@ -18,12 +18,15 @@
 	import { STATUS_LABEL, subscribePresence, type Presence } from '#lib/scripts/discord.ts';
 	import { timeAgo } from '#lib/scripts/music.ts';
 	import {
-		fetchDevice,
 		fetchFronters,
 		memberName,
-		type Device,
 		type Member
 	} from '#lib/scripts/plural.ts';
+
+	import {
+		type Device,
+		fetchDevice
+	} from "#lib/scripts/api";
 
 	import { discordId } from '#lib';
 
@@ -118,12 +121,12 @@
 					<SelfieDust
 						{revealed}
 						from={{
-							src: '/avatar.avif',
-							alt: 'Selfie of Clove',
+							src: '/pixel-art.png',
+							alt: '',
 							width: 400,
 							height: 400
 						}}
-						to={{ src: '/avatar.avif', alt: '', width: 400, height: 400 }}
+						to={{ src: '/avatar.avif', alt: 'Selfie of Clove', width: 400, height: 400 }}
 					/>
 
 					{#if status}
