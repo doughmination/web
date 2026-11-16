@@ -26,6 +26,9 @@ export const wsUrl = 'wss://doughmination.uk/v2/ws';
 
 export const pluralBase = 'https://doughmination.co.uk/api';
 
+// Fronting and mental state events come from the system site's own socket
+export const pluralWsUrl = 'wss://doughmination.co.uk/api/plural/ws';
+
 // Discord
 
 export const discordId = '1464890289922641993';

@@ -7,7 +7,7 @@
 
 import { cached, invalidateOn } from '#lib/scripts/cache.ts';
 
-import { wsUrl, discordCdn } from '#lib';
+import { wsUrl, pluralWsUrl, discordCdn } from '#lib';
 import { apiData } from '#lib/scripts/api.ts';
 
 export type Status = 'online' | 'idle' | 'dnd' | 'offline';
@@ -180,11 +180,43 @@ function connect() {
 	};
 }
 
-// Opens the socket if it isn't already, and adds any new ids to it
+// The system site's socket: no presence, just events like fronters_update
+let pluralWs: WebSocket | null = null;
+let pluralRetry = 0;
+
+function connectPlural() {
+	pluralWs = new WebSocket(pluralWsUrl);
+	let pluralPing: ReturnType<typeof setInterval> | undefined;
+
+	pluralWs.onopen = () => {
+		if (pluralRetry) emitEvent('fronters_update');
+		pluralRetry = 0;
+		pluralPing = setInterval(() => pluralWs?.send('ping'), 30_000);
+	};
+
+	pluralWs.onmessage = (event) => {
+		if (event.data === 'pong') return;
+		let msg;
+		try {
+			msg = JSON.parse(event.data);
+		} catch {
+			return;
+		}
+		if (typeof msg.type === 'string') emitEvent(msg.type);
+	};
+
+	pluralWs.onclose = () => {
+		clearInterval(pluralPing);
+		setTimeout(connectPlural, Math.min(30_000, 1000 * 2 ** pluralRetry++));
+	};
+}
+
+// Opens the sockets if they aren't already, and adds any new ids to the presence one
 export function connectLive(ids: string[]) {
 	if (typeof WebSocket === 'undefined') return;
 	const before = subscribed.size;
 	for (const id of ids) subscribed.add(id);
+	if (!pluralWs) connectPlural();
 	if (!ws) connect();
 	else if (subscribed.size !== before) sendSubscribe();
 }
