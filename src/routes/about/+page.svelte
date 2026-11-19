@@ -61,6 +61,26 @@
 		> Woman from the UK.
 	</p>
 
+ <h1 class='sec'>Where I work</h1>
+ <p class='text'>
+  I work within a lot of organizations, and this is a full comprehensive list of where I currently work, completely voluntarily
+ </p>
+
+ <ul class='projects'>
+		<li>
+			<span class='project-name'>free-names</span>
+			A free subdomain service, spanning various domains, so you can kickstart your projects!
+		</li>
+  <li>
+   <span class='project-name'>is-a.dev</span>
+   Get a cool free is-a.dev or is-a.bot subdomain, free forever.
+  </li>
+  <li>
+   <span class='project-name'>WLWDevs</span>
+   Formerly known as Girls-Network, we operate GayBot, our queer and lovable Discord bot
+  </li>
+	</ul>
+ 
 	<h1 class='sec'>Coding</h1>
 	<p class='text'>
 		I&apos;ve been programming for around nine years, starting out writing Discord bots in
