@@ -12,7 +12,7 @@ export const websiteUrl = `https://${websiteDomain}`;
 
 export const contactEmail = `clove@${websiteDomain}`;
 
-export const mediaBase = `https://m.${websiteDomain}`;
+export const mediaBase = `https://raw.${websiteDomain}`;
 
 export const authUrl = `https://auth.${websiteDomain}`;
 
